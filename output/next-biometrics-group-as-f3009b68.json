@@ -1,0 +1,235 @@
+{
+  "company_id": "next-biometrics-group-as-f3009b68",
+  "input_name": "Next Biometrics Group AS",
+  "country_code": "NO",
+  "clean_name": "next biometrics group",
+  "status": "ok",
+  "lei": "5967007LIEEXZXK9R405",
+  "lei_record": {
+    "lei": "5967007LIEEXZXK9R405",
+    "legal_name": "NEXT BIOMETRICS GROUP ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "982 904 420"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "5967007LIEEXZXK9R405-2024-12-31-ESEF-NO-0",
+    "period_end": "2024-12-31",
+    "viewer_url": "https://filings.xbrl.org/5967007LIEEXZXK9R405/2024-12-31/ESEF/NO/0/NB_Group_ASA_Annual_report_2024-12-31/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/5967007LIEEXZXK9R405/2024-12-31/ESEF/NO/0/NB_Group_ASA_Annual_report_2024-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/5967007LIEEXZXK9R405/2024-12-31/ESEF/NO/0/NB_Group_ASA_Annual_report_2024-12-31/reports/5967007LIEEXZXK9R405-2024-12-31-0-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 71574000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 71,574,000 NOK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 71574000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 152390000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 152,390,000 NOK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 152390000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "licensing_royalties"
+    ],
+    "description": "The company sells fingerprint sensor technology hardware and software to distributors and end-customers, mainly in Asia, Europe, and North America, typically shipped ex-works with fixed prices and credit terms of 30-90 days.",
+    "quote": "The Group manufactures and sell fingerprint sensor technology hardware and software, both to distributors and end-customers.",
+    "chunk_id": 13,
+    "source_pages": [
+      27,
+      28,
+      29,
+      30
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Fingerprint sensor technology"
+    ],
+    "description": "Next Biometrics Group ASA is a publicly listed company on the Oslo Stock Exchange. It operates in one business segment, Fingerprint sensor technology, with sales, support, and development operations in multiple countries.",
+    "quote": "NEXT Biometrics Group ASA is headquartered in Oslo, with sales, support, and development operations in Seattle, Taipei, Tokyo, New Delhi and Shanghai.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2,
+      3
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 152390000.0,
+      "unit": "units",
+      "currency": "NOK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 152,390,000 NOK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 152390000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 152,390,000 vs equity+liabilities 152,390,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 13"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 0"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 5967007LIEEXZXK9R405"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:15:18+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "next-biometrics-group-as-f3009b68_ca04b1aacd63c6bdb962bc4b6723dd0350dce974.md",
+    "chunks_total": 27,
+    "chunks_sent": {
+      "financials": [
+        2,
+        11,
+        20,
+        21,
+        26
+      ],
+      "qualitative": [
+        0,
+        3,
+        4,
+        5,
+        13
+      ]
+    }
+  }
+}

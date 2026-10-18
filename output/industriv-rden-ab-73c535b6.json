@@ -1,0 +1,280 @@
+{
+  "company_id": "industriv-rden-ab-73c535b6",
+  "input_name": "Industrivärden AB",
+  "country_code": "SE",
+  "clean_name": "industrivarden",
+  "status": "ok",
+  "lei": "549300TM1DLIQI3B3T37",
+  "lei_record": {
+    "lei": "549300TM1DLIQI3B3T37",
+    "legal_name": "Aktiebolaget Industrivärden",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556043-4200"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.industrivarden.se",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.industrivarden.se/globalassets/arsredovisningar/engelska/2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "Dec 31 2025",
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "consolidated",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No consolidated revenue figure found in the provided excerpts",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 198900.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 198,900",
+    "chunk_id": 118,
+    "not_found_reason": null,
+    "value_full": 198900000000.0,
+    "source_pages": [
+      59,
+      60
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "other"
+    ],
+    "description": "Industrivärden is a holding company that invests in and creates value in portfolio companies by holding sizable ownership stakes and receiving dividends.",
+    "quote": "Industrivärden is a listed holding company that invests in and works long-term to develop and create value in its portfolio companies.",
+    "chunk_id": 2,
+    "source_pages": [
+      5
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB Industrivärden (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Portfolio companies"
+    ],
+    "description": "Industrivärden is a Swedish public limited holding company listed on Nasdaq Stockholm. It operates by holding sizable ownership stakes in a selection of listed portfolio companies and exercising active ownership through these holdings.",
+    "quote": "Industrivärden is a listed holding company that invests in and works long-term to develop and create value in its portfolio companies.",
+    "chunk_id": 2,
+    "source_pages": [
+      5
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 198900.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "TOTAL SHAREHOLDERS’ EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL SHAREHOLDERS’ EQUITY AND LIABILITIES 198,900",
+      "chunk_id": 118,
+      "not_found_reason": null,
+      "value_full": 198900000000.0,
+      "source_pages": [
+        59,
+        60
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 118"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 118"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 198,900,000,000 vs equity+liabilities 198,900,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:19:06+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": false
+    },
+    "markdown_file": "industriv-rden-ab-73c535b6_d340e1e7f5e70f67e02c6a548d0297020fcfd682.md",
+    "chunks_total": 233,
+    "chunks_sent": {
+      "financials": [
+        5,
+        6,
+        30,
+        35,
+        43,
+        48,
+        52,
+        57,
+        62,
+        73,
+        118,
+        159,
+        160,
+        161,
+        162,
+        176,
+        190,
+        195,
+        218
+      ],
+      "qualitative": [
+        2,
+        7,
+        8,
+        9,
+        11,
+        15,
+        17,
+        21,
+        34,
+        38,
+        42,
+        47,
+        51,
+        56,
+        61,
+        86,
+        89,
+        90,
+        95,
+        96,
+        97,
+        121,
+        122,
+        123,
+        124,
+        125,
+        127,
+        129,
+        133,
+        134,
+        146,
+        152,
+        170,
+        171,
+        173,
+        174,
+        203,
+        207,
+        208,
+        214,
+        225
+      ]
+    }
+  }
+}

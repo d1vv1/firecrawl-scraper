@@ -1,0 +1,246 @@
+{
+  "company_id": "bang-olufsen-a-s-bc7838a7",
+  "input_name": "Bang & Olufsen A/S",
+  "country_code": "DK",
+  "clean_name": "bang and olufsen",
+  "status": "ok",
+  "lei": "52990018KGR3ILFDNJ20",
+  "lei_record": {
+    "lei": "52990018KGR3ILFDNJ20",
+    "legal_name": "BANG & OLUFSEN A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "41257911"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "52990018KGR3ILFDNJ20-2026-05-31-ESEF-DK-0",
+    "period_end": "2026-05-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/52990018KGR3ILFDNJ20/2026-05-31/ESEF/DK/0/BangogOlufsen-2026-05-31-1-en/reports/BangogOlufsen-2026-05-31-1-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/52990018KGR3ILFDNJ20/2026-05-31/ESEF/DK/0/BangogOlufsen-2026-05-31-1-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/52990018KGR3ILFDNJ20/2026-05-31/ESEF/DK/0/52990018KGR3ILFDNJ20-2026-05-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/52990018KGR3ILFDNJ20/2026-05-31/ESEF/DK/0/BangogOlufsen-2026-05-31-1-en/reports/BangogOlufsen-2026-05-31-1-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2026",
+  "period_end_date": "2026-05-31",
+  "period_end_date_raw": "2026-05-31",
+  "revenue": {
+    "value": 2468000000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 2,468,000,000 DKK (2025-06-01/2026-05-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2468000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 2222000000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 2,222,000,000 DKK (2026-05-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2222000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "licensing_royalties",
+      "services"
+    ],
+    "description": "The company primarily generates revenue from selling luxury audio products to discerning customers, including integrated home systems and portable solutions, through its retail network and partners. It also earns income from licensing its brand and from service, repair, refurbishment, and resale activities.",
+    "quote": "Our product portfolio forms the foundation of everything we do, continuously evolving through innovation and exceptional sound and iconic design.",
+    "chunk_id": 2,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "EMEA",
+      "Americas",
+      "APAC",
+      "Brand Partnering & other activities"
+    ],
+    "description": "Bang & Olufsen A/S is a Danish public company listed on Nasdaq Copenhagen. It is organized and reports its operations based on strategic market segments: EMEA, Americas, APAC, and Brand Partnering & other activities.",
+    "quote": "Bang & Olufsen is a Danish company listed on Nasdaq Copenhagen. The strategic markets have been identified as the reportable segments being the primary dimension",
+    "chunk_id": 35,
+    "source_pages": [
+      74,
+      75,
+      76,
+      77
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 2222000000.0,
+      "unit": "units",
+      "currency": "DKK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 2,222,000,000 DKK (2026-05-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 2222000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 2,222,000,000 vs equity+liabilities 2,222,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2026 (latest year 2026, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "loose match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 35: probable hallucination. Quote: 'Bang & Olufsen is a Danish company listed on Nasdaq Copenhagen. The \\ue808strategic markets\\ue809 have been identified as the reportable segments being the primary dimension'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 52990018KGR3ILFDNJ20)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 35: probable hallucination. Quote: 'Bang & Olufsen is a Danish company listed on Nasdaq Copenhagen. The \\ue808strategic markets\\ue809 have been identified as the reportable segments being the primary dimension'"
+  ],
+  "extracted_at": "2026-10-18T06:44:10+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "bang-olufsen-a-s-bc7838a7_3c9a91f3638fd30926cbdc6743857c08e20e459a.md",
+    "chunks_total": 57,
+    "chunks_sent": {
+      "financials": [
+        4,
+        33,
+        34,
+        48,
+        49
+      ],
+      "qualitative": [
+        2,
+        19,
+        20,
+        35,
+        36
+      ]
+    }
+  }
+}

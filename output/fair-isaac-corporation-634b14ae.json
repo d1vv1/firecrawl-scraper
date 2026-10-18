@@ -1,0 +1,241 @@
+{
+  "company_id": "fair-isaac-corporation-634b14ae",
+  "input_name": "Fair Isaac Corporation",
+  "country_code": "US",
+  "clean_name": "fair isaac",
+  "status": "ok",
+  "lei": "RI6HET5SJUEY30V1PS26",
+  "lei_record": {
+    "lei": "RI6HET5SJUEY30V1PS26",
+    "legal_name": "FAIR ISAAC CORPORATION",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "2126420"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "edgar",
+  "filing": {
+    "type": "edgar",
+    "filing_id": "0000814547-25-000030",
+    "period_end": "2025-09-30",
+    "form": "10-K",
+    "cik": 814547,
+    "report_url": "https://www.sec.gov/Archives/edgar/data/814547/000081454725000030/fico-20250930.htm",
+    "viewer_url": null,
+    "package_url": null
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://www.sec.gov/Archives/edgar/data/814547/000081454725000030/fico-20250930.htm",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-09-30",
+  "period_end_date_raw": "2025-09-30",
+  "revenue": {
+    "value": 1990869000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "scope": "consolidated",
+    "quote": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax = 1,990,869,000 USD (2024-10-01/2025-09-30)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1990869000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax"
+  },
+  "total_assets": {
+    "value": 1868133000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "us-gaap:Assets = 1,868,133,000 USD (2025-09-30)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1868133000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "subscription",
+      "services"
+    ],
+    "description": "The company sells scoring solutions and software products primarily to businesses and consumers. Scores are distributed through consumer reporting agencies and direct-to-consumer channels, while software is sold as subscriptions or on-premises to business customers.",
+    "quote": "Our Scores segment includes our business-to-business (“B2B”) scoring solutions and services which give our clients access to predictive credit and other scores... Our Software segment includes pre-configured analytic and decision management solutions... Our offerings are available to our customers as software-as-a-service (“SaaS”) or as on-premises software.",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5,
+      6
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Corporation",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Scores",
+      "Software"
+    ],
+    "description": "Fair Isaac Corporation is organized into two reportable segments: Scores and Software. It is a publicly listed corporation and is the ultimate parent company of its group.",
+    "quote": "We are organized into two reportable segments: Scores and Software... Our chief operating decision maker (“CODM”), who is our Chief Executive Officer, evaluates segment financial performance...",
+    "chunk_id": 43,
+    "source_pages": [
+      97,
+      98,
+      99,
+      100
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 1868133000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "LiabilitiesAndStockholdersEquity",
+      "scope": "consolidated",
+      "quote": "us-gaap:LiabilitiesAndStockholdersEquity = 1,868,133,000 USD (2025-09-30)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 1868133000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "us-gaap:LiabilitiesAndStockholdersEquity"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 1,868,133,000 vs equity+liabilities 1,868,133,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "fragments match in chunk 1 (3 passages joined with '...')"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "fragments match in chunk 43 (2 passages joined with '...')"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (SEC CIK 814547)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T06:50:48+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "fair-isaac-corporation-634b14ae_aa6c3adb3f9d6b17a5aa88ce3fbf2e897e5cbbcb.md",
+    "chunks_total": 51,
+    "chunks_sent": {
+      "financials": [
+        22,
+        24,
+        27,
+        30,
+        37,
+        38
+      ],
+      "qualitative": [
+        1,
+        13,
+        42,
+        43
+      ]
+    }
+  }
+}

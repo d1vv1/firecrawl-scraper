@@ -1,0 +1,244 @@
+{
+  "company_id": "zimmer-biomet-holdings-inc-c738a3f1",
+  "input_name": "Zimmer Biomet Holdings, Inc.",
+  "country_code": "US",
+  "clean_name": "zimmer biomet",
+  "status": "ok",
+  "lei": "2P2YLDVPES3BXQ1FRB91",
+  "lei_record": {
+    "lei": "2P2YLDVPES3BXQ1FRB91",
+    "legal_name": "ZIMMER BIOMET HOLDINGS, INC.",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "3343799"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.zimmer.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://investor.zimmerbiomet.com/~/media/Files/Z/ZimmerBiomet-IR/documents/annual-reports/2025-annual-report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 8231.5,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Net Sales",
+    "scope": "consolidated",
+    "quote": "Total|$8,231.5|$7,678.6|$7,394.2|7.2|3.8|",
+    "chunk_id": 60,
+    "not_found_reason": null,
+    "value_full": 8231500000.0,
+    "source_pages": [
+      33
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 23091.7,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total Assets",
+    "scope": "consolidated",
+    "quote": "**Total Assets**|$23,091.7|$21,365.3|",
+    "chunk_id": 89,
+    "not_found_reason": null,
+    "value_full": 23091700000.0,
+    "source_pages": [
+      47
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Zimmer Biomet sells orthopedic reconstructive products and related medical devices primarily to healthcare institutions and specialists through direct sales and distributors.",
+    "quote": "We design, manufacture and market orthopedic reconstructive products; sports medicine, biologics, extremities and trauma products; craniomaxillofacial and thoracic (“CMFT”) products; bone cement; surgical products; and a suite of integrated digital and robotic technologies",
+    "chunk_id": 13,
+    "source_pages": [
+      10
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Americas",
+      "EMEA",
+      "Asia Pacific"
+    ],
+    "description": "Zimmer Biomet Holdings, Inc. is a publicly listed company incorporated in Delaware, operating through three regional segments: Americas, EMEA, and Asia Pacific.",
+    "quote": "Our CODM allocates resources to achieve our operating profit goals through three operating segments. These operating segments, which also constitute our reportable segments, are Americas; EMEA; and Asia Pacific.",
+    "chunk_id": 128,
+    "source_pages": [
+      79,
+      80
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 23091.7,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total Liabilities and Stockholders’ Equity",
+      "scope": "consolidated",
+      "quote": "**Total Liabilities and Stockholders’ Equity**|$23,091.7|$21,365.3|",
+      "chunk_id": 89,
+      "not_found_reason": null,
+      "value_full": 23091700000.0,
+      "source_pages": [
+        47
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 60"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 89"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 89"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 23,091,700,000 vs equity+liabilities 23,091,700,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 13"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 128"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:14:47+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "zimmer-biomet-holdings-inc-c738a3f1_57532ab61c73bfb875b580857bfbdefbd98c39e8.md",
+    "chunks_total": 150,
+    "chunks_sent": {
+      "financials": [
+        2,
+        19,
+        60,
+        64,
+        65,
+        83,
+        89,
+        93,
+        97,
+        122,
+        134
+      ],
+      "qualitative": [
+        6,
+        13,
+        14,
+        35,
+        59,
+        91,
+        97,
+        104,
+        128
+      ]
+    }
+  }
+}

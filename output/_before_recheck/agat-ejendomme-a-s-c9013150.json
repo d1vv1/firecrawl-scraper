@@ -1,0 +1,200 @@
+{
+  "company_id": "agat-ejendomme-a-s-c9013150",
+  "input_name": "Agat Ejendomme A/S",
+  "country_code": "DK",
+  "clean_name": "agat ejendomme",
+  "status": "needs_review",
+  "lei": "213800A9E3DB29NTMU72",
+  "lei_record": {
+    "lei": "213800A9E3DB29NTMU72",
+    "legal_name": "Agat Ejendomme A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "24256782"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://agat.dk",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://agat.dk/wp-content/uploads/2024/03/Aarsrapport-2023-24.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2023-24",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No revenue figure found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null
+  },
+  "total_assets": {
+    "value": 1.07,
+    "unit": "billions",
+    "currency": "DKK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Balance sheet Total assets 1,070 million DKK",
+    "chunk_id": 1,
+    "not_found_reason": null,
+    "value_full": 1070000000.0000001,
+    "source_pages": [
+      4,
+      5
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company sells real estate properties to customers.",
+    "quote": "Agat Ejendomme A/S is engaged in the acquisition, development, and sale of real estate properties.",
+    "chunk_id": 2,
+    "source_pages": [
+      6,
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Real Estate Development"
+    ],
+    "description": "Agat Ejendomme A/S is organized as a public limited company focusing on real estate development.",
+    "quote": "Agat Ejendomme A/S is a public limited company (A/S) specializing in real estate development.",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 1.07,
+      "unit": "billions",
+      "currency": "DKK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Balance sheet Total equity and liabilities 1,070 million DKK",
+      "chunk_id": 1,
+      "not_found_reason": null,
+      "value_full": 1070000000.0000001,
+      "source_pages": [
+        4,
+        5
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Balance sheet Total assets 1,070 million DKK'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "1.07 not in quote 'Balance sheet Total assets 1,070 million DKK'"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Balance sheet Total equity and liabilities 1,070 million DKK'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "1.07 not in quote 'Balance sheet Total equity and liabilities 1,070 million DKK'"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 1,070,000,000 vs equity+liabilities 1,070,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2023-24 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Agat Ejendomme A/S is engaged in the acquisition, development, and sale of real estate properties.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Agat Ejendomme A/S is a public limited company (A/S) specializing in real estate development.'"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T19:56:22+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "agat-ejendomme-a-s-c9013150_1280bbc66709f81bca6b1d03c9f9405ccc7b35dc.md",
+    "chunks_total": 7,
+    "chunks_sent": {
+      "financials": [],
+      "qualitative": []
+    }
+  }
+}

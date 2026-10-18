@@ -1,0 +1,268 @@
+{
+  "company_id": "alleima-ab-9051d2b0",
+  "input_name": "Alleima AB",
+  "country_code": "SE",
+  "clean_name": "alleima",
+  "status": "ok",
+  "lei": "529900EBHTYGLA6PGP77",
+  "lei_record": {
+    "lei": "529900EBHTYGLA6PGP77",
+    "legal_name": "Alleima AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "559224-1433"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.alleima.com",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.alleima.com/siteassets/documents/ir/2025-ar/alleima-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "Dec 31, 2025",
+  "revenue": {
+    "value": 18630.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Revenues",
+    "scope": "consolidated",
+    "quote": "Revenues 18,630",
+    "chunk_id": 121,
+    "not_found_reason": null,
+    "value_full": 18630000000.0,
+    "source_pages": [
+      43,
+      44,
+      45,
+      46
+    ]
+  },
+  "total_assets": {
+    "value": 22531.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 22,531",
+    "chunk_id": 121,
+    "not_found_reason": null,
+    "value_full": 22531000000.0,
+    "source_pages": [
+      43,
+      44,
+      45,
+      46
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Alleima sells advanced stainless steel and special alloy products, including seamless tubes, industrial heating products, and precision strip steel, primarily to industrial customers in sectors like Energy, Chemical, and Medical. Sales are conducted globally through a fully integrated value chain with local production facilities.",
+    "quote": "The Tube division develops and manufactures seamless tubes and other long products in advanced stainless steels and special alloys that are tailored for specific end-applications.",
+    "chunk_id": 70,
+    "source_pages": [
+      26
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Tube",
+      "Kanthal",
+      "Strip"
+    ],
+    "description": "Alleima AB is a publicly listed Swedish company organized into three divisions: Tube, Kanthal, and Strip. The CEO acts as the Chief Operating Decision Maker, overseeing these segments which are based on product lines.",
+    "quote": "Alleima’s management has identified the three divisions Tube, Kanthal and Strip as the reportable segments.",
+    "chunk_id": 132,
+    "source_pages": [
+      48
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 22531.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 22,531",
+      "chunk_id": 121,
+      "not_found_reason": null,
+      "value_full": 22531000000.0,
+      "source_pages": [
+        43,
+        44,
+        45,
+        46
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 121"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 121"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 121"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 22,531,000,000 vs equity+liabilities 22,531,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 70"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 132"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T20:30:27+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "alleima-ab-9051d2b0_d9aa8132a8aceb034d54c914c49a90a95872b3bd.md",
+    "chunks_total": 452,
+    "chunks_sent": {
+      "financials": [
+        5,
+        28,
+        29,
+        74,
+        81,
+        91,
+        92,
+        98,
+        107,
+        119,
+        121,
+        133,
+        134,
+        136,
+        176,
+        177,
+        180,
+        181,
+        231,
+        244,
+        248,
+        258,
+        259,
+        318,
+        368,
+        428,
+        443,
+        447
+      ],
+      "qualitative": [
+        0,
+        14,
+        17,
+        48,
+        68,
+        70,
+        89,
+        106,
+        119,
+        120,
+        123,
+        126,
+        132,
+        144,
+        159,
+        176,
+        210,
+        244,
+        245,
+        251,
+        252,
+        253,
+        256,
+        299,
+        300,
+        308,
+        394,
+        395
+      ]
+    }
+  }
+}

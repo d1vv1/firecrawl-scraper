@@ -1,0 +1,250 @@
+{
+  "company_id": "FI001",
+  "input_name": "Nokia Oyj",
+  "country_code": "FI",
+  "clean_name": "nokia",
+  "status": "ok",
+  "lei": "549300A0JPRWG1KI7U06",
+  "lei_record": {
+    "lei": "549300A0JPRWG1KI7U06",
+    "legal_name": "Nokia Oyj",
+    "country": "FI",
+    "jurisdiction": "FI",
+    "legal_form_id": "K6VE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "0112038-9"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.nokia.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.nokia.com/system/files/2026-03/nokia-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 19889.0,
+    "unit": "millions",
+    "currency": "EUR",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales 19 889",
+    "chunk_id": 153,
+    "not_found_reason": null,
+    "value_full": 19889000000.0,
+    "source_pages": [
+      69
+    ]
+  },
+  "total_assets": {
+    "value": 37597.0,
+    "unit": "millions",
+    "currency": "EUR",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 37 597",
+    "chunk_id": 153,
+    "not_found_reason": null,
+    "value_full": 37597000000.0,
+    "source_pages": [
+      69
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "licensing_royalties"
+    ],
+    "description": "Nokia sells network infrastructure products and services to telecommunication providers, enterprises, and AI & Cloud customers through direct sales channels. It also licenses its patents and technologies to various industries.",
+    "quote": "Whenever a device connects to a mobile network or streams video, it’s powered by Nokia’s technology.",
+    "chunk_id": 26,
+    "source_pages": [
+      13
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Oyj",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Network Infrastructure",
+      "Cloud and Network Services",
+      "Mobile Networks",
+      "Nokia Technologies"
+    ],
+    "description": "Nokia Oyj is a publicly listed company operating through four business groups: Network Infrastructure, Cloud and Network Services, Mobile Networks, and Nokia Technologies. From 2026, it will reorganize into two primary operating segments: Network Infrastructure and Mobile Infrastructure.",
+    "quote": "Nokia has four operating and reportable segments for financial reporting purposes: (1) Network Infrastructure, (2) Cloud and Network Services, (3) Mobile Networks and (4) Nokia Technologies.",
+    "chunk_id": 572,
+    "source_pages": [
+      210,
+      211
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 37597.0,
+      "unit": "millions",
+      "currency": "EUR",
+      "label_in_report": "Total shareholders’ equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total shareholders’ equity and liabilities 37 597",
+      "chunk_id": 153,
+      "not_found_reason": null,
+      "value_full": 37597000000.0,
+      "source_pages": [
+        69
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 153"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 153"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 544 (model cited chunk 153)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 37,597,000,000 vs equity+liabilities 37,597,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 26"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 572"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T17:54:17+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "fi001_ef49fc59ac214b8fb700e8cf0bc830eae82843a8.md",
+    "chunks_total": 816,
+    "chunks_sent": {
+      "financials": [
+        153,
+        156,
+        179,
+        184,
+        303,
+        359,
+        365,
+        541,
+        544,
+        545,
+        567,
+        569,
+        570,
+        698,
+        707,
+        720,
+        741,
+        774,
+        785
+      ],
+      "qualitative": [
+        0,
+        18,
+        22,
+        26,
+        27,
+        29,
+        31,
+        39,
+        237,
+        238,
+        244,
+        248,
+        354,
+        390,
+        512,
+        567,
+        572,
+        646,
+        740,
+        741,
+        742,
+        744,
+        745,
+        767,
+        810
+      ]
+    }
+  }
+}

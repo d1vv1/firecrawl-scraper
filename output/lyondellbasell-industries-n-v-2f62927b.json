@@ -1,0 +1,264 @@
+{
+  "company_id": "lyondellbasell-industries-n-v-2f62927b",
+  "input_name": "LyondellBasell Industries N.V.",
+  "country_code": "NL",
+  "clean_name": "lyondellbasell industries",
+  "status": "ok",
+  "lei": "BN6WCCZ8OVP3ITUUVN49",
+  "lei_record": {
+    "lei": "BN6WCCZ8OVP3ITUUVN49",
+    "legal_name": "LyondellBasell Industries N.V.",
+    "country": "GB",
+    "jurisdiction": "NL",
+    "legal_form_id": "B5PM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "24473890"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.lyondellbasell.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://s204.q4cdn.com/455115734/files/doc_financials/2025/ar/2026-Proxy-Statement-and-2025-Annual-Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 30153.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total",
+    "scope": "consolidated",
+    "quote": "Total|$ 30,153|$ 33,394|$ 33,336|",
+    "chunk_id": 341,
+    "not_found_reason": null,
+    "value_full": 30153000000.0,
+    "source_pages": [
+      198,
+      199
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 34003.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets|$ 34,003|$ 35,746|",
+    "chunk_id": 307,
+    "not_found_reason": null,
+    "value_full": 34003000000.0,
+    "source_pages": [
+      181
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "licensing_royalties"
+    ],
+    "description": "The company produces and markets chemical products including olefins, polyolefins, propylene oxide and derivatives, and advanced polymer solutions to various customers globally. It also develops and licenses chemical and polyolefin process technologies and sells polyolefin catalysts.",
+    "quote": "Our O&P-Americas segment produces and markets olefins and co-products, polyethylene and polypropylene. ... Our Technology segment develops and licenses chemical and polyolefin process technologies and manufactures and sells polyolefin catalysts.",
+    "chunk_id": 230,
+    "source_pages": [
+      124,
+      125
+    ]
+  },
+  "business_structure": {
+    "legal_form": "N.V.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Olefins and Polyolefins-Americas",
+      "Olefins and Polyolefins-Europe, Asia, International",
+      "Intermediates and Derivatives",
+      "Advanced Polymer Solutions",
+      "Technology"
+    ],
+    "description": "LyondellBasell Industries N.V. is a publicly listed company organized as a Naamloze Vennootschap (N.V.). It operates through five reportable segments focused on chemical production and technology licensing. It is the ultimate parent company of its group.",
+    "quote": "We manage our operations through five operating segments. Our reportable segments are: Olefins and Polyolefins-Americas, Olefins and Polyolefins-Europe, Asia, International, Intermediates and Derivatives, Advanced Polymer Solutions, Technology.",
+    "chunk_id": 230,
+    "source_pages": [
+      124,
+      125
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 34003.0,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total liabilities, redeemable non-controlling interests and equity",
+      "scope": "consolidated",
+      "quote": "Total liabilities, redeemable non-controlling interests and equity|$ 34,003|$ 35,746|",
+      "chunk_id": 308,
+      "not_found_reason": null,
+      "value_full": 34003000000.0,
+      "source_pages": [
+        182
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 341"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 307"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 308"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 34,003,000,000 vs equity+liabilities 34,003,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "fragments match in chunk 230 (2 passages joined with '...')"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 230: probable hallucination. Quote: 'We manage our operations through five operating segments. Our reportable segments are: Olefins and Polyolefins-Americas, Olefins and Polyolefins-Europe, Asia, International, Intermediates and Derivati…'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 230: probable hallucination. Quote: 'We manage our operations through five operating segments. Our reportable segments are: Olefins and Polyolefins-Americas, Olefins and Polyolefins-Europe, Asia, International, Intermediates and Derivati…'"
+  ],
+  "extracted_at": "2026-10-16T19:02:46+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "lyondellbasell-industries-n-v-2f62927b_2c91a62821f9f0a181c9c8d16a45fb9e7b40c123.md",
+    "chunks_total": 398,
+    "chunks_sent": {
+      "financials": [
+        130,
+        153,
+        230,
+        231,
+        253,
+        257,
+        283,
+        284,
+        285,
+        286,
+        287,
+        307,
+        308,
+        327,
+        333,
+        341,
+        348,
+        359,
+        360,
+        380,
+        381
+      ],
+      "qualitative": [
+        52,
+        68,
+        71,
+        73,
+        75,
+        118,
+        142,
+        213,
+        229,
+        230,
+        241,
+        259,
+        282
+      ]
+    }
+  }
+}

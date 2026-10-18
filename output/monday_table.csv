@@ -1,0 +1,53 @@
+﻿field,segment,companies_tested,found,coverage_pct,checked,confirmed,accuracy_pct,source,method,refresh,recommendation,notes
+revenue,nordic_listed,27,21,77.8,13,9,69.2,filings.xbrl.org ESEF (12); company website reports (12),PARSE,yearly (annual report),BUY,"10 read from XBRL tags, 11 by AI from report text | 3 companies failed before extraction | 5 not compared: golden value is for another year | 3 have no golden value | mismatches to re-check: sparebank-1-ostfold-akershus-9219c22d: ours 14,240,000,000 vs golden 1,378,000,000; afarak-62f73907: ours 141,279 vs golden 141,000,000; newcap-holding-0a15d2ac: ours 11,965,000,000 vs golden 12,000,000; cloudberry-clean-energy-asa-d064b1f5: ours 571,000,000 vs golden 511,000,000"
+total_assets,nordic_listed,27,23,85.2,16,12,75.0,filings.xbrl.org ESEF (12); company website reports (12),PARSE,yearly (annual report),BUY,"12 read from XBRL tags, 11 by AI from report text | 3 companies failed before extraction | 6 not compared: golden value is for another year | 1 have no golden value | mismatches to re-check: pharma-equity-2ac0b418: ours 38,898,000 vs golden 62,000,000; sparebank-1-ostfold-akershus-9219c22d: ours 513,054,000,000 vs golden 31,406,000,000; afarak-62f73907: ours 148,102 vs golden 148,000,000; newcap-holding-0a15d2ac: ours 28,130,000,000 vs golden 28,000,000"
+revenue_model,nordic_listed,27,24,88.9,24,19,79.2,filings.xbrl.org ESEF (12); company website reports (12),PARSE,yearly (annual report),BUY,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+business_structure,nordic_listed,27,23,85.2,23,18,78.3,filings.xbrl.org ESEF (12); company website reports (12),PARSE,yearly (annual report),BUY,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+employees_fte,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+employees_headcount,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+controlling_owner,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pe_stake,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue_by_country,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+staff_by_country,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pension_type,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+shareholding_requirement,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+sector,nordic_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue,europe_uk_listed,30,25,83.3,14,13,92.9,filings.xbrl.org ESEF (9); SEC EDGAR 10-K/20-F (4); company website reports (14),PARSE,yearly (annual report),REVIEW,"11 read from XBRL tags, 14 by AI from report text | 3 companies failed before extraction | 11 have no golden value | mismatches to re-check: chubb-limited-0965d2d4: ours 499,816,000 vs golden 59,783,000,000"
+total_assets,europe_uk_listed,30,25,83.3,14,12,85.7,filings.xbrl.org ESEF (9); SEC EDGAR 10-K/20-F (4); company website reports (14),PARSE,yearly (annual report),REVIEW,"12 read from XBRL tags, 13 by AI from report text | 3 companies failed before extraction | 11 have no golden value | mismatches to re-check: panoro-energy-asa-afe54815: ours 674,207,000 vs golden 666,000,000; chubb-limited-0965d2d4: ours 1,010,935,000 vs golden 272,327,000,000"
+revenue_model,europe_uk_listed,30,27,90.0,27,24,88.9,filings.xbrl.org ESEF (9); SEC EDGAR 10-K/20-F (4); company website reports (14),PARSE,yearly (annual report),REVIEW,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+business_structure,europe_uk_listed,30,25,83.3,25,15,60.0,filings.xbrl.org ESEF (9); SEC EDGAR 10-K/20-F (4); company website reports (14),PARSE,yearly (annual report),BUY,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+employees_fte,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+employees_headcount,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+controlling_owner,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pe_stake,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue_by_country,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+staff_by_country,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pension_type,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+shareholding_requirement,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+sector,europe_uk_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue,us_listed,30,26,86.7,22,20,90.9,SEC EDGAR 10-K/20-F (17); company website reports (13),PARSE,yearly (annual report),REVIEW,"15 read from XBRL tags, 11 by AI from report text | 3 not compared: golden value is for another year | 1 have no golden value | mismatches to re-check: berkshire-hathaway-inc-aa140e74: ours 371,444,000,000 vs golden 410,522,000,000; synchrony-financial-736f9a82: ours 22,601,000,000 vs golden 14,981,000,000"
+total_assets,us_listed,30,26,86.7,22,22,100.0,SEC EDGAR 10-K/20-F (17); company website reports (13),PARSE,yearly (annual report),BUILD,"17 read from XBRL tags, 9 by AI from report text | 3 not compared: golden value is for another year | 1 have no golden value"
+revenue_model,us_listed,30,30,100.0,30,24,80.0,SEC EDGAR 10-K/20-F (17); company website reports (13),PARSE,yearly (annual report),REVIEW,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+business_structure,us_listed,30,29,96.7,29,24,82.8,SEC EDGAR 10-K/20-F (17); company website reports (13),PARSE,yearly (annual report),REVIEW,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+employees_fte,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+employees_headcount,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+controlling_owner,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pe_stake,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue_by_country,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+staff_by_country,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pension_type,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+shareholding_requirement,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+sector,us_listed,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue,nordic_uk_unlisted,30,14,46.7,9,5,55.6,filings.xbrl.org ESEF (3); company website reports (11),PARSE,yearly (annual report),REVIEW,"3 read from XBRL tags, 11 by AI from report text | 16 companies failed before extraction | 4 not compared: golden value is for another year | not compared, currency differs (re-check the golden label): cares-327341ef: currency USD vs golden NOK | mismatches to re-check: color-line-5c4e8895: ours 6,713,745,000 vs golden 1,075,321,000; flokk-c356e79e: ours 4,721,424,000 vs golden 831,127,000; bulk-infrastructure-120d062b: ours 906,943,000 vs golden 897,216,000; wilson-asa-dcef0792: ours 375,110,000 vs golden 210,480,000"
+total_assets,nordic_uk_unlisted,30,12,40.0,1,1,100.0,filings.xbrl.org ESEF (3); company website reports (11),PARSE,yearly (annual report),REVIEW,"3 read from XBRL tags, 9 by AI from report text | 16 companies failed before extraction | 11 have no golden value"
+revenue_model,nordic_uk_unlisted,30,14,46.7,14,12,85.7,filings.xbrl.org ESEF (3); company website reports (11),PARSE,yearly (annual report),REVIEW,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+business_structure,nordic_uk_unlisted,30,13,43.3,13,9,69.2,filings.xbrl.org ESEF (3); company website reports (11),PARSE,yearly (annual report),BUY,no golden values: 'confirmed' = supporting quote found word for word in the report; an analyst sample is still needed
+employees_fte,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+employees_headcount,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+controlling_owner,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pe_stake,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+revenue_by_country,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+staff_by_country,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+pension_type,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+shareholding_requirement,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet
+sector,nordic_uk_unlisted,0,,,,,,,PARSE,,NOT_TESTED,not built yet

@@ -1,0 +1,233 @@
+{
+  "company_id": "archer-ltd-a477bc21",
+  "input_name": "Archer Ltd",
+  "country_code": "NO",
+  "clean_name": "archer",
+  "status": "ok",
+  "lei": null,
+  "lei_record": null,
+  "lei_lookup": "ambiguous: 2 records match 'Archer Ltd' (exact name match (registered outside NO)): 2549005EIW32TOMRMN25 ARCHER (IN), 549300D1D5TS4O1V4923 ARCHER LIMITED (BM). Pass --lei to choose.",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://archerwell.com",
+  "website_source": "search",
+  "website_score": 0.86,
+  "report_url": "https://archerwell.com/wp-content/uploads/2024/04/Archer-Norge-AS-2023-Annual-Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2023",
+  "period_end_date": "2023-12-31",
+  "period_end_date_raw": "2023-12-31",
+  "revenue": {
+    "value": 8122.2,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total Revenues",
+    "scope": "consolidated",
+    "quote": "**Total Revenues** 8,122.2",
+    "chunk_id": 22,
+    "not_found_reason": null,
+    "value_full": 8122200000.0,
+    "source_pages": [
+      11
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 6455.3,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total Assets",
+    "scope": "consolidated",
+    "quote": "**Total Assets** 6,455.3",
+    "chunk_id": 23,
+    "not_found_reason": null,
+    "value_full": 6455300000.0,
+    "source_pages": [
+      12,
+      13
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "other",
+      "interest_income"
+    ],
+    "description": "Archer Norge AS generates its primary revenue from transactions with various entities within the Archer Ltd group. Additionally, it earns interest income from these related parties.",
+    "quote": "Total revenue from related parties 787.9",
+    "chunk_id": 33,
+    "source_pages": [
+      17,
+      18,
+      19
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AS",
+    "is_listed": null,
+    "ultimate_parent": "Archer Ltd",
+    "segments": [],
+    "description": "Archer Norge AS is a Norwegian limited company that operates as part of the Archer Ltd group, which includes its subsidiaries and unconsolidated associates.",
+    "quote": "Part of Archer Ltd group",
+    "chunk_id": 33,
+    "source_pages": [
+      17,
+      18,
+      19
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 6455.3,
+      "unit": "millions",
+      "currency": "NOK",
+      "label_in_report": "Total Equity and Liabilities",
+      "scope": "consolidated",
+      "quote": "**Total Equity and Liabilities** 6,455.3",
+      "chunk_id": 23,
+      "not_found_reason": null,
+      "value_full": 6455300000.0,
+      "source_pages": [
+        12,
+        13
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 22"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 23"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 23"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 6,455,300,000 vs equity+liabilities 6,455,300,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2023 (latest year 2023, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 33"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 33"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:18:50+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "archer-ltd-a477bc21_1bdcd41112c6bec4da03323e8dfbda1e15f7f3fb.md",
+    "chunks_total": 62,
+    "chunks_sent": {
+      "financials": [
+        6,
+        7,
+        13,
+        14,
+        22,
+        23,
+        25,
+        28,
+        32,
+        33,
+        47,
+        55
+      ],
+      "qualitative": [
+        17,
+        33,
+        48,
+        49,
+        50
+      ]
+    }
+  }
+}

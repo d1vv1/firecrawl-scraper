@@ -1,0 +1,281 @@
+{
+  "company_id": "axfood-ab-9b088e81",
+  "input_name": "Axfood AB",
+  "country_code": "SE",
+  "clean_name": "axfood",
+  "status": "ok",
+  "lei": "549300QIXCZWZLHE8L05",
+  "lei_record": {
+    "lei": "549300QIXCZWZLHE8L05",
+    "legal_name": "Axfood AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556542-0824"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://www.axfood.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.axfood.com/globalassets/startsida/investerare/rapporter-och-presentationer/arkiv/2025/axfood-annual-and-sustainability-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 89152.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Turnover",
+    "scope": "consolidated",
+    "quote": "Turnover|89,152",
+    "chunk_id": 321,
+    "not_found_reason": null,
+    "value_full": 89152000000.0,
+    "source_pages": [
+      77
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 36913.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets||36,913|35,432",
+    "chunk_id": 495,
+    "not_found_reason": null,
+    "value_full": 36913000000.0,
+    "source_pages": [
+      123
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "Axfood sells food, health, and skincare products to consumers and businesses through various retail formats, including discount grocery chains, hypermarkets, traditional grocery stores, small format stores, online pharmacies, and restaurant wholesalers, operating both Group-owned and retailer-owned stores.",
+    "quote": "With our distinctive concepts and brands, we have a strong customer offering in all segments of the market.",
+    "chunk_id": 9,
+    "source_pages": [
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": "A Johnson & Co. AB",
+    "segments": [
+      "Willys",
+      "Hemköp",
+      "City Gross",
+      "Snabbgross",
+      "Dagab"
+    ],
+    "description": "Axfood AB is a Swedish limited liability company whose shares are listed on Nasdaq Stockholm. It operates through five identified segments: Willys, Hemköp, City Gross, Snabbgross, and Dagab, and is ultimately controlled by A Johnson & Co. AB.",
+    "quote": "Axfood AB... is a Swedish-registered limited liability company... The Parent Company’s shares are listed on Nasdaq Stockholm.",
+    "chunk_id": 503,
+    "source_pages": [
+      128
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 36913.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities||36,913|35,432",
+      "chunk_id": 495,
+      "not_found_reason": null,
+      "value_full": 36913000000.0,
+      "source_pages": [
+        123
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 321"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 495"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 495"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 36,913,000,000 vs equity+liabilities 36,913,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 9"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "fragments match in chunk 503 (2 passages joined with '...')"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:40:55+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "axfood-ab-9b088e81_003e7715fbabb754a3f2d51a4e6218fe61131065.md",
+    "chunks_total": 654,
+    "chunks_sent": {
+      "financials": [
+        2,
+        13,
+        14,
+        221,
+        314,
+        319,
+        321,
+        360,
+        462,
+        466,
+        468,
+        473,
+        475,
+        478,
+        480,
+        487,
+        492,
+        495,
+        499,
+        500,
+        508,
+        564,
+        565,
+        572,
+        576,
+        629
+      ],
+      "qualitative": [
+        0,
+        9,
+        23,
+        68,
+        89,
+        91,
+        142,
+        156,
+        449,
+        455,
+        499,
+        500,
+        501,
+        503,
+        504,
+        507,
+        524,
+        525,
+        526,
+        527,
+        528,
+        536,
+        538,
+        560,
+        565,
+        569,
+        573,
+        582,
+        601,
+        602,
+        603
+      ]
+    }
+  }
+}

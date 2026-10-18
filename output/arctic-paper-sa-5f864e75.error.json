@@ -1,0 +1,10 @@
+{
+  "company_id": "arctic-paper-sa-5f864e75",
+  "company_name": "Arctic Paper SA",
+  "country_code": "SE",
+  "error_type": "ReportNotFoundError",
+  "error": "Only old reports found on https://www.arcticpaper.com (newest: FY2010, https://preproduction.arcticpaper.com/globalassets/arcticpapergroup.com/03-investor/03-meetings/1-shareholders-meetings/2011/26.05.2011/3_2010-consolidated-annual-report_arctic-paper-sa.pdf). Pass --report-url URL.",
+  "network_error": false,
+  "firecrawl_credits_used": 5,
+  "at": "2026-10-18T06:19:28+00:00"
+}

@@ -1,0 +1,240 @@
+{
+  "company_id": "fjord1-as-7621077e",
+  "input_name": "Fjord1 AS",
+  "country_code": "NO",
+  "clean_name": "fjord1",
+  "status": "needs_review",
+  "lei": "549300RANUO1920OIK60",
+  "lei_record": {
+    "lei": "549300RANUO1920OIK60",
+    "legal_name": "FJORD1 AS",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "YI42",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "983 472 583"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300RANUO1920OIK60-2021-12-31-ESEF-NO-0",
+    "period_end": "2021-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300RANUO1920OIK60/2021-12-31/ESEF/NO/0/Fjord1_AS-2021-12-31-no/reports/Fjord1_AS-2021-12-31-no.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300RANUO1920OIK60/2021-12-31/ESEF/NO/0/Fjord1_AS-2021-12-31-no/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300RANUO1920OIK60/2021-12-31/ESEF/NO/0/Fjord1_AS-2021-12-31-no.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300RANUO1920OIK60/2021-12-31/ESEF/NO/0/Fjord1_AS-2021-12-31-no/reports/Fjord1_AS-2021-12-31-no.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2021",
+  "period_end_date": "2021-12-31",
+  "period_end_date_raw": "2021-12-31",
+  "revenue": {
+    "value": 2834854000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 2,834,854,000 NOK (2021-01-01/2021-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2834854000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 10280711000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 10,280,711,000 NOK (2021-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 10280711000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "services"
+    ],
+    "description": "The company provides ferry transport services to the public sector and passengers, receiving fixed payments from public contracts and variable ticket revenues from passengers.",
+    "quote": "Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.",
+    "chunk_id": 17,
+    "source_pages": [
+      36,
+      37,
+      38,
+      39
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AS",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "ferjekontraktar"
+    ],
+    "description": "Fjord1 AS operates ferry services under contracts with public authorities, receiving fixed and variable revenues. The company manages financial assets and liabilities as part of its operations.",
+    "quote": "Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.",
+    "chunk_id": 17,
+    "source_pages": [
+      36,
+      37,
+      38,
+      39
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 10280711000.0,
+      "unit": "units",
+      "currency": "NOK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 10,280,711,000 NOK (2021-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 10280711000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 10,280,711,000 vs equity+liabilities 10,280,711,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "2021 (latest year 2021, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 17: probable hallucination. Quote: 'Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 17: probable hallucination. Quote: 'Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300RANUO1920OIK60)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 17: probable hallucination. Quote: 'Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.'",
+    "business_structure: quote not found in chunk 17: probable hallucination. Quote: 'Konsernet mottek ein fast pris frå kunden i tillegg til inntekt frå sal av billettar til passasjerar.'"
+  ],
+  "extracted_at": "2026-10-17T06:55:02+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "fjord1-as-7621077e_cdff6c1372a8e80c6331d5358563c97694402f9b.md",
+    "chunks_total": 70,
+    "chunks_sent": {
+      "financials": [
+        7,
+        53,
+        67
+      ],
+      "qualitative": [
+        17,
+        18,
+        19,
+        20,
+        43
+      ]
+    }
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "company_id": "aak-ab-10cc070c",
+  "input_name": "AAK AB",
+  "country_code": "SE",
+  "clean_name": "aak",
+  "status": "ok",
+  "lei": "549300GK4LGIDDWJWL07",
+  "lei_record": {
+    "lei": "549300GK4LGIDDWJWL07",
+    "legal_name": "AAK AB (PUBL)",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "5566692850"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.aak.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://storage.mfn.se/c0ccfa59-3ca3-4597-9f78-1f0588efbc27/aak-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "Dec 31, 2025",
+  "revenue": {
+    "value": 46021.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales|26|46,021|45,052|",
+    "chunk_id": 356,
+    "not_found_reason": null,
+    "value_full": 46021000000.0,
+    "source_pages": [
+      124,
+      125
+    ]
+  },
+  "total_assets": {
+    "value": 32622.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS||32,622|34,386|",
+    "chunk_id": 358,
+    "not_found_reason": null,
+    "value_full": 32622000000.0,
+    "source_pages": [
+      126,
+      127
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "AAK sells plant-based oil and fat ingredient solutions primarily to customers in the fast-moving consumer goods (FMCG) industry, serving both food and non-food sectors. It co-develops tailored fat solutions with customers and delivers them through its production facilities worldwide.",
+    "quote": "AAK is a multi-oil ingredient company that provides plant-based oil and fat solutions to customers, primarily in the fast-moving consumer goods (FMCG) industry, serving both food and non-food sectors.",
+    "chunk_id": 124,
+    "source_pages": [
+      51,
+      52
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Our business"
+    ],
+    "description": "AAK AB is a publicly listed company organized with a focus on its business segment. It operates globally with multiple production and innovation centers and is the ultimate parent in its group structure.",
+    "quote": "All shares are fully paid and entitle the holder to equal voting rights and shares in Company assets.",
+    "chunk_id": 472,
+    "source_pages": [
+      168
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 32622.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES||32,622|34,386|",
+      "chunk_id": 359,
+      "not_found_reason": null,
+      "value_full": 32622000000.0,
+      "source_pages": [
+        127,
+        128
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 356"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 358"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 359"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 32,622,000,000 vs equity+liabilities 32,622,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 124"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 472"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T08:23:18+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "aak-ab-10cc070c_8b6949778ddc019b3d75de6f02f0d27be14fcc31.md",
+    "chunks_total": 525,
+    "chunks_sent": {
+      "financials": [
+        7,
+        16,
+        23,
+        46,
+        80,
+        122,
+        159,
+        191,
+        192,
+        197,
+        209,
+        211,
+        215,
+        216,
+        217,
+        218,
+        261,
+        320,
+        356,
+        358,
+        359,
+        362,
+        364,
+        365,
+        376,
+        377,
+        463
+      ],
+      "qualitative": [
+        4,
+        31,
+        44,
+        48,
+        50,
+        53,
+        55,
+        124,
+        144,
+        228,
+        310,
+        356,
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363,
+        364,
+        365,
+        366,
+        367,
+        373,
+        389,
+        398,
+        407,
+        410,
+        414,
+        422,
+        425,
+        429,
+        441,
+        464,
+        468,
+        472,
+        488
+      ]
+    }
+  }
+}

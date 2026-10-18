@@ -1,0 +1,286 @@
+{
+  "company_id": "acrinova-ab-0d4b0d19",
+  "input_name": "Acrinova AB",
+  "country_code": "SE",
+  "clean_name": "acrinova",
+  "status": "ok",
+  "lei": "54930064FHDVK3N8U251",
+  "lei_record": {
+    "lei": "54930064FHDVK3N8U251",
+    "legal_name": "Acrinova AB (publ)",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556984-0910"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://www.acrinova.se",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.acrinova.se/wp-content/uploads/2025/04/Acrinova-Arsredovisning-2024.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 159704.0,
+    "unit": "thousands",
+    "currency": "SEK",
+    "label_in_report": "INTÄKTER",
+    "scope": "consolidated",
+    "quote": "INTÄKTER 159 704",
+    "chunk_id": 118,
+    "not_found_reason": null,
+    "value_full": 159704000.0,
+    "source_pages": [
+      52
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 2188494.0,
+    "unit": "thousands",
+    "currency": "SEK",
+    "label_in_report": "SUMMA TILLGÅNGAR",
+    "scope": "consolidated",
+    "quote": "SUMMA TILLGÅNGAR 2 188 494",
+    "chunk_id": 119,
+    "not_found_reason": null,
+    "value_full": 2188494000.0,
+    "source_pages": [
+      53
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company generates revenue primarily from renting out commercial properties and from selling developed properties.",
+    "quote": "Koncernens fastigheter innehas i syfte att generera hyresintäkter och värdestegring.",
+    "chunk_id": 139,
+    "source_pages": [
+      63,
+      64
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [],
+    "description": "Acrinova AB (publ) is a Swedish public limited company listed on Nasdaq Stockholm, operating as the parent company of a group of subsidiaries and focusing solely on real estate.",
+    "quote": "Acrinova AB (publ)... Moderbolagets aktier är noterade på Nasdaq Stockholm sedan 16 december 2022.",
+    "chunk_id": 128,
+    "source_pages": [
+      62
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 2188494.0,
+      "unit": "thousands",
+      "currency": "SEK",
+      "label_in_report": "SUMMA EGET KAPITAL OCH SKULDER",
+      "scope": "consolidated",
+      "quote": "SUMMA EGET KAPITAL OCH SKULDER 2 188 494",
+      "chunk_id": 120,
+      "not_found_reason": null,
+      "value_full": 2188494000.0,
+      "source_pages": [
+        54
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 118"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 119"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 120"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 2,188,494,000 vs equity+liabilities 2,188,494,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 139"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "fragments match in chunk 128 (2 passages joined with '...')"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:11:37+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "acrinova-ab-0d4b0d19_24f5ae8efae742c6cef75d65c2d1cfe97a7629a0.md",
+    "chunks_total": 206,
+    "chunks_sent": {
+      "financials": [
+        0,
+        4,
+        27,
+        77,
+        80,
+        87,
+        88,
+        89,
+        103,
+        106,
+        108,
+        118,
+        119,
+        120,
+        123,
+        124,
+        125,
+        134,
+        137,
+        145,
+        147,
+        151,
+        152,
+        155,
+        164,
+        166,
+        171,
+        177,
+        178,
+        188,
+        200
+      ],
+      "qualitative": [
+        10,
+        18,
+        19,
+        20,
+        35,
+        62,
+        86,
+        87,
+        118,
+        120,
+        121,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        132,
+        138,
+        139,
+        140,
+        142,
+        146,
+        152,
+        165,
+        171,
+        174,
+        175,
+        178,
+        179,
+        180,
+        181,
+        182,
+        185,
+        186
+      ]
+    }
+  }
+}

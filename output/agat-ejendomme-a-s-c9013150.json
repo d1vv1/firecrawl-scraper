@@ -1,0 +1,231 @@
+{
+  "company_id": "agat-ejendomme-a-s-c9013150",
+  "input_name": "Agat Ejendomme A/S",
+  "country_code": "DK",
+  "clean_name": "agat ejendomme",
+  "status": "ok",
+  "lei": "213800A9E3DB29NTMU72",
+  "lei_record": {
+    "lei": "213800A9E3DB29NTMU72",
+    "legal_name": "Agat Ejendomme A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "24256782"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef tags + website text",
+  "filing": {
+    "type": "esef",
+    "filing_id": "213800A9E3DB29NTMU72-2026-01-31-ESEF-DK-0",
+    "period_end": "2026-01-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/213800A9E3DB29NTMU72/2026-01-31/ESEF/DK/0/213800A9E3DB29NTMU72-2026-01-31-da/reports/213800A9E3DB29NTMU72-2026-01-31-da.xhtml",
+    "viewer_url": "https://filings.xbrl.org/213800A9E3DB29NTMU72/2026-01-31/ESEF/DK/0/213800A9E3DB29NTMU72-2026-01-31-da/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/213800A9E3DB29NTMU72/2026-01-31/ESEF/DK/0/213800A9E3DB29NTMU72-2026-01-31.zip"
+  },
+  "website": "https://agat.dk",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://agat.dk/wp-content/uploads/2024/03/Aarsrapport-2023-24.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2026",
+  "period_end_date": "2026-01-31",
+  "period_end_date_raw": "2026-01-31",
+  "revenue": {
+    "value": 72200000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 72,200,000 DKK (2025-02-01/2026-01-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 72200000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 766100000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 766,100,000 DKK (2026-01-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 766100000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "interest_income"
+    ],
+    "description": "The company sells residential and commercial properties and generates rental income from investment properties. It also earns revenue from property administration, related services, and interest from financial assets.",
+    "quote": "Selskabets primære indtægtskilder er salg af ejendomme og udlejning af investeringsejendomme.",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Ejendomsudvikling",
+      "Investeringsejendomme"
+    ],
+    "description": "Agat Ejendomme A/S is a public limited company listed on Nasdaq Copenhagen. It is organized into two primary segments: Property Development and Investment Properties, and has no ultimate parent company.",
+    "quote": "Selskabets drift er organiseret i to primære segmenter: Ejendomsudvikling og Investeringsejendomme.",
+    "chunk_id": 8,
+    "source_pages": null
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 766100000.0,
+      "unit": "units",
+      "currency": "DKK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 766,100,000 DKK (2026-01-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 766100000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 766,100,000 vs equity+liabilities 766,100,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2026 (latest year 2026, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Selskabets primære indtægtskilder er salg af ejendomme og udlejning af investeringsejendomme.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 8 not sent): probable hallucination. Quote: 'Selskabets drift er organiseret i to primære segmenter: Ejendomsudvikling og Investeringsejendomme.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Selskabets primære indtægtskilder er salg af ejendomme og udlejning af investeringsejendomme.'",
+    "business_structure: quote not found in all chunks (chunk_id 8 not sent): probable hallucination. Quote: 'Selskabets drift er organiseret i to primære segmenter: Ejendomsudvikling og Investeringsejendomme.'"
+  ],
+  "extracted_at": "2026-10-18T06:12:14+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "agat-ejendomme-a-s-c9013150_1280bbc66709f81bca6b1d03c9f9405ccc7b35dc.md",
+    "chunks_total": 7,
+    "chunks_sent": {
+      "financials": [
+        0,
+        3,
+        4,
+        5
+      ],
+      "qualitative": []
+    }
+  }
+}

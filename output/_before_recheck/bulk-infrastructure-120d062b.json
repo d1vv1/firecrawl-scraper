@@ -1,0 +1,272 @@
+{
+  "company_id": "bulk-infrastructure-120d062b",
+  "input_name": "Bulk Infrastructure",
+  "country_code": "NO",
+  "clean_name": "bulk infrastructure",
+  "status": "needs_review",
+  "lei": "5493005OITT4ZDW0U217",
+  "lei_record": {
+    "lei": "5493005OITT4ZDW0U217",
+    "legal_name": "BULK INFRASTRUCTURE HOLDING AS",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "YI42",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "996 501 876"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://bulkinfrastructure.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://bulkinfrastructure.com/uploads/Bulk-Infrastructure-Holding-Annual-Report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 906943000.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "Total revenue and other income",
+    "scope": "consolidated",
+    "quote": "Total revenue and other income 906,943",
+    "chunk_id": 26,
+    "not_found_reason": null,
+    "value_full": 906943000000.0,
+    "source_pages": [
+      14,
+      15
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 20348440000.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 20,348,440",
+    "chunk_id": 27,
+    "not_found_reason": null,
+    "value_full": 20348440000000.0,
+    "source_pages": [
+      15,
+      16
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "subscription"
+    ],
+    "description": "The company sells digital infrastructure services including data center services and dark fiber network solutions to public and private sector customers across Europe and globally, through its data centers and fiber networks. It also leases industrial and logistics real estate properties.",
+    "quote": "Bulk Infrastructure Holding AS is a leading provider of sustainable digital infrastructure in the Nordics. The Group is an industrial investor, developer and operator of data centers, dark fiber networks and industrial real estate.",
+    "chunk_id": 6,
+    "source_pages": [
+      6
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AS",
+    "is_listed": false,
+    "ultimate_parent": "Bulk Industrier AS",
+    "segments": [
+      "Digital Infrastructure",
+      "Industrial Real Estate"
+    ],
+    "description": "Bulk Infrastructure Holding AS is a Norwegian limited liability company and the parent company of a group structured into two main segments: Digital Infrastructure, which includes data centers and fiber networks, and Industrial Real Estate, which focuses on industrial and logistics properties. The ultimate parent company is Bulk Industrier AS.",
+    "quote": "Bulk Infrastructure Holding is a Norwegian limited liability company... The ultimate parent of the Group is Bulk Industrier AS. Bulk Data Centers AS and its subsidiaries are included in the Bulk Digital Infrastructure segment. Bulk Fiber Networks AS and its subsidiaries are also included in the Bulk Digital Infrastructure segment.",
+    "chunk_id": 30,
+    "source_pages": [
+      18
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 20348440000.0,
+      "unit": "thousands",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 20,348,440",
+      "chunk_id": 27,
+      "not_found_reason": null,
+      "value_full": 20348440000000.0,
+      "source_pages": [
+        15,
+        16
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 26"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "9.06943e+08 not in quote 'Total revenue and other income 906,943'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 27"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "2.03484e+10 not in quote 'Total assets 20,348,440'"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 27"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "2.03484e+10 not in quote 'Total equity and liabilities 20,348,440'"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 20,348,440,000,000 vs equity+liabilities 20,348,440,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 6"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 30: probable hallucination. Quote: 'Bulk Infrastructure Holding is a Norwegian limited liability company... The ultimate parent of the Group is Bulk Industrier AS. Bulk Data Centers AS and its subsidiaries are included in the Bulk Digit…'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 30: probable hallucination. Quote: 'Bulk Infrastructure Holding is a Norwegian limited liability company... The ultimate parent of the Group is Bulk Industrier AS. Bulk Data Centers AS and its subsidiaries are included in the Bulk Digit…'"
+  ],
+  "extracted_at": "2026-10-16T19:44:23+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "bulk-infrastructure-120d062b_78e00b090588fec954f14d72ec5178e15d529308.md",
+    "chunks_total": 150,
+    "chunks_sent": {
+      "financials": [
+        1,
+        4,
+        9,
+        10,
+        11,
+        14,
+        25,
+        26,
+        27,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        47,
+        68,
+        71,
+        76,
+        127,
+        148
+      ],
+      "qualitative": [
+        1,
+        4,
+        6,
+        9,
+        12,
+        15,
+        24,
+        25,
+        26,
+        28,
+        30,
+        35,
+        54,
+        112,
+        124,
+        126,
+        127,
+        128,
+        129,
+        135,
+        137,
+        138,
+        140
+      ]
+    }
+  }
+}

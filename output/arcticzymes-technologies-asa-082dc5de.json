@@ -1,0 +1,247 @@
+{
+  "company_id": "arcticzymes-technologies-asa-082dc5de",
+  "input_name": "ArcticZymes Technologies ASA",
+  "country_code": "NO",
+  "clean_name": "arcticzymes technologies",
+  "status": "ok",
+  "lei": "5967007LIEEXZXGR7K47",
+  "lei_record": {
+    "lei": "5967007LIEEXZXGR7K47",
+    "legal_name": "ARCTICZYMES TECHNOLOGIES ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "959 033 560"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.arcticzymes.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://cdn.prod.website-files.com/64c25a874bf82d94feb670d6/69faff077b5ddeac40788aed_ArcticZymes_Annual%20Report_2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "31.12.2025",
+  "revenue": {
+    "value": 112618.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "Sales revenues",
+    "scope": "consolidated",
+    "quote": "Sales revenues 112 618",
+    "chunk_id": 40,
+    "not_found_reason": null,
+    "value_full": 112618000.0,
+    "source_pages": [
+      43,
+      44,
+      45
+    ]
+  },
+  "total_assets": {
+    "value": 361268.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 361 268",
+    "chunk_id": 41,
+    "not_found_reason": null,
+    "value_full": 361268000.0,
+    "source_pages": [
+      45,
+      46,
+      47
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells recombinant enzymes as standalone products and integrated into customers' kits and workflows, mainly to molecular research, In Vitro Diagnostics, and biomanufacturing customers globally, through warehouses in the USA and Europe.",
+    "quote": "ArcticZymes’ business model is centred around the development of unique high-value enzymes that address clearly defined customer needs. These enzymes are supplied as standalone products and are integrated into customers’ proprietary kits and reagent systems as well as into customers’ workflows, platforms, and manufacturing processes.",
+    "chunk_id": 2,
+    "source_pages": [
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "enzymes",
+      "corporate"
+    ],
+    "description": "The group consists of the parent company ArcticZymes Technologies ASA and its wholly owned subsidiary ArcticZymes AS, which handles operational activities. The company is listed on the Oslo Stock Exchange. The business is divided into two segments: enzymes and corporate.",
+    "quote": "The Group consists of the parent company ArcticZymes Technologies ASA and the wholly owned subsidiary ArcticZymes AS, which holds the operational activities including research and development, production, quality assurance and quality control, marketing and sales, and human resources.",
+    "chunk_id": 2,
+    "source_pages": [
+      7
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 361268.0,
+      "unit": "thousands",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 361 268",
+      "chunk_id": 41,
+      "not_found_reason": null,
+      "value_full": 361268000.0,
+      "source_pages": [
+        45,
+        46,
+        47
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 40"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 41"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 41"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 361,268,000 vs equity+liabilities 361,268,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T20:59:07+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "arcticzymes-technologies-asa-082dc5de_c6d5a451fd8f1e4094746fcf6e31a560cd58c0c9.md",
+    "chunks_total": 102,
+    "chunks_sent": {
+      "financials": [
+        2,
+        5,
+        6,
+        10,
+        12,
+        13,
+        14,
+        34,
+        39,
+        40,
+        41,
+        48,
+        55,
+        56,
+        78,
+        79,
+        80,
+        84,
+        87,
+        94
+      ],
+      "qualitative": [
+        2,
+        13,
+        27,
+        41,
+        45,
+        55,
+        56,
+        63,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        86,
+        89,
+        91,
+        94
+      ]
+    }
+  }
+}

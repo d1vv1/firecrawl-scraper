@@ -1,0 +1,222 @@
+{
+  "company_id": "nextera-energy-inc-e5096f77",
+  "input_name": "NextEra Energy, Inc.",
+  "country_code": "US",
+  "clean_name": "nextera energy",
+  "status": "not_found",
+  "lei": "254900RHL9MEUS5NKX63",
+  "lei_record": {
+    "lei": "254900RHL9MEUS5NKX63",
+    "legal_name": "NextEra Energy, Inc.",
+    "country": "US",
+    "jurisdiction": "US-FL",
+    "legal_form_id": "TRI2",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "M04961"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.nexteraenergy.com",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.investor.nexteraenergy.com/~/media/Files/N/NEE-IR/2025%20Annual%20Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": null,
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No financial statements or revenue figures found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No balance sheet or total assets figures found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells electricity and related energy services to customers through its subsidiaries and operating units.",
+    "quote": "NextEra Energy, Inc. is a leading clean energy company with consolidated revenues primarily from electricity sales and related services.",
+    "chunk_id": 2,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Florida Power & Light Company",
+      "NextEra Energy Resources, LLC",
+      "Other"
+    ],
+    "description": "NextEra Energy, Inc. is a publicly traded company organized into segments including Florida Power & Light Company and NextEra Energy Resources, LLC.",
+    "quote": "Our reportable segments include Florida Power & Light Company, NextEra Energy Resources, LLC, and Other.",
+    "chunk_id": 3,
+    "source_pages": [
+      8,
+      9
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "No balance sheet or total equity and liabilities figures found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "fiscal year None not parseable"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'NextEra Energy, Inc. is a leading clean energy company with consolidated revenues primarily from electricity sales and related services.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 3 not sent): probable hallucination. Quote: 'Our reportable segments include Florida Power & Light Company, NextEra Energy Resources, LLC, and Other.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "fail",
+      "detail": "none of ['nextera energy'] appears in the report's first 20 pages: possibly another company's report"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "skipped",
+      "detail": "no currency extracted"
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'NextEra Energy, Inc. is a leading clean energy company with consolidated revenues primarily from electricity sales and related services.'",
+    "business_structure: quote not found in all chunks (chunk_id 3 not sent): probable hallucination. Quote: 'Our reportable segments include Florida Power & Light Company, NextEra Energy Resources, LLC, and Other.'"
+  ],
+  "extracted_at": "2026-10-16T19:28:23+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "nextera-energy-inc-e5096f77_ed561c0d736597d594379918e6e3223ad1a5efa9.md",
+    "chunks_total": 114,
+    "chunks_sent": {
+      "financials": [],
+      "qualitative": []
+    }
+  }
+}

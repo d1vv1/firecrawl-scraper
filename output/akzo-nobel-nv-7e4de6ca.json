@@ -1,0 +1,271 @@
+{
+  "company_id": "akzo-nobel-nv-7e4de6ca",
+  "input_name": "Akzo Nobel NV",
+  "country_code": "NL",
+  "clean_name": "akzo nobel",
+  "status": "ok",
+  "lei": "2549008VHDJNBVSOIY97",
+  "lei_record": {
+    "lei": "2549008VHDJNBVSOIY97",
+    "legal_name": "Akzo Nobel GmbH",
+    "country": "DE",
+    "jurisdiction": "DE",
+    "legal_form_id": "2HBR",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "HRB 104939"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.akzonobel.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.akzonobel.com/content/dam/akzonobel-corporate/global/en/investor-relations-images/result-center/archive-annual-reports/2029-2020/akzonobel-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 10158.0,
+    "unit": "millions",
+    "currency": "EUR",
+    "label_in_report": "Total",
+    "scope": "consolidated",
+    "quote": "Total 10,711 10,158",
+    "chunk_id": 446,
+    "not_found_reason": null,
+    "value_full": 10158000000.0,
+    "source_pages": [
+      151,
+      152
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 13952.0,
+    "unit": "millions",
+    "currency": "EUR",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 14,249 13,952",
+    "chunk_id": 401,
+    "not_found_reason": null,
+    "value_full": 13952000000.0,
+    "source_pages": [
+      135,
+      136
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "AkzoNobel sells paints and coatings products primarily to customers in architectural, aerospace, marine, and protective markets through its Paints and Coatings businesses.",
+    "quote": "AkzoNobel produces paints and coatings, which is classified under NACE Code C20.3.",
+    "chunk_id": 87,
+    "source_pages": [
+      31
+    ]
+  },
+  "business_structure": {
+    "legal_form": "N.V.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Decorative Paints",
+      "Performance Coatings"
+    ],
+    "description": "Akzo Nobel N.V. is a publicly listed company organized into two main operating segments: Decorative Paints and Performance Coatings. It is the parent company of a group of entities consolidated in its financial statements.",
+    "quote": "AkzoNobel’s operations are grouped into two main businesses: Paints and Coatings.",
+    "chunk_id": 87,
+    "source_pages": [
+      31
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 13952.0,
+      "unit": "millions",
+      "currency": "EUR",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 14,249 13,952",
+      "chunk_id": 401,
+      "not_found_reason": null,
+      "value_full": 13952000000.0,
+      "source_pages": [
+        135,
+        136
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 437 (model cited chunk 446)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 401"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 401"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 13,952,000,000 vs equity+liabilities 13,952,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 87"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 87"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:15:28+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "akzo-nobel-nv-7e4de6ca_9b1d65cad697df9f398832c13613b3c51153dd7b.md",
+    "chunks_total": 658,
+    "chunks_sent": {
+      "financials": [
+        10,
+        34,
+        39,
+        45,
+        140,
+        163,
+        165,
+        168,
+        194,
+        390,
+        398,
+        401,
+        420,
+        437,
+        443,
+        446,
+        492,
+        502,
+        576,
+        607,
+        611,
+        635,
+        636,
+        637
+      ],
+      "qualitative": [
+        4,
+        7,
+        24,
+        87,
+        88,
+        90,
+        91,
+        94,
+        96,
+        101,
+        124,
+        166,
+        327,
+        357,
+        362,
+        363,
+        382,
+        398,
+        405,
+        426,
+        560,
+        590,
+        610
+      ]
+    }
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "company_id": "aker-solutions-asa-417e0e5a",
+  "input_name": "Aker Solutions ASA",
+  "country_code": "NO",
+  "clean_name": "aker solutions",
+  "status": "ok",
+  "lei": "5967007LIEEXZXG42836",
+  "lei_record": {
+    "lei": "5967007LIEEXZXG42836",
+    "legal_name": "AKER SOLUTIONS ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "913 748 174"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.akersolutions.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.akersolutions.com/globalassets/investors/agm/2026/aker-solutions-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 63202.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "|Revenue|NOK mill|63,202|53,201|",
+    "chunk_id": 5,
+    "not_found_reason": null,
+    "value_full": 63202000000.0,
+    "source_pages": [
+      6,
+      7
+    ]
+  },
+  "total_assets": {
+    "value": 38351.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "|**Total assets**||**38,351**|**36,157**|",
+    "chunk_id": 287,
+    "not_found_reason": null,
+    "value_full": 38351000000.0,
+    "source_pages": [
+      116,
+      117
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Aker Solutions sells integrated solutions, products, and services to the global energy industry, including oil and gas and renewable energy companies, through direct sales, partnerships, and service centers.",
+    "quote": "Aker Solutions provides products, systems and services ranging from concept studies and front-end engineering to integrated project execution and services to the global oil and gas industry.",
+    "chunk_id": 55,
+    "source_pages": [
+      27
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "New Build",
+      "New Energies",
+      "Life Cycle",
+      "Power Solutions"
+    ],
+    "description": "Aker Solutions ASA is the parent company of the group, listed on the Oslo Stock Exchange, organized into four operating segments: New Build, New Energies, Life Cycle, and Power Solutions.",
+    "quote": "Aker Solutions ASA, the parent company of the Aker Solutions group, owns and manages the group’s subsidiaries.",
+    "chunk_id": 22,
+    "source_pages": [
+      15
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 38351.0,
+      "unit": "millions",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "|**Total equity and liabilities**||**38,351**|**36,157**|",
+      "chunk_id": 287,
+      "not_found_reason": null,
+      "value_full": 38351000000.0,
+      "source_pages": [
+        116,
+        117
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 5"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 287"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 287"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 38,351,000,000 vs equity+liabilities 38,351,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 55"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 22"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T20:14:33+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "aker-solutions-asa-417e0e5a_6246b2cdc07c7275e6290c126beb12f33c23c038.md",
+    "chunks_total": 489,
+    "chunks_sent": {
+      "financials": [
+        3,
+        5,
+        142,
+        143,
+        146,
+        153,
+        154,
+        172,
+        278,
+        285,
+        287,
+        296,
+        297,
+        304,
+        305,
+        306,
+        307,
+        311,
+        312,
+        314,
+        387,
+        409,
+        421,
+        424,
+        430,
+        431,
+        434,
+        435,
+        458,
+        461
+      ],
+      "qualitative": [
+        17,
+        22,
+        31,
+        32,
+        34,
+        45,
+        47,
+        53,
+        55,
+        56,
+        60,
+        87,
+        110,
+        125,
+        131,
+        280,
+        282,
+        285,
+        286,
+        288,
+        290,
+        293,
+        309,
+        354,
+        397,
+        429,
+        430,
+        433,
+        435,
+        436,
+        437,
+        455
+      ]
+    }
+  }
+}

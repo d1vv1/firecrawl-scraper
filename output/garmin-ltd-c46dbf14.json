@@ -1,0 +1,251 @@
+{
+  "company_id": "garmin-ltd-c46dbf14",
+  "input_name": "Garmin Ltd.",
+  "country_code": "CH",
+  "clean_name": "garmin",
+  "status": "ok",
+  "lei": "2549001E0HIPIJQ0W046",
+  "lei_record": {
+    "lei": "2549001E0HIPIJQ0W046",
+    "legal_name": "Garmin Ltd.",
+    "country": "CH",
+    "jurisdiction": "CH",
+    "legal_form_id": "MVII",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "CHE-115.417.272"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.garmin.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www8.garmin.com/aboutGarmin/invRelations/reports/2025_Annual_Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-27",
+  "period_end_date_raw": "December 27, 2025",
+  "revenue": {
+    "value": 7245519.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Net Sales",
+    "scope": "consolidated",
+    "quote": "Total $ 7,245,519 15 %",
+    "chunk_id": 87,
+    "not_found_reason": null,
+    "value_full": 7245519000.0,
+    "source_pages": [
+      47
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 10993669.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets $ 10,993,669",
+    "chunk_id": 108,
+    "not_found_reason": null,
+    "value_full": 10993669000.0,
+    "source_pages": [
+      59
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells GPS navigation products and related services to customers worldwide through various channels. Revenue is mostly recognized at the point in time of product shipment, with some revenue recognized over time for certain segments.",
+    "quote": "A large majority of the Company’s revenue is recognized on a point in time basis, usually once the product is shipped and title and risk of loss have transferred to the customer.",
+    "chunk_id": 136,
+    "source_pages": [
+      72,
+      73
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Ltd.",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "fitness",
+      "outdoor",
+      "aviation",
+      "marine",
+      "auto OEM"
+    ],
+    "description": "Garmin Ltd. is the parent company of the Garmin Group, organized into five operating and reportable segments: fitness, outdoor, aviation, marine, and auto OEM. The CEO is the Chief Operating Decision Maker who allocates resources and assesses segment performance.",
+    "quote": "Garmin is organized in the five operating segments of fitness, outdoor, aviation, marine, and auto OEM, which represent the primary markets served by the Company.",
+    "chunk_id": 79,
+    "source_pages": [
+      44
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 10993669.0,
+      "unit": "thousands",
+      "currency": "USD",
+      "label_in_report": "Total liabilities and stockholders’ equity",
+      "scope": "consolidated",
+      "quote": "Total liabilities and stockholders’ equity $ 10,993,669",
+      "chunk_id": 108,
+      "not_found_reason": null,
+      "value_full": 10993669000.0,
+      "source_pages": [
+        59
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 87"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 108"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 108"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 10,993,669,000 vs equity+liabilities 10,993,669,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 136"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 79"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T18:53:33+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "garmin-ltd-c46dbf14_b939d1ba0b0a1cd8f487b4b98b2bb2a1b3e15215.md",
+    "chunks_total": 237,
+    "chunks_sent": {
+      "financials": [
+        4,
+        17,
+        37,
+        43,
+        45,
+        82,
+        87,
+        88,
+        89,
+        90,
+        101,
+        108,
+        116,
+        128,
+        136,
+        139,
+        141,
+        144,
+        179
+      ],
+      "qualitative": [
+        79,
+        115,
+        130,
+        136,
+        153,
+        181
+      ]
+    }
+  }
+}

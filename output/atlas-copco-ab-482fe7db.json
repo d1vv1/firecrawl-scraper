@@ -1,0 +1,226 @@
+{
+  "company_id": "atlas-copco-ab-482fe7db",
+  "input_name": "Atlas Copco AB",
+  "country_code": "SE",
+  "clean_name": "atlas copco",
+  "status": "needs_review",
+  "lei": "213800T8PC8Q4FYJZR07",
+  "lei_record": {
+    "lei": "213800T8PC8Q4FYJZR07",
+    "legal_name": "ATLAS COPCO AKTIEBOLAG",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "5560142720"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "http://www.atlascopco.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.atlascopco.com/content/dam/atlas-copco/local-countries/greece/documents/2024-atlas-copco-annual-report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2023",
+  "period_end_date": "2023-12-31",
+  "period_end_date_raw": "2023-12-31",
+  "revenue": {
+    "value": 164000.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Revenues",
+    "scope": "consolidated",
+    "quote": "Revenues 164 000",
+    "chunk_id": 1,
+    "not_found_reason": null,
+    "value_full": 164000000000.0,
+    "source_pages": [
+      3,
+      4
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 209000.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 209 000",
+    "chunk_id": 2,
+    "not_found_reason": null,
+    "value_full": 209000000000.0,
+    "source_pages": [
+      4
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company generates revenue primarily from selling industrial tools, equipment (like compressors, vacuum pumps, and power generation equipment), and related aftermarket services (including installation, maintenance, spare parts, and repairs) to various industries through a global sales and service network.",
+    "quote": "The Group’s revenue primarily comes from the sale of equipment and aftermarket services.",
+    "chunk_id": 6,
+    "source_pages": [
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Compressor Technique",
+      "Vacuum Technique",
+      "Industrial Technique",
+      "Power Technique"
+    ],
+    "description": "Atlas Copco AB is the parent company of the Atlas Copco Group, organized into four business areas: Compressor Technique, Vacuum Technique, Industrial Technique, and Power Technique. Its shares are listed on Nasdaq Stockholm.",
+    "quote": "The shares of Atlas Copco AB are listed on Nasdaq Stockholm",
+    "chunk_id": 4,
+    "source_pages": [
+      6
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 209000.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 209 000",
+      "chunk_id": 2,
+      "not_found_reason": null,
+      "value_full": 209000000000.0,
+      "source_pages": [
+        4
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Revenues 164 000'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Total assets 209 000'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Total equity and liabilities 209 000'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 209,000,000,000 vs equity+liabilities 209,000,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2023 (latest year 2023, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 6 not sent): probable hallucination. Quote: 'The Group’s revenue primarily comes from the sale of equipment and aftermarket services.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 4 not sent): probable hallucination. Quote: 'The shares of Atlas Copco AB are listed on Nasdaq Stockholm'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 6 not sent): probable hallucination. Quote: 'The Group’s revenue primarily comes from the sale of equipment and aftermarket services.'",
+    "business_structure: quote not found in all chunks (chunk_id 4 not sent): probable hallucination. Quote: 'The shares of Atlas Copco AB are listed on Nasdaq Stockholm'"
+  ],
+  "extracted_at": "2026-10-18T06:22:18+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "atlas-copco-ab-482fe7db_c122790351cfa1b8f4384d96e9e345bb48fdb650.md",
+    "chunks_total": 41,
+    "chunks_sent": {
+      "financials": [],
+      "qualitative": []
+    }
+  }
+}

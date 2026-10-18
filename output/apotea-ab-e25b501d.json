@@ -1,0 +1,239 @@
+{
+  "company_id": "apotea-ab-e25b501d",
+  "input_name": "Apotea AB",
+  "country_code": "SE",
+  "clean_name": "apotea",
+  "status": "ok",
+  "lei": "6367005D3D7BO6FIEV09",
+  "lei_record": {
+    "lei": "6367005D3D7BO6FIEV09",
+    "legal_name": "Apotea Sverige AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556651-6489"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "636700XU8GQ8ZL4RNM17-2024-12-31-ESEF-SE-0",
+    "period_end": "2024-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/636700XU8GQ8ZL4RNM17/2024-12-31/ESEF/SE/0/636700XU8GQ8ZL4RNM17-2024-12-31-sv/reports/636700XU8GQ8ZL4RNM17-2024-12-31-sv.xhtml",
+    "viewer_url": "https://filings.xbrl.org/636700XU8GQ8ZL4RNM17/2024-12-31/ESEF/SE/0/636700XU8GQ8ZL4RNM17-2024-12-31-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/636700XU8GQ8ZL4RNM17/2024-12-31/ESEF/SE/0/636700XU8GQ8ZL4RNM17-2024-12-31-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/636700XU8GQ8ZL4RNM17/2024-12-31/ESEF/SE/0/636700XU8GQ8ZL4RNM17-2024-12-31-sv/reports/636700XU8GQ8ZL4RNM17-2024-12-31-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 6541100000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "RevenueFromContractsWithCustomers",
+    "scope": "consolidated",
+    "quote": "ifrs-full:RevenueFromContractsWithCustomers = 6,541,100,000 SEK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 6541100000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:RevenueFromContractsWithCustomers"
+  },
+  "total_assets": {
+    "value": 1627700000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 1,627,700,000 SEK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1627700000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells prescription and non-prescription medicines, health products, and other goods, primarily to consumers through its online pharmacy platform in Sweden. It also generates revenue from services such as leasing and personnel rental.",
+    "quote": "Apoteas omsättning består av receptbelagda läkemedel, receptfria läkemedel och handelsvaror samt tjänster.",
+    "chunk_id": 6,
+    "source_pages": [
+      13,
+      14,
+      15
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [],
+    "description": "Apotea AB (publ) is a public limited company registered in Sweden, serving as the parent company for its subsidiaries. Its shares are listed on Nasdaq Stockholm.",
+    "quote": "Apotea AB (publ) är ett publikt aktiebolag registrerat i Sverige.",
+    "chunk_id": 6,
+    "source_pages": [
+      13,
+      14,
+      15
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 1627700000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 1,627,700,000 SEK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 1627700000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 1,627,700,000 vs equity+liabilities 1,627,700,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 6: probable hallucination. Quote: 'Apoteas omsättning består av receptbelagda läkemedel, receptfria läkemedel och handelsvaror samt tjänster.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 6"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 636700XU8GQ8ZL4RNM17)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 6: probable hallucination. Quote: 'Apoteas omsättning består av receptbelagda läkemedel, receptfria läkemedel och handelsvaror samt tjänster.'"
+  ],
+  "extracted_at": "2026-10-18T06:17:43+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "apotea-ab-e25b501d_fdc01101d040aae49a3918d35cb0b3eb164e86b6.md",
+    "chunks_total": 42,
+    "chunks_sent": {
+      "financials": [
+        25,
+        28,
+        30,
+        33,
+        34
+      ],
+      "qualitative": [
+        6,
+        26,
+        31,
+        35,
+        36,
+        41
+      ]
+    }
+  }
+}

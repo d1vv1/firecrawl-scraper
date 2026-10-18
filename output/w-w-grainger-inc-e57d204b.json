@@ -1,0 +1,243 @@
+{
+  "company_id": "w-w-grainger-inc-e57d204b",
+  "input_name": "W.W. Grainger, Inc.",
+  "country_code": "US",
+  "clean_name": "ww grainger",
+  "status": "ok",
+  "lei": "549300TWZSP6O1IH2V34",
+  "lei_record": {
+    "lei": "549300TWZSP6O1IH2V34",
+    "legal_name": "W.W. GRAINGER, INC.",
+    "country": "US",
+    "jurisdiction": "US-IL",
+    "legal_form_id": "AZUK",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "20210320"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "edgar",
+  "filing": {
+    "type": "edgar",
+    "filing_id": "0000277135-26-000011",
+    "period_end": "2025-12-31",
+    "form": "10-K",
+    "cik": 277135,
+    "report_url": "https://www.sec.gov/Archives/edgar/data/277135/000027713526000011/gww-20251231.htm",
+    "viewer_url": null,
+    "package_url": null
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://www.sec.gov/Archives/edgar/data/277135/000027713526000011/gww-20251231.htm",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 17942000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "scope": "consolidated",
+    "quote": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax = 17,942,000,000 USD (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 17942000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax"
+  },
+  "total_assets": {
+    "value": 8962000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "us-gaap:Assets = 8,962,000,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 8962000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells maintenance, repair, and operating (MRO) products and related services primarily to businesses and institutions through distribution centers, branches, and online platforms.",
+    "quote": "W.W. Grainger, Inc., incorporated in the State of Illinois in 1928, is a broad line, distributor of maintenance, repair and operating (MRO) products and services with operations primarily in North America, Japan and the United Kingdom (U.K.).",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "High-Touch Solutions N.A.",
+      "Endless Assortment"
+    ],
+    "description": "W.W. Grainger, Inc. is a publicly listed company organized into two main reportable segments: High-Touch Solutions North America and Endless Assortment, reflecting its bifurcated business models.",
+    "quote": "Grainger's two reportable segments are High-Touch Solutions North America (High-Touch Solutions N.A.) and Endless Assortment.",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 8962000000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "LiabilitiesAndStockholdersEquity",
+      "scope": "consolidated",
+      "quote": "us-gaap:LiabilitiesAndStockholdersEquity = 8,962,000,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 8962000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "us-gaap:LiabilitiesAndStockholdersEquity"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 8,962,000,000 vs equity+liabilities 8,962,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (SEC CIK 277135)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T06:50:58+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "w-w-grainger-inc-e57d204b_eb8ec78c7d6b909ade598cc43088cf18990d3d67.md",
+    "chunks_total": 36,
+    "chunks_sent": {
+      "financials": [
+        4,
+        6,
+        14,
+        19,
+        24,
+        30,
+        31
+      ],
+      "qualitative": [
+        1,
+        14,
+        19,
+        29,
+        30
+      ]
+    }
+  }
+}

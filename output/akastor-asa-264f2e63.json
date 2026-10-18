@@ -1,0 +1,256 @@
+{
+  "company_id": "akastor-asa-264f2e63",
+  "input_name": "Akastor ASA",
+  "country_code": "NO",
+  "clean_name": "akastor",
+  "status": "ok",
+  "lei": "5967007LIEEXZXIX5468",
+  "lei_record": {
+    "lei": "5967007LIEEXZXIX5468",
+    "legal_name": "AKASTOR ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "986529551"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.akastor.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://akastor.com/assets/files/Akastor-Annual-Report-2024_2025-04-08-103923_ifcd.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "December 31, 2024",
+  "revenue": {
+    "value": 922.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Revenue and other income",
+    "scope": "consolidated",
+    "quote": "Revenue and other income 922",
+    "chunk_id": 64,
+    "not_found_reason": null,
+    "value_full": 922000000.0,
+    "source_pages": [
+      34,
+      35,
+      36
+    ]
+  },
+  "total_assets": {
+    "value": 6704.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 6 704",
+    "chunk_id": 65,
+    "not_found_reason": null,
+    "value_full": 6704000000.0,
+    "source_pages": [
+      36
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "other"
+    ],
+    "description": "Akastor provides oilfield services through its portfolio companies and earns income from parent company guarantees recharged to group entities.",
+    "quote": "Operating revenue mainly comprise parent company guarantees (PCG) recharged to entities within the group.",
+    "chunk_id": 190,
+    "source_pages": [
+      83
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": "Aker Holding AS",
+    "segments": [
+      "HMH",
+      "AKOFS Offshore",
+      "DDW Offshore",
+      "Other holdings"
+    ],
+    "description": "Akastor ASA is the ultimate parent company of the Akastor group, listed on the Oslo Stock Exchange, with operating segments including HMH, AKOFS Offshore, DDW Offshore, and Other holdings.",
+    "quote": "The parent company Akastor ASA is the ultimate parent company in the Akastor group.",
+    "chunk_id": 22,
+    "source_pages": [
+      16,
+      17
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 6704.0,
+      "unit": "millions",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total assets 6 704",
+      "chunk_id": 65,
+      "not_found_reason": "Total equity and liabilities not explicitly stated but total assets equals total equity and liabilities in consolidated statement of financial position",
+      "value_full": 6704000000.0,
+      "source_pages": [
+        36
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 64"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 65"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 65"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 6,704,000,000 vs equity+liabilities 6,704,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 190"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 22"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T20:00:59+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "akastor-asa-264f2e63_fdf3a61f21ad710239c61a86528981bfd57ffe94.md",
+    "chunks_total": 228,
+    "chunks_sent": {
+      "financials": [
+        11,
+        13,
+        15,
+        16,
+        17,
+        18,
+        62,
+        64,
+        65,
+        86,
+        102,
+        103,
+        105,
+        106,
+        107,
+        151,
+        185,
+        186,
+        187,
+        190,
+        196,
+        213,
+        216
+      ],
+      "qualitative": [
+        3,
+        22,
+        28,
+        32,
+        33,
+        38,
+        62,
+        64,
+        66,
+        67,
+        69,
+        82,
+        100,
+        101,
+        102,
+        103,
+        107,
+        158,
+        176,
+        189,
+        190,
+        191,
+        194,
+        196,
+        206,
+        207
+      ]
+    }
+  }
+}

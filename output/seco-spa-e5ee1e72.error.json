@@ -1,0 +1,10 @@
+{
+  "company_id": "seco-spa-e5ee1e72",
+  "company_name": "Seco SpA",
+  "country_code": "DE",
+  "error_type": "ReportNotFoundError",
+  "error": "No annual report found on https://corporate.seco.com (12 URLs checked). Pass --report-url URL.",
+  "network_error": false,
+  "firecrawl_credits_used": 5,
+  "at": "2026-10-17T06:50:01+00:00"
+}

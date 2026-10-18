@@ -1,0 +1,196 @@
+{
+  "company_id": "alligo-ab-64746f2d",
+  "input_name": "Alligo AB",
+  "country_code": "SE",
+  "clean_name": "alligo",
+  "status": "needs_review",
+  "lei": "549300AZV2TAMUBEZS90",
+  "lei_record": {
+    "lei": "549300AZV2TAMUBEZS90",
+    "legal_name": "Alligo AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "5590721352"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.alligo.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.alligo.com/en/wp-content/uploads/sites/2/2025/06/momentum-group-publishes-annual-report-201819-190626.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2018/19",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": 6000000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "annual revenue of approximately SEK 6 billion",
+    "scope": "unclear",
+    "quote": "the Momentum Group has now surpassed SEK 6 billion in revenue",
+    "chunk_id": 0,
+    "not_found_reason": null,
+    "value_full": 6000000000.0,
+    "source_pages": [
+      1
+    ]
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "Total assets figure not found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Alligo AB sells products and services primarily to customers through its distribution channels.",
+    "quote": "Alligo is a leading Nordic distributor of IT products and services.",
+    "chunk_id": 2,
+    "source_pages": null
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Distribution"
+    ],
+    "description": "Alligo AB operates as a Nordic distributor of IT products and services under one segment.",
+    "quote": "Alligo is a leading Nordic distributor of IT products and services.",
+    "chunk_id": 2,
+    "source_pages": null
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "Total equity and liabilities figure not found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 0"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "6e+09 not in quote 'the Momentum Group has now surpassed SEK 6 billion in revenue'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "scope is 'unclear', not consolidated"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "2018/19 (latest year 2019, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Alligo is a leading Nordic distributor of IT products and services.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Alligo is a leading Nordic distributor of IT products and services.'"
+    }
+  ],
+  "warnings": [
+    "revenue: scope is 'unclear', not consolidated"
+  ],
+  "extracted_at": "2026-10-15T20:34:35+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "alligo-ab-64746f2d_1f715a2ccf2250328f7c668dd206ab2e8e40a475.md",
+    "chunks_total": 2,
+    "chunks_sent": {
+      "financials": [
+        0,
+        1
+      ],
+      "qualitative": []
+    }
+  }
+}

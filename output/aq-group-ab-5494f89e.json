@@ -1,0 +1,275 @@
+{
+  "company_id": "aq-group-ab-5494f89e",
+  "input_name": "AQ Group AB",
+  "country_code": "SE",
+  "clean_name": "aq group",
+  "status": "ok",
+  "lei": "549300CN568MD1JD3E40",
+  "lei_record": {
+    "lei": "549300CN568MD1JD3E40",
+    "legal_name": "AQ Group AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556281-8830"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://www.aqgroup.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.aqgroup.com/download/5142-A95A2544FEDD12317899ACF608F03B8A/AQ-Group-Annual-Report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31/12/2025",
+  "revenue": {
+    "value": 9071.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales|4,5,6|9,071",
+    "chunk_id": 164,
+    "not_found_reason": null,
+    "value_full": 9071000000.0,
+    "source_pages": [
+      60,
+      61
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 6909.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS||6,909",
+    "chunk_id": 165,
+    "not_found_reason": null,
+    "value_full": 6909000000.0,
+    "source_pages": [
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company manufactures and supplies components and systems on order for demanding industrial customers. These products are often further refined by the customers before reaching the end customer.",
+    "quote": "AQ has no patents of its own, but manufactures and supplies components and systems on order from industrial customers.",
+    "chunk_id": 108,
+    "source_pages": [
+      38
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Component",
+      "System"
+    ],
+    "description": "AQ Group AB (publ) is the highest level parent company of the Group, listed on Nasdaq Stockholm. It operates through two business segments: Component and System.",
+    "quote": "AQ Group AB (publ) is the highest level parent company of the Group. The parent company, which is listed on Nasdaq Stockholm’s main market since January 16, 2017, is based in Västerås, Sweden.",
+    "chunk_id": 167,
+    "source_pages": [
+      69
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 6909.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES||6,909",
+      "chunk_id": 165,
+      "not_found_reason": null,
+      "value_full": 6909000000.0,
+      "source_pages": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 164"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 165"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 165"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 6,909,000,000 vs equity+liabilities 6,909,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 108"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 167: probable hallucination. Quote: 'AQ Group AB (publ) is the highest level parent company of the Group. The parent company, which is listed on Nasdaq Stockholm’s main market since January 16, 2017, is based in Västerås, Sweden.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 167: probable hallucination. Quote: 'AQ Group AB (publ) is the highest level parent company of the Group. The parent company, which is listed on Nasdaq Stockholm’s main market since January 16, 2017, is based in Västerås, Sweden.'"
+  ],
+  "extracted_at": "2026-10-18T06:10:56+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "aq-group-ab-5494f89e_b54b8fcf9f0fd9cf9ebad5bb062c4b24a1657456.md",
+    "chunks_total": 311,
+    "chunks_sent": {
+      "financials": [
+        111,
+        129,
+        130,
+        145,
+        157,
+        158,
+        164,
+        165,
+        189,
+        198,
+        200,
+        217,
+        246,
+        254,
+        255,
+        278,
+        282
+      ],
+      "qualitative": [
+        0,
+        82,
+        108,
+        117,
+        164,
+        167,
+        168,
+        174,
+        179,
+        183,
+        197,
+        198,
+        201,
+        228,
+        232,
+        238,
+        250,
+        283,
+        284,
+        294
+      ]
+    }
+  }
+}

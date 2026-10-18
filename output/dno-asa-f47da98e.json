@@ -1,0 +1,275 @@
+{
+  "company_id": "dno-asa-f47da98e",
+  "input_name": "DNO ASA",
+  "country_code": "NO",
+  "clean_name": "dno",
+  "status": "ok",
+  "lei": "5967007LIEEXZXH3K072",
+  "lei_record": {
+    "lei": "5967007LIEEXZXH3K072",
+    "legal_name": "DNO ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "921 526 121"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://dno.no",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.dno.no/media/kfgni4kw/2025-annual-report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 1474.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Revenues",
+    "scope": "consolidated",
+    "quote": "Revenues 1,474.0",
+    "chunk_id": 139,
+    "not_found_reason": null,
+    "value_full": 1474000000.0,
+    "source_pages": [
+      50,
+      51,
+      52
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 5998.3,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 5,998.3",
+    "chunk_id": 140,
+    "not_found_reason": null,
+    "value_full": 5998300000.0,
+    "source_pages": [
+      52,
+      53,
+      54
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "DNO sells oil and gas produced from its exploration and production activities primarily in the Middle East, North Sea, and West Africa.",
+    "quote": "In 2025, DNO reported revenues of USD 1,474 million, of which USD 577 million was related to gas-oriented activities and USD 802 million was related to oil-oriented activities.",
+    "chunk_id": 66,
+    "source_pages": [
+      21,
+      22
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Kurdistan",
+      "North Sea",
+      "West Africa"
+    ],
+    "description": "DNO ASA is a publicly listed company operating through three main segments: Kurdistan, North Sea, and West Africa. It is the ultimate parent company of its group.",
+    "quote": "The Company reports the following three operating segments: Kurdistan, North Sea (which includes DNO’s oil and gas activities in Norway and the UK) and West Africa (which represents DNO’s equity accounted investment in Côte d'Ivoire, see Note 12).",
+    "chunk_id": 153,
+    "source_pages": [
+      58
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 5998.3,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES 5,998.3",
+      "chunk_id": 140,
+      "not_found_reason": null,
+      "value_full": 5998300000.0,
+      "source_pages": [
+        52,
+        53,
+        54
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 139"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 140"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 140"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 5,998,300,000 vs equity+liabilities 5,998,300,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 66"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 153"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:11:58+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "dno-asa-f47da98e_593dd04e9ded5be475546b31dd50041ea610e987.md",
+    "chunks_total": 306,
+    "chunks_sent": {
+      "financials": [
+        2,
+        21,
+        24,
+        79,
+        80,
+        139,
+        140,
+        154,
+        155,
+        156,
+        157,
+        199,
+        200,
+        201,
+        202,
+        251,
+        252,
+        258,
+        264,
+        280
+      ],
+      "qualitative": [
+        12,
+        37,
+        40,
+        57,
+        58,
+        66,
+        68,
+        69,
+        76,
+        82,
+        91,
+        101,
+        134,
+        137,
+        138,
+        139,
+        148,
+        153,
+        158,
+        161,
+        236,
+        249,
+        250,
+        267,
+        274,
+        277
+      ]
+    }
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "company_id": "aker-asa-09051565",
+  "input_name": "Aker ASA",
+  "country_code": "NO",
+  "clean_name": "aker",
+  "status": "ok",
+  "lei": "5967007LIEEXZXJ10071",
+  "lei_record": {
+    "lei": "5967007LIEEXZXJ10071",
+    "legal_name": "AKER ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "886 581 432"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.akerasa.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.akerasa.com/~/media/Files/A/aker-corp/results-and-presentations/Aker%20ASA%20Annual%20Report%202025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": 18364.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Operating income",
+    "scope": "consolidated",
+    "quote": "Operating income 18 364",
+    "chunk_id": 134,
+    "not_found_reason": null,
+    "value_full": 18364000000.0,
+    "source_pages": [
+      61,
+      62
+    ]
+  },
+  "total_assets": {
+    "value": 99563.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 99 563",
+    "chunk_id": 136,
+    "not_found_reason": null,
+    "value_full": 99563000000.0,
+    "source_pages": [
+      63,
+      64
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "other"
+    ],
+    "description": "Aker ASA earns revenue mainly through its subsidiaries and investments in various sectors including energy, marine biotechnology, and real estate. The subsidiaries sell products and services such as offshore supply vessels, krill products, and real estate management to global and Nordic markets.",
+    "quote": "The Aker Group’s consolidated operating revenue totaled NOK 18.4 billion in 2025, compared to NOK 12.9 billion the year before.",
+    "chunk_id": 33,
+    "source_pages": [
+      16
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Listed equity investments",
+      "Unlisted equity investments"
+    ],
+    "description": "Aker ASA is a publicly listed industrial investment company organized as an ASA. It holds a portfolio of subsidiaries and investments grouped into two main segments: Listed equity investments and Unlisted equity investments. The company exercises active ownership but each portfolio company operates independently.",
+    "quote": "Aker has in 2025 changed its segment reporting from Industrial and Financial Investments to Listed equity investments and Unlisted equity investments.",
+    "chunk_id": 196,
+    "source_pages": [
+      81
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 99563.0,
+      "unit": "millions",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 99 563",
+      "chunk_id": 136,
+      "not_found_reason": null,
+      "value_full": 99563000000.0,
+      "source_pages": [
+        63,
+        64
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 134"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "loose match in chunk 136"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "loose match in chunk 136"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 99,563,000,000 vs equity+liabilities 99,563,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 33"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 196"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T08:22:26+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "aker-asa-09051565_7e79899e02853eb9f893c29a45e095d16619f488.md",
+    "chunks_total": 340,
+    "chunks_sent": {
+      "financials": [
+        19,
+        33,
+        83,
+        85,
+        94,
+        99,
+        101,
+        104,
+        111,
+        134,
+        136,
+        142,
+        154,
+        155,
+        156,
+        157,
+        158,
+        202,
+        203,
+        204,
+        205,
+        207,
+        208,
+        211,
+        212,
+        213,
+        214,
+        245,
+        278,
+        288,
+        318,
+        319
+      ],
+      "qualitative": [
+        1,
+        19,
+        30,
+        33,
+        36,
+        42,
+        54,
+        133,
+        170,
+        196,
+        197,
+        200,
+        201,
+        241,
+        242,
+        257,
+        315,
+        316
+      ]
+    }
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "company_id": "hoegh-autoliners-asa-a034042e",
+  "input_name": "Hoegh Autoliners ASA",
+  "country_code": "NO",
+  "clean_name": "hoegh autoliners",
+  "status": "ok",
+  "lei": "549300D7GNMPKTA4HD46",
+  "lei_record": {
+    "lei": "549300D7GNMPKTA4HD46",
+    "legal_name": "HÖEGH AUTOLINERS ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "985 459 614"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "549300D7GNMPKTA4HD46-2024-12-31-ESEF-NO-0",
+    "period_end": "2024-12-31",
+    "viewer_url": "https://filings.xbrl.org/549300D7GNMPKTA4HD46/2024-12-31/ESEF/NO/0/Hoegh_Autoliners_ASA-2024-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300D7GNMPKTA4HD46/2024-12-31/ESEF/NO/0/Hoegh_Autoliners_ASA-2024-12-31-en.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300D7GNMPKTA4HD46/2024-12-31/ESEF/NO/0/Hoegh_Autoliners_ASA-2024-12-31-en/reports/549300D7GNMPKTA4HD46-2024-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 1370828000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 1,370,828,000 USD (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1370828000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 2105644000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 2,105,644,000 USD (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2105644000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company provides ocean transportation services using Pure Car and Truck Carrier vessels, transporting automobiles, mining equipment, and breakbulk cargo globally. It operates a fleet of owned and chartered vessels and serves customers including vehicle manufacturers and equipment producers.",
+    "quote": "Höegh Autoliners is a leading global provider of Roll-on Roll-off (RoRo) ocean transportation services, specializing in port-to-port transport of automobiles, mining equipment, and breakbulk cargo.",
+    "chunk_id": 96,
+    "source_pages": null
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Commercial and operational management",
+      "Technical services",
+      "Crewing"
+    ],
+    "description": "Hoegh Autoliners ASA is a publicly listed company operating a fully integrated global organization with in-house expertise in commercial and operational management, technical services, and crewing. It has over 400 onshore employees and more than 1,200 seafarers working from 16 offices worldwide.",
+    "quote": "Höegh Autoliners has a fully integrated global organization with significant in-house expertise in commercial and operational management, technical services, and crewing.",
+    "chunk_id": 96,
+    "source_pages": null
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 2105644000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 2,105,644,000 USD (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 2105644000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 2,105,644,000 vs equity+liabilities 2,105,644,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in all chunks (chunk_id 96 not sent)"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in all chunks (chunk_id 96 not sent)"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 549300D7GNMPKTA4HD46"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:20:57+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 6,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "hoegh-autoliners-asa-a034042e_894c03ac9853f8ee1ce1c17a2aa16380c1c4f9b5.md",
+    "chunks_total": 72,
+    "chunks_sent": {
+      "financials": [
+        51,
+        63,
+        67,
+        70,
+        71
+      ],
+      "qualitative": [
+        1,
+        12,
+        13,
+        14,
+        15,
+        30,
+        35
+      ]
+    }
+  }
+}

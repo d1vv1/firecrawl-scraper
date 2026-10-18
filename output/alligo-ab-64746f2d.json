@@ -1,0 +1,224 @@
+{
+  "company_id": "alligo-ab-64746f2d",
+  "input_name": "Alligo AB",
+  "country_code": "SE",
+  "clean_name": "alligo",
+  "status": "ok",
+  "lei": "549300AZV2TAMUBEZS90",
+  "lei_record": {
+    "lei": "549300AZV2TAMUBEZS90",
+    "legal_name": "Alligo AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "5590721352"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://www.alligo.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.alligo.com/en/report/annual-and-sustainability-report-2025",
+  "report_type": "html",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 9551.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "Revenue increased to MSEK 9,551 (9,333) in 2025",
+    "chunk_id": 6,
+    "not_found_reason": null,
+    "value_full": 9551000000.0,
+    "source_pages": [
+      1
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "Total assets not found in the provided text.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company sells products to large industrial customers and small and medium-sized customers, primarily through its store network.",
+    "quote": "driving traffic to stores and improving profitability from large industrial customers.",
+    "chunk_id": 8,
+    "source_pages": [
+      1
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Swedol",
+      "TOOLS",
+      "Non-integrated companies"
+    ],
+    "description": "Alligo AB is a publicly traded company structured around integrated business chains like Swedol and Tools, alongside other non-integrated companies, operating on a Nordic platform.",
+    "quote": "integrated business of the Swedol and Tools chains",
+    "chunk_id": 8,
+    "source_pages": [
+      1
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "Total equity and liabilities not found in the provided text.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 6"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 8"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 8"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:14:45+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 6,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "alligo-ab-64746f2d_7bd0e672df1394e8b610b610acc3b618319e4043.md",
+    "chunks_total": 13,
+    "chunks_sent": {
+      "financials": [
+        1,
+        4,
+        6,
+        9
+      ],
+      "qualitative": [
+        0,
+        8
+      ]
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "company_id": "allegion-public-limited-company-42c11de0",
+  "input_name": "Allegion Public Limited Company",
+  "country_code": "IE",
+  "clean_name": "allegion public",
+  "status": "ok",
+  "lei": "984500560CAC2E6FB757",
+  "lei_record": {
+    "lei": "984500560CAC2E6FB757",
+    "legal_name": "ALLEGION PUBLIC LIMITED COMPANY",
+    "country": "IE",
+    "jurisdiction": "IE",
+    "legal_form_id": "VYAX",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "527370"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.allegion.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.allegion.com/content/dam/allegion-corp/migration/annual_report/2025/Annual-Report-Form-10K.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 4067.3,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Net revenues",
+    "scope": "consolidated",
+    "quote": "Net revenues $ 4,067.3",
+    "chunk_id": 76,
+    "not_found_reason": null,
+    "value_full": 4067300000.0,
+    "source_pages": [
+      31
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 5223.7,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets $ 5,223.7",
+    "chunk_id": 118,
+    "not_found_reason": null,
+    "value_full": 5223700000.0,
+    "source_pages": [
+      55,
+      56
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "subscription"
+    ],
+    "description": "The company sells mechanical and electronic security products, as well as services and software, to customers globally through a broad network of channel partners and third-party providers.",
+    "quote": "We distribute our products through a broad network of channel partners.",
+    "chunk_id": 10,
+    "source_pages": [
+      11,
+      12
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Public Limited Company",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Allegion Americas",
+      "Allegion International"
+    ],
+    "description": "Allegion Public Limited Company operates through two main segments: Allegion Americas and Allegion International. It manufactures and distributes products globally with production facilities in both segments.",
+    "quote": "The Company classifies its business into the following two reportable segments based on industry and market focus: Allegion Americas and Allegion International.",
+    "chunk_id": 161,
+    "source_pages": [
+      84,
+      85,
+      86
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 5223.7,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total liabilities and equity",
+      "scope": "consolidated",
+      "quote": "Total liabilities and equity $ 5,223.7",
+      "chunk_id": 118,
+      "not_found_reason": null,
+      "value_full": 5223700000.0,
+      "source_pages": [
+        55,
+        56
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 76"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 118"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 118"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 5,223,700,000 vs equity+liabilities 5,223,700,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 10"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 161"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:02:42+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "allegion-public-limited-company-42c11de0_3df00c9926c4b27535df82d46e8cf9396b527e2b.md",
+    "chunks_total": 163,
+    "chunks_sent": {
+      "financials": [
+        8,
+        24,
+        27,
+        42,
+        45,
+        72,
+        73,
+        76,
+        77,
+        78,
+        79,
+        83,
+        84,
+        86,
+        89,
+        93,
+        100,
+        111,
+        112,
+        116,
+        118,
+        143,
+        157,
+        161
+      ],
+      "qualitative": [
+        10,
+        73,
+        161
+      ]
+    }
+  }
+}

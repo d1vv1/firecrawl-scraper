@@ -1,0 +1,247 @@
+{
+  "company_id": "atlantic-sapphire-asa-23a75939",
+  "input_name": "Atlantic Sapphire ASA",
+  "country_code": "NO",
+  "clean_name": "atlantic sapphire",
+  "status": "ok",
+  "lei": "2138007BY85FI48VX666",
+  "lei_record": {
+    "lei": "2138007BY85FI48VX666",
+    "legal_name": "ATLANTIC SAPPHIRE ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "LAPSED",
+    "registered_as": "895 436 232"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://atlanticsapphire.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://atlanticsapphire.com/wp-content/uploads/2025/04/AS_Annual_Report_2024-A4_V15-22042025-FINAL-REPORT.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "31 December 2024",
+  "revenue": {
+    "value": 22819.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "Revenue|22,819|13,995|",
+    "chunk_id": 236,
+    "not_found_reason": null,
+    "value_full": 22819000.0,
+    "source_pages": [
+      113,
+      114
+    ]
+  },
+  "total_assets": {
+    "value": 273673.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets||273,673|342,258|",
+    "chunk_id": 238,
+    "not_found_reason": null,
+    "value_full": 273673000.0,
+    "source_pages": [
+      116
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells salmon products mainly to customers in the US and Canada through its land-based salmon farms.",
+    "quote": "Revenue from sale of salmon",
+    "chunk_id": 275,
+    "source_pages": [
+      130
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Denmark operations",
+      "US operations",
+      "Other and eliminations"
+    ],
+    "description": "Atlantic Sapphire ASA is a public limited liability company listed on the Oslo Stock Exchange. It operates through segments including Denmark operations and US operations, with the parent company controlling subsidiaries in Denmark and the US.",
+    "quote": "Atlantic Sapphire ASA (“ASA”), a public limited liability company incorporated in Vikebukt, Norway and domiciled in Vestnes, Norway",
+    "chunk_id": 5,
+    "source_pages": [
+      6
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 273673.0,
+      "unit": "thousands",
+      "currency": "USD",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities||273,673|342,258|",
+      "chunk_id": 239,
+      "not_found_reason": null,
+      "value_full": 273673000.0,
+      "source_pages": [
+        117
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 236"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 238"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 239"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 273,673,000 vs equity+liabilities 273,673,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 275"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 5"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T21:40:20+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "atlantic-sapphire-asa-23a75939_2c189d96ec66a78bfffa0ffa6995302265c1bfc1.md",
+    "chunks_total": 374,
+    "chunks_sent": {
+      "financials": [
+        5,
+        6,
+        87,
+        153,
+        185,
+        186,
+        193,
+        195,
+        201,
+        210,
+        224,
+        236,
+        238,
+        239,
+        254,
+        256,
+        269,
+        271,
+        275,
+        276,
+        277,
+        282,
+        285,
+        309,
+        340,
+        341,
+        342,
+        349,
+        350
+      ],
+      "qualitative": [
+        5,
+        44,
+        68,
+        112,
+        184,
+        195,
+        233,
+        246,
+        258,
+        275,
+        346,
+        347,
+        348,
+        360
+      ]
+    }
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "company_id": "m-g-plc-56cbf8f9",
+  "input_name": "M&G PLC",
+  "country_code": "GB",
+  "clean_name": "m and g",
+  "status": "ok",
+  "lei": "254900TWUJUQ44TQJY84",
+  "lei_record": {
+    "lei": "254900TWUJUQ44TQJY84",
+    "legal_name": "M&G PLC",
+    "country": "GB",
+    "jurisdiction": "GB",
+    "legal_form_id": "B6ES",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "11444019"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "254900TWUJUQ44TQJY84-2025-12-31-ESEF-GB-0",
+    "period_end": "2025-12-31",
+    "viewer_url": "https://filings.xbrl.org/254900TWUJUQ44TQJY84/2025-12-31/ESEF/GB/0/254900TWUJUQ44TQJY84-2025-12-31/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/254900TWUJUQ44TQJY84/2025-12-31/ESEF/GB/0/254900TWUJUQ44TQJY84-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/254900TWUJUQ44TQJY84/2025-12-31/ESEF/GB/0/254900TWUJUQ44TQJY84-2025-12-31/reports/254900TWUJUQ44TQJY84-2025-12-31-T01.html",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 4425.0,
+    "unit": "millions",
+    "currency": "GBP",
+    "label_in_report": "Insurance revenue",
+    "scope": "consolidated",
+    "quote": "Insurance revenue | 4,425 | 4,095 |",
+    "chunk_id": 158,
+    "not_found_reason": null,
+    "value_full": 4425000000.0,
+    "source_pages": [
+      339,
+      340,
+      341
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 190601000000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 190,601,000,000 GBP (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 190601000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells active asset management services and life insurance products including savings, retirement solutions, and annuities to retail and institutional clients through a wide distribution network.",
+    "quote": "We sell our active asset management capabilities to retail and institutional clients, including a range of investment strategies and propositions",
+    "chunk_id": 3,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "business_structure": {
+    "legal_form": "plc",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Asset Management",
+      "Life"
+    ],
+    "description": "M&G plc is a publicly listed company organized into two main segments: Asset Management and Life. It operates internationally with a strong capital base and a well-capitalised With-Profits Fund.",
+    "quote": "We are an internationally recognised active asset manager and an established life business, with a well capitalised With-Profits Fund",
+    "chunk_id": 3,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 190601000000.0,
+      "unit": "units",
+      "currency": "GBP",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 190,601,000,000 GBP (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 190601000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in all chunks (chunk_id 158 not sent)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 190,601,000,000 vs equity+liabilities 190,601,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 0 (model cited chunk 3)"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 0 (model cited chunk 3)"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 254900TWUJUQ44TQJY84"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:09:10+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "m-g-plc-56cbf8f9_306b015cbda9467c38f7c01bace587a58dcf5566.md",
+    "chunks_total": 201,
+    "chunks_sent": {
+      "financials": [
+        92,
+        122,
+        123,
+        138,
+        146,
+        150,
+        159,
+        164,
+        191
+      ],
+      "qualitative": [
+        0,
+        1,
+        3,
+        4,
+        29,
+        83
+      ]
+    }
+  }
+}

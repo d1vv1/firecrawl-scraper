@@ -1,0 +1,221 @@
+{
+  "company_id": "camden-property-trust-076b056f",
+  "input_name": "Camden Property Trust",
+  "country_code": "US",
+  "clean_name": "camden property trust",
+  "status": "not_found",
+  "lei": "5493002MYX22OHYJBD89",
+  "lei_record": {
+    "lei": "5493002MYX22OHYJBD89",
+    "legal_name": "CAMDEN PROPERTY TRUST",
+    "country": "US",
+    "jurisdiction": "US",
+    "legal_form_id": "8888",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "0000906345"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.camdenliving.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://s28.q4cdn.com/425223795/files/doc_financials/2025/ar/2025-CPT-Annual-Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No revenue figure found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No total assets figure found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells residential apartment homes to tenants, generating rental income primarily through leasing apartments.",
+    "quote": "We own, develop, acquire, and manage multifamily apartment communities primarily in the Sunbelt region of the United States.",
+    "chunk_id": 2,
+    "source_pages": [
+      3
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Trust",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Operating Properties",
+      "Development Properties"
+    ],
+    "description": "Camden Property Trust is a publicly listed real estate investment trust organized into operating and development property segments.",
+    "quote": "Camden Property Trust is a publicly traded real estate investment trust (REIT) focused on multifamily residential properties.",
+    "chunk_id": 1,
+    "source_pages": [
+      3
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "No total equity and liabilities figure found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'We own, develop, acquire, and manage multifamily apartment communities primarily in the Sunbelt region of the United States.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Camden Property Trust is a publicly traded real estate investment trust (REIT) focused on multifamily residential properties.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "skipped",
+      "detail": "no currency extracted"
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'We own, develop, acquire, and manage multifamily apartment communities primarily in the Sunbelt region of the United States.'",
+    "business_structure: quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Camden Property Trust is a publicly traded real estate investment trust (REIT) focused on multifamily residential properties.'"
+  ],
+  "extracted_at": "2026-10-16T19:21:39+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "camden-property-trust-076b056f_203e9f8cc0f4302e28a6233b9e7f6699d3de3bf1.md",
+    "chunks_total": 12,
+    "chunks_sent": {
+      "financials": [
+        2,
+        3,
+        6
+      ],
+      "qualitative": []
+    }
+  }
+}

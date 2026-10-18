@@ -1,0 +1,262 @@
+{
+  "company_id": "bw-energy-ltd-dfad1693",
+  "input_name": "BW Energy Ltd",
+  "country_code": "NO",
+  "clean_name": "bw energy",
+  "status": "ok",
+  "lei": "5493004D19CJBN3DLD40",
+  "lei_record": {
+    "lei": "5493004D19CJBN3DLD40",
+    "legal_name": "BW ENERGY LIMITED",
+    "country": "BM",
+    "jurisdiction": "BM",
+    "legal_form_id": "7AS7",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "54653"
+  },
+  "lei_lookup": "exact name match (registered outside NO)",
+  "website": "https://www.bwenergy.no",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.bwenergy.no/en/wp-content/uploads/sites/2/2025/10/bw-energy-annual-report-2025-260227.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 797.9,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total revenues and other income",
+    "scope": "consolidated",
+    "quote": "Total revenues and other income 797.9",
+    "chunk_id": 145,
+    "not_found_reason": null,
+    "value_full": 797900000.0,
+    "source_pages": [
+      90,
+      91
+    ]
+  },
+  "total_assets": {
+    "value": 2484.4,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 2,484.4",
+    "chunk_id": 147,
+    "not_found_reason": null,
+    "value_full": 2484400000.0,
+    "source_pages": [
+      92
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "BW Energy sells oil and gas produced from its licenses in Gabon and Brazil to customers in the oil market.",
+    "quote": "The sanctioning of the Maromba development laid the foundation for tripling production by 2028",
+    "chunk_id": 1,
+    "source_pages": [
+      4
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Limited",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Gabon operations",
+      "Brazil operations"
+    ],
+    "description": "BW Energy Limited is a holding company incorporated in Bermuda and listed on Oslo Børs. It operates mainly through its oil and gas production licenses in Gabon and Brazil.",
+    "quote": "BW Energy Limited (‘the Company’) was incorporated on 22 May 2019 as an exempted company limited by shares under the laws of Bermuda",
+    "chunk_id": 243,
+    "source_pages": [
+      132
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 2484.4,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total equityand liabilities",
+      "scope": "consolidated",
+      "quote": "Total equityand liabilities 2,484.4",
+      "chunk_id": 147,
+      "not_found_reason": null,
+      "value_full": 2484400000.0,
+      "source_pages": [
+        92
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 145"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 147"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 147"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 2,484,400,000 vs equity+liabilities 2,484,400,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 243"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T22:28:33+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "bw-energy-ltd-dfad1693_4ef3b40f41f58321a9bc71420eddbb40566f159b.md",
+    "chunks_total": 276,
+    "chunks_sent": {
+      "financials": [
+        7,
+        15,
+        41,
+        45,
+        63,
+        140,
+        144,
+        145,
+        147,
+        152,
+        156,
+        158,
+        159,
+        160,
+        161,
+        168,
+        171,
+        178,
+        179,
+        187,
+        196,
+        201,
+        203,
+        222,
+        223,
+        237,
+        240,
+        245,
+        247,
+        252,
+        265,
+        267,
+        272
+      ],
+      "qualitative": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        45,
+        71,
+        144,
+        153,
+        167,
+        215,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        247,
+        248,
+        251,
+        252,
+        254,
+        258,
+        261,
+        265
+      ]
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "company_id": "ap-moller-maersk-a-s-04082866",
+  "input_name": "AP Moller - Maersk A/S",
+  "country_code": "DK",
+  "clean_name": "ap moller maersk",
+  "status": "ok",
+  "lei": "549300D2K6PKKKXVNN73",
+  "lei_record": {
+    "lei": "549300D2K6PKKKXVNN73",
+    "legal_name": "A.P. MØLLER - MÆRSK A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "22756214"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300D2K6PKKKXVNN73-2025-12-31-ESEF-DK-0",
+    "period_end": "2025-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300D2K6PKKKXVNN73/2025-12-31/ESEF/DK/0/APMM-2025-12-31-en/reports/APMM-2025-12-31-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300D2K6PKKKXVNN73/2025-12-31/ESEF/DK/0/APMM-2025-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300D2K6PKKKXVNN73/2025-12-31/ESEF/DK/0/APMM-2025-12-31-en.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300D2K6PKKKXVNN73/2025-12-31/ESEF/DK/0/APMM-2025-12-31-en/reports/APMM-2025-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 53988000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 53,988,000,000 USD (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 53988000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 88352000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 88,352,000,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 88352000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company provides integrated logistics services, including ocean container freight, various logistics solutions, and terminal services, to customers globally. It also generates revenue from the sale of containers and spare parts.",
+    "quote": "Maersk delivers innovative, reliable ocean network solutions, offers truly integrated logistics products and operates advanced container terminals.",
+    "chunk_id": 3,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": "A.P. Møller Holding A/S",
+    "segments": [
+      "Ocean",
+      "Logistics & Services",
+      "Terminals"
+    ],
+    "description": "A.P. Møller - Mærsk A/S is a publicly traded company, controlled by A.P. Møller Holding A/S. Its operations are structured into three main segments: Ocean, Logistics & Services, and Terminals.",
+    "quote": "Maersk has organised segments in ‘Ocean’, ‘Logistics & Services’ and ‘Terminals’.",
+    "chunk_id": 71,
+    "source_pages": [
+      151,
+      152,
+      153,
+      154
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 88352000000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 88,352,000,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 88352000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 88,352,000,000 vs equity+liabilities 88,352,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 3"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "loose match in chunk 71"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300D2K6PKKKXVNN73)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:10:59+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "ap-moller-maersk-a-s-04082866_710847dcbe176f70c5a8f25216f533f27cb7ca68.md",
+    "chunks_total": 101,
+    "chunks_sent": {
+      "financials": [
+        17,
+        18,
+        44,
+        71,
+        88,
+        99
+      ],
+      "qualitative": [
+        0,
+        3,
+        71,
+        72,
+        89
+      ]
+    }
+  }
+}

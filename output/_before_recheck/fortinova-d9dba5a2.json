@@ -1,0 +1,283 @@
+{
+  "company_id": "fortinova-d9dba5a2",
+  "input_name": "Fortinova",
+  "country_code": "SE",
+  "clean_name": "fortinova",
+  "status": "needs_review",
+  "lei": null,
+  "lei_record": null,
+  "lei_lookup": "no GLEIF record matching 'Fortinova' in SE",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.fortinova.se",
+  "website_source": "search",
+  "website_score": 1.0,
+  "report_url": "https://www.fortinova.se/wp-content/uploads/2026/04/Fortinova-Arsredovisning-2025-pdf.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "2025.12.31",
+  "revenue": {
+    "value": 393.4,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Hyresintäkter",
+    "scope": "consolidated",
+    "quote": "Hyresintäkter 393,4",
+    "chunk_id": 83,
+    "not_found_reason": null,
+    "value_full": 393400000.0,
+    "source_pages": [
+      50
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 5692.8,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "SUMMA TILLGÅNGAR",
+    "scope": "consolidated",
+    "quote": "SUMMA TILLGÅNGAR 5 692,8",
+    "chunk_id": 84,
+    "not_found_reason": null,
+    "value_full": 5692800000.0,
+    "source_pages": [
+      51,
+      52
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "Fortinova sells rental housing properties to tenants, primarily in growth areas with structural housing shortages, through direct property management and leasing.",
+    "quote": "Fortinova levererar ett starkt år där både resultat och marginaler förbättrats, samtidigt som vi tagit viktiga strategiska steg för att skapa hållbart värde för aktieägare, hyresgäster och medarbetare.",
+    "chunk_id": 6,
+    "source_pages": [
+      10
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Halland",
+      "Skaraborg",
+      "Västra Götaland"
+    ],
+    "description": "Fortinova is a publicly listed Swedish limited company (AB (publ)) organized into three geographic operating segments: Halland, Skaraborg, and Västra Götaland. It owns and manages residential and commercial properties primarily in these regions.",
+    "quote": "Fortinovas verksamhet organiseras, styrs och rapporteras per de geografiska områdena Halland, Skaraborg och Västra Götaland.",
+    "chunk_id": 96,
+    "source_pages": [
+      60
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 5692.8,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "SUMMA EGET KAPITAL OCH SKULDER",
+      "scope": "consolidated",
+      "quote": "SUMMA EGET KAPITAL OCH SKULDER 5 692,8",
+      "chunk_id": 84,
+      "not_found_reason": null,
+      "value_full": 5692800000.0,
+      "source_pages": [
+        51,
+        52
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 83"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "393.4 not in quote 'Hyresintäkter 393,4'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 84"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "5692.8 not in quote 'SUMMA TILLGÅNGAR 5 692,8'"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 84"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "5692.8 not in quote 'SUMMA EGET KAPITAL OCH SKULDER 5 692,8'"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 5,692,800,000 vs equity+liabilities 5,692,800,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 6"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 96"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T18:37:19+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "fortinova-d9dba5a2_77ca12722531eb7ccf9d3889fdf3263e76b31bc6.md",
+    "chunks_total": 240,
+    "chunks_sent": {
+      "financials": [
+        2,
+        18,
+        36,
+        62,
+        71,
+        72,
+        74,
+        76,
+        80,
+        83,
+        84,
+        87,
+        88,
+        94,
+        97,
+        98,
+        99,
+        100,
+        101,
+        108,
+        109,
+        111,
+        113,
+        114,
+        122,
+        127,
+        134,
+        142,
+        143,
+        147,
+        153,
+        156,
+        162,
+        163,
+        235,
+        237
+      ],
+      "qualitative": [
+        6,
+        7,
+        15,
+        18,
+        22,
+        32,
+        62,
+        77,
+        87,
+        88,
+        89,
+        90,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        109,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        154,
+        167,
+        169,
+        170,
+        235,
+        237,
+        238
+      ]
+    }
+  }
+}

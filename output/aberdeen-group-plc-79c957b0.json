@@ -1,0 +1,239 @@
+{
+  "company_id": "aberdeen-group-plc-79c957b0",
+  "input_name": "Aberdeen Group PLC",
+  "country_code": "GB",
+  "clean_name": "aberdeen group",
+  "status": "ok",
+  "lei": "0TMBS544NMO7GLCE7H90",
+  "lei_record": {
+    "lei": "0TMBS544NMO7GLCE7H90",
+    "legal_name": "ABERDEEN GROUP PLC",
+    "country": "GB",
+    "jurisdiction": "GB",
+    "legal_form_id": "B6ES",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "SC286832"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "0TMBS544NMO7GLCE7H90-2025-12-31-ESEF-GB-0",
+    "period_end": "2025-12-31",
+    "viewer_url": "https://filings.xbrl.org/0TMBS544NMO7GLCE7H90/2025-12-31/ESEF/GB/0/0TMBS544NMO7GLCE7H90-2025-12-31/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/0TMBS544NMO7GLCE7H90/2025-12-31/ESEF/GB/0/0TMBS544NMO7GLCE7H90-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/0TMBS544NMO7GLCE7H90/2025-12-31/ESEF/GB/0/0TMBS544NMO7GLCE7H90-2025-12-31/reports/0TMBS544NMO7GLCE7H90-2025-12-31-T01.html",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 1341000000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "RevenueFromContractsWithCustomers",
+    "scope": "consolidated",
+    "quote": "ifrs-full:RevenueFromContractsWithCustomers = 1,341,000,000 GBP (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1341000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:RevenueFromContractsWithCustomers"
+  },
+  "total_assets": {
+    "value": 10718000000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 10,718,000,000 GBP (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 10718000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "services"
+    ],
+    "description": "The company provides services to customers, including direct investing platform services, adviser services, and investment management.",
+    "quote": "the activities of our three businesses: ii, Adviser and Investments",
+    "chunk_id": 22,
+    "source_pages": [
+      45,
+      46,
+      47,
+      48
+    ]
+  },
+  "business_structure": {
+    "legal_form": "plc",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "ii",
+      "Adviser",
+      "Investments"
+    ],
+    "description": "Aberdeen Group plc is a public limited company listed on a stock exchange. It operates through three main business segments: ii, Adviser, and Investments.",
+    "quote": "Our Board oversees the implementation of the Group’s business model and the activities of our three businesses: ii, Adviser and Investments",
+    "chunk_id": 22,
+    "source_pages": [
+      45,
+      46,
+      47,
+      48
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 10718000000.0,
+      "unit": "units",
+      "currency": "GBP",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 10,718,000,000 GBP (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 10718000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 10,718,000,000 vs equity+liabilities 10,718,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 22"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 22"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 0TMBS544NMO7GLCE7H90"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:07:47+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "aberdeen-group-plc-79c957b0_36aec05180ae3da2141fc94756bfe36941d2530d.md",
+    "chunks_total": 169,
+    "chunks_sent": {
+      "financials": [
+        0,
+        97,
+        101,
+        118,
+        125,
+        130
+      ],
+      "qualitative": [
+        22,
+        60,
+        87,
+        88,
+        89,
+        95
+      ]
+    }
+  }
+}

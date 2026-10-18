@@ -1,0 +1,245 @@
+{
+  "company_id": "be-group-ab-c7500c95",
+  "input_name": "BE Group AB",
+  "country_code": "SE",
+  "clean_name": "be group",
+  "status": "ok",
+  "lei": "549300TD8XXBS8J3TF85",
+  "lei_record": {
+    "lei": "549300TD8XXBS8J3TF85",
+    "legal_name": "BE Group AB (publ)",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556578-4724"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300TD8XXBS8J3TF85-2024-12-31-ESEF-SE-0",
+    "period_end": "2024-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300TD8XXBS8J3TF85/2024-12-31/ESEF/SE/0/549300TD8XXBS8J3TF85-2024-12-31-0-sv/reports/549300TD8XXBS8J3TF85-2024-12-31-0-sv.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300TD8XXBS8J3TF85/2024-12-31/ESEF/SE/0/549300TD8XXBS8J3TF85-2024-12-31-0-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300TD8XXBS8J3TF85/2024-12-31/ESEF/SE/0/549300TD8XXBS8J3TF85-2024-12-31-0-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300TD8XXBS8J3TF85/2024-12-31/ESEF/SE/0/549300TD8XXBS8J3TF85-2024-12-31-0-sv/reports/549300TD8XXBS8J3TF85-2024-12-31-0-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 4667000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 4,667,000,000 SEK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 4667000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 2924000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 2,924,000,000 SEK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2924000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells steel, stainless steel, and aluminum products, along with production services, to customers primarily in the construction and manufacturing industries. Sales are conducted through warehouse sales, production service sales, and direct sales.",
+    "quote": "erbjuder BE Group olika affärslösningar; lagerförsäljning, produktionsserviceförsäljning samt direktförsäljning.",
+    "chunk_id": 18,
+    "source_pages": [
+      41,
+      42,
+      43,
+      44
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Sverige & Polen",
+      "Finland & Baltikum",
+      "Moderbolaget & koncernposter"
+    ],
+    "description": "BE Group AB (publ) is a Swedish public limited company that operates through two geographical business segments: Sverige & Polen and Finland & Baltikum. The parent company and group adjustments are reported under \"Moderbolaget & koncernposter\".",
+    "quote": "Koncernen omfattar två affärsområden, Sverige & Polen och Finland & Baltikum",
+    "chunk_id": 4,
+    "source_pages": [
+      8,
+      9,
+      10,
+      11
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 2924000000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 2,924,000,000 SEK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 2924000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 2,924,000,000 vs equity+liabilities 2,924,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 18: probable hallucination. Quote: 'erbjuder BE Group olika affärslösningar; lagerförsäljning, produktionsserviceförsäljning samt direktförsäljning.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 4: probable hallucination. Quote: 'Koncernen omfattar två affärsområden, Sverige & Polen och Finland & Baltikum'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300TD8XXBS8J3TF85)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 18: probable hallucination. Quote: 'erbjuder BE Group olika affärslösningar; lagerförsäljning, produktionsserviceförsäljning samt direktförsäljning.'",
+    "business_structure: quote not found in chunk 4: probable hallucination. Quote: 'Koncernen omfattar två affärsområden, Sverige & Polen och Finland & Baltikum'"
+  ],
+  "extracted_at": "2026-10-18T06:39:59+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "be-group-ab-c7500c95_86a96c39c436d8df1e5a674258937d5fc615e635.md",
+    "chunks_total": 34,
+    "chunks_sent": {
+      "financials": [
+        4,
+        14,
+        20,
+        21,
+        22
+      ],
+      "qualitative": [
+        4,
+        8,
+        15,
+        18,
+        20
+      ]
+    }
+  }
+}

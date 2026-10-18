@@ -1,0 +1,287 @@
+{
+  "company_id": "arise-ab-088d674c",
+  "input_name": "Arise AB",
+  "country_code": "SE",
+  "clean_name": "arise",
+  "status": "ok",
+  "lei": "549300FOT7EE85QYB655",
+  "lei_record": {
+    "lei": "549300FOT7EE85QYB655",
+    "legal_name": "Arise AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556274-6726"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "http://www.arise.se",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.arise.se/sites/default/files/files/Arise%20%C3%85rsredovisning%202025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 389.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Nettoomsättning",
+    "scope": "consolidated",
+    "quote": "Nettoomsättning||389|470|",
+    "chunk_id": 93,
+    "not_found_reason": null,
+    "value_full": 389000000.0,
+    "source_pages": [
+      29,
+      30
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 3070.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "SUMMA TILLGÅNGAR",
+    "scope": "consolidated",
+    "quote": "SUMMA TILLGÅNGAR||3 070|3 868|",
+    "chunk_id": 95,
+    "not_found_reason": null,
+    "value_full": 3070000000.0,
+    "source_pages": [
+      30,
+      31
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "other"
+    ],
+    "description": "The company develops, builds, and sells solar, battery, and wind power parks to external investors and global financial actors. It also manages these facilities for customers and sells electricity, electricity certificates, and origin guarantees.",
+    "quote": "Arise AB är moderbolag i Arisekoncernen, som utvecklar, bygger och säljer sol-, batteri- och vindkraftparker samt förvaltar desamma.",
+    "chunk_id": 75,
+    "source_pages": [
+      26
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Development",
+      "Production",
+      "Solutions"
+    ],
+    "description": "Arise AB (publ) is the parent company of the Arise Group, which is organized into three operating segments: Development, Production, and Solutions. The group operates through various subsidiaries in several countries.",
+    "quote": "Verksamheten delas in i tre segment – Development, Production och Solutions.",
+    "chunk_id": 28,
+    "source_pages": [
+      15
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 3070.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "SUMMA EGET KAPITAL OCH SKULDER",
+      "scope": "consolidated",
+      "quote": "SUMMA EGET KAPITAL OCH SKULDER||3 070|3 868|",
+      "chunk_id": 95,
+      "not_found_reason": null,
+      "value_full": 3070000000.0,
+      "source_pages": [
+        30,
+        31
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 93"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 95"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 95"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 3,070,000,000 vs equity+liabilities 3,070,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 75"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 28: probable hallucination. Quote: 'Verksamheten delas in i tre segment – Development, Production och Solutions.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 28: probable hallucination. Quote: 'Verksamheten delas in i tre segment – Development, Production och Solutions.'"
+  ],
+  "extracted_at": "2026-10-18T06:22:10+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "arise-ab-088d674c_c2b50ad5466f963764e7bb0acda8df7f428b02bc.md",
+    "chunks_total": 203,
+    "chunks_sent": {
+      "financials": [
+        1,
+        52,
+        54,
+        77,
+        84,
+        93,
+        94,
+        95,
+        98,
+        110,
+        129,
+        131,
+        132,
+        140,
+        144,
+        161,
+        163,
+        171,
+        172,
+        173,
+        177,
+        179,
+        180,
+        185,
+        186,
+        202
+      ],
+      "qualitative": [
+        21,
+        28,
+        74,
+        75,
+        79,
+        80,
+        92,
+        93,
+        95,
+        96,
+        97,
+        101,
+        104,
+        105,
+        130,
+        133,
+        143,
+        145,
+        170,
+        172,
+        173,
+        174,
+        175,
+        176,
+        179,
+        180,
+        181,
+        183,
+        188,
+        189,
+        190,
+        192
+      ]
+    }
+  }
+}

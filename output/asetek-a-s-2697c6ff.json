@@ -1,0 +1,245 @@
+{
+  "company_id": "asetek-a-s-2697c6ff",
+  "input_name": "Asetek A/S",
+  "country_code": "DK",
+  "clean_name": "asetek",
+  "status": "ok",
+  "lei": "213800ATZVDWWKJ8NI47",
+  "lei_record": {
+    "lei": "213800ATZVDWWKJ8NI47",
+    "legal_name": "ASETEK A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "34880522"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "213800ATZVDWWKJ8NI47-2025-12-31-ESEF-DK-0",
+    "period_end": "2025-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/213800ATZVDWWKJ8NI47/2025-12-31/ESEF/DK/0/Asetek-2025-12-31-en/reports/Asetek-2025-12-31-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/213800ATZVDWWKJ8NI47/2025-12-31/ESEF/DK/0/Asetek-2025-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/213800ATZVDWWKJ8NI47/2025-12-31/ESEF/DK/0/213800ATZVDWWKJ8NI47-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/213800ATZVDWWKJ8NI47/2025-12-31/ESEF/DK/0/Asetek-2025-12-31-en/reports/Asetek-2025-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 41497000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 41,497,000 USD (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 41497000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 84779000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 84,779,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 84779000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "Asetek A/S designs, manufactures, and sells high-quality gaming hardware, including liquid cooling solutions for PC and enthusiast gaming brands, and products for SimSports gaming experiences. These products are sold to a global customer base, including major PC manufacturers and sim racers.",
+    "quote": "Asetek is a developer and manufacturer of high-quality gaming hardware. Since 2000, we design, manufacture, and sell high-quality liquid cooling soluons to most major PC and Enthusiast gaming brands.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Liquid cooling",
+      "SimSports"
+    ],
+    "description": "Asetek A/S is a publicly listed company on Nasdaq Copenhagen. It operates with two reported segments: Liquid cooling and SimSports.",
+    "quote": "The Asetek share is listed on Nasdaq Copenhagen. In 2025, the Company reports on two segments, Liquid cooling and SimSports.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 84779000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 84,779,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 84779000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 84,779,000 vs equity+liabilities 84,779,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 0: probable hallucination. Quote: 'Asetek is a developer and manufacturer of high-quality gaming hardware. Since 2000, we design, manufacture, and sell high-quality liquid cooling solu\\ue79fons to most major PC and Enthusiast gaming brands.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 0: probable hallucination. Quote: 'The Asetek share is listed on Nasdaq Copenhagen. In 2025, the Company reports on two segments, Liquid cooling and SimSports.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 213800ATZVDWWKJ8NI47)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 0: probable hallucination. Quote: 'Asetek is a developer and manufacturer of high-quality gaming hardware. Since 2000, we design, manufacture, and sell high-quality liquid cooling solu\\ue79fons to most major PC and Enthusiast gaming brands.'",
+    "business_structure: quote not found in chunk 0: probable hallucination. Quote: 'The Asetek share is listed on Nasdaq Copenhagen. In 2025, the Company reports on two segments, Liquid cooling and SimSports.'"
+  ],
+  "extracted_at": "2026-10-18T06:21:45+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "asetek-a-s-2697c6ff_d2f2534c419cc37136dbf261ba03a1ed494b92c9.md",
+    "chunks_total": 28,
+    "chunks_sent": {
+      "financials": [
+        7,
+        10,
+        16,
+        17,
+        22
+      ],
+      "qualitative": [
+        0,
+        1,
+        8,
+        16,
+        18,
+        24,
+        26
+      ]
+    }
+  }
+}

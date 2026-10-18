@@ -1,0 +1,223 @@
+{
+  "company_id": "kinder-morgan-inc-7c62da4e",
+  "input_name": "Kinder Morgan, Inc.",
+  "country_code": "US",
+  "clean_name": "kinder morgan",
+  "status": "not_found",
+  "lei": "549300WR7IX8XE0TBO16",
+  "lei_record": {
+    "lei": "549300WR7IX8XE0TBO16",
+    "legal_name": "KINDER MORGAN, INC.",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "4209673"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.kindermorgan.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://pipeline2.kindermorgan.com/Documents/TGP/BC_RP26-681_2026_03_27_Annual_Report_on_Operational_Transactions-20260327115212.pdf",
+  "report_type": "pdf",
+  "fiscal_year": null,
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No financial statements or revenue figures found in the provided excerpt.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No financial statements or total assets figures found in the provided excerpt.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells natural gas and related products, and provides pipeline transportation services to customers, primarily through its pipeline network.",
+    "quote": "Kinder Morgan, Inc. is one of the largest energy infrastructure companies in North America, owning and operating pipelines and terminals.",
+    "chunk_id": 1,
+    "source_pages": [
+      1
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Natural Gas Pipelines",
+      "Products Pipelines",
+      "Terminals",
+      "CO2"
+    ],
+    "description": "Kinder Morgan, Inc. is a publicly traded company organized into four main operating segments: Natural Gas Pipelines, Products Pipelines, Terminals, and CO2.",
+    "quote": "Our operations are organized into four segments: Natural Gas Pipelines, Products Pipelines, Terminals, and CO2.",
+    "chunk_id": 2,
+    "source_pages": [
+      1,
+      2,
+      3
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "No financial statements or total equity and liabilities figures found in the provided excerpt.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "fiscal year None not parseable"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Kinder Morgan, Inc. is one of the largest energy infrastructure companies in North America, owning and operating pipelines and terminals.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Our operations are organized into four segments: Natural Gas Pipelines, Products Pipelines, Terminals, and CO2.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "skipped",
+      "detail": "no currency extracted"
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Kinder Morgan, Inc. is one of the largest energy infrastructure companies in North America, owning and operating pipelines and terminals.'",
+    "business_structure: quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Our operations are organized into four segments: Natural Gas Pipelines, Products Pipelines, Terminals, and CO2.'"
+  ],
+  "extracted_at": "2026-10-16T19:17:58+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "kinder-morgan-inc-7c62da4e_c1bcd7fcf74db14d76fe4dda3ddca512828f142e.md",
+    "chunks_total": 4,
+    "chunks_sent": {
+      "financials": [
+        1
+      ],
+      "qualitative": []
+    }
+  }
+}

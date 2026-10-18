@@ -1,0 +1,281 @@
+{
+  "company_id": "embracer-group-ab-1e5ff65c",
+  "input_name": "Embracer Group AB",
+  "country_code": "SE",
+  "clean_name": "embracer group",
+  "status": "ok",
+  "lei": "549300RFXXKT652HB549",
+  "lei_record": {
+    "lei": "549300RFXXKT652HB549",
+    "legal_name": "Embracer Group AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556582-6558"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://embracer.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://embracer.com/wp-content/uploads/2026/06/Embracer-Group-publicerar-arsredovisning-202526-260618.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025/26",
+  "period_end_date": "2026-03-31",
+  "period_end_date_raw": "2026-03-31",
+  "revenue": {
+    "value": 15906.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Nettoomsättning",
+    "scope": "consolidated",
+    "quote": "Nettoomsättning 15 906",
+    "chunk_id": 246,
+    "not_found_reason": null,
+    "value_full": 15906000000.0,
+    "source_pages": [
+      132
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 26798.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "SUMMA TILLGÅNGAR",
+    "scope": "consolidated",
+    "quote": "SUMMA TILLGÅNGAR 26 798",
+    "chunk_id": 248,
+    "not_found_reason": null,
+    "value_full": 26798000000.0,
+    "source_pages": [
+      133,
+      134
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "advertising",
+      "licensing_royalties",
+      "services"
+    ],
+    "description": "Embracer Group sells digital and physical PC, console, and mobile games, as well as entertainment products like comic books and merchandise. It distributes games digitally via third-party stores and physically via retailers. Mobile games revenue includes advertising and in-app purchases. Entertainment segment includes licensing of IP rights and distribution of comics, films, and merchandise.",
+    "quote": "Försäljning av digitala spel sker via tredjeparts digitala butiker som Microsofts Xbox Games Store, Sonys PSN, Epic, Discord och Steam. Försäljning av fysiska spel sker via både tredjeparts online-återförsäljare och fysiska butiker.",
+    "chunk_id": 41,
+    "source_pages": [
+      21
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (PUBL)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "PC/Console Games",
+      "Mobile Games",
+      "Entertainment & Services"
+    ],
+    "description": "Embracer Group AB (publ) is a publicly listed Swedish company organized into three main operating segments: PC/Console Games, Mobile Games, and Entertainment & Services. It operates globally through six operative groups and owns over 400 IPs and brands.",
+    "quote": "Idag och till och med publiceringen av Embracer Groups Q1rapport för räkenskapsåret 2026/27 är Embracer Group organiserat i tre rörelsesegment: PC/Console Games, Mobile Games och Entertainment & Services.",
+    "chunk_id": 20,
+    "source_pages": [
+      13,
+      14
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 26798.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "SUMMA EGET KAPITAL OCH SKULDER",
+      "scope": "consolidated",
+      "quote": "SUMMA EGET KAPITAL OCH SKULDER 26 798",
+      "chunk_id": 249,
+      "not_found_reason": null,
+      "value_full": 26798000000.0,
+      "source_pages": [
+        134,
+        135
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 246"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 248"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 249"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 26,798,000,000 vs equity+liabilities 26,798,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025/26 (latest year 2026, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 41"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 20"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T18:49:00+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "embracer-group-ab-1e5ff65c_9324aa227ed820f946c16d2a29cba221e02f6c33.md",
+    "chunks_total": 419,
+    "chunks_sent": {
+      "financials": [
+        37,
+        43,
+        47,
+        56,
+        198,
+        245,
+        246,
+        247,
+        248,
+        249,
+        264,
+        265,
+        266,
+        268,
+        271,
+        272,
+        274,
+        284,
+        315,
+        350,
+        355,
+        356,
+        357,
+        360,
+        363,
+        367,
+        381,
+        383
+      ],
+      "qualitative": [
+        0,
+        20,
+        38,
+        41,
+        43,
+        45,
+        46,
+        49,
+        57,
+        60,
+        101,
+        160,
+        170,
+        173,
+        202,
+        204,
+        233,
+        245,
+        262,
+        271,
+        348,
+        359,
+        363,
+        376,
+        384
+      ]
+    }
+  }
+}

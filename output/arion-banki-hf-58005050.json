@@ -1,0 +1,246 @@
+{
+  "company_id": "arion-banki-hf-58005050",
+  "input_name": "Arion Banki HF",
+  "country_code": "SE",
+  "clean_name": "arion banki",
+  "status": "needs_review",
+  "lei": "RIL4VBPDB0M7Z3KXSF19",
+  "lei_record": {
+    "lei": "RIL4VBPDB0M7Z3KXSF19",
+    "legal_name": "Arion banki hf.",
+    "country": "IS",
+    "jurisdiction": "IS",
+    "legal_form_id": "E4KB",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "5810080150"
+  },
+  "lei_lookup": "exact name match (registered outside SE)",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "RIL4VBPDB0M7Z3KXSF19-2025-12-31-ESEF-IS-0",
+    "period_end": "2025-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/RIL4VBPDB0M7Z3KXSF19/2025-12-31/ESEF/IS/0/RIL4VBPDB0M7Z3KXSF19-2025-12-31-1-en/reports/RIL4VBPDB0M7Z3KXSF19-2025-12-31-1-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/RIL4VBPDB0M7Z3KXSF19/2025-12-31/ESEF/IS/0/RIL4VBPDB0M7Z3KXSF19-2025-12-31-1-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/RIL4VBPDB0M7Z3KXSF19/2025-12-31/ESEF/IS/0/RIL4VBPDB0M7Z3KXSF19-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/RIL4VBPDB0M7Z3KXSF19/2025-12-31/ESEF/IS/0/RIL4VBPDB0M7Z3KXSF19-2025-12-31-1-en/reports/RIL4VBPDB0M7Z3KXSF19-2025-12-31-1-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 129777.0,
+    "unit": "millions",
+    "currency": "ISK",
+    "label_in_report": "Interest income",
+    "scope": "consolidated",
+    "quote": "Interest income ........................................................................................................................................... 129,777",
+    "chunk_id": 9,
+    "not_found_reason": null,
+    "value_full": 129777000000.0,
+    "source_pages": [
+      22,
+      23,
+      24,
+      25
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 1755765000000.0,
+    "unit": "units",
+    "currency": "ISK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 1,755,765,000,000 ISK (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1755765000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "interest_income",
+      "services"
+    ],
+    "description": "The company generates revenue primarily from interest on loans and deposits, and from fees and commissions for various financial services. It also earns income from insurance services.",
+    "quote": "Net interest income ................................... 1,387 29,890 16,163 5,315 (75) 6 (144) 52,542 Net fee and commission income ............... 5,686 6,844 3,261 796 (180) 210 530 17,147 Insurance service results .......................... - - - - 2,174 (5) (58) 2,111",
+    "chunk_id": 13,
+    "source_pages": [
+      30,
+      31,
+      32
+    ]
+  },
+  "business_structure": {
+    "legal_form": "hf.",
+    "is_listed": false,
+    "ultimate_parent": null,
+    "segments": [
+      "Markets & Stefnir",
+      "Corporate & Investment Banking (CIB)",
+      "Retail Banking",
+      "Treasury",
+      "Vördur tryggingar hf."
+    ],
+    "description": "Arion Bank hf. is an independent financial institution organized into five operating segments. These segments serve different customer groups and provide specialized financial and insurance services.",
+    "quote": "Operating segments Markets & Stefnir Corporate & Investment Banking (CIB) Retail Banking Treasury Vördur tryggingar hf.",
+    "chunk_id": 12,
+    "source_pages": [
+      26,
+      27,
+      28,
+      29
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 1755765000000.0,
+      "unit": "units",
+      "currency": "ISK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 1,755,765,000,000 ISK (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 1755765000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "quote not found in chunk 9: probable hallucination. Quote: 'Interest income ........................................................................................................................................... 129,777'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 1,755,765,000,000 vs equity+liabilities 1,755,765,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 13"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 12"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI RIL4VBPDB0M7Z3KXSF19)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:20:27+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "arion-banki-hf-58005050_408d22e09905159facb2c6eb6ec8cef25f1d191f.md",
+    "chunks_total": 68,
+    "chunks_sent": {
+      "financials": [
+        9,
+        13,
+        33
+      ],
+      "qualitative": [
+        7,
+        12,
+        13,
+        36,
+        40
+      ]
+    }
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "company_id": "accentro-real-estate-ag-cd9a4de0",
+  "input_name": "Accentro Real Estate AG",
+  "country_code": "DE",
+  "clean_name": "accentro real estate",
+  "status": "not_found",
+  "lei": "391200VKLY50XNAFCM46",
+  "lei_record": {
+    "lei": "391200VKLY50XNAFCM46",
+    "legal_name": "Accentro Real Estate AG",
+    "country": "DE",
+    "jurisdiction": "DE",
+    "legal_form_id": "6QQB",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "HRB 103691"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "filing": null,
+  "website": "http://www.accentro.ag",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://live-files.ynfinite.de/v1/file/6abbb27354de2a5b8b225ff2/invitation_to_submit_offers_260929.pdf",
+  "report_type": "pdf",
+  "fiscal_year": null,
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No revenue figure found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "No total assets figure found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells real estate properties and provides related services to customers, likely through direct sales channels.",
+    "quote": "Accentro Real Estate AG is a real estate company.",
+    "chunk_id": 1,
+    "source_pages": [
+      3,
+      4
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AG",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Real Estate Sales",
+      "Real Estate Services"
+    ],
+    "description": "Accentro Real Estate AG is organized as an AG and operates through segments focused on real estate sales and services.",
+    "quote": "The company operates through the segments Real Estate Sales and Real Estate Services.",
+    "chunk_id": 2,
+    "source_pages": [
+      5
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "No total equity and liabilities figure found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "fiscal year None not parseable"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Accentro Real Estate AG is a real estate company.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'The company operates through the segments Real Estate Sales and Real Estate Services.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "skipped",
+      "detail": "no currency extracted"
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Accentro Real Estate AG is a real estate company.'",
+    "business_structure: quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'The company operates through the segments Real Estate Sales and Real Estate Services.'"
+  ],
+  "extracted_at": "2026-10-17T07:06:55+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": false
+    },
+    "markdown_file": "accentro-real-estate-ag-cd9a4de0_4c5cbdd4da504b800e91258935868d0e51ca5b95.md",
+    "chunks_total": 5,
+    "chunks_sent": {
+      "financials": [],
+      "qualitative": []
+    }
+  }
+}

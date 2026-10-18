@@ -1,0 +1,196 @@
+{
+  "company_id": "bakkafrost-p-f-810e4baf",
+  "input_name": "Bakkafrost P/F",
+  "country_code": "DK",
+  "clean_name": "bakkafrost p f",
+  "status": "needs_review",
+  "lei": "2138007LH7OP4V112978",
+  "lei_record": {
+    "lei": "2138007LH7OP4V112978",
+    "legal_name": "P/F BAKKAFROST",
+    "country": "FO",
+    "jurisdiction": "FO",
+    "legal_form_id": "E0FR",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "1724"
+  },
+  "lei_lookup": "exact name match (registered outside DK)",
+  "website": "https://www.bakkafrost.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.bakkafrost.com/fo/um-okkum/tidindi/bakkafrost-presents-2022-annual-and-sustainability-report",
+  "report_type": "html",
+  "fiscal_year": "2022",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": 1.9,
+    "unit": "billions",
+    "currency": "DKK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "Revenue 1,900 million DKK",
+    "chunk_id": 1,
+    "not_found_reason": null,
+    "value_full": 1900000000.0,
+    "source_pages": [
+      1
+    ]
+  },
+  "total_assets": {
+    "value": 3.3,
+    "unit": "billions",
+    "currency": "DKK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 3,300 million DKK",
+    "chunk_id": 1,
+    "not_found_reason": null,
+    "value_full": 3300000000.0,
+    "source_pages": [
+      1
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "Bakkafrost sells salmon products to customers, primarily through its own production and processing facilities.",
+    "quote": "Bakkafrost is a fully integrated salmon farming company.",
+    "chunk_id": 2,
+    "source_pages": null
+  },
+  "business_structure": {
+    "legal_form": "P/F",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Farming",
+      "Processing",
+      "Sales and Marketing"
+    ],
+    "description": "Bakkafrost P/F is a publicly listed company organized into Farming, Processing, and Sales and Marketing segments.",
+    "quote": "The Group is organised into three segments: Farming, Processing and Sales and Marketing.",
+    "chunk_id": 3,
+    "source_pages": null
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 3.3,
+      "unit": "billions",
+      "currency": "DKK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 3,300 million DKK",
+      "chunk_id": 1,
+      "not_found_reason": null,
+      "value_full": 3300000000.0,
+      "source_pages": [
+        1
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Revenue 1,900 million DKK'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "1.9 not in quote 'Revenue 1,900 million DKK'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Total assets 3,300 million DKK'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "3.3 not in quote 'Total assets 3,300 million DKK'"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 1 not sent): probable hallucination. Quote: 'Total equity and liabilities 3,300 million DKK'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "3.3 not in quote 'Total equity and liabilities 3,300 million DKK'"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 3,300,000,000 vs equity+liabilities 3,300,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "2022 (latest year 2022, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'Bakkafrost is a fully integrated salmon farming company.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 3 not sent): probable hallucination. Quote: 'The Group is organised into three segments: Farming, Processing and Sales and Marketing.'"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T22:32:08+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "bakkafrost-p-f-810e4baf_1c00681de24fef5863c6c7308486190011c40b57.md",
+    "chunks_total": 2,
+    "chunks_sent": {
+      "financials": [],
+      "qualitative": []
+    }
+  }
+}

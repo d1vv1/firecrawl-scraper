@@ -1,0 +1,233 @@
+{
+  "company_id": "strategic-partners-3cedaf2c",
+  "input_name": "Strategic Partners",
+  "country_code": "DK",
+  "clean_name": "strategic partners",
+  "status": "ok",
+  "lei": "54930025OZD2GGSQ7L42",
+  "lei_record": {
+    "lei": "54930025OZD2GGSQ7L42",
+    "legal_name": "Strategic Partners A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "32266355"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "54930025OZD2GGSQ7L42-2025-12-31-ESEF-DK-0",
+    "period_end": "2025-12-31",
+    "viewer_url": "https://filings.xbrl.org/54930025OZD2GGSQ7L42/2025-12-31/ESEF/DK/0/SP-2025-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/54930025OZD2GGSQ7L42/2025-12-31/ESEF/DK/0/54930025OZD2GGSQ7L42-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/54930025OZD2GGSQ7L42/2025-12-31/ESEF/DK/0/SP-2025-12-31-en/reports/SP-2025-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 309000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 309,000 DKK (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 309000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 19539000.0,
+    "unit": "units",
+    "currency": "DKK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 19,539,000 DKK (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 19539000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "other"
+    ],
+    "description": "The company has limited ongoing business operations and does not report distinct revenue streams from product sales, services, or other typical categories. It holds investment properties and strategic investments.",
+    "quote": "The Company is managed and operated as one business unit that is reflected in the internal reporting.",
+    "chunk_id": 3,
+    "source_pages": [
+      8,
+      9,
+      10,
+      11
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "one business unit"
+    ],
+    "description": "Strategic Partners A/S is a Danish public limited company listed on Nasdaq Copenhagen. It operates as a single business unit and owns two subsidiaries in the process of liquidation.",
+    "quote": "Strategic Partners A/S (the “Company\") is headquartered in Herlev, Denmark and is publicly traded on Nasdaq Copenhagen.",
+    "chunk_id": 3,
+    "source_pages": [
+      8,
+      9,
+      10,
+      11
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 19539000.0,
+      "unit": "units",
+      "currency": "DKK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 19,539,000 DKK (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 19539000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 19,539,000 vs equity+liabilities 19,539,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 3"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 3"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 54930025OZD2GGSQ7L42"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:18:08+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "strategic-partners-3cedaf2c_ee5f9417b41fb3179656eafe36630d6a9b15e24c.md",
+    "chunks_total": 12,
+    "chunks_sent": {
+      "financials": [
+        0,
+        2,
+        3,
+        4,
+        6
+      ],
+      "qualitative": [
+        1,
+        3,
+        9
+      ]
+    }
+  }
+}

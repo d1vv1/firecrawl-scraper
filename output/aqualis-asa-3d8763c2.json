@@ -1,0 +1,260 @@
+{
+  "company_id": "aqualis-asa-3d8763c2",
+  "input_name": "Aqualis ASA",
+  "country_code": "NO",
+  "clean_name": "aqualis",
+  "status": "ok",
+  "lei": "5967007LIEEXZXH86O96",
+  "lei_record": {
+    "lei": "5967007LIEEXZXH86O96",
+    "legal_name": "ABL GROUP ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "913757424"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://aqualis-group.com",
+  "website_source": "search",
+  "website_score": 0.86,
+  "report_url": "https://aqualis-group.com/wp-content/uploads/2026/05/ABL-Group-ASA-Annual-Report-2025-final.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 354358.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total Revenue",
+    "scope": "consolidated",
+    "quote": "Total Revenue 4 354,358",
+    "chunk_id": 210,
+    "not_found_reason": null,
+    "value_full": 354358000.0,
+    "source_pages": [
+      87,
+      88
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 196131.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 196,131",
+    "chunk_id": 211,
+    "not_found_reason": null,
+    "value_full": 196131000.0,
+    "source_pages": [
+      88
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company generates revenue primarily by providing high-end consultancy services to clients in the global energy, shipping, and insurance industries. A smaller portion of its revenue comes from software sales.",
+    "quote": "The Group focuses on the provision of high-end consultancy services to the global energy, shipping and insurance industries.",
+    "chunk_id": 83,
+    "source_pages": [
+      41
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "ABL",
+      "AGR",
+      "OWC",
+      "Longitude"
+    ],
+    "description": "ABL Group ASA is the ultimate holding company for its operations. The company is organized into four distinct business segments: ABL, AGR, OWC, and Longitude.",
+    "quote": "The group consists of 4 business segments – ABL, AGR, OWC and Longitude.",
+    "chunk_id": 115,
+    "source_pages": [
+      47,
+      48
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 196131.0,
+      "unit": "thousands",
+      "currency": "USD",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 196,131",
+      "chunk_id": 211,
+      "not_found_reason": null,
+      "value_full": 196131000.0,
+      "source_pages": [
+        88
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 210"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 211"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 211"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 196,131,000 vs equity+liabilities 196,131,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 83"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 115"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:18:14+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "aqualis-asa-3d8763c2_e6349dcbc6d3d3718abc67546668281dd92d3320.md",
+    "chunks_total": 334,
+    "chunks_sent": {
+      "financials": [
+        6,
+        12,
+        85,
+        139,
+        141,
+        144,
+        151,
+        167,
+        210,
+        211,
+        227,
+        233,
+        234,
+        237,
+        254,
+        288,
+        289,
+        295
+      ],
+      "qualitative": [
+        83,
+        87,
+        115,
+        117,
+        122,
+        123,
+        129,
+        130,
+        134,
+        151,
+        179,
+        189,
+        197,
+        210,
+        211,
+        234
+      ]
+    }
+  }
+}

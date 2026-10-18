@@ -1,0 +1,271 @@
+{
+  "company_id": "wilson-asa-dcef0792",
+  "input_name": "Wilson ASA",
+  "country_code": "NO",
+  "clean_name": "wilson",
+  "status": "ok",
+  "lei": "5967007LIEEXZXHIZK23",
+  "lei_record": {
+    "lei": "5967007LIEEXZXHIZK23",
+    "legal_name": "WILSON ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "882 757 692"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.wilsonship.no",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://st-wilsonas.nf.cdn.netflexapp.com/1778495720/wilson-annual-report-2025-1.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "31.12.2025",
+  "revenue": {
+    "value": 375110.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "Freight revenue",
+    "scope": "consolidated",
+    "quote": "Freight revenue 375 110",
+    "chunk_id": 145,
+    "not_found_reason": null,
+    "value_full": 375110000.0,
+    "source_pages": [
+      39
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 487060.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 487 060",
+    "chunk_id": 147,
+    "not_found_reason": null,
+    "value_full": 487060000.0,
+    "source_pages": [
+      40
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services"
+    ],
+    "description": "Wilson ASA provides maritime transport services by chartering and operating dry cargo ships for customers across Europe, using owned and chartered vessels.",
+    "quote": "Wilson is a well-established and leading short sea shipping company headquartered in Bergen, Norway. With a flexible fleet, Wilson specializes in the transportation of dry bulk and general cargo across Europe.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": null,
+    "ultimate_parent": "Caiano Maritime AS",
+    "segments": [
+      "Wilson EuroCarriers AS",
+      "Wilson Agency Norway AS",
+      "Wilson Agency B.V.",
+      "HSW Logistics GmbH",
+      "Nesskip ehf.",
+      "Wilson Shipowning AS",
+      "Wilson Shipowning V",
+      "Wilson Ship AS",
+      "Wilson Ship Management AS",
+      "Wilson Management AS",
+      "Wilson Crewing Agency Ltd.",
+      "Wilson Crewing Agency Odessa Ltd.",
+      "Wilson Ship Management Poland Sp. z o. o."
+    ],
+    "description": "Wilson ASA is a Norwegian public limited company majority owned by Caiano Maritime AS. It operates through multiple subsidiaries covering ship owning, management, chartering, agency, logistics, and crewing services across Europe.",
+    "quote": "Wilson ASA is majority owned (90.9%) by Caiano Maritime AS, which has its registered office at Strandgaten 92, 5528 Haugesund.",
+    "chunk_id": 153,
+    "source_pages": [
+      42
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 487060.0,
+      "unit": "thousands",
+      "currency": "EUR",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES 487 060",
+      "chunk_id": 148,
+      "not_found_reason": null,
+      "value_full": 487060000.0,
+      "source_pages": [
+        41
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 145"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 147"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 148"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 487,060,000 vs equity+liabilities 487,060,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 0"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 153"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:46:46+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "wilson-asa-dcef0792_3a2895eb7593213c876d0ae406fbf373b995fe99.md",
+    "chunks_total": 220,
+    "chunks_sent": {
+      "financials": [
+        1,
+        5,
+        14,
+        15,
+        26,
+        145,
+        147,
+        148,
+        156,
+        157,
+        158,
+        165,
+        166,
+        181,
+        195,
+        200,
+        205
+      ],
+      "qualitative": [
+        0,
+        2,
+        5,
+        8,
+        17,
+        29,
+        47,
+        52,
+        53,
+        56,
+        76,
+        130,
+        153,
+        169,
+        172,
+        180,
+        197,
+        199,
+        207,
+        210,
+        212
+      ]
+    }
+  }
+}

@@ -1,0 +1,343 @@
+{
+  "company_id": "aker-biomarine-asa-a5eff262",
+  "input_name": "Aker BioMarine ASA",
+  "country_code": "NO",
+  "clean_name": "aker biomarine",
+  "status": "ok",
+  "lei": "549300V34T6VWDSYWE64",
+  "lei_record": {
+    "lei": "549300V34T6VWDSYWE64",
+    "legal_name": "AKER BIOMARINE ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "913 915 062"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://akerbiomarine.com",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.akerbiomarine.com/hubfs/AKBM%20Annual%20Report%202025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 218.1,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales\n2|218.1",
+    "chunk_id": 89,
+    "not_found_reason": null,
+    "value_full": 218100000.0,
+    "source_pages": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 388.9,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets||388.9",
+    "chunk_id": 89,
+    "not_found_reason": null,
+    "value_full": 388900000.0,
+    "source_pages": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company primarily generates revenue by selling krill oil supplements and other krill-derived products. These are sold as B2B ingredients to nutritional brands and as processed, packaged, and branded products to retailers and consumers.",
+    "quote": "The Human Health Ingredients segment sells B2B krill oil supplements to nutritional brands for humans around world.",
+    "chunk_id": 96,
+    "source_pages": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Human Health Ingredients",
+      "Consumer Health Products",
+      "Emerging Businesses"
+    ],
+    "description": "Aker BioMarine ASA is a holding company that operates through three main segments: Human Health Ingredients, Consumer Health Products, and Emerging Businesses.",
+    "quote": "Following the sale of Feed Ingredients in 2024, the Company has three segments.",
+    "chunk_id": 96,
+    "source_pages": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 388.9,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities||388.9",
+      "chunk_id": 89,
+      "not_found_reason": null,
+      "value_full": 388900000.0,
+      "source_pages": [
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 89"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 89"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 89"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 388,900,000 vs equity+liabilities 388,900,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 96: probable hallucination. Quote: 'The Human Health Ingredients segment sells B2B krill oil supplements to nutritional brands for humans around world.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 96: probable hallucination. Quote: 'Following the sale of Feed Ingredients in 2024, the Company has three segments.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 96: probable hallucination. Quote: 'The Human Health Ingredients segment sells B2B krill oil supplements to nutritional brands for humans around world.'",
+    "business_structure: quote not found in chunk 96: probable hallucination. Quote: 'Following the sale of Feed Ingredients in 2024, the Company has three segments.'"
+  ],
+  "extracted_at": "2026-10-18T06:12:33+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "aker-biomarine-asa-a5eff262_311c8056c49384dc5a0e83f40a797e36b3917e64.md",
+    "chunks_total": 152,
+    "chunks_sent": {
+      "financials": [
+        3,
+        79,
+        89,
+        95,
+        101,
+        130,
+        132
+      ],
+      "qualitative": [
+        17,
+        80,
+        96,
+        97,
+        109,
+        139
+      ]
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "company_id": "block-inc-a1f7f142",
+  "input_name": "Block, Inc.",
+  "country_code": "US",
+  "clean_name": "block",
+  "status": "ok",
+  "lei": "549300OHIIUWSTIZME52",
+  "lei_record": {
+    "lei": "549300OHIIUWSTIZME52",
+    "legal_name": "BLOCK, INC.",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "4699855"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "edgar",
+  "filing": {
+    "type": "edgar",
+    "filing_id": "0001628280-26-012254",
+    "period_end": "2025-12-31",
+    "form": "10-K",
+    "cik": 1512673,
+    "report_url": "https://www.sec.gov/Archives/edgar/data/1512673/000162828026012254/xyz-20251231.htm",
+    "viewer_url": null,
+    "package_url": null
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://www.sec.gov/Archives/edgar/data/1512673/000162828026012254/xyz-20251231.htm",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 24193683000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Revenues",
+    "scope": "consolidated",
+    "quote": "us-gaap:Revenues = 24,193,683,000 USD (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 24193683000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Revenues"
+  },
+  "total_assets": {
+    "value": 39549887000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "us-gaap:Assets = 39,549,887,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 39549887000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company sells payment processing services, software, and hardware products to sellers across various industries and geographies, primarily through its integrated commerce platform.",
+    "quote": "Square's commerce enablement products include our payments, software, and hardware products, which together provide an integrated operating system for local commerce.",
+    "chunk_id": 3,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Networks",
+      "Commerce Enablement"
+    ],
+    "description": "Block, Inc. is a publicly listed company organized into operating segments including Networks and Commerce Enablement, offering integrated commerce and payment solutions.",
+    "quote": "•Networks: Our strategy includes strengthening local commerce ecosystems by enabling deeper connections among sellers, their customers, staff, and other sellers, and by leveraging Cash App’s network of monthly transacting actives to expand seller reach and support ecosystem engagement.",
+    "chunk_id": 3,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 39549887000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "LiabilitiesAndStockholdersEquity",
+      "scope": "consolidated",
+      "quote": "us-gaap:LiabilitiesAndStockholdersEquity = 39,549,887,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 39549887000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "us-gaap:LiabilitiesAndStockholdersEquity"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Revenues in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Revenues in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 39,549,887,000 vs equity+liabilities 39,549,887,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 3"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 3"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (SEC CIK 1512673)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T06:50:34+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "block-inc-a1f7f142_11923348a33db3ee9c22af04c3ea58be81de3dde.md",
+    "chunks_total": 82,
+    "chunks_sent": {
+      "financials": [
+        38,
+        46,
+        52,
+        53,
+        54,
+        55,
+        62,
+        77
+      ],
+      "qualitative": [
+        3,
+        21,
+        29,
+        68
+      ]
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "company_id": "abb-ltd-c4d3e67c",
+  "input_name": "ABB Ltd",
+  "country_code": "SE",
+  "clean_name": "abb",
+  "status": "ok",
+  "lei": "5493000LKVGOO9PELI61",
+  "lei_record": {
+    "lei": "5493000LKVGOO9PELI61",
+    "legal_name": "ABB Ltd",
+    "country": "CH",
+    "jurisdiction": "CH",
+    "legal_form_id": "3EKS",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "CHE-101.049.653"
+  },
+  "lei_lookup": "exact name match (registered outside SE)",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://global.abb",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://library.e.abb.com/public/d4151daf6c4340f4925c513ad557fba9/ABB%20Integrated%20Report%202025%20-%20Value%20Creation.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": 33220.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Revenues",
+    "scope": "consolidated",
+    "quote": "ABB Group 33,220",
+    "chunk_id": 40,
+    "not_found_reason": null,
+    "value_full": 33220000000.0,
+    "source_pages": [
+      22,
+      23
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "unclear",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "Total assets not found in the provided excerpts. A balance sheet or statement of financial position is not present.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "ABB sells electrification and automation products and solutions to customers. A significant portion of its revenues are covered by local production.",
+    "quote": "our localized electrification and automation products and solutions offering.",
+    "chunk_id": 9,
+    "source_pages": [
+      6
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Ltd",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Divisions",
+      "Business areas",
+      "Business lines"
+    ],
+    "description": "The company operates with a decentralized business model, where divisions are the highest operational level, organized into business areas and business lines. These divisions have full ownership and accountability for their strategies and performance.",
+    "quote": "We operate in a decentralized setup where our divisions represent the highest operational level, empowered with full ownership and accountability.",
+    "chunk_id": 11,
+    "source_pages": [
+      7
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "unclear",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "Total equity and liabilities not found in the provided excerpts. A balance sheet or statement of financial position is not present.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 40"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 9"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 11"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:10:36+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "abb-ltd-c4d3e67c_ff5840cf05b5a59895f4c3984dcf7dabc1ac84af.md",
+    "chunks_total": 122,
+    "chunks_sent": {
+      "financials": [
+        5,
+        9,
+        15,
+        22,
+        23,
+        24,
+        25,
+        26,
+        30,
+        32,
+        36,
+        37,
+        38,
+        39,
+        40,
+        48,
+        53,
+        54,
+        55,
+        56,
+        65,
+        72,
+        73,
+        83,
+        85
+      ],
+      "qualitative": [
+        9,
+        10,
+        11,
+        13,
+        14,
+        16,
+        17,
+        28,
+        35,
+        84
+      ]
+    }
+  }
+}

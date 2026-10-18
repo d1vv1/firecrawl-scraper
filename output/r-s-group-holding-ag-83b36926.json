@@ -1,0 +1,267 @@
+{
+  "company_id": "r-s-group-holding-ag-83b36926",
+  "input_name": "R&S Group Holding AG",
+  "country_code": "CH",
+  "clean_name": "r and s group",
+  "status": "needs_review",
+  "lei": "549300BKHOM0Y2GJZJ41",
+  "lei_record": {
+    "lei": "549300BKHOM0Y2GJZJ41",
+    "legal_name": "R&S Group Holding AG",
+    "country": "CH",
+    "jurisdiction": "CH",
+    "legal_form_id": "MVII",
+    "entity_status": "ACTIVE",
+    "registration_status": "LAPSED",
+    "registered_as": "CHE499708558"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://ir.the-rsgroup.com",
+  "website_source": "search+lei",
+  "website_score": 0.79,
+  "report_url": "https://ir.the-rsgroup.com/media/document/0fec9fb0-b91a-4deb-aef1-5cb2afb265d8/assets/RSG_Annual_report_2025_def.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "31.12.2025",
+  "revenue": {
+    "value": 414843.0,
+    "unit": "thousands",
+    "currency": "CHF",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales 414'843",
+    "chunk_id": 114,
+    "not_found_reason": null,
+    "value_full": 414843000.0,
+    "source_pages": [
+      68,
+      69
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 286075.0,
+    "unit": "thousands",
+    "currency": "CHF",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 286'075",
+    "chunk_id": 115,
+    "not_found_reason": null,
+    "value_full": 286075000.0,
+    "source_pages": [
+      69,
+      70
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "R&S Group sells transformers and related equipment mainly to utility, infrastructure, renewable, and industrial customers through manufacturing sites in Europe and the Middle East.",
+    "quote": "Revenue is generated mainly from the sale of transformers and related equipment on an order or project basis, complemented in selected cases by aftermarket and service activities over the asset life cycle.",
+    "chunk_id": 21,
+    "source_pages": [
+      18
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AG",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [],
+    "description": "R&S Group Holding AG is a Swiss public company listed on the SIX Swiss Exchange. It operates through subsidiaries manufacturing electrical infrastructure products, managed as a single segment.",
+    "quote": "The registered shares (security no. 110797983; ISIN CH1107979838) are listed on the SIX Swiss Exchange.",
+    "chunk_id": 47,
+    "source_pages": [
+      34
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 286075.0,
+      "unit": "thousands",
+      "currency": "CHF",
+      "label_in_report": "Total liabilities and equity/ deficit",
+      "scope": "consolidated",
+      "quote": "Total liabilities and equity/ deficit 286'075",
+      "chunk_id": 115,
+      "not_found_reason": null,
+      "value_full": 286075000.0,
+      "source_pages": [
+        69,
+        70
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 134 (model cited chunk 114)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 115"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 115"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 286,075,000 vs equity+liabilities 286,075,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 21"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 47"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "fail",
+      "detail": "none of ['r and s group'] appears in the report's first 20 pages: possibly another company's report"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:10:38+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "r-s-group-holding-ag-83b36926_0aff4a93d813afc44eb5b8704a4647be0b560596.md",
+    "chunks_total": 208,
+    "chunks_sent": {
+      "financials": [
+        0,
+        1,
+        4,
+        21,
+        25,
+        26,
+        27,
+        28,
+        29,
+        96,
+        103,
+        114,
+        115,
+        132,
+        134,
+        158,
+        164,
+        166,
+        171,
+        196,
+        197,
+        198
+      ],
+      "qualitative": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        19,
+        20,
+        21,
+        23,
+        30,
+        47,
+        48,
+        119,
+        133
+      ]
+    }
+  }
+}

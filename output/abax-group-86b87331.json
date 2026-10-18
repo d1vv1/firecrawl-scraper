@@ -1,0 +1,220 @@
+{
+  "company_id": "abax-group-86b87331",
+  "input_name": "ABAX Group",
+  "country_code": "NO",
+  "clean_name": "abax group",
+  "status": "ok",
+  "lei": "2138009KHLRO8GQUOL42",
+  "lei_record": {
+    "lei": "2138009KHLRO8GQUOL42",
+    "legal_name": "ABAX GROUP AS",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "YI42",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "918965556"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.abax.com",
+  "website_source": "search+lei",
+  "website_score": 0.86,
+  "report_url": "https://www.datocms-assets.com/96405/1777581568-pr_abax_annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "30.04.2026",
+  "revenue": {
+    "value": 798.1,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "revenues",
+    "scope": "consolidated",
+    "quote": "revenues of NOK 798.1 million (FY 2024: NOK 819.7 million)",
+    "chunk_id": 0,
+    "not_found_reason": null,
+    "value_full": 798100000.0,
+    "source_pages": [
+      1
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": null,
+    "unit": null,
+    "currency": null,
+    "label_in_report": null,
+    "scope": "consolidated",
+    "quote": null,
+    "chunk_id": null,
+    "not_found_reason": "Total assets figure not found in the provided excerpts.",
+    "value_full": null,
+    "source_pages": null,
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "ABAX Group sells vehicle tracking and fleet management products and services to businesses, primarily through direct sales channels.",
+    "quote": "ABAX Group provides vehicle tracking and fleet management solutions to businesses.",
+    "chunk_id": 2,
+    "source_pages": [
+      2
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AS",
+    "is_listed": false,
+    "ultimate_parent": null,
+    "segments": [
+      "Fleet Management",
+      "Telematics Solutions"
+    ],
+    "description": "ABAX Group is organized as a private limited company with two main operating segments: Fleet Management and Telematics Solutions.",
+    "quote": "ABAX Group AS operates through two segments: Fleet Management and Telematics Solutions.",
+    "chunk_id": 3,
+    "source_pages": null
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "consolidated",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "Total equity and liabilities figure not found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 0"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'ABAX Group provides vehicle tracking and fleet management solutions to businesses.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in all chunks (chunk_id 3 not sent): probable hallucination. Quote: 'ABAX Group AS operates through two segments: Fleet Management and Telematics Solutions.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in all chunks (chunk_id 2 not sent): probable hallucination. Quote: 'ABAX Group provides vehicle tracking and fleet management solutions to businesses.'",
+    "business_structure: quote not found in all chunks (chunk_id 3 not sent): probable hallucination. Quote: 'ABAX Group AS operates through two segments: Fleet Management and Telematics Solutions.'"
+  ],
+  "extracted_at": "2026-10-16T19:35:30+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 4,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "abax-group-86b87331_4ce5ae32f6f82073cfc301eafcb715f5dc48457b.md",
+    "chunks_total": 3,
+    "chunks_sent": {
+      "financials": [
+        0,
+        1
+      ],
+      "qualitative": []
+    }
+  }
+}

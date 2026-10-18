@@ -1,0 +1,10 @@
+{
+  "company_id": "holdbart-7636e694",
+  "company_name": "Holdbart",
+  "country_code": "NO",
+  "error_type": "WebsiteNotFoundError",
+  "error": "Best website match studocu.com has score 0.30 (< 0.5). Not confident it is official; pass --website URL.",
+  "network_error": false,
+  "firecrawl_credits_used": 2,
+  "at": "2026-10-17T06:52:49+00:00"
+}

@@ -1,0 +1,10 @@
+{
+  "company_id": "7c-solarparken-ag-a8fa3a42",
+  "company_name": "7C Solarparken AG",
+  "country_code": "DE",
+  "error_type": "ReportNotFoundError",
+  "error": "No annual report found on http://www.colexon.de (104 URLs checked). Pass --report-url URL.",
+  "network_error": false,
+  "firecrawl_credits_used": 5,
+  "at": "2026-10-17T06:49:48+00:00"
+}

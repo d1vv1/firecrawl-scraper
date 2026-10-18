@@ -1,0 +1,232 @@
+{
+  "company_id": "first-solar-inc-35f10d10",
+  "input_name": "First Solar, Inc.",
+  "country_code": "US",
+  "clean_name": "first solar",
+  "status": "ok",
+  "lei": "549300NPYMLM4NHTOF27",
+  "lei_record": {
+    "lei": "549300NPYMLM4NHTOF27",
+    "legal_name": "FIRST SOLAR, INC.",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "3658676"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.firstsolar.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://s202.q4cdn.com/499595574/files/doc_financials/2025/ar/FSLR-2025-Annual-Report-web.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 5219376.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales     . . . . . . . . . . . . . . . .|. ..\n$ 5,219,376",
+    "chunk_id": 83,
+    "not_found_reason": null,
+    "value_full": 5219376000.0,
+    "source_pages": [
+      71,
+      72
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 13321310.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets     . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .|.<br>$13,321,310",
+    "chunk_id": 123,
+    "not_found_reason": null,
+    "value_full": 13321310000.0,
+    "source_pages": [
+      92
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "First Solar sells advanced thin film solar modules primarily to customers in the United States, including hyperscale data centers and local utilities, through direct manufacturing and supply chain channels.",
+    "quote": "For the year, we sold a record 17.5 gigawatts (GW) of solar modules and generated net sales of approximately $5.2 billion",
+    "chunk_id": 2,
+    "source_pages": [
+      4
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [],
+    "description": "First Solar, Inc. is a technology company that designs and manufactures advanced thin film solar modules. It operates primarily in the United States and focuses on manufacturing and supply chain localization, innovation, and customer partnership.",
+    "quote": "First Solar is a technology company at our core. We design and manufacture advanced thin film solar modules",
+    "chunk_id": 1,
+    "source_pages": [
+      3
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": null,
+      "unit": null,
+      "currency": null,
+      "label_in_report": null,
+      "scope": "consolidated",
+      "quote": null,
+      "chunk_id": null,
+      "not_found_reason": "Total equity and liabilities figure not found in the provided excerpts.",
+      "value_full": null,
+      "source_pages": null,
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 83"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 123"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no quote"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "skipped",
+      "detail": "total assets or total equity and liabilities missing"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T05:54:39+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "first-solar-inc-35f10d10_51c858deac5bd04251e1bc366153298513f90b4c.md",
+    "chunks_total": 194,
+    "chunks_sent": {
+      "financials": [
+        25,
+        44,
+        73,
+        83,
+        86,
+        122,
+        123,
+        140,
+        174,
+        187,
+        188
+      ],
+      "qualitative": [
+        1,
+        2,
+        7,
+        50
+      ]
+    }
+  }
+}

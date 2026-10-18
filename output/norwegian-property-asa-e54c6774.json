@@ -1,0 +1,237 @@
+{
+  "company_id": "norwegian-property-asa-e54c6774",
+  "input_name": "Norwegian Property ASA",
+  "country_code": "NO",
+  "clean_name": "norwegian property",
+  "status": "ok",
+  "lei": "5967007LIEEXZXGQFS44",
+  "lei_record": {
+    "lei": "5967007LIEEXZXGQFS44",
+    "legal_name": "NORWEGIAN PROPERTY ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "988622036"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "5967007LIEEXZXGQFS44-2024-12-31-ESEF-NO-0",
+    "period_end": "2024-12-31",
+    "viewer_url": "https://filings.xbrl.org/5967007LIEEXZXGQFS44/2024-12-31/ESEF/NO/0/5967007LIEEXZXGQFS44-2024-12-31-0-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/5967007LIEEXZXGQFS44/2024-12-31/ESEF/NO/0/5967007LIEEXZXGQFS44-2024-12-31-0-en.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/5967007LIEEXZXGQFS44/2024-12-31/ESEF/NO/0/5967007LIEEXZXGQFS44-2024-12-31-0-en/reports/5967007LIEEXZXGQFS44-2024-12-31-0-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 1386400000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 1,386,400,000 NOK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1386400000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 29884300000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 29,884,300,000 NOK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 29884300000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company sells rental access to commercial properties primarily to commercial companies and public-sector institutions, invoiced mostly quarterly in advance.",
+    "quote": "Rental income for commercial property 15, 16 1,386.4 1,109.6",
+    "chunk_id": 5,
+    "source_pages": [
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Commercial properties",
+      "Residential properties"
+    ],
+    "description": "Norwegian Property ASA is a public limited company owning and managing commercial properties in the Oslo region, with a joint venture in residential development. It reports two operating segments: Commercial properties and Residential properties.",
+    "quote": "The segmentation of operating profit, excluding the administrative owner costs, reflects the division into commercial property and residential property segments.",
+    "chunk_id": 17,
+    "source_pages": [
+      36,
+      37,
+      38,
+      39
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 29884300000.0,
+      "unit": "units",
+      "currency": "NOK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 29,884,300,000 NOK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 29884300000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 29,884,300,000 vs equity+liabilities 29,884,300,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 5"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 17"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 5967007LIEEXZXGQFS44"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:32:21+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "norwegian-property-asa-e54c6774_58d2c1e893c00a88c06079ef44121e6f75d60418.md",
+    "chunks_total": 29,
+    "chunks_sent": {
+      "financials": [
+        2,
+        3,
+        5,
+        9,
+        21
+      ],
+      "qualitative": [
+        5,
+        6,
+        7,
+        17,
+        23,
+        25
+      ]
+    }
+  }
+}

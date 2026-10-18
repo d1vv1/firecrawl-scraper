@@ -1,0 +1,238 @@
+{
+  "company_id": "autoliv-inc-640ca0cc",
+  "input_name": "Autoliv Inc",
+  "country_code": "SE",
+  "clean_name": "autoliv",
+  "status": "ok",
+  "lei": "5493005BQW8MFXOWCZ07",
+  "lei_record": {
+    "lei": "5493005BQW8MFXOWCZ07",
+    "legal_name": "Autoliv Aktiebolag",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556036-1981"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "edgar",
+  "filing": {
+    "type": "edgar",
+    "filing_id": "0001193125-26-058162",
+    "period_end": "2025-12-31",
+    "form": "10-K",
+    "cik": 1034670,
+    "report_url": "https://www.sec.gov/Archives/edgar/data/1034670/000119312526058162/alv-20251231.htm",
+    "viewer_url": null,
+    "package_url": null
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://www.sec.gov/Archives/edgar/data/1034670/000119312526058162/alv-20251231.htm",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 10815000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "scope": "consolidated",
+    "quote": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax = 10,815,000,000 USD (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 10815000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax"
+  },
+  "total_assets": {
+    "value": 8644000000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "us-gaap:Assets = 8,644,000,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 8644000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company manufactures and supplies passive safety systems, such as airbags, seatbelts, and steering wheels, as well as mobility safety solutions to car manufacturers.",
+    "quote": "The Company is a leading developer, manufacturer, and supplier of passive safety systems to the automotive industry",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5,
+      6
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "passive safety products"
+    ],
+    "description": "Autoliv Inc. is a Delaware corporation that functions as a holding company. It operates as a single reportable segment focused on passive safety products.",
+    "quote": "The Company is the single operating and reportable segment under ASC 280, Segment Reporting.",
+    "chunk_id": 39,
+    "source_pages": [
+      84,
+      85,
+      86,
+      87,
+      88
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 8644000000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "LiabilitiesAndStockholdersEquity",
+      "scope": "consolidated",
+      "quote": "us-gaap:LiabilitiesAndStockholdersEquity = 8,644,000,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 8644000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "us-gaap:LiabilitiesAndStockholdersEquity"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 8,644,000,000 vs equity+liabilities 8,644,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 39"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (SEC CIK 1034670)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:28:41+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "autoliv-inc-640ca0cc_8c9ee4d900c03bd9558e278e18b31e8a9314b044.md",
+    "chunks_total": 63,
+    "chunks_sent": {
+      "financials": [
+        32,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "qualitative": [
+        1,
+        3,
+        39
+      ]
+    }
+  }
+}

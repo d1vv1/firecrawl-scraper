@@ -1,0 +1,10 @@
+{
+  "company_id": "data-respons-asa-4299d30b",
+  "company_name": "Data Respons ASA",
+  "country_code": "NO",
+  "error_type": "ReportNotFoundError",
+  "error": "No annual report found on https://www.datarespons.com (1939 URLs checked). Pass --report-url URL.",
+  "network_error": false,
+  "firecrawl_credits_used": 5,
+  "at": "2026-10-17T06:54:13+00:00"
+}

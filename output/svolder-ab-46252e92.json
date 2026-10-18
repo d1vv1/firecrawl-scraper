@@ -1,0 +1,245 @@
+{
+  "company_id": "svolder-ab-46252e92",
+  "input_name": "Svolder AB",
+  "country_code": "SE",
+  "clean_name": "svolder",
+  "status": "ok",
+  "lei": "5493006ZVS6SHCKH6I37",
+  "lei_record": {
+    "lei": "5493006ZVS6SHCKH6I37",
+    "legal_name": "Svolder Aktiebolag",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556469-2019"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "5493006ZVS6SHCKH6I37-2024-08-31-ESEF-SE-0",
+    "period_end": "2024-08-31",
+    "viewer_url": "https://filings.xbrl.org/5493006ZVS6SHCKH6I37/2024-08-31/ESEF/SE/0/svolder-2024-08-31-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/5493006ZVS6SHCKH6I37/2024-08-31/ESEF/SE/0/svolder-2024-08-31-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/5493006ZVS6SHCKH6I37/2024-08-31/ESEF/SE/0/svolder-2024-08-31-sv/reports/svolder-2024-08-31-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-08-31",
+  "period_end_date_raw": "2024-08-31",
+  "revenue": {
+    "value": null,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": null,
+    "scope": "consolidated",
+    "quote": "Resultat från värdepappersförvaltning 895,4",
+    "chunk_id": 25,
+    "not_found_reason": "No explicit revenue or turnover figure found; investment income reported but no top-line revenue",
+    "value_full": null,
+    "source_pages": [
+      52,
+      53,
+      54,
+      55
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 6027800000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 6,027,800,000 SEK (2024-08-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 6027800000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "interest_income"
+    ],
+    "description": "The company earns revenue primarily from dividends and capital gains on its investments in Swedish small-cap stocks, and also earns interest income from bank deposits. It sells investment exposure to shareholders through its listed shares on Nasdaq Stockholm.",
+    "quote": "Verksamhetens huvudsakliga intäktsslag är Utdelningsintäkter och Resultat från värdepapper.",
+    "chunk_id": 27,
+    "source_pages": [
+      56,
+      57,
+      58,
+      59
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Investment operations"
+    ],
+    "description": "Svolder AB is a Swedish investment company listed on Nasdaq Stockholm. It operates mainly through a single segment focused on investment operations in Swedish small-cap stocks.",
+    "quote": "Bolagets A- och B-aktier är noterade på Nasdaq Stockholm.",
+    "chunk_id": 27,
+    "source_pages": [
+      56,
+      57,
+      58,
+      59
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 6027800000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 6,027,800,000 SEK (2024-08-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 6027800000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 25"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value or quote"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "skipped",
+      "detail": "no value"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 6,027,800,000 vs equity+liabilities 6,027,800,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 27: probable hallucination. Quote: 'Verksamhetens huvudsakliga intäktsslag är Utdelningsintäkter och Resultat från värdepapper.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 27"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 5493006ZVS6SHCKH6I37"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 27: probable hallucination. Quote: 'Verksamhetens huvudsakliga intäktsslag är Utdelningsintäkter och Resultat från värdepapper.'"
+  ],
+  "extracted_at": "2026-10-16T14:01:18+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 6,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "svolder-ab-46252e92_ee374473f9f1d160fe2d67523f0b0b7c4eb890d7.md",
+    "chunks_total": 38,
+    "chunks_sent": {
+      "financials": [
+        25,
+        26,
+        27,
+        28,
+        31,
+        36
+      ],
+      "qualitative": [
+        25,
+        26,
+        27,
+        28,
+        31,
+        34
+      ]
+    }
+  }
+}

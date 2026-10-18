@@ -1,0 +1,247 @@
+{
+  "company_id": "addtech-ab-5ec690af",
+  "input_name": "Addtech AB",
+  "country_code": "SE",
+  "clean_name": "addtech",
+  "status": "ok",
+  "lei": "549300QZ5U2IDRHPWL60",
+  "lei_record": {
+    "lei": "549300QZ5U2IDRHPWL60",
+    "legal_name": "Addtech AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556302-9726"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300QZ5U2IDRHPWL60-2024-03-31-ESEF-SE-0",
+    "period_end": "2024-03-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300QZ5U2IDRHPWL60/2024-03-31/ESEF/SE/0/549300QZ5U2IDRHPWL60-2024-03-31-sv/reports/549300QZ5U2IDRHPWL60-2024-03-31-sv.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300QZ5U2IDRHPWL60/2024-03-31/ESEF/SE/0/549300QZ5U2IDRHPWL60-2024-03-31-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300QZ5U2IDRHPWL60/2024-03-31/ESEF/SE/0/549300QZ5U2IDRHPWL60-2024-03-31-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300QZ5U2IDRHPWL60/2024-03-31/ESEF/SE/0/549300QZ5U2IDRHPWL60-2024-03-31-sv/reports/549300QZ5U2IDRHPWL60-2024-03-31-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-03-31",
+  "period_end_date_raw": "2024-03-31",
+  "revenue": {
+    "value": 20019000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 20,019,000,000 SEK (2023-04-01/2024-03-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 20019000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 16657000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 16,657,000,000 SEK (2024-03-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 16657000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Addtech sells high-technology products and solutions, including after-market services. It operates in selected niches, primarily serving customers in the manufacturing industry and infrastructure.",
+    "quote": "Addtech är en tekniklösningskoncern som tillför både tekniskt och ekonomiskt mervärde i länken mellan tillverkare och kund.",
+    "chunk_id": 14,
+    "source_pages": [
+      29,
+      30,
+      31,
+      32
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Energy",
+      "Process Technology",
+      "Industrial Solutions",
+      "Automation",
+      "Electrification"
+    ],
+    "description": "Addtech AB is a publicly listed technology solutions group. It is organized into several business areas: Energy, Process Technology, Industrial Solutions, Automation, and Electrification.",
+    "quote": "Addtechaktien är noterad på Nasdaq Stockholm.",
+    "chunk_id": 14,
+    "source_pages": [
+      29,
+      30,
+      31,
+      32
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 16657000000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 16,657,000,000 SEK (2024-03-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 16657000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 16,657,000,000 vs equity+liabilities 16,657,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 14: probable hallucination. Quote: 'Addtech är en tekniklösningskoncern som tillför både tekniskt och ekonomiskt mervärde i länken mellan tillverkare och kund.'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 14"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300QZ5U2IDRHPWL60)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 14: probable hallucination. Quote: 'Addtech är en tekniklösningskoncern som tillför både tekniskt och ekonomiskt mervärde i länken mellan tillverkare och kund.'"
+  ],
+  "extracted_at": "2026-10-18T06:12:48+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "addtech-ab-5ec690af_02113c7250ee29ee813aa1faec693a9c3bab333c.md",
+    "chunks_total": 61,
+    "chunks_sent": {
+      "financials": [
+        26,
+        27,
+        31,
+        39,
+        42
+      ],
+      "qualitative": [
+        14,
+        20,
+        28,
+        31,
+        39,
+        42
+      ]
+    }
+  }
+}

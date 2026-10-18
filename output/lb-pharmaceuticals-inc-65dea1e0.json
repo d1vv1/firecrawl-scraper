@@ -1,0 +1,231 @@
+{
+  "company_id": "lb-pharmaceuticals-inc-65dea1e0",
+  "input_name": "LB Pharmaceuticals Inc",
+  "country_code": "US",
+  "clean_name": "lb pharmaceuticals",
+  "status": "needs_review",
+  "lei": null,
+  "lei_record": null,
+  "lei_lookup": "no GLEIF record matching 'LB Pharmaceuticals Inc' in US",
+  "data_source": "edgar",
+  "filing": {
+    "type": "edgar",
+    "filing_id": "0001193125-26-126368",
+    "period_end": "2025-12-31",
+    "form": "10-K",
+    "cik": 1691082,
+    "report_url": "https://www.sec.gov/Archives/edgar/data/1691082/000119312526126368/lbrx-20251231.htm",
+    "viewer_url": null,
+    "package_url": null
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://www.sec.gov/Archives/edgar/data/1691082/000119312526126368/lbrx-20251231.htm",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 0.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "revenues",
+    "scope": "consolidated",
+    "quote": "To date, we have not recognized any revenues, including revenues from product sales.",
+    "chunk_id": 74,
+    "not_found_reason": null,
+    "value_full": 0.0,
+    "source_pages": [
+      168,
+      169,
+      170
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 312934000.0,
+    "unit": "units",
+    "currency": "USD",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "us-gaap:Assets = 312,934,000 USD (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 312934000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "us-gaap:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company develops and plans to commercialize pharmaceutical products, specifically novel therapies for neuropsychiatric disorders, targeting patients with schizophrenia, bipolar depression, and major depressive disorder. It intends to build internal commercialization capabilities and also explore partnerships for marketing and distribution.",
+    "quote": "We intend to build our global commercialization capabilities internally over time, such that we are able to commercialize any product candidate for which we may obtain regulatory approval.",
+    "chunk_id": 18,
+    "source_pages": [
+      43,
+      44,
+      45
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Neuropsychiatric Disorders"
+    ],
+    "description": "LB Pharmaceuticals Inc is a biopharmaceutical company focused on developing therapies for neuropsychiatric disorders. It currently operates as a single segment focused on drug development and plans to commercialize its lead product candidate internally and through partnerships.",
+    "quote": "Throughout this Annual Report on Form 10-K, the “Company,” “we,” “us” and “our” refer to LB Pharmaceuticals Inc.",
+    "chunk_id": 1,
+    "source_pages": [
+      4,
+      5,
+      6
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 312934000.0,
+      "unit": "units",
+      "currency": "USD",
+      "label_in_report": "LiabilitiesAndStockholdersEquity",
+      "scope": "consolidated",
+      "quote": "us-gaap:LiabilitiesAndStockholdersEquity = 312,934,000 USD (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 312934000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "us-gaap:LiabilitiesAndStockholdersEquity"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 74"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "0 not in quote 'To date, we have not recognized any revenues, including revenues from product sales.'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "value 0 is not > 0"
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag us-gaap:LiabilitiesAndStockholdersEquity in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 312,934,000 vs equity+liabilities 312,934,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 18"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 1"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (SEC CIK 1691082)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T06:50:01+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "lb-pharmaceuticals-inc-65dea1e0_27f0cfe335ba9d768bedb592fefeb6e6615117d0.md",
+    "chunks_total": 98,
+    "chunks_sent": {
+      "financials": [
+        30,
+        33,
+        45,
+        74,
+        97
+      ],
+      "qualitative": [
+        1,
+        18,
+        64,
+        69
+      ]
+    }
+  }
+}

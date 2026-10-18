@@ -1,0 +1,271 @@
+{
+  "company_id": "alk-abello-a-s-3258e8fd",
+  "input_name": "ALK-Abello A/S",
+  "country_code": "DK",
+  "clean_name": "alk abello",
+  "status": "ok",
+  "lei": "529900SGCREUZCZ7P020",
+  "lei_record": {
+    "lei": "529900SGCREUZCZ7P020",
+    "legal_name": "ALK-ABELLÓ A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "63717916"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://alk.net",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.alk.net/sites/default/files/ALK_Annual%20Report%202024.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2024",
+  "period_end_date": null,
+  "period_end_date_raw": "31 Dec. 2024",
+  "revenue": {
+    "value": 5537.0,
+    "unit": "millions",
+    "currency": "DKK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "Revenue|5,537|4,824",
+    "chunk_id": 51,
+    "not_found_reason": null,
+    "value_full": 5537000000.0,
+    "source_pages": [
+      20,
+      21
+    ]
+  },
+  "total_assets": {
+    "value": 8246.0,
+    "unit": "millions",
+    "currency": "DKK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets||8,246|6,726",
+    "chunk_id": 263,
+    "not_found_reason": null,
+    "value_full": 8246000000.0,
+    "source_pages": [
+      109
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "licensing_royalties",
+      "services"
+    ],
+    "description": "ALK sells allergy immunotherapy products including tablets, injections, drops, adrenaline autoinjectors, and nasal sprays primarily to distributors, pharmacies, and hospitals through global distribution channels.",
+    "quote": "ALK markets a diversified portfolio of products, including AIT tablets, injections, and drops as well as adrenaline autoinjectors and nasal sprays.",
+    "chunk_id": 11,
+    "source_pages": [
+      5,
+      6
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Allergy treatment"
+    ],
+    "description": "ALK-Abelló A/S is the parent company of the ALK Group, which operates mainly in one segment called Allergy treatment. The group consolidates subsidiaries controlled by the parent company.",
+    "quote": "Based on the internal reporting used by the Board of Management to assess the results of operations and allocation of resources, the ALK Group has identified one operating segment ‘Allergy treatment’.",
+    "chunk_id": 275,
+    "source_pages": [
+      114
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 8246.0,
+      "unit": "millions",
+      "currency": "DKK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities||8,246|6,726",
+      "chunk_id": 264,
+      "not_found_reason": null,
+      "value_full": 8246000000.0,
+      "source_pages": [
+        109,
+        110
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 51"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 263"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 264"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 8,246,000,000 vs equity+liabilities 8,246,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 11"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 275"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T19:28:40+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "alk-abello-a-s-3258e8fd_91d30f17b0516c808234e5390287e53d0f502998.md",
+    "chunks_total": 387,
+    "chunks_sent": {
+      "financials": [
+        14,
+        18,
+        19,
+        20,
+        43,
+        48,
+        49,
+        50,
+        51,
+        52,
+        57,
+        58,
+        60,
+        139,
+        172,
+        174,
+        179,
+        195,
+        204,
+        232,
+        260,
+        263,
+        264,
+        274,
+        276,
+        277,
+        348,
+        349,
+        350,
+        356,
+        376,
+        386
+      ],
+      "qualitative": [
+        0,
+        2,
+        4,
+        11,
+        12,
+        112,
+        114,
+        118,
+        121,
+        122,
+        126,
+        130,
+        142,
+        147,
+        154,
+        155,
+        161,
+        206,
+        212,
+        229,
+        238,
+        251,
+        268,
+        274,
+        275,
+        277,
+        318,
+        348,
+        352,
+        355,
+        356,
+        369,
+        372,
+        378
+      ]
+    }
+  }
+}

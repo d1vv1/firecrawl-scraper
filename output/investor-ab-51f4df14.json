@@ -1,0 +1,243 @@
+{
+  "company_id": "investor-ab-51f4df14",
+  "input_name": "Investor AB",
+  "country_code": "SE",
+  "clean_name": "investor",
+  "status": "ok",
+  "lei": "549300VEBQPHRZBKUX38",
+  "lei_record": {
+    "lei": "549300VEBQPHRZBKUX38",
+    "legal_name": "Investor Aktiebolag",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556013-8298"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "549300VEBQPHRZBKUX38-2024-12-31-ESEF-SE-0",
+    "period_end": "2024-12-31",
+    "viewer_url": "https://filings.xbrl.org/549300VEBQPHRZBKUX38/2024-12-31/ESEF/SE/0/investor-2024-12-31-0-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300VEBQPHRZBKUX38/2024-12-31/ESEF/SE/0/investor-2024-12-31-0-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300VEBQPHRZBKUX38/2024-12-31/ESEF/SE/0/investor-2024-12-31-0-sv/reports/investor-2024-12-31-0-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 63196000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 63,196,000,000 SEK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 63196000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 952090000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 952,090,000,000 SEK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 952090000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "other"
+    ],
+    "description": "Investor AB earns revenue mainly from dividends and value changes in its investments, and from sales of products and services in its subsidiaries. It sells products such as healthcare products, life science equipment, real estate leases, and grip and transfer solutions to customers via distributors and direct sales.",
+    "quote": "Nettoomsättning 7 63 196 59  643 Kostnad för sålda varor och tjänster 10 -32 679 -31 601 Försäljnings- och marknadsföringskostnader 10 -9 315 -8  687 Administrations-, forsknings och utvecklings- och övriga rörelsekostnader 10 -11 812 -11  823 Förvaltningskostnader 10 -7 5 5 -668 Andelar i intresseföretags resultat 20 -124 208 Rörelseresultat 6 122 090 132 7 44",
+    "chunk_id": 42,
+    "source_pages": [
+      89,
+      90,
+      91,
+      92
+    ]
+  },
+  "business_structure": {
+    "legal_form": "publ",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Noterade Bolag",
+      "Patricia Industries",
+      "Investeringar i EQT"
+    ],
+    "description": "Investor AB is a Swedish public limited company listed on a stock exchange. It operates through three segments: Noterade Bolag (listed holdings), Patricia Industries (wholly owned subsidiaries and other financial investments), and Investeringar i EQT (investments in EQT AB and EQT funds).",
+    "quote": "Investor delas upp i rörelsesegment utifrån hur verksamheten följs upp och utvärderas av koncernchefen och motsvarar bolagets interna struktur för styrning och rapportering. Verksamheten delas upp i de tre affärsområdena Noterade Bolag, Patricia Industries och Investeringar i EQT.",
+    "chunk_id": 52,
+    "source_pages": [
+      110,
+      111,
+      112,
+      113
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 952090000000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 952,090,000,000 SEK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 952090000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 952,090,000,000 vs equity+liabilities 952,090,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 42"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 52"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 549300VEBQPHRZBKUX38"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T14:17:55+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "investor-ab-51f4df14_12061762406191a01d6991a6a2b9525cb805fe86.md",
+    "chunks_total": 92,
+    "chunks_sent": {
+      "financials": [
+        33,
+        42,
+        43,
+        67,
+        79,
+        81
+      ],
+      "qualitative": [
+        29,
+        42,
+        45,
+        52,
+        55,
+        78,
+        80,
+        84
+      ]
+    }
+  }
+}

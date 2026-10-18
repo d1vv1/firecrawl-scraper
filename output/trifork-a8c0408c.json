@@ -1,0 +1,295 @@
+{
+  "company_id": "trifork-a8c0408c",
+  "input_name": "Trifork Group AG",
+  "country_code": "CH",
+  "clean_name": "trifork group",
+  "status": "ok",
+  "lei": "9845008F90ABE70DE713",
+  "lei_record": {
+    "lei": "9845008F90ABE70DE713",
+    "legal_name": "TRIFORK A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "LAPSED",
+    "registered_as": "20921897"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://investor.trifork.com",
+  "website_source": "search+lei",
+  "website_score": 0.86,
+  "report_url": "https://investor.trifork.com/wp-content/uploads/sites/4/2026/02/Trifork_FY25_Annual-report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 220852.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "Revenue from contracts with customers",
+    "scope": "consolidated",
+    "quote": "Revenue from contracts with customers 220,852",
+    "chunk_id": 290,
+    "not_found_reason": null,
+    "value_full": 220852000.0,
+    "source_pages": [
+      121
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 313060.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "Assets 313,060",
+    "chunk_id": 291,
+    "not_found_reason": null,
+    "value_full": 313060000.0,
+    "source_pages": [
+      121,
+      122,
+      123
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "licensing_royalties"
+    ],
+    "description": "Trifork sells self-developed software products and platforms mainly to corporate and public customers, delivering through long-term contracts and customer projects. It also licenses software products and operates IT systems including hosting and security services.",
+    "quote": "- Licensing of self-developed software products - Operating of software products and hosting and security services - The “Services” activities include the development of innovative software in customer projects (private and public).",
+    "chunk_id": 307,
+    "source_pages": [
+      130
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AG",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Products",
+      "Services",
+      "Labs",
+      "Other"
+    ],
+    "description": "Trifork Group AG is the parent company of the Trifork Group, which is organized into four operating segments: Products, Services, Labs, and Other. The shares are traded on the NASDAQ Copenhagen.",
+    "quote": "The Group's activities are divided into four segments: - “Products” focuses on deliveries based on self-developed software products and operations of IT-systems, including conferences. - “Services” focuses on development of innovative software for private and public customers. - “Labs” focuses on investments in tech startup companies and is the Group's driver for R&D innovation. - \"Other\" comprises mainly general corporate activities. The registered shares of the Company are traded on the NASDAQ Copenhagen.",
+    "chunk_id": 298,
+    "source_pages": [
+      127
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 313060.0,
+      "unit": "thousands",
+      "currency": "EUR",
+      "label_in_report": "Liabilities and shareholders' equity",
+      "scope": "consolidated",
+      "quote": "Liabilities and shareholders' equity 313,060",
+      "chunk_id": 291,
+      "not_found_reason": null,
+      "value_full": 313060000.0,
+      "source_pages": [
+        121,
+        122,
+        123
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 290"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 291"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 291"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 313,060,000 vs equity+liabilities 313,060,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "fail",
+      "detail": "quote not found in chunk 307: probable hallucination. Quote: '- Licensing of self-developed software products - Operating of software products and hosting and security services - The “Services” activities include the development of innovative software in custome…'"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 298: probable hallucination. Quote: \"The Group's activities are divided into four segments: - “Products” focuses on deliveries based on self-developed software products and operations of IT-systems, including conferences. - “Services” fo…\""
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "revenue_model: quote not found in chunk 307: probable hallucination. Quote: '- Licensing of self-developed software products - Operating of software products and hosting and security services - The “Services” activities include the development of innovative software in custome…'",
+    "business_structure: quote not found in chunk 298: probable hallucination. Quote: \"The Group's activities are divided into four segments: - “Products” focuses on deliveries based on self-developed software products and operations of IT-systems, including conferences. - “Services” fo…\""
+  ],
+  "extracted_at": "2026-10-16T19:04:44+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "trifork-a8c0408c_7e57d6963b81ab886c6c1ca07fc19b9c5d9225cf.md",
+    "chunks_total": 443,
+    "chunks_sent": {
+      "financials": [
+        2,
+        11,
+        13,
+        14,
+        15,
+        20,
+        28,
+        29,
+        30,
+        181,
+        204,
+        207,
+        209,
+        210,
+        211,
+        214,
+        241,
+        289,
+        290,
+        291,
+        310,
+        312,
+        319,
+        399,
+        403,
+        405,
+        406,
+        407,
+        414,
+        415,
+        416,
+        441
+      ],
+      "qualitative": [
+        7,
+        29,
+        30,
+        67,
+        106,
+        115,
+        119,
+        120,
+        121,
+        132,
+        134,
+        136,
+        142,
+        150,
+        153,
+        162,
+        168,
+        170,
+        181,
+        208,
+        211,
+        214,
+        215,
+        276,
+        295,
+        298,
+        301,
+        305,
+        307,
+        308,
+        309
+      ]
+    }
+  }
+}

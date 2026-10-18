@@ -1,0 +1,258 @@
+{
+  "company_id": "DK001",
+  "input_name": "Novo Nordisk A/S",
+  "country_code": "DK",
+  "clean_name": "novo nordisk",
+  "status": "needs_review",
+  "lei": "549300DAQ1CVT6CXN342",
+  "lei_record": {
+    "lei": "549300DAQ1CVT6CXN342",
+    "legal_name": "NOVO NORDISK A/S",
+    "country": "DK",
+    "jurisdiction": "DK",
+    "legal_form_id": "ZRPO",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "24256790"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.novonordisk.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://annualreport.novonordisk.com/2025/_assets/downloads/novo-nordisk-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December",
+  "revenue": {
+    "value": 309064.0,
+    "unit": "millions",
+    "currency": "DKK",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales|2.1, 2.2|309,064|290,403|232,261",
+    "chunk_id": 252,
+    "not_found_reason": null,
+    "value_full": 309064000000.0,
+    "source_pages": [
+      81,
+      82,
+      83,
+      84
+    ]
+  },
+  "total_assets": {
+    "value": 542902.0,
+    "unit": "millions",
+    "currency": "DKK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets||542,902|465,630|17%",
+    "chunk_id": 254,
+    "not_found_reason": null,
+    "value_full": 542902000000.0,
+    "source_pages": [
+      85,
+      86
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Novo Nordisk sells pharmaceutical products primarily for obesity, diabetes, cardiovascular and rare diseases to healthcare providers and patients worldwide through direct sales and marketing channels.",
+    "quote": "Novo Nordisk operates in two segments based on therapies: Obesity and Diabetes care and Rare disease, representing the entirety of the Group's operations.",
+    "chunk_id": 273,
+    "source_pages": [
+      89
+    ]
+  },
+  "business_structure": {
+    "legal_form": "A/S",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Obesity and Diabetes care",
+      "Rare disease"
+    ],
+    "description": "Novo Nordisk A/S is a publicly listed Danish company organized into two main operating segments: Obesity and Diabetes care, and Rare disease. It conducts research, development, manufacturing, and marketing of pharmaceutical products globally.",
+    "quote": "Novo Nordisk operates in two segments based on therapies: Obesity and Diabetes care and Rare disease, representing the entirety of the Group's operations.",
+    "chunk_id": 273,
+    "source_pages": [
+      89
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 542902.0,
+      "unit": "millions",
+      "currency": "DKK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities||542,902|465,630",
+      "chunk_id": 254,
+      "not_found_reason": null,
+      "value_full": 542902000000.0,
+      "source_pages": [
+        85,
+        86
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 252"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "quote not found in chunk 254: probable hallucination. Quote: 'Total assets||542,902|465,630|17%'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 254"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 542,902,000,000 vs equity+liabilities 542,902,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 273"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 273"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T17:54:10+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "dk001_0b75bb7246b07d16cdb41e7469250501a485f9b1.md",
+    "chunks_total": 425,
+    "chunks_sent": {
+      "financials": [
+        10,
+        161,
+        177,
+        179,
+        181,
+        252,
+        254,
+        258,
+        262,
+        268,
+        270,
+        275,
+        355,
+        357,
+        358,
+        381,
+        396,
+        397,
+        403,
+        423
+      ],
+      "qualitative": [
+        0,
+        1,
+        2,
+        8,
+        11,
+        99,
+        100,
+        105,
+        121,
+        142,
+        209,
+        227,
+        252,
+        258,
+        272,
+        273,
+        274,
+        291,
+        308,
+        395,
+        397,
+        398,
+        399,
+        400,
+        401,
+        402,
+        406,
+        408,
+        411,
+        412,
+        419
+      ]
+    }
+  }
+}

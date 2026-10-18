@@ -1,0 +1,280 @@
+{
+  "company_id": "glamox-3a9ec75b",
+  "input_name": "Glamox",
+  "country_code": "NO",
+  "clean_name": "glamox",
+  "status": "needs_review",
+  "lei": "635400T7NGIJLKUTWE52",
+  "lei_record": {
+    "lei": "635400T7NGIJLKUTWE52",
+    "legal_name": "GLAMOX AS",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "YI42",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "912007782"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://glamox.com",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.glamox.com/globalassets/corporate/investor-relations/reports-and-presentations/glamox/annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": null,
+  "period_end_date_raw": "31.12.2025",
+  "revenue": {
+    "value": 4430534.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "Total revenue and other operating income",
+    "scope": "consolidated",
+    "quote": "Total revenue and other operating income 4 446 534",
+    "chunk_id": 267,
+    "not_found_reason": null,
+    "value_full": 4430534000.0,
+    "source_pages": [
+      148
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 3281210.0,
+    "unit": "thousands",
+    "currency": "NOK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 2 215 069 3 281 210",
+    "chunk_id": 191,
+    "not_found_reason": null,
+    "value_full": 3281210000.0,
+    "source_pages": [
+      107
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "Glamox sells professional lighting solutions to customers worldwide, including commercial buildings and marine sectors, primarily through direct sales and wholesalers.",
+    "quote": "Glamox is a Norwegian industrial group that develops, manufactures, and distributes professional lighting solutions to customers worldwide.",
+    "chunk_id": 94,
+    "source_pages": [
+      48
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AS",
+    "is_listed": null,
+    "ultimate_parent": "GLX Holding AS",
+    "segments": [
+      "Professional Building Solutions (PBS)",
+      "Marine Offshore & Wind (MOW)"
+    ],
+    "description": "Glamox AS is the parent company of the Glamox Group, which operates through two segments: Professional Building Solutions and Marine Offshore & Wind. The group consists of 25 companies, all fully owned.",
+    "quote": "Glamox AS is the parent company in Glamox group consisting of 25 companies. All are directly or indirectly 100 % owned.",
+    "chunk_id": 245,
+    "source_pages": [
+      139,
+      140
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 3281210.0,
+      "unit": "thousands",
+      "currency": "NOK",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES 3 281 210",
+      "chunk_id": 191,
+      "not_found_reason": null,
+      "value_full": 3281210000.0,
+      "source_pages": [
+        107
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 267"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "4.43053e+06 not in quote 'Total revenue and other operating income 4 446 534'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 191"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 191"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 3,281,210,000 vs equity+liabilities 3,281,210,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 94"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 245"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:41:10+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "glamox-3a9ec75b_79923e2819bbe08aa0101d9aa6f8addaa48058ca.md",
+    "chunks_total": 319,
+    "chunks_sent": {
+      "financials": [
+        2,
+        3,
+        4,
+        6,
+        19,
+        30,
+        32,
+        56,
+        81,
+        125,
+        126,
+        127,
+        128,
+        150,
+        178,
+        191,
+        200,
+        201,
+        210,
+        253,
+        267,
+        268,
+        269,
+        270,
+        272,
+        273,
+        275,
+        277,
+        278,
+        285,
+        308
+      ],
+      "qualitative": [
+        2,
+        8,
+        10,
+        27,
+        57,
+        65,
+        66,
+        68,
+        76,
+        90,
+        94,
+        95,
+        99,
+        120,
+        129,
+        184,
+        188,
+        195,
+        200,
+        201,
+        245,
+        250,
+        275,
+        276,
+        286,
+        301,
+        308
+      ]
+    }
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "company_id": "aker-horizons-asa-6abc78a2",
+  "input_name": "Aker Horizons ASA",
+  "country_code": "NO",
+  "clean_name": "aker horizons",
+  "status": "ok",
+  "lei": "549300SX4Z9T612Q0N59",
+  "lei_record": {
+    "lei": "549300SX4Z9T612Q0N59",
+    "legal_name": "AKER HORIZONS ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "925 978 558"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300SX4Z9T612Q0N59-2024-12-31-ESEF-NO-0",
+    "period_end": "2024-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300SX4Z9T612Q0N59/2024-12-31/ESEF/NO/0/ah-2024-12-31-en/reports/ah-2024-12-31-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300SX4Z9T612Q0N59/2024-12-31/ESEF/NO/0/ah-2024-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300SX4Z9T612Q0N59/2024-12-31/ESEF/NO/0/ah-2024-12-31-en.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300SX4Z9T612Q0N59/2024-12-31/ESEF/NO/0/ah-2024-12-31-en/reports/ah-2024-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 2537000000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 2,537,000,000 NOK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 2537000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 31312000000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 31,312,000,000 NOK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 31312000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company generates revenue primarily from the sale of electricity produced by its solar and wind power generation assets. It also earns income from providing man-hour based engineering and maintenance services.",
+    "quote": "The revenue in Aker Horizons includes the sale of electricity generated from power generation assets in solar and wind parks and man-hour based sale of engineering or maintenance services.",
+    "chunk_id": 28,
+    "source_pages": [
+      61,
+      62,
+      63,
+      64,
+      65
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": "The Resource Group TRG AS",
+    "segments": [
+      "Aker Carbon Capture",
+      "Asset Development",
+      "Mainstream Renewable Power",
+      "Aker Horizons and holdings",
+      "Other"
+    ],
+    "description": "Aker Horizons ASA is a public limited company listed on the Oslo Stock Exchange, with The Resource Group TRG AS as its ultimate parent. It is organized into operating segments including Aker Carbon Capture, Asset Development, Mainstream Renewable Power, and Aker Horizons and holdings.",
+    "quote": "Aker Horizons ASA is a limited liability public company incorporated and domiciled in Norway, whose shares are traded on the Oslo Stock Exchange.",
+    "chunk_id": 26,
+    "source_pages": [
+      56,
+      57,
+      58,
+      59,
+      60
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 31312000000.0,
+      "unit": "units",
+      "currency": "NOK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 31,312,000,000 NOK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 31312000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 31,312,000,000 vs equity+liabilities 31,312,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 28"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 26"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300SX4Z9T612Q0N59)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:13:23+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "aker-horizons-asa-6abc78a2_00cbbd6565b4bc60fcae599dbd138bd79e4add7c.md",
+    "chunks_total": 53,
+    "chunks_sent": {
+      "financials": [
+        13,
+        17,
+        24,
+        28,
+        29,
+        30
+      ],
+      "qualitative": [
+        24,
+        26,
+        28,
+        44,
+        46,
+        51
+      ]
+    }
+  }
+}

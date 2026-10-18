@@ -1,0 +1,258 @@
+{
+  "company_id": "atea-asa-85d4a6ab",
+  "input_name": "Atea ASA",
+  "country_code": "NO",
+  "clean_name": "atea",
+  "status": "ok",
+  "lei": "5967007LIEEXZXINVS13",
+  "lei_record": {
+    "lei": "5967007LIEEXZXINVS13",
+    "legal_name": "ATEA ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "920237126"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.atea.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.atea.com/media/13glmdm5/atea-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 Dec 2025",
+  "revenue": {
+    "value": 37376.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "Revenue 37,376",
+    "chunk_id": 250,
+    "not_found_reason": null,
+    "value_full": 37376000000.0,
+    "source_pages": [
+      138,
+      139
+    ]
+  },
+  "total_assets": {
+    "value": 21341.0,
+    "unit": "millions",
+    "currency": "NOK",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets 21,341",
+    "chunk_id": 251,
+    "not_found_reason": null,
+    "value_full": 21341000000.0,
+    "source_pages": [
+      139,
+      140
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Atea sells IT infrastructure products and services to customers in the Nordic and Baltic regions through its geographical business segments and shared services.",
+    "quote": "Atea’s range of solutions can be categorized into three areas: Digital Workplace, Hybrid Platforms and Information Management.",
+    "chunk_id": 103,
+    "source_pages": [
+      46,
+      47
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Norway",
+      "Sweden",
+      "Denmark",
+      "Finland",
+      "The Baltics",
+      "AppXite",
+      "Group Shared Services"
+    ],
+    "description": "Atea ASA is the parent company of the Group, which operates primarily through geographical segments in Nordic and Baltic countries, plus shared services and software distribution segments.",
+    "quote": "Atea ASA is the parent company of the Group.",
+    "chunk_id": 41,
+    "source_pages": [
+      20
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 21341.0,
+      "unit": "millions",
+      "currency": "NOK",
+      "label_in_report": "Total equity and liabilities",
+      "scope": "consolidated",
+      "quote": "Total equity and liabilities 21,341",
+      "chunk_id": 251,
+      "not_found_reason": null,
+      "value_full": 21341000000.0,
+      "source_pages": [
+        139,
+        140
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 250"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 251"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 251"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 21,341,000,000 vs equity+liabilities 21,341,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 103"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 41"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T21:36:56+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "atea-asa-85d4a6ab_2fd96fb15a25d7c8bbeff1f37f6e10ac0236e21d.md",
+    "chunks_total": 426,
+    "chunks_sent": {
+      "financials": [
+        1,
+        143,
+        178,
+        184,
+        249,
+        250,
+        251,
+        261,
+        275,
+        276,
+        277,
+        280,
+        284,
+        286,
+        288,
+        289,
+        308,
+        309,
+        310,
+        344,
+        363,
+        365,
+        368,
+        374,
+        407,
+        408,
+        409,
+        410,
+        411
+      ],
+      "qualitative": [
+        16,
+        36,
+        37,
+        41,
+        49,
+        77,
+        85,
+        102,
+        103,
+        105,
+        107,
+        129,
+        131,
+        188,
+        249,
+        272,
+        354,
+        369
+      ]
+    }
+  }
+}

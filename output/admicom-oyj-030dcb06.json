@@ -1,0 +1,222 @@
+{
+  "company_id": "admicom-oyj-030dcb06",
+  "input_name": "Admicom Oyj",
+  "country_code": "FI",
+  "clean_name": "admicom",
+  "status": "ok",
+  "lei": "743700T7K2K149J4GB17",
+  "lei_record": {
+    "lei": "743700T7K2K149J4GB17",
+    "legal_name": "Admicom Oyj",
+    "country": "FI",
+    "jurisdiction": "FI",
+    "legal_form_id": "K6VE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "2800085-4"
+  },
+  "lei_lookup": "exact name match",
+  "website": "https://www.admicom.fi",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.admicom.com/hubfs/Admicom%20-%20sijoittajat/Admicom%20Oyj%20-%20Financial%20statements%202024_30.1.2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2024",
+  "period_end_date": null,
+  "period_end_date_raw": "31.12.2024",
+  "revenue": {
+    "value": 35572.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "REVENUE",
+    "scope": "consolidated",
+    "quote": "REVENUE 35 572",
+    "chunk_id": 20,
+    "not_found_reason": null,
+    "value_full": 35572000.0,
+    "source_pages": [
+      17,
+      18
+    ]
+  },
+  "total_assets": {
+    "value": 43497.0,
+    "unit": "thousands",
+    "currency": "EUR",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 43 497",
+    "chunk_id": 21,
+    "not_found_reason": null,
+    "value_full": 43497000.0,
+    "source_pages": [
+      18,
+      19,
+      20
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "subscription",
+      "services"
+    ],
+    "description": "Admicom sells project management and construction technology software solutions mainly to construction companies, including international customers, through direct contracts and acquisitions.",
+    "quote": "Admicom signed a contract with a large Swedish construction company operating in the Nordic countries for Admicom's project management solution package for its group-wide use.",
+    "chunk_id": 2,
+    "source_pages": [
+      2,
+      3
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Oyj",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [],
+    "description": "Admicom Oyj is the parent company of the group, operating in software and technology solutions for construction, with international expansion through acquisitions.",
+    "quote": "The Board of Directors of the parent company proposes a dividend of EUR 0,65 per registered share to be paid for the financial year 2024.",
+    "chunk_id": 2,
+    "source_pages": [
+      2,
+      3
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 43497.0,
+      "unit": "thousands",
+      "currency": "EUR",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES 43 497",
+      "chunk_id": 21,
+      "not_found_reason": null,
+      "value_full": 43497000.0,
+      "source_pages": [
+        18,
+        19,
+        20
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 20"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 21"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 21"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 43,497,000 vs equity+liabilities 43,497,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T19:53:11+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "admicom-oyj-030dcb06_9a8d5f655904512b0c6bb4748aed0d743696d125.md",
+    "chunks_total": 26,
+    "chunks_sent": {
+      "financials": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        14,
+        19,
+        20,
+        21,
+        25
+      ],
+      "qualitative": [
+        2,
+        4,
+        15
+      ]
+    }
+  }
+}

@@ -1,0 +1,276 @@
+{
+  "company_id": "panoro-energy-asa-afe54815",
+  "input_name": "Panoro Energy ASA",
+  "country_code": "GB",
+  "clean_name": "panoro energy",
+  "status": "ok",
+  "lei": "5967007LIEEXZXGWM030",
+  "lei_record": {
+    "lei": "5967007LIEEXZXGWM030",
+    "legal_name": "PANORO ENERGY ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "994 051 067"
+  },
+  "lei_lookup": "exact name match (registered outside GB)",
+  "data_source": "website",
+  "esef": null,
+  "website": "https://www.panoroenergy.com",
+  "website_source": "search+lei",
+  "website_score": 1.0,
+  "report_url": "https://www.panoroenergy.com/wp-content/uploads/2026/04/Panoro-Annual-Report-Web-Version.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "31 December 2025",
+  "revenue": {
+    "value": 216799.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total revenues",
+    "scope": "consolidated",
+    "quote": "|Total revenues||216,799|285,058|",
+    "chunk_id": 33,
+    "not_found_reason": null,
+    "value_full": 216799000.0,
+    "source_pages": [
+      15
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 674207.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total Assets",
+    "scope": "consolidated",
+    "quote": "|Total Assets||674,207|715,556|",
+    "chunk_id": 180,
+    "not_found_reason": null,
+    "value_full": 674207000.0,
+    "source_pages": [
+      86,
+      87
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "other"
+    ],
+    "description": "The company sells hydrocarbons (oil and gas) primarily from assets in Equatorial Guinea, Gabon, and Tunisia to three key customers. Sales include oil revenue and state profit oil, with some volumes sold to the Tunisian State Oil Company under domestic market obligations.",
+    "quote": "The oil revenue from continuing operations relates to sale of hydrocarbons from three assets, Block G in Equatorial Guinea, Dussafu in Gabon and TPS in Tunisia.",
+    "chunk_id": 230,
+    "source_pages": [
+      99,
+      100,
+      101,
+      102
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Equatorial Guinea",
+      "Gabon",
+      "Tunisia",
+      "South Africa",
+      "Corporate and others"
+    ],
+    "description": "Panoro Energy ASA is a Norwegian public limited company listed on the Oslo Stock Exchange. It operates through four main segments based on geographic regions: Equatorial Guinea, Gabon, Tunisia, and South Africa, plus a corporate segment for head office and service operations.",
+    "quote": "The parent company, Panoro Energy ASA (“the Company”), was incorporated on 28 April 2009 as a public limited company under the Norwegian Public Limited Companies Act.",
+    "chunk_id": 184,
+    "source_pages": [
+      89
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 674207.0,
+      "unit": "thousands",
+      "currency": "USD",
+      "label_in_report": "Total Equity and Liabilities",
+      "scope": "consolidated",
+      "quote": "|Total Equity and Liabilities||674,207|715,556|",
+      "chunk_id": 180,
+      "not_found_reason": null,
+      "value_full": 674207000.0,
+      "source_pages": [
+        86,
+        87
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 33"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 180"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 180"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 674,207,000 vs equity+liabilities 674,207,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 230"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 184"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T18:50:20+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 3,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "panoro-energy-asa-afe54815_b00acab5f98bdc30608912b000f6b820db483e23.md",
+    "chunks_total": 334,
+    "chunks_sent": {
+      "financials": [
+        2,
+        4,
+        5,
+        10,
+        31,
+        33,
+        35,
+        37,
+        164,
+        179,
+        180,
+        183,
+        191,
+        221,
+        222,
+        235,
+        266,
+        273,
+        288,
+        289
+      ],
+      "qualitative": [
+        2,
+        38,
+        39,
+        44,
+        71,
+        78,
+        82,
+        97,
+        103,
+        107,
+        121,
+        123,
+        128,
+        158,
+        184,
+        210,
+        211,
+        230,
+        235,
+        242,
+        263,
+        288,
+        289,
+        292,
+        293,
+        297
+      ]
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "company_id": "alfa-laval-ab-77c05cbf",
+  "input_name": "Alfa Laval AB",
+  "country_code": "SE",
+  "clean_name": "alfa laval",
+  "status": "ok",
+  "lei": "549300UCKT2UK88AG251",
+  "lei_record": {
+    "lei": "549300UCKT2UK88AG251",
+    "legal_name": "Alfa Laval AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556587-8054"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300UCKT2UK88AG251-2024-12-31-ESEF-SE-0",
+    "period_end": "2024-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300UCKT2UK88AG251/2024-12-31/ESEF/SE/0/549300UCKT2UK88AG251-2024-12-31-0-sv/reports/549300UCKT2UK88AG251-2024-12-31-0-sv.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300UCKT2UK88AG251/2024-12-31/ESEF/SE/0/549300UCKT2UK88AG251-2024-12-31-0-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300UCKT2UK88AG251/2024-12-31/ESEF/SE/0/549300UCKT2UK88AG251-2024-12-31-0-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300UCKT2UK88AG251/2024-12-31/ESEF/SE/0/549300UCKT2UK88AG251-2024-12-31-0-sv/reports/549300UCKT2UK88AG251-2024-12-31-0-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 66954000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 66,954,000,000 SEK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 66954000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 88803000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 88,803,000,000 SEK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 88803000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "The company generates revenue from selling products, systems, and digital solutions, as well as providing spare parts and services. It sells these offerings to customers in the energy, marine, food, and water sectors, as well as process industries, HVAC, and cooling markets.",
+    "quote": "Nettoomsättningen för både nyförsäljning och Service var i princip oförändrad jämfört med föregående år.",
+    "chunk_id": 28,
+    "source_pages": [
+      59,
+      60,
+      61,
+      62
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Energy",
+      "Food & Water",
+      "Marine",
+      "Operations & Övrigt"
+    ],
+    "description": "Alfa Laval AB (publ) is the parent company of the Alfa Laval group. Its operations are organized into four reported operating segments: Energy, Food & Water, Marine, and Operations & Övrigt.",
+    "quote": "Dessa fyra divisioner utgör Alfa Lavals fyra rörelsesegment.",
+    "chunk_id": 28,
+    "source_pages": [
+      59,
+      60,
+      61,
+      62
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 88803000000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 88,803,000,000 SEK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 88803000000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 88,803,000,000 vs equity+liabilities 88,803,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 28"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 28"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300UCKT2UK88AG251)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:13:39+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "alfa-laval-ab-77c05cbf_b112d0c271d739ffd19ff035b5f32001b405a278.md",
+    "chunks_total": 66,
+    "chunks_sent": {
+      "financials": [
+        33,
+        34,
+        56,
+        57,
+        63
+      ],
+      "qualitative": [
+        28,
+        34,
+        39,
+        47,
+        51
+      ]
+    }
+  }
+}

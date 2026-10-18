@@ -1,0 +1,248 @@
+{
+  "company_id": "crh-public-limited-company-019fa66b",
+  "input_name": "CRH public limited company",
+  "country_code": "IE",
+  "clean_name": "crh public",
+  "status": "needs_review",
+  "lei": "549300MIDJNNTH068E74",
+  "lei_record": {
+    "lei": "549300MIDJNNTH068E74",
+    "legal_name": "CRH PUBLIC LIMITED COMPANY",
+    "country": "IE",
+    "jurisdiction": "IE",
+    "legal_form_id": "VYAX",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "12965"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "esef": null,
+  "website": "http://www.crh.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.crh.com/wp-content/uploads/2026/03/2025-Annual-Report.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 37400.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total revenues",
+    "scope": "consolidated",
+    "quote": "Total revenues were $37.4 billion in 2025",
+    "chunk_id": 135,
+    "not_found_reason": null,
+    "value_full": 37400000000.0,
+    "source_pages": [
+      48
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 58329.0,
+    "unit": "millions",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets|58,329|50,613",
+    "chunk_id": 176,
+    "not_found_reason": null,
+    "value_full": 58329000000.0,
+    "source_pages": [
+      67,
+      68
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "CRH sells building materials, products, and services primarily to construction and infrastructure customers in North America, Europe, and Australia through a network of locations and integrated supply chains.",
+    "quote": "The _Americas Materials Solutions_ segment provides building materials, products and services for the construction and maintenance of public infrastructure and commercial and residential buildings in North America.",
+    "chunk_id": 232,
+    "source_pages": [
+      97,
+      98
+    ]
+  },
+  "business_structure": {
+    "legal_form": "public limited company",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Americas Materials Solutions",
+      "Americas Building Solutions",
+      "International Solutions"
+    ],
+    "description": "CRH plc is organized into three operating segments across two divisions: Americas Materials Solutions, Americas Building Solutions, and International Solutions. It operates globally with a focus on North America, Europe, and Australia.",
+    "quote": "For the year ended December 31, 2025, CRH was organized through three segments across two Divisions.",
+    "chunk_id": 50,
+    "source_pages": [
+      23
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 58329.0,
+      "unit": "millions",
+      "currency": "USD",
+      "label_in_report": "Total liabilities, redeemable noncontrolling interests and equity",
+      "scope": "consolidated",
+      "quote": "Total liabilities, redeemable noncontrolling interests and equity|58,329|50,613",
+      "chunk_id": 176,
+      "not_found_reason": null,
+      "value_full": 58329000000.0,
+      "source_pages": [
+        67,
+        68
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 135"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "fail",
+      "detail": "37400 not in quote 'Total revenues were $37.4 billion in 2025'"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 176"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 176"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 58,329,000,000 vs equity+liabilities 58,329,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 232"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 50"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:06:53+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "crh-public-limited-company-019fa66b_201ea1d15e72cb773c8ec01706c8d1555c94bd6f.md",
+    "chunks_total": 262,
+    "chunks_sent": {
+      "financials": [
+        135,
+        171,
+        176,
+        178,
+        184,
+        188,
+        215,
+        220,
+        223,
+        233,
+        234,
+        237
+      ],
+      "qualitative": [
+        8,
+        29,
+        34,
+        50,
+        61,
+        63,
+        65,
+        127,
+        197,
+        232
+      ]
+    }
+  }
+}

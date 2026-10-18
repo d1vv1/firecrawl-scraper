@@ -1,0 +1,247 @@
+{
+  "company_id": "arla-plast-ab-f81ad6af",
+  "input_name": "Arla Plast AB",
+  "country_code": "SE",
+  "clean_name": "arla plast",
+  "status": "ok",
+  "lei": "549300DGKW6UDAZV9R84",
+  "lei_record": {
+    "lei": "549300DGKW6UDAZV9R84",
+    "legal_name": "Arla Plast AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "556131-2611"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "549300DGKW6UDAZV9R84-2024-12-31-ESEF-SE-0",
+    "period_end": "2024-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/549300DGKW6UDAZV9R84/2024-12-31/ESEF/SE/0/arlaplastab-2024-12-31-0-sv/reports/arlaplastab-2024-12-31-0-sv.xhtml",
+    "viewer_url": "https://filings.xbrl.org/549300DGKW6UDAZV9R84/2024-12-31/ESEF/SE/0/arlaplastab-2024-12-31-0-sv/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/549300DGKW6UDAZV9R84/2024-12-31/ESEF/SE/0/arlaplastab-2024-12-31-0-sv.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/549300DGKW6UDAZV9R84/2024-12-31/ESEF/SE/0/arlaplastab-2024-12-31-0-sv/reports/arlaplastab-2024-12-31-0-sv.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2024",
+  "period_end_date": "2024-12-31",
+  "period_end_date_raw": "2024-12-31",
+  "revenue": {
+    "value": 1398000000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "RevenueFromContractsWithCustomers",
+    "scope": "consolidated",
+    "quote": "ifrs-full:RevenueFromContractsWithCustomers = 1,398,000,000 SEK (2024-01-01/2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1398000000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:RevenueFromContractsWithCustomers"
+  },
+  "total_assets": {
+    "value": 982800000.0,
+    "unit": "units",
+    "currency": "SEK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 982,800,000 SEK (2024-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 982800000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "licensing_royalties"
+    ],
+    "description": "The company primarily generates revenue from selling extruded plastic sheets. It also receives license fees from a subsidiary for production technology.",
+    "quote": "Koncernens intäkter utgörs huvudsakligen av försäljning av extruderade skivor i plastmaterial.",
+    "chunk_id": 17,
+    "source_pages": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "Sverige",
+      "Tjeckien",
+      "Tyskland",
+      "Spanien"
+    ],
+    "description": "Arla Plast AB is a Swedish limited company that operates through four geographical segments: Sweden, Czech Republic, Germany, and Spain. It is the parent company of a group.",
+    "quote": "VD bedömer verksamheten utifrån de fyra rörelsesegmenten Sverige, Tjeckien, Tyskland och Spanien",
+    "chunk_id": 16,
+    "source_pages": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 982800000.0,
+      "unit": "units",
+      "currency": "SEK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 982,800,000 SEK (2024-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 982800000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:RevenueFromContractsWithCustomers in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 982,800,000 vs equity+liabilities 982,800,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2024 (latest year 2024, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 17"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 16"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 549300DGKW6UDAZV9R84)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:21:14+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "arla-plast-ab-f81ad6af_152070212511e9320253037972b5f8120b41a560.md",
+    "chunks_total": 33,
+    "chunks_sent": {
+      "financials": [
+        13,
+        16,
+        17,
+        24,
+        26
+      ],
+      "qualitative": [
+        15,
+        16,
+        17,
+        19,
+        27,
+        28,
+        29
+      ]
+    }
+  }
+}

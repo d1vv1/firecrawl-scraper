@@ -1,0 +1,249 @@
+{
+  "company_id": "anora-group-plc-db99a8d5",
+  "input_name": "Anora Group Plc",
+  "country_code": "FI",
+  "clean_name": "anora group",
+  "status": "ok",
+  "lei": "52990007AXNSS4PNX352",
+  "lei_record": {
+    "lei": "52990007AXNSS4PNX352",
+    "legal_name": "Anora Group Oyj",
+    "country": "FI",
+    "jurisdiction": "FI",
+    "legal_form_id": "K6VE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "1505555-7"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "esef",
+  "filing": {
+    "type": "esef",
+    "filing_id": "52990007AXNSS4PNX352-2025-12-31-ESEF-FI-0",
+    "period_end": "2025-12-31",
+    "form": "ESEF",
+    "cik": null,
+    "report_url": "https://filings.xbrl.org/52990007AXNSS4PNX352/2025-12-31/ESEF/FI/0/52990007AXNSS4PNX352-2025-12-31-en/reports/52990007AXNSS4PNX352-2025-12-31-en.xhtml",
+    "viewer_url": "https://filings.xbrl.org/52990007AXNSS4PNX352/2025-12-31/ESEF/FI/0/52990007AXNSS4PNX352-2025-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/52990007AXNSS4PNX352/2025-12-31/ESEF/FI/0/52990007AXNSS4PNX352-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/52990007AXNSS4PNX352/2025-12-31/ESEF/FI/0/52990007AXNSS4PNX352-2025-12-31-en/reports/52990007AXNSS4PNX352-2025-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 657900000.0,
+    "unit": "units",
+    "currency": "EUR",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 657,900,000 EUR (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 657900000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 1032200000.0,
+    "unit": "units",
+    "currency": "EUR",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 1,032,200,000 EUR (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 1032200000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Anora sells its own and partner wines and spirits to customers through various retail channels, travel retail, and exports. It also sells industrial products to B2B customers and provides production, packaging, and logistics services to partners.",
+    "quote": "Anora’s business model is based on offering a complete portfolio of its own brands and a wide range of prominent international partner wines and spirits...",
+    "chunk_id": 5,
+    "source_pages": [
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Plc",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Wine",
+      "Spirits",
+      "Industrial"
+    ],
+    "description": "Anora Group Plc is the parent company of a group structured into three reportable segments: Wine, Spirits, and Industrial. Its shares are traded on a stock exchange.",
+    "quote": "The reportable segments of Anora in these consolidated financial statements consist of Wine, Spirits, and Industrial.",
+    "chunk_id": 55,
+    "source_pages": [
+      120,
+      121,
+      122,
+      123
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 1032200000.0,
+      "unit": "units",
+      "currency": "EUR",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 1,032,200,000 EUR (2025-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 1032200000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 1,032,200,000 vs equity+liabilities 1,032,200,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 5"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 55"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "filing found by the company's own identifier (LEI 52990007AXNSS4PNX352)"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:16:16+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "anora-group-plc-db99a8d5_3a2096432b47b0800eb04b6c9dbd3449d99c7969.md",
+    "chunks_total": 96,
+    "chunks_sent": {
+      "financials": [
+        52,
+        56,
+        60,
+        62,
+        64,
+        69,
+        78,
+        87,
+        88,
+        90
+      ],
+      "qualitative": [
+        5,
+        21,
+        51,
+        55,
+        78,
+        89,
+        95
+      ]
+    }
+  }
+}

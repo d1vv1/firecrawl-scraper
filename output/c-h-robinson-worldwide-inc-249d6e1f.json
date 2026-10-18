@@ -1,0 +1,240 @@
+{
+  "company_id": "c-h-robinson-worldwide-inc-249d6e1f",
+  "input_name": "C.H. Robinson Worldwide, Inc.",
+  "country_code": "US",
+  "clean_name": "ch robinson worldwide",
+  "status": "ok",
+  "lei": "529900WNWN5L0OVDHA79",
+  "lei_record": {
+    "lei": "529900WNWN5L0OVDHA79",
+    "legal_name": "C.H. Robinson Worldwide, Inc.",
+    "country": "US",
+    "jurisdiction": "US-DE",
+    "legal_form_id": "XTIQ",
+    "entity_status": "ACTIVE",
+    "registration_status": "LAPSED",
+    "registered_as": "2784713"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://www.chrobinson.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://s25.q4cdn.com/568306620/files/doc_financials/2025/ar/CHRW-2025-Annual-Report-10-K.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "December 31, 2025",
+  "revenue": {
+    "value": 16232763.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total revenues",
+    "scope": "consolidated",
+    "quote": "Total revenues     . . . . . . . . . . . . . . . . . . . . . . . . . . .|. . . . . . . . . . . . . . . . . . . . . $16,232,763",
+    "chunk_id": 90,
+    "not_found_reason": null,
+    "value_full": 16232763000.0,
+    "source_pages": [
+      73,
+      74
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 5058381.0,
+    "unit": "thousands",
+    "currency": "USD",
+    "label_in_report": "Total assets",
+    "scope": "consolidated",
+    "quote": "Total assets      . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .|$5,058,381",
+    "chunk_id": 64,
+    "not_found_reason": null,
+    "value_full": 5058381000.0,
+    "source_pages": [
+      51
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company sells transportation and logistics services, including truckload, less-than-truckload, ocean, air freight, customs brokerage, and supply chain consulting to customers globally through a network of offices and technology platforms. It also sells fresh fruits, vegetables, and other perishable items through its sourcing services.",
+    "quote": "We deliver tailored solutions across the world via truckload, less-than-truckload, ocean, air, and more.",
+    "chunk_id": 10,
+    "source_pages": [
+      12,
+      13
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Inc.",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "North American Surface Transportation",
+      "Global Forwarding",
+      "All Other and Corporate"
+    ],
+    "description": "C.H. Robinson Worldwide, Inc. is a publicly listed company organized into two main reportable segments: North American Surface Transportation and Global Forwarding. Other operations including Robinson Fresh and Managed Solutions are reported under All Other and Corporate.",
+    "quote": "We have two reportable segments, North American Surface Transportation (“NAST”) and Global Forwarding, with our remaining operating segments reported as All Other and Corporate.",
+    "chunk_id": 10,
+    "source_pages": [
+      12,
+      13
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 5058381.0,
+      "unit": "thousands",
+      "currency": "USD",
+      "label_in_report": "Total liabilities and stockholders' investment",
+      "scope": "consolidated",
+      "quote": "Total assets      . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .|$5,058,381",
+      "chunk_id": 64,
+      "not_found_reason": null,
+      "value_full": 5058381000.0,
+      "source_pages": [
+        51
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 89 (model cited chunk 90)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "loose match in chunk 64"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "loose match in chunk 64"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 5,058,381,000 vs equity+liabilities 5,058,381,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 10"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 10"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-17T06:52:51+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 2,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "c-h-robinson-worldwide-inc-249d6e1f_1c732d14d1b04808215be601ba6445fb454383f1.md",
+    "chunks_total": 115,
+    "chunks_sent": {
+      "financials": [
+        50,
+        51,
+        53,
+        60,
+        64,
+        89,
+        90
+      ],
+      "qualitative": [
+        0,
+        1,
+        10,
+        20,
+        24,
+        29,
+        30
+      ]
+    }
+  }
+}

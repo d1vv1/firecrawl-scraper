@@ -1,0 +1,257 @@
+{
+  "company_id": "clarkson-plc-2b61cfef",
+  "input_name": "Clarkson PLC",
+  "country_code": "GB",
+  "clean_name": "clarkson",
+  "status": "needs_review",
+  "lei": "2138007G6BGTEHI3OT22",
+  "lei_record": {
+    "lei": "2138007G6BGTEHI3OT22",
+    "legal_name": "CLARKSON PLC",
+    "country": "GB",
+    "jurisdiction": "GB",
+    "legal_form_id": "B6ES",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "01190238"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "2138007G6BGTEHI3OT22-2025-12-31-ESEF-GB-0",
+    "period_end": "2025-12-31",
+    "viewer_url": "https://filings.xbrl.org/2138007G6BGTEHI3OT22/2025-12-31/ESEF/GB/0/2138007G6BGTEHI3OT22-2025-12-31/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/2138007G6BGTEHI3OT22/2025-12-31/ESEF/GB/0/2138007G6BGTEHI3OT22-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/2138007G6BGTEHI3OT22/2025-12-31/ESEF/GB/0/2138007G6BGTEHI3OT22-2025-12-31/reports/2138007G6BGTEHI3OT22-2025-12-31-T01.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 631400000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 631,400,000 GBP (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 631400000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 978.5,
+    "unit": "millions",
+    "currency": "GBP",
+    "label_in_report": "Non-current assets + Current assets",
+    "scope": "consolidated",
+    "quote": "Non-current assets 294.8 | Current assets 683.7",
+    "chunk_id": 68,
+    "not_found_reason": null,
+    "value_full": 978500000.0,
+    "source_pages": [
+      140,
+      141,
+      142,
+      143,
+      144,
+      145
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services"
+    ],
+    "description": "Clarksons sells broking, financial, support, and research services primarily to clients in the maritime, offshore, trade, and energy markets through a global network of offices.",
+    "quote": "Our broking services are unrivalled – in terms of the number and calibre of our brokers, our breadth of market coverage, geographical spread, digital solutions and depth of intelligence resources.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2,
+      3
+    ]
+  },
+  "business_structure": {
+    "legal_form": "PLC",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Broking",
+      "Financial",
+      "Support",
+      "Research"
+    ],
+    "description": "Clarkson PLC is a public limited company listed on the London Stock Exchange. It operates through four main segments: Broking, Financial, Support, and Research, with a global presence across multiple countries.",
+    "quote": "Clarksons PLC is a Public Limited Company, listed on the London Stock Exchange, incorporated in the UK, registered in England and Wales and domiciled in the UK.",
+    "chunk_id": 69,
+    "source_pages": [
+      140,
+      141,
+      142,
+      143,
+      144,
+      145
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 978.5,
+      "unit": "millions",
+      "currency": "GBP",
+      "label_in_report": "Total equity",
+      "scope": "consolidated",
+      "quote": "Total equity | 527.8",
+      "chunk_id": 68,
+      "not_found_reason": "Total equity and liabilities equals total assets, which is 978.5 million GBP (sum of non-current and current assets). Total equity is 527.8 million GBP, so total liabilities are 978.5 - 527.8 = 450.7 million GBP. The total equity and liabilities combined is 978.5 million GBP.",
+      "value_full": 978500000.0,
+      "source_pages": [
+        140,
+        141,
+        142,
+        143,
+        144,
+        145
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "quote not found in chunk 68: probable hallucination. Quote: 'Non-current assets 294.8 | Current assets 683.7'"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "978.5 not in quote 'Non-current assets 294.8 | Current assets 683.7'"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 68"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "fail",
+      "detail": "978.5 not in quote 'Total equity | 527.8'"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 978,500,000 vs equity+liabilities 978,500,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "loose match in chunk 0"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "fail",
+      "detail": "quote not found in chunk 69: probable hallucination. Quote: 'Clarksons PLC is a Public Limited Company, listed on the London Stock Exchange, incorporated in the UK, registered in England and Wales and domiciled in the UK.'"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 2138007G6BGTEHI3OT22"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [
+    "business_structure: quote not found in chunk 69: probable hallucination. Quote: 'Clarksons PLC is a Public Limited Company, listed on the London Stock Exchange, incorporated in the UK, registered in England and Wales and domiciled in the UK.'"
+  ],
+  "extracted_at": "2026-10-16T19:09:32+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "clarkson-plc-2b61cfef_220ce2c9949b586cd89882575453a53d79f2ed47.md",
+    "chunks_total": 101,
+    "chunks_sent": {
+      "financials": [
+        0,
+        7,
+        63,
+        68,
+        79,
+        83
+      ],
+      "qualitative": [
+        0,
+        1,
+        63,
+        67,
+        69,
+        97
+      ]
+    }
+  }
+}

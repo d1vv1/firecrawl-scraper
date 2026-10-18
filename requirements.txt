@@ -1,0 +1,12 @@
+firecrawl-py>=4.50,<5
+openai>=3.31,<4
+pydantic>=2.14,<3
+python-dotenv>=1.2
+tenacity>=9
+httpx[http2]>=0.28
+curl_cffi>=0.11
+pymupdf4llm>=1.28
+pytest>=8
+azure-identity>=1.19      # Foundry sign-in when key login is disabled
+google-auth>=2.35         # Vertex AI sign-in (LLM_PROVIDER=vertex)
+requests>=2.32

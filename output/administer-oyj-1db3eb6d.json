@@ -1,0 +1,266 @@
+{
+  "company_id": "administer-oyj-1db3eb6d",
+  "input_name": "Administer Oyj",
+  "country_code": "FI",
+  "clean_name": "administer",
+  "status": "ok",
+  "lei": "743700M4YLEWP2UNWG60",
+  "lei_record": {
+    "lei": "743700M4YLEWP2UNWG60",
+    "legal_name": "Administer Oyj",
+    "country": "FI",
+    "jurisdiction": "FI",
+    "legal_form_id": "K6VE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "0593027-4"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "https://administergroup.com",
+  "website_source": "search+lei",
+  "website_score": 0.86,
+  "report_url": "https://administergroup.com/wp-content/uploads/2026/03/administer-group-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 73307349.99,
+    "unit": "units",
+    "currency": "EUR",
+    "label_in_report": "NET SALES",
+    "scope": "consolidated",
+    "quote": "NET SALES\n73,307,349.99",
+    "chunk_id": 53,
+    "not_found_reason": null,
+    "value_full": 73307349.99,
+    "source_pages": [
+      30,
+      31
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 51570263.57,
+    "unit": "units",
+    "currency": "EUR",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS\n51,570,263.57",
+    "chunk_id": 54,
+    "not_found_reason": null,
+    "value_full": 51570263.57,
+    "source_pages": [
+      31,
+      32
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company primarily generates revenue by offering financial and payroll management services, including accounting, reporting, payroll, HR specialist, and staffing services. It also sells its EmCe software to customers for independent use.",
+    "quote": "Administer is a Finnish Group established in 1985, which offers financial and payroll management services, consultancy services, and software services.",
+    "chunk_id": 40,
+    "source_pages": [
+      24,
+      25
+    ]
+  },
+  "business_structure": {
+    "legal_form": "Plc",
+    "is_listed": null,
+    "ultimate_parent": null,
+    "segments": [
+      "financial management services",
+      "HR and payroll management services"
+    ],
+    "description": "Administer Plc is a Finnish group that operates with two main business areas: financial management services and HR and payroll management services. It is the parent company of a group that includes 17 companies.",
+    "quote": "The Group includes a total of 17 companies, the most significant of which are the parent company Administer Plc",
+    "chunk_id": 40,
+    "source_pages": [
+      24,
+      25
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 51570263.57,
+      "unit": "units",
+      "currency": "EUR",
+      "label_in_report": "TOTAL EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL EQUITY AND LIABILITIES\n51,570,263.57",
+      "chunk_id": 55,
+      "not_found_reason": null,
+      "value_full": 51570263.57,
+      "source_pages": [
+        32,
+        33
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 53"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 54"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 55"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 51,570,264 vs equity+liabilities 51,570,264 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 40"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 40"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:12:11+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": true,
+      "report": true
+    },
+    "markdown_file": "administer-oyj-1db3eb6d_c4e41f0c6293253e2d6126898d6cc921adc2fda8.md",
+    "chunks_total": 88,
+    "chunks_sent": {
+      "financials": [
+        2,
+        3,
+        5,
+        6,
+        9,
+        10,
+        13,
+        21,
+        26,
+        27,
+        29,
+        36,
+        38,
+        40,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        57,
+        58,
+        59,
+        68,
+        76
+      ],
+      "qualitative": [
+        5,
+        39,
+        40,
+        57,
+        58,
+        59,
+        60,
+        64,
+        66,
+        71,
+        83,
+        84,
+        85,
+        86
+      ]
+    }
+  }
+}

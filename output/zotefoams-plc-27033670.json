@@ -1,0 +1,243 @@
+{
+  "company_id": "zotefoams-plc-27033670",
+  "input_name": "Zotefoams PLC",
+  "country_code": "GB",
+  "clean_name": "zotefoams",
+  "status": "needs_review",
+  "lei": "213800B6P256B5XN8D32",
+  "lei_record": {
+    "lei": "213800B6P256B5XN8D32",
+    "legal_name": "ZOTEFOAMS PLC",
+    "country": "GB",
+    "jurisdiction": "GB",
+    "legal_form_id": "B6ES",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "02714645"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "213800B6P256B5XN8D32-2025-12-31-ESEF-GB-0",
+    "period_end": "2025-12-31",
+    "viewer_url": "https://filings.xbrl.org/213800B6P256B5XN8D32/2025-12-31/ESEF/GB/0/213800B6P256B5XN8D32-2025-12-31/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/213800B6P256B5XN8D32/2025-12-31/ESEF/GB/0/213800B6P256B5XN8D32-2025-12-31.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/213800B6P256B5XN8D32/2025-12-31/ESEF/GB/0/213800B6P256B5XN8D32-2025-12-31/reports/213800B6P256B5XN8D32-2025-12-31.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 158490000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 158,490,000 GBP (2025-01-01/2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 158490000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 227094000.0,
+    "unit": "units",
+    "currency": "GBP",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 227,094,000 GBP (2025-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 227094000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services"
+    ],
+    "description": "Zotefoams sells advanced foam materials and engineered foam solutions to global customers across multiple industries, including consumer goods, transport, and construction. Sales are made through a global manufacturing and commercial network with regional proximity to customers.",
+    "quote": "The Group generates revenue primarily through the sale of advanced foam materials and engineered solutions.",
+    "chunk_id": 2,
+    "source_pages": [
+      5,
+      6,
+      7
+    ]
+  },
+  "business_structure": {
+    "legal_form": "plc",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Consumer & Lifestyle",
+      "Transport & Smart Technologies",
+      "Construction & Other Industrial"
+    ],
+    "description": "Zotefoams plc is a publicly listed company organized around three market verticals: Consumer & Lifestyle, Transport & Smart Technologies, and Construction & Other Industrial. It operates manufacturing sites across EMEA, North America, and Asia, with a global commercial and innovation footprint.",
+    "quote": "At the start of 2025, we reorganised our global commercial organisation around three core market verticals: Consumer & Lifestyle, Transport & Smart Technologies, and Construction & Other Industrial.",
+    "chunk_id": 5,
+    "source_pages": [
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 97015.0,
+      "unit": "thousands",
+      "currency": "GBP",
+      "label_in_report": "Total liabilities",
+      "scope": "consolidated",
+      "quote": "| Total liabilities | (56,289) | (32,228) | (26,644) | (21,943) | (7,748) | (1,962) | (1,063) | (2,677) | (97,015) | (65,392) |",
+      "chunk_id": 85,
+      "not_found_reason": null,
+      "value_full": 97015000.0,
+      "source_pages": [
+        180,
+        181,
+        182,
+        183,
+        184
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 85"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "fail",
+      "detail": "assets 227,094,000 vs equity+liabilities 97,015,000 (57.28% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 2"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 5"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 213800B6P256B5XN8D32"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:10:44+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 0,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "zotefoams-plc-27033670_c991bba29475dd9b95400edb3a34312d9f55de9b.md",
+    "chunks_total": 111,
+    "chunks_sent": {
+      "financials": [
+        0,
+        67,
+        70,
+        85,
+        87
+      ],
+      "qualitative": [
+        0,
+        2,
+        5,
+        39,
+        67
+      ]
+    }
+  }
+}

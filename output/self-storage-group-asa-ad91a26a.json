@@ -1,0 +1,243 @@
+{
+  "company_id": "self-storage-group-asa-ad91a26a",
+  "input_name": "Self Storage Group ASA",
+  "country_code": "NO",
+  "clean_name": "self storage group",
+  "status": "needs_review",
+  "lei": "254900TSU8Q0HCFHLY03",
+  "lei_record": {
+    "lei": "254900TSU8Q0HCFHLY03",
+    "legal_name": "SELF STORAGE GROUP ASA",
+    "country": "NO",
+    "jurisdiction": "NO",
+    "legal_form_id": "IQGE",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "818 096 712"
+  },
+  "lei_lookup": "override (--lei)",
+  "data_source": "esef",
+  "esef": {
+    "filing_id": "254900TSU8Q0HCFHLY03-2022-12-31-ESEF-NO-0",
+    "period_end": "2022-12-31",
+    "viewer_url": "https://filings.xbrl.org/254900TSU8Q0HCFHLY03/2022-12-31/ESEF/NO/0/254900TSU8Q0HCFHLY03-2022-12-31-en/reports/ixbrlviewer.html",
+    "package_url": "https://filings.xbrl.org/254900TSU8Q0HCFHLY03/2022-12-31/ESEF/NO/0/254900TSU8Q0HCFHLY03-2022-12-31-en.zip"
+  },
+  "website": null,
+  "website_source": "not needed (ESEF filing)",
+  "website_score": null,
+  "report_url": "https://filings.xbrl.org/254900TSU8Q0HCFHLY03/2022-12-31/ESEF/NO/0/254900TSU8Q0HCFHLY03-2022-12-31-en/reports/254900TSU8Q0HCFHLY03-2022-12-31-en.xhtml",
+  "report_type": "xhtml",
+  "fiscal_year": "2022",
+  "period_end_date": "2022-12-31",
+  "period_end_date_raw": "2022-12-31",
+  "revenue": {
+    "value": 392161000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Revenue",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Revenue = 392,161,000 NOK (2022-01-01/2022-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 392161000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Revenue"
+  },
+  "total_assets": {
+    "value": 3638219000.0,
+    "unit": "units",
+    "currency": "NOK",
+    "label_in_report": "Assets",
+    "scope": "consolidated",
+    "quote": "ifrs-full:Assets = 3,638,219,000 NOK (2022-12-31)",
+    "chunk_id": null,
+    "not_found_reason": null,
+    "value_full": 3638219000.0,
+    "source_pages": null,
+    "method": "xbrl_tag",
+    "xbrl_concept": "ifrs-full:Assets"
+  },
+  "revenue_model": {
+    "categories": [
+      "services",
+      "product_sales"
+    ],
+    "description": "The company rents out self-storage units to private individuals and businesses in Scandinavia, operating facilities primarily in Norway, Sweden, and Denmark. It also sells storage supplies to customers.",
+    "quote": "Self Storage Group (SSG) engages in the business of renting out self-storage units to both private individuals and businesses.",
+    "chunk_id": 0,
+    "source_pages": [
+      1,
+      2,
+      3
+    ]
+  },
+  "business_structure": {
+    "legal_form": "ASA",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "OK Minilager (OKM)",
+      "City Self-Storage (CSS)",
+      "Property",
+      "HQ",
+      "Other/eliminations"
+    ],
+    "description": "Self Storage Group ASA is the holding company of the group, operating through segments including OK Minilager, City Self-Storage, Property, HQ, and Other/eliminations. It is listed and headquartered in Oslo, Norway.",
+    "quote": "Self Storage Group ASA is the holding Company for the Group.",
+    "chunk_id": 9,
+    "source_pages": [
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 3638219000.0,
+      "unit": "units",
+      "currency": "NOK",
+      "label_in_report": "EquityAndLiabilities",
+      "scope": "consolidated",
+      "quote": "ifrs-full:EquityAndLiabilities = 3,638,219,000 NOK (2022-12-31)",
+      "chunk_id": null,
+      "not_found_reason": null,
+      "value_full": 3638219000.0,
+      "source_pages": null,
+      "method": "xbrl_tag",
+      "xbrl_concept": "ifrs-full:EquityAndLiabilities"
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Revenue in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:Assets in the ESEF filing"
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "read from XBRL tag ifrs-full:EquityAndLiabilities in the ESEF filing"
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 3,638,219,000 vs equity+liabilities 3,638,219,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "fail",
+      "detail": "2022 (latest year 2022, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 0"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 9"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": "ESEF filing filed under LEI 254900TSU8Q0HCFHLY03"
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-16T19:40:36+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "self-storage-group-asa-ad91a26a_98796934345744e1b66a054d6fbeaabfb67bd28d.md",
+    "chunks_total": 40,
+    "chunks_sent": {
+      "financials": [
+        1,
+        9,
+        18,
+        19,
+        20,
+        26,
+        33
+      ],
+      "qualitative": [
+        0,
+        9,
+        22,
+        24,
+        25,
+        29,
+        34
+      ]
+    }
+  }
+}

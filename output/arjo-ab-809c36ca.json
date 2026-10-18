@@ -1,0 +1,257 @@
+{
+  "company_id": "arjo-ab-809c36ca",
+  "input_name": "Arjo AB",
+  "country_code": "SE",
+  "clean_name": "arjo",
+  "status": "ok",
+  "lei": "549300OWGJPYKC6JF790",
+  "lei_record": {
+    "lei": "549300OWGJPYKC6JF790",
+    "legal_name": "Arjo AB (publ)",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "559092-8064"
+  },
+  "lei_lookup": "exact name match",
+  "website": "http://www.arjo.com",
+  "website_source": "wikidata",
+  "website_score": null,
+  "report_url": "https://www.arjo.com/siteassets/06_investors/annual-report-2023/arjo_ahr23_eng_final.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2023",
+  "period_end_date": null,
+  "period_end_date_raw": null,
+  "revenue": {
+    "value": 10980.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales 10,980",
+    "chunk_id": 171,
+    "not_found_reason": null,
+    "value_full": 10980000000.0,
+    "source_pages": [
+      71,
+      72
+    ]
+  },
+  "total_assets": {
+    "value": 15444.0,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS 15,444",
+    "chunk_id": 172,
+    "not_found_reason": null,
+    "value_full": 15444000000.0,
+    "source_pages": [
+      72,
+      73
+    ]
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales",
+      "services",
+      "subscription"
+    ],
+    "description": "Arjo sells medical equipment and outcome-based programs primarily to healthcare providers, including acute and long-term care sectors, through direct partnerships and rental agreements.",
+    "quote": "Arjo also offers therapeutic mattresses and equipment for transferring, repositioning and early mobilization of bedridden patients.",
+    "chunk_id": 58,
+    "source_pages": [
+      26
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Care & Organizational Development"
+    ],
+    "description": "Arjo AB (publ) is a publicly listed company organized with various subsidiaries globally, operating in segments including Care & Organizational Development. It has a parent company structure with multiple subsidiaries in different countries.",
+    "quote": "The financial statements of the Parent Company were prepared in accordance with the Swedish Annual Accounts Act and the Swedish Financial Reporting Board’s recommendation RFR 2, Reporting of Legal Entities.",
+    "chunk_id": 261,
+    "source_pages": [
+      107
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 15444.0,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "TOTAL SHAREHOLDERS’ EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL SHAREHOLDERS’ EQUITY AND LIABILITIES 15,444",
+      "chunk_id": 172,
+      "not_found_reason": null,
+      "value_full": 15444000000.0,
+      "source_pages": [
+        72,
+        73
+      ]
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "loose match in chunk 171"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "loose match in chunk 172"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 366 (model cited chunk 172)"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 15,444,000,000 vs equity+liabilities 15,444,000,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2023 (latest year 2023, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 58"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 261"
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-15T21:10:15+00:00",
+  "model": "gpt-4.1-mini-1",
+  "firecrawl_credits_used": 1,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "arjo-ab-809c36ca_0b82f5c52b8aadf374bc5b2fa431be094703c388.md",
+    "chunks_total": 422,
+    "chunks_sent": {
+      "financials": [
+        6,
+        9,
+        113,
+        171,
+        172,
+        184,
+        193,
+        215,
+        222,
+        256,
+        258,
+        292,
+        303,
+        324,
+        325,
+        337,
+        339,
+        366,
+        368,
+        370,
+        371,
+        374,
+        394,
+        398
+      ],
+      "qualitative": [
+        4,
+        21,
+        24,
+        38,
+        52,
+        55,
+        56,
+        58,
+        62,
+        74,
+        82,
+        108,
+        113,
+        170,
+        171,
+        186,
+        202,
+        248,
+        257,
+        258,
+        259,
+        260,
+        261,
+        268,
+        272,
+        273,
+        347,
+        348
+      ]
+    }
+  }
+}

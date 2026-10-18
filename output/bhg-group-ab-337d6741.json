@@ -1,0 +1,280 @@
+{
+  "company_id": "bhg-group-ab-337d6741",
+  "input_name": "BHG Group AB",
+  "country_code": "SE",
+  "clean_name": "bhg group",
+  "status": "ok",
+  "lei": "549300ZLCWL2QTO3HR86",
+  "lei_record": {
+    "lei": "549300ZLCWL2QTO3HR86",
+    "legal_name": "BHG Group AB",
+    "country": "SE",
+    "jurisdiction": "SE",
+    "legal_form_id": "XJHM",
+    "entity_status": "ACTIVE",
+    "registration_status": "ISSUED",
+    "registered_as": "559077-0763"
+  },
+  "lei_lookup": "exact name match",
+  "data_source": "website",
+  "filing": null,
+  "website": "http://www.wearebhg.com",
+  "website_source": "wikidata-name",
+  "website_score": null,
+  "report_url": "https://www.wearebhg.com/media/2033/bhg-group-ab-annual-report-2025.pdf",
+  "report_type": "pdf",
+  "fiscal_year": "2025",
+  "period_end_date": "2025-12-31",
+  "period_end_date_raw": "2025-12-31",
+  "revenue": {
+    "value": 10582.9,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "Net sales",
+    "scope": "consolidated",
+    "quote": "Net sales|4|10,582.9",
+    "chunk_id": 213,
+    "not_found_reason": null,
+    "value_full": 10582900000.0,
+    "source_pages": [
+      94,
+      95
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "total_assets": {
+    "value": 10534.5,
+    "unit": "millions",
+    "currency": "SEK",
+    "label_in_report": "TOTAL ASSETS",
+    "scope": "consolidated",
+    "quote": "TOTAL ASSETS||10,534.5",
+    "chunk_id": 215,
+    "not_found_reason": null,
+    "value_full": 10534500000.0,
+    "source_pages": [
+      96,
+      97,
+      98
+    ],
+    "method": "llm",
+    "xbrl_concept": null
+  },
+  "revenue_model": {
+    "categories": [
+      "product_sales"
+    ],
+    "description": "The company sells DIY products, furniture, and home furnishings. It offers these products primarily to private customers in the Nordics, Europe, and selected Asian markets, mainly through its numerous online stores and a limited number of physical stores.",
+    "quote": "we offer the market’s leading range of well-known external and strong own brands, primarily to private customers in the Nordics, but also in the rest of Europe and in selected Asian markets.",
+    "chunk_id": 68,
+    "source_pages": [
+      37
+    ]
+  },
+  "business_structure": {
+    "legal_form": "AB (publ)",
+    "is_listed": true,
+    "ultimate_parent": null,
+    "segments": [
+      "Home Improvement",
+      "Value Home",
+      "Premium Living"
+    ],
+    "description": "BHG Group AB (publ) is the parent company of the group, listed on Nasdaq Stockholm. It operates through three strategic business segments: Home Improvement, Value Home, and Premium Living.",
+    "quote": "The Group is organised in three distinctly positioned business areas, where assortment, price and customer experience vary according to each business model and category.",
+    "chunk_id": 6,
+    "source_pages": [
+      7,
+      8
+    ]
+  },
+  "cross_check": {
+    "total_equity_and_liabilities": {
+      "value": 10534.5,
+      "unit": "millions",
+      "currency": "SEK",
+      "label_in_report": "TOTAL SHAREHOLDERS' EQUITY AND LIABILITIES",
+      "scope": "consolidated",
+      "quote": "TOTAL SHAREHOLDERS' EQUITY AND LIABILITIES||10,534.5",
+      "chunk_id": 215,
+      "not_found_reason": null,
+      "value_full": 10534500000.0,
+      "source_pages": [
+        96,
+        97,
+        98
+      ],
+      "method": "llm",
+      "xbrl_concept": null
+    }
+  },
+  "checks": [
+    {
+      "name": "quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": "exact match in chunk 213"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "revenue",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "exact match in chunk 215"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "scope",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "sanity",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": "exact match in chunk 215"
+    },
+    {
+      "name": "value_in_quote",
+      "target": "total_equity_and_liabilities",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "balance",
+      "target": "total_assets",
+      "result": "pass",
+      "detail": "assets 10,534,500,000 vs equity+liabilities 10,534,500,000 (0.00% apart)"
+    },
+    {
+      "name": "sanity",
+      "target": "fiscal_year",
+      "result": "pass",
+      "detail": "2025 (latest year 2025, today 2026)"
+    },
+    {
+      "name": "quote",
+      "target": "revenue_model",
+      "result": "pass",
+      "detail": "exact match in chunk 68"
+    },
+    {
+      "name": "quote",
+      "target": "business_structure",
+      "result": "pass",
+      "detail": "exact match in chunk 6"
+    },
+    {
+      "name": "entity",
+      "target": "company_name",
+      "result": "pass",
+      "detail": ""
+    },
+    {
+      "name": "entity",
+      "target": "currency",
+      "result": "pass",
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "extracted_at": "2026-10-18T06:43:52+00:00",
+  "model": "google/gemini-2.5-flash",
+  "firecrawl_credits_used": 5,
+  "debug": {
+    "cache_used": {
+      "discovery": false,
+      "report": false
+    },
+    "markdown_file": "bhg-group-ab-337d6741_80d759d8ce7eabc973d62cfc80129d2ac391d45e.md",
+    "chunks_total": 365,
+    "chunks_sent": {
+      "financials": [
+        16,
+        17,
+        22,
+        23,
+        27,
+        28,
+        35,
+        42,
+        149,
+        151,
+        213,
+        215,
+        218,
+        219,
+        228,
+        232,
+        238,
+        258,
+        259,
+        281,
+        284,
+        316,
+        328,
+        363
+      ],
+      "qualitative": [
+        0,
+        2,
+        6,
+        8,
+        9,
+        56,
+        68,
+        79,
+        82,
+        91,
+        93,
+        218,
+        219,
+        220,
+        221,
+        222,
+        227,
+        244,
+        245,
+        246,
+        248,
+        258,
+        266,
+        286,
+        308,
+        324,
+        328,
+        330
+      ]
+    }
+  }
+}
