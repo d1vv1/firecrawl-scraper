@@ -142,12 +142,15 @@ def _recommend(tested: int, found: int, checked: int, confirmed: int) -> str:
 def _source_mix(results: list[dict]) -> str:
     esef = sum(1 for r in results if (r.get("data_source") or "").startswith("esef"))
     sec = sum(1 for r in results if (r.get("data_source") or "").startswith("edgar"))
-    web = len(results) - esef - sec
+    reg = sum(1 for r in results if (r.get("data_source") or "").startswith("registry"))
+    web = len(results) - esef - sec - reg
     parts = []
     if esef:
         parts.append(f"filings.xbrl.org ESEF ({esef})")
     if sec:
         parts.append(f"SEC EDGAR 10-K/20-F ({sec})")
+    if reg:
+        parts.append(f"company registry filings ({reg})")
     if web:
         parts.append(f"company website reports ({web})")
     return "; ".join(parts)

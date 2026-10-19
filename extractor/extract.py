@@ -52,7 +52,8 @@ _FIGURES = ("revenue", "total_assets", "total_equity_and_liabilities")
 def tagged_figure(tag) -> MoneyFigure:
     """A MoneyFigure for a value read from an XBRL tag (full units, exact)."""
     return MoneyFigure(value=tag.value, unit="units", currency=tag.currency,
-                       label_in_report=tag.concept.split(":", 1)[-1], scope="consolidated",
+                       label_in_report=tag.concept.split(":", 1)[-1],
+                       scope=getattr(tag, "scope", "consolidated"),
                        quote=f"{tag.concept} = {tag.value:,.0f} {tag.currency} ({tag.period})",
                        chunk_id=None, not_found_reason=None)
 

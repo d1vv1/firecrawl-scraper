@@ -43,6 +43,7 @@ class TaggedFigure:
     currency: str             # ISO 4217
     concept: str              # e.g. "ifrs-full:Revenue"
     period: str               # e.g. "2025-01-01/2025-12-31" or "2025-12-31"
+    scope: str = "consolidated"   # registries also file parent-only accounts
 
 
 @dataclass

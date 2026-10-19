@@ -540,12 +540,15 @@ def run_batch(companies: list[Company], args) -> int:
             return per_company_cap
         if (CACHE_DIR / f"{c.slug}_discovery.json").exists():
             return 0
-        for kind in ("esef", "edgar"):
+        # In route order: the first recent filing is the one the run uses. A recent
+        # filing in another language (Luxor's Danish ESEF) sends the run to the
+        # website for English text, so it can cost credits even when a later route
+        # (the registry) would have been free.
+        for kind in ("esef", "edgar", "registry"):
             try:
                 filing = json.loads((CACHE_DIR / f"{c.slug}_{kind}.json").read_text(encoding="utf-8"))["filing"]
-                if filing and int(filing["period_end"][:4]) >= dt.date.today().year - 1 \
-                        and filing.get("language") in (None, "en"):
-                    return 0
+                if filing and int(filing["period_end"][:4]) >= dt.date.today().year - 1:
+                    return 0 if filing.get("language") in (None, "en") else per_company_cap
             except (OSError, ValueError, KeyError, TypeError):
                 pass
         return per_company_cap

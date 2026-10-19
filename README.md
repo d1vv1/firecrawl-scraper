@@ -145,6 +145,55 @@ segment):
 `country_code` (ISO 3166 alpha-2) is used to search GLEIF within that country, as the
 country for website scoring, and for the native report search term when no LEI is found.
 
+### All data points, with the exact source of each value
+
+```bash
+python -m extractor.datapoints golden_test_sample_5_per_segment_country_all.csv --workers 3
+```
+
+This collects every field of the company-data schema (38 data points: reference, market,
+financials, ownership, pay, revenue and staff by country) for the companies in the CSV,
+and writes **`output/datapoints.csv`**, one row per company and data point:
+
+`company_id, company_name, segment, country, lei, data_point, value, unit, period_end,
+source, endpoint, method, retrieved_at, confidence, note`
+
+Per company, cheapest and most exact first:
+1. the annual-report pipeline above (run first if the company has no result yet);
+2. official APIs: GLEIF (record, ultimate parent, ISIN map), SEC EDGAR (submissions,
+   `dei` XBRL), Brønnøysund (NO), Companies House incl. the PSC register (UK), PRH (FI);
+3. one more AI pass over the same report for employees, owners, listing, pay, and revenue
+   and staff by country (`prompts/datapoints_system.md`);
+4. **HTML backup**: data points still missing are looked for on the company's own web
+   pages. Firecrawl maps the site, then scrapes the home page and the pages whose URLs
+   fit what's missing (about, owners, investors...). Default cap: 4 credits per company
+   (`--web-credits`, `--no-web`).
+
+When several sources give a value, the most exact one wins (A before B before C, then
+API/XBRL, then report, then web). A different value from another source is mentioned in
+`note`.
+
+**Where each value came from:**
+- `endpoint` is the exact URL: the API request, the XBRL filing, the **PDF with
+  `#page=N`** (opens at that page), or the web page / filed HTML report with a
+  `#:~:text=` fragment that Chrome, Edge and Safari scroll to.
+- `note` repeats the page and quote (`PDF page 45: "Net sales|3|2,326.2|1,827.3"`), the
+  XBRL tag, or why there is no value (`not found in: …`, `not applicable: the company is
+  not listed`, `not collected: market data … is bought`).
+- `method`: `API` (register field), `XBRL` (tagged figure), `PARSE` (read from a filed
+  document), `SCRAPE` (read from a web page), `BUY` (market data: not collected).
+- `confidence`: `A` exact (register field or XBRL tag, or an ISIN confirmed by GLEIF);
+  `B` read by the AI and its quote found in the source; `C` read by the AI but the quote
+  wasn't found word for word (check it).
+- Money is in full units with the ISO currency in `unit` (`2326200000`, `SEK`);
+  employees have unit `employees`.
+- The page of a PDF value is the page its quote is found on, looked up in the PDF's text.
+  It is the PDF's page number (what `#page=` opens), not the number printed on the page.
+
+Re-runs skip companies already done (`output/datapoints/<id>.json`; `--redo` to redo).
+When the input is the golden sample, `output/golden_test_filled.csv` is the same file with
+`build_value` filled in, in the golden unit (millions), for the reviewers.
+
 ## ESEF route (tried first)
 
 EU, EEA and UK companies listed on a regulated market file their annual report in ESEF
@@ -195,6 +244,28 @@ Free, no scraping, no Firecrawl credits. It also covers companies listed outside
 file with the SEC (Chubb, NXP, Smurfit WestRock, Johnson Controls), whose websites often
 have no annual report PDF. **Requires `SEC_CONTACT` in `.env`**: the SEC refuses requests
 without a contact in the User-Agent. Without it, the SEC route is skipped.
+
+## Company registry route (Norway, Denmark, UK; tried after SEC)
+
+Private companies rarely publish annual reports on their websites, but they must file
+their accounts with the national registry ([extractor/registries.py](extractor/registries.py)).
+Both registries below are open, free and need no key:
+
+| Country | Registry | Figures | Text for the descriptive facts |
+|---|---|---|---|
+| Norway | Brønnøysund (Regnskapsregisteret) | Filed accounts as data: `sumDriftsinntekter` (revenue), `sumEiendeler` (total assets), `sumEgenkapitalGjeld`. Group accounts (KONSERN) preferred over company-only (SELSKAP). | The company profile (legal form, industry, activity, employees). |
+| Denmark | Danish Business Authority | The filed XBRL: `fsa:Revenue` / `ifrs-full:Revenue`, `Assets`, `LiabilitiesAndEquity`. Group figures (`ConsolidatedMember`) preferred. | The filed annual report (inline XBRL or PDF). |
+| UK | Companies House (needs a free **live** REST key: `COMPANIES_HOUSE_API_KEY`) | The latest filed accounts. iXBRL: `TurnoverRevenue`; UK balance sheets have no total-assets line, so total assets = `FixedAssets` + `CurrentAssets`. PDF-only accounts: the AI reads the figures. | The filed accounts (iXBRL or PDF). |
+
+- **Finding the company:** by the registration number in its LEI record. Without an LEI, Norway
+  falls back to an exact legal-name match (one match only); Denmark needs the LEI.
+- **Parent-only accounts:** when only company accounts of a parent company are filed, the
+  figures are marked `scope: parent_only` and the result needs review.
+- **Small Danish companies** may file gross profit instead of revenue (allowed for small
+  companies). Then revenue is left to the AI reading the report text, and may be missing.
+- Sweden (Bolagsverket) needs an organisation account and isn't built yet.
+- The UK route is skipped while `COMPANIES_HOUSE_API_KEY` is empty. A key from the Companies
+  House *test* environment is refused by the live service (HTTP 401).
 
 ## Pipeline
 

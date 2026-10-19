@@ -13,10 +13,12 @@ from .config import CACHE_DIR, OUTPUT_DIR, clean_name, load_settings, slugify
 from .extract import extract, iso_period_end, money_with_full_value
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .report_finder import ReportNotFoundError, find_report, reports_linked_from
-from . import edgar
+from . import edgar, registries
 from .edgar import EdgarFiling
+from .registries import RegistryFiling
 from .esef import EsefFiling, download_report, is_recent, latest_annual_filing
 from .scraper import (DownloadError, NeedsOCRError, ReportDocument, TeaserPageError, cache_stem,
+                      pdf_to_pages,
                       check_not_scanned, fetch_report, markdown_to_pages, pages_to_markdown)
 from .xhtml_text import html_to_text, text_to_pages
 from .sections import select_chunks, split_chunks
@@ -208,7 +210,26 @@ def esef_document(filing: EsefFiling, slug: str, use_cache: bool) -> ReportDocum
     md_path = CACHE_DIR / f"{cache_stem(slug, filing.report_url)}.md"
     if use_cache and md_path.exists():
         pages = markdown_to_pages(md_path.read_text(encoding="utf-8"))
-        return ReportDocument(filing.report_url, "xhtml", pages, md_path, None, True)
+        return ReportDocument(filing.report_url,
+                              "registry" if isinstance(filing, RegistryFiling) else "xhtml",
+                              pages, md_path, None, True)
+    if isinstance(filing, RegistryFiling):
+        kind, content = registries.download_text(filing)
+        log.info("Using the registry's %s as the text source",
+                 "company profile" if kind == "text" else f"filed report ({kind})")
+        CACHE_DIR.mkdir(exist_ok=True)
+        if kind == "pdf":
+            pdf_path = CACHE_DIR / f"{cache_stem(slug, filing.report_url)}.pdf"
+            pdf_path.write_bytes(content)
+            pages = pdf_to_pages(pdf_path)
+            check_not_scanned(pages)
+        elif kind == "html":
+            pages = text_to_pages(html_to_text(content))
+            check_not_scanned(pages)
+        else:                       # a short profile: the "scanned PDF" test doesn't apply
+            pages = text_to_pages(content)
+        md_path.write_text(pages_to_markdown(pages), encoding="utf-8")
+        return ReportDocument(filing.report_url, "registry", pages, md_path, None, False)
     log.info("Downloading the filed report %s", filing.report_url)
     html = (edgar.download_report(filing) if isinstance(filing, EdgarFiling)
             else download_report(filing))
@@ -246,6 +267,34 @@ def get_edgar(legal_name: str, slug: str, use_cache: bool) -> EdgarFiling | None
     return filing
 
 
+def get_registry(legal_name: str, slug: str, lei_record: dict | None, country: str | None,
+                 use_cache: bool) -> RegistryFiling | None:
+    """The latest accounts filed in the company's home registry (Norway, Denmark), if
+    open. Cached; a "none" answer is reused for a week."""
+    home = (lei_record or {}).get("country") or country
+    if not registries.available(home):       # no open registry, or no UK API key yet
+        return None
+    path = CACHE_DIR / f"{slug}_registry.json"
+    if use_cache and path.exists():
+        cached = json.loads(path.read_text(encoding="utf-8"))
+        if cached.get("filing"):
+            return RegistryFiling.from_dict(cached["filing"])
+        checked = dt.datetime.fromisoformat(cached.get("checked_at", "2000-01-01T00:00:00+00:00"))
+        if dt.datetime.now(dt.timezone.utc) - checked < dt.timedelta(days=7):
+            return None
+    try:
+        filing, reason = registries.find_filing(legal_name, country, lei_record)
+    except (httpx.HTTPError, ValueError, registries.RegistryUnavailable) as e:
+        log.warning("Registry lookup failed (%s); skipping the registry route", str(e)[:120])
+        return None
+    log.info("Registry: %s", reason)
+    CACHE_DIR.mkdir(exist_ok=True)
+    path.write_text(json.dumps({"filing": filing.as_dict() if filing else None, "reason": reason,
+                                "checked_at": dt.datetime.now(dt.timezone.utc).isoformat()},
+                               indent=2), encoding="utf-8")
+    return filing
+
+
 def _esef_doc_or_none(filing, slug: str, use_cache: bool) -> ReportDocument | None:
     try:
         doc = esef_document(filing, slug, use_cache)
@@ -254,6 +303,15 @@ def _esef_doc_or_none(filing, slug: str, use_cache: bool) -> ReportDocument | No
     except (httpx.HTTPError, NeedsOCRError) as e:
         log.warning("ESEF report text unusable (%s)", str(e)[:120])
         return None
+
+
+def _identifier(filing) -> str:
+    """How the filing was tied to the company: LEI, SEC CIK or registration number."""
+    if isinstance(filing, RegistryFiling):
+        return filing.identifier
+    if isinstance(filing, EdgarFiling):
+        return f"SEC CIK {filing.cik}"
+    return f"LEI {filing.lei}"
 
 
 def run(legal_name: str, website: str | None = None, report_url: str | None = None,
@@ -292,6 +350,14 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
             filing = sec
         elif sec and older is None:
             older = sec
+    if filing is None and not (website or report_url):
+        # Accounts filed in the home registry (Norway, Denmark): mostly private
+        # companies, which rarely publish reports on their websites.
+        reg = get_registry(legal_name, slug, lei_info["record"], country, use_cache)
+        if reg and is_recent(reg):
+            filing = reg
+        elif reg and older is None:
+            older = reg
     use_tags = filing is not None
     if use_tags and filing.language in (None, "en"):
         doc = _esef_doc_or_none(filing, slug, use_cache)
@@ -324,7 +390,7 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
             if doc is None:
                 raise website_error
     if doc.source_url == (filing.report_url if filing else None):
-        found = {"website": None, "website_source": "not needed (ESEF filing)",
+        found = {"website": None, "website_source": "not needed (filed accounts)",
                  "report_url": filing.report_url}
 
     # Step 5
@@ -352,10 +418,11 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
         # when the report uses a trade name ("Nokian Tyres" for Nokian Renkaat Oyj).
         checks = [Check("entity", "company_name", "pass",
                         f"filing found by the company's own identifier "
-                        f"({'LEI ' + filing.lei if filing.lei else 'SEC CIK ' + str(getattr(filing, 'cik', ''))})")
+                        f"({_identifier(filing)})")
                   if c.name == "entity" and c.target == "company_name" else c for c in checks]
     status = overall_status(ex, checks)
-    kind = "edgar" if isinstance(filing, EdgarFiling) else "esef"
+    kind = ("edgar" if isinstance(filing, EdgarFiling)
+            else "registry" if isinstance(filing, RegistryFiling) else "esef")
     pages_of = {c.id: c.pages for c in chunks}
 
     def with_pages(d: dict) -> dict:
@@ -380,6 +447,9 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
                         else f"{kind} tags + website text" if use_tags else "website"),
         "filing": ({"type": kind, "filing_id": filing.filing_id, "period_end": filing.period_end,
                     "form": getattr(filing, "form", "ESEF"), "cik": getattr(filing, "cik", None),
+                    "registry": getattr(filing, "registry", None),
+                    "registration_number": getattr(filing, "org_number", None),
+                    "employees_in_filing": getattr(filing, "employees", None),
                     "report_url": filing.report_url, "viewer_url": filing.viewer_url,
                     "package_url": filing.package_url}
                    if filing else None),

@@ -56,6 +56,7 @@ ROWS = [
     ("Annual report found", lambda r, ctx: r is not None),
     ("… read from an ESEF filing (filings.xbrl.org)", lambda r, ctx: _source(r, "esef")),
     ("… read from an SEC filing (10-K / 20-F)", lambda r, ctx: _source(r, "edgar")),
+    ("… read from a company registry filing (NO, DK)", lambda r, ctx: _source(r, "registry")),
     ("… read from the company website", lambda r, ctx: _source(r, "website")),
     ("Report is recent (FY within 2 years)", lambda r, ctx: _recent(r)),
     ("Revenue", lambda r, ctx: _money(r, "revenue")),

@@ -61,8 +61,8 @@ The file has seven parts:
 | `website_source` | `"wikidata"` | How the website was found. See the values below. |
 | `website_score` | `null` | Only for web-search results: how well the domain and page title matched the name, from 0 to 1 (0.5 needed). `null` when the website came from Wikidata. |
 | `report_url` | `".../bn_annual_report_2025.pdf"` | **The exact document the text came from.** Open it to verify anything. For the ESEF route this is the filing's `.xhtml` report. |
-| `data_source` | `"esef"` | Where the data came from: `esef` (tags and text from the company's ESEF filing), `edgar` (tags and text from its SEC 10-K / 20-F), `… tags + website text` (tagged figures from the filing, text from the English report on the website), or `website` (everything from the report found on the website). |
-| `filing` | *(object or `null`)* | The filing used: `type` (`esef` / `edgar`), `form` (`ESEF`, `10-K`, `20-F`…), `filing_id` (ESEF id or SEC accession number), `cik` (SEC filings), `period_end`, `report_url`, and for ESEF `viewer_url` (an XBRL viewer showing each tag) and `package_url`. `null` if no filing was used. |
+| `data_source` | `"esef"` | Where the data came from: `esef` (tags and text from the company's ESEF filing), `edgar` (tags and text from its SEC 10-K / 20-F), `registry` (figures and text from the accounts filed in the company registry: Norway, Denmark), `… tags + website text` (tagged figures from the filing, text from the English report on the website), or `website` (everything from the report found on the website). |
+| `filing` | *(object or `null`)* | The filing used: `type` (`esef` / `edgar` / `registry`), `registry` (`brreg` Norway, `virk` Denmark) and `registration_number` for registry filings, `employees_in_filing` (the number of employees the filing states, registry filings only), `form` (`ESEF`, `10-K`, `20-F`…), `filing_id` (ESEF id or SEC accession number), `cik` (SEC filings), `period_end`, `report_url`, and for ESEF `viewer_url` (an XBRL viewer showing each tag) and `package_url`. `null` if no filing was used. |
 | `report_type` | `"pdf"` | `pdf`, or `html` if the annual report is a web page. |
 | `fiscal_year` | `"2025"` | The financial year the figures are for, as written in the report (`"2025"`, `"2024/25"`, …). |
 | `period_end_date` | `"2025-12-31"` | The balance-sheet date, as YYYY-MM-DD. `null` if the report doesn't state it clearly. |
@@ -109,7 +109,7 @@ The file has seven parts:
 | `chunk_id` | Which excerpt of the report the quote came from. The report is split into numbered chunks before it's sent to the LLM. |
 | `source_pages` | **The PDF page(s)** of that excerpt. Open the PDF at page 123 to see the income statement. |
 | `not_found_reason` | When `value` is `null`, the model's explanation of why the figure wasn't found. Otherwise `null`. |
-| `method` | `xbrl_tag`: read directly from the filing's XBRL tag (ESEF or SEC; exact, no AI). `llm`: read by the AI from the report text. |
+| `method` | `xbrl_tag`: read directly from the filing's XBRL tag or registry data (ESEF, SEC or registry; exact, no AI). `llm`: read by the AI from the report text. |
 | `xbrl_concept` | For `xbrl_tag` figures, the tag that was read, e.g. `ifrs-full:Revenue`. `null` otherwise. |
 
 **Tagged figures look slightly different:** `value` is the full number in `units` (e.g. 6,243,956,000 DKK), `quote` names the tag and period (e.g. `ifrs-full:Revenue = 6,243,956,000 DKK (2025-01-01/2025-12-31)`), and `chunk_id` / `source_pages` are `null` because the number comes from the filing's data, not from a page of text.

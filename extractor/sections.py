@@ -51,7 +51,48 @@ QUALITATIVE = [
     "liiketoimintamalli", "strategiamme", "toimintasegmentit", "segmenttitiedot",
     "konsernirakenne", "tytäryhtiöt", "emoyhtiö",
 ]
-KEYWORD_GROUPS = {"financials": FINANCIALS, "qualitative": QUALITATIVE}
+# Data points beyond the core figures (python -m extractor.datapoints), one group
+# per topic so that each topic gets its own share of the word budget.
+OWNERSHIP = [
+    "shareholders", "largest shareholders", "major shareholders", "principal shareholders",
+    "ownership structure", "share capital", "number of shares", "controlling shareholder",
+    "ultimate parent", "parent company", "owned by", "isin", "ticker", "listed on",
+    "stock exchange", "nasdaq", "euronext", "large cap", "mid cap", "small cap", "first north",
+    "största aktieägare", "aktieägare", "ägarstruktur", "aktiekapital",
+    "største aksjonærer", "aksjonærer", "eierstruktur", "aksjekapital",
+    "største aktionærer", "aktionærer", "ejerforhold", "aktiekapital",
+    "suurimmat osakkeenomistajat", "osakkeenomistajat", "omistusrakenne", "osakepääoma",
+]
+EMPLOYEES = [
+    "number of employees", "average number of employees", "full-time equivalents", "fte",
+    "headcount", "employees", "staff costs", "personnel",
+    "medelantal anställda", "antal anställda", "medarbetare",
+    "årsverk", "antall ansatte", "ansatte",
+    "gennemsnitligt antal", "antal ansatte", "medarbejdere",
+    "henkilöstön määrä", "henkilöstö", "keskimäärin",
+]
+REMUNERATION = [
+    "remuneration", "pension", "defined contribution", "defined benefit",
+    "shareholding requirement", "share ownership guideline", "shareholding guideline",
+    "chief executive officer", "executive management", "group management",
+    "ersättning", "ersättningar till ledande befattningshavare", "pensionsavsättning",
+    "godtgjørelse", "lederlønn", "vederlag", "lønn til ledende ansatte",
+    "palkitseminen", "palkitsemisraportti", "eläke", "toimitusjohtaja",
+]
+GEOGRAPHY = [
+    "geographical information", "geographic information", "geographical areas",
+    "revenue by country", "revenue by geography", "by geographical market", "by country",
+    "domestic", "rest of the world", "rest of world", "non-current assets by country",
+    "geografiska", "geografisk", "geografiske", "maantieteellinen", "maantieteelliset",
+]
+PROFILE = [
+    "registered office", "headquarters", "head office", "domicile", "corporate information",
+    "general information", "reporting entity", "presentation currency", "functional currency",
+    "säte", "huvudkontor", "hovedkontor", "forretningskontor", "hjemsted", "kotipaikka",
+]
+DATAPOINT_TOPICS = {"ownership": OWNERSHIP, "employees": EMPLOYEES,
+                    "remuneration": REMUNERATION, "geography": GEOGRAPHY, "profile": PROFILE}
+KEYWORD_GROUPS = {"financials": FINANCIALS, "qualitative": QUALITATIVE, **DATAPOINT_TOPICS}
 
 # Headings of the primary statements. A chunk with one of these AND lots of
 # numbers is almost certainly the statement itself.

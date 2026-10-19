@@ -56,7 +56,9 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    load_dotenv(PROJECT_ROOT / ".env")
+    # override=True: .env is re-read for each company, so a key changed mid-run (a new
+    # Firecrawl key when credits run out) is used from the next company on.
+    load_dotenv(PROJECT_ROOT / ".env", override=True)
     return Settings(
         firecrawl_api_key=os.getenv("FIRECRAWL_API_KEY") or None,
         foundry_endpoint=os.getenv("FOUNDRY_ENDPOINT") or None,
