@@ -144,6 +144,9 @@ NATIVE_MARKERS = {"de", "deu", "ger", "deutsch", "sv", "swe", "svenska", "no", "
 # A year must stand alone: "2025.pdf" yes, the "2059" inside hash "205966bf" no. A
 # fiscal-year prefix is allowed: "Annual-Financial-Report-FY2025.pdf" (Siemens), "GJ2025".
 _YEAR_RE = re.compile(r"(?<![0-9a-z])(?:fy|gj)?(20\d{2})(?![0-9])")
+# A year inside a date written without separators: "jumboannualreport_31122025_en.pdf"
+# (ddmmyyyy) and "report_20251231.pdf" (yyyymmdd).
+_DATE_RE = re.compile(r"(?<![0-9a-z])(?:[0-3]\d[01]\d(20\d{2})|(20\d{2})[01]\d[0-3]\d)(?![0-9a-z])")
 _IR_PAGE_HINTS = ["annual-report", "report-and-accounts", "reports", "results", "berichte",
                   "rapporter", "raportit", "publications", "investor", "sijoittaj"]
 
@@ -213,7 +216,8 @@ def extract_year(url: str) -> int | None:
     year, e.g. /2026/...-annual-report-2025.pdf), else from the whole URL."""
     max_year = dt.date.today().year + 1
     for part in (_split(url)[1], _norm(url)):
-        years = [int(y) for y in _YEAR_RE.findall(part) if int(y) <= max_year]
+        found = _YEAR_RE.findall(part) + [a or b for a, b in _DATE_RE.findall(part)]
+        years = [int(y) for y in found if int(y) <= max_year]
         if years:
             return max(years)
     return None

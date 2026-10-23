@@ -393,3 +393,9 @@ def test_a_value_the_ai_already_scaled_is_not_scaled_again():
     assert full_value_quoted(2326.2, "millions", "Net sales|3|2,326.2") == 2_326_200_000
     assert full_value_quoted(1050, "thousands", "Base salary|1.050|1.000") == 1_050_000
     assert full_value_quoted(5, "millions", None) == 5_000_000          # no quote: as before
+
+
+def test_years_inside_dates_in_file_names():
+    assert extract_year("https://x.gr/uploads/159286/51c9_jumboannualreport_31122025_en.pdf") == 2025
+    assert extract_year("https://x.com/annual_report_20251231.pdf") == 2025
+    assert extract_year("https://x.com/a/9f31122025aa.pdf") is None            # part of a hash

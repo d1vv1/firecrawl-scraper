@@ -339,9 +339,26 @@ def test_a_report_from_another_country_is_graded_c():
     vals = [Found("country_code", "NL", source="Annual report (PDF)", confidence="B"),
             Found("revenue", 1.2e9, source="Annual report (PDF)", method="PARSE", confidence="B"),
             Found("revenue", 7.9e10, source="ESEF filing", method="XBRL", confidence="A")]
-    dp.country_check(vals, "DE", "Annual report (PDF)")
+    dp.identity_check(vals, "DE", ["Siemens AG"], "Annual report (PDF)")
     assert [v.confidence for v in vals] == ["C", "C", "A"]
-    assert "possibly a subsidiary's report" in vals[1].note
+    assert "possibly another company's report" in vals[1].note
     ok = [Found("country_code", "DE", source="Annual report (PDF)", confidence="B")]
-    dp.country_check(ok, "DE", "Annual report (PDF)")
+    dp.identity_check(ok, "DE", ["Siemens AG"], "Annual report (PDF)")
     assert ok[0].confidence == "B"
+
+
+def test_a_report_by_another_legal_entity_is_graded_c():
+    sub = [Found("legal_name", "Siemens Financieringsmaatschappij N.V.", source="AR", confidence="B")]
+    dp.identity_check(sub, None, ["Siemens AG", "Siemens Aktiengesellschaft"], "AR")
+    assert sub[0].confidence == "C" and "Financieringsmaatschappij" in sub[0].note
+    for report, ours in [("Yubico AB (publ)", "Yubico AB"), ("Leonardo S.p.a.", "Leonardo SpA"),
+                         ("CTT – Correios de Portugal, S.A.", "CTT - Correios de Portugal SA"),
+                         ("Siemens Aktiengesellschaft", "Siemens AG"),
+                         ("H & M Hennes & Mauritz AB", "Hennes & Mauritz AB"),
+                         ("Komax Holding AG", "Komax Holding AG")]:
+        f = [Found("legal_name", report, source="AR", confidence="B")]
+        dp.identity_check(f, None, [ours], "AR")
+        assert f[0].confidence == "B", report
+    trade = [Found("legal_name", "Nokian Renkaat Oyj", source="AR", confidence="B")]
+    dp.identity_check(trade, None, ["Nokian Tyres plc", "Nokian Renkaat Oyj"], "AR")   # LEI name
+    assert trade[0].confidence == "B"

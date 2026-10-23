@@ -59,7 +59,7 @@ from firecrawl import PaymentRequiredError
 from . import edgar, llm, pay
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
-from .config import CACHE_DIR, OUTPUT_DIR, load_settings
+from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
 from .documents import DP_DOC_TYPES, Document, Library
 from .extract import full_value, full_value_quoted
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
@@ -746,22 +746,44 @@ def year_check(f: Found, report_year: int | None) -> None:
                    + (f"from {year}" if year else "undated"))
 
 
-def country_check(values: list[Found], expected: str | None, source: str) -> None:
-    """The report says the company is registered in another country than the company
-    list: probably a subsidiary's report (Siemens: a Dutch financing company's). Every
-    value read from that report is graded C with a warning; XBRL tags of a filing found
-    by the company's LEI are left alone."""
+# Words that don't tell two companies apart: legal forms and generic name parts.
+_NAME_NOISE = {"ab", "ag", "as", "asa", "nv", "bv", "sa", "se", "spa", "plc", "ltd", "limited",
+               "oyj", "oy", "abp", "gmbh", "kgaa", "inc", "corp", "corporation", "llc", "publ",
+               "aktiengesellschaft", "aktiebolag", "aktiebolaget", "allmennaksjeselskap",
+               "aksjeselskap", "osakeyhtio", "sgps", "sarl", "srl", "holding", "holdings", "group",
+               "groupe", "gruppe", "gruppo", "grupo", "company", "the", "and", "international"}
+
+
+def name_core(name: str | None) -> frozenset[str]:
+    """The distinctive words of a company name: 'Siemens Aktiengesellschaft' -> {siemens}."""
+    words = re.findall(r"[a-z0-9]+", fold(name or ""))
+    return frozenset(w for w in words if len(w) > 2 and w not in _NAME_NOISE)
+
+
+def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
+    """Is the report really this company's? Two signals from the report's own text: the
+    country it says the company is registered in, and its legal name (the Siemens run
+    read 'Siemens Financieringsmaatschappij N.V.', a Dutch subsidiary). On either
+    mismatch, every value read from that report is graded C with the reason; XBRL tags of
+    a filing found by the company's LEI are left alone."""
+    reasons = []
     stated = next((f.value for f in values if f.data_point == "country_code"
                    and f.source == source and f.value), None)
-    if not expected or not stated or stated == expected:
+    if country and stated and stated != country:
+        reasons.append(f"the report says the company is in {stated}, the company list says {country}")
+    legal = next((f.value for f in values if f.data_point == "legal_name"
+                  and f.source == source and f.value), None)
+    wanted = [name_core(n) for n in names if name_core(n)]
+    if legal and name_core(legal) and wanted and name_core(legal) not in wanted:
+        reasons.append(f"the report is by '{clip(str(legal), 60)}', not {names[0]}")
+    if not reasons:
         return
-    log.warning("The report says country %s, the company list says %s", stated, expected)
+    why = "check: " + " and ".join(reasons) + ": possibly another company's report"
+    log.warning("Identity check: %s", why)
     for f in values:
         if f.source == source and f.method != "XBRL":
             f.confidence = "C"
-            f.note = "; ".join(x for x in (
-                f.note, f"check: the report says the company is in {stated}, the company list "
-                        f"says {expected}: possibly a subsidiary's report") if x)
+            f.note = "; ".join(x for x in (f.note, why) if x)
 
 
 def same_company(a: str, b: str) -> bool:
@@ -919,8 +941,9 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
             report_values = from_facts(facts, origin)
             # The LEI record's legal country first: the input's country can be the
             # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
-            country_check(report_values + values, (lei_record or {}).get("country") or c.country,
-                          origin.source)
+            identity_check(report_values + values,
+                           (lei_record or {}).get("country") or c.country,
+                           [c.name, (lei_record or {}).get("legal_name") or ""], origin.source)
             values += report_values
 
     chosen = best(values)
