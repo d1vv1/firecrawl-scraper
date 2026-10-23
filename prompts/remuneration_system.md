@@ -35,21 +35,36 @@ during the year (e.g. "Former CEO (until April 2025)").
   not convert. If one figure bundles other components (pension with
   social security, base salary with allowances, pension with benefits),
   say so in `includes`.
-  - base_salary: fixed salary / base pay.
+  - base_salary: the fixed base salary only. Leave out board fees,
+    benefits, holiday-pay adjustments, allowances and salary additions
+    (e.g. a fixed salary addition paid instead of pension): those belong
+    to benefits or pension, or nowhere. Only if the table gives no
+    separate base figure, give the combined one and name what it
+    includes in `includes`.
   - sti_paid: the short-term incentive / annual bonus for the year.
-  - lti_received: the long-term incentive for the year. lti_basis says
-    what the figure is: "grant_value" (value granted), "vested_value"
-    (value that vested or was paid out), "accounting_expense" (IFRS 2
-    cost), "number_of_instruments" (a number of shares or options, not
-    money: then unit "units" and currency null), or "other".
+  - lti_vested: the long-term incentive that vested, was paid out or was
+    exercised for the year (the value realised). lti_granted: the
+    long-term incentive granted (awarded) in the year, at its grant
+    value. Reports often give both: fill both. If the report gives only
+    one LTI figure, put it where its label says (vested/paid/realised ->
+    lti_vested; granted/awarded/allocated -> lti_granted). form: "cash",
+    "shares", "options", "number_of_instruments" (a number of shares or
+    options, not money: then unit "units" and currency null),
+    "accounting_expense" (IFRS 2 cost) or "other".
   - benefits: the value of other benefits (car, insurance, housing).
   - pension: the pension contribution or cost for the year.
   - total: the total remuneration as the company states it. Never add
     it up yourself.
-- sti_target_pct, sti_max_pct, lti_target_pct, lti_max_pct: target and
-  maximum opportunity as a percent of base salary, as stated in the
-  report or policy for this role (e.g. "target bonus 60% of base salary,
-  capped at 120%"). Null if stated only in money or not at all.
+- sti_target, sti_max, lti_target, lti_max: the target and maximum
+  opportunity for this role, in the form the report or policy states
+  it. form: "pct_of_base" (e.g. "target bonus 60% of base salary" ->
+  60), "pct_of_max" (e.g. "target is half of the maximum" -> 50),
+  "months_of_salary" (e.g. "up to 6 months' salary" -> 6), "amount"
+  (money: with unit and currency), "number_of_shares", or "other".
+  Give the number as stated; never convert one form into another.
+  These are the opportunity the policy sets, not the outcome: "STIP
+  outcome 24.4% of maximum" or "vested at 62%" are results, not a target
+  or a maximum. Null if not stated.
 
 Company level, from the policy or report:
 - pension_type: the pension arrangement for executives, e.g. "defined

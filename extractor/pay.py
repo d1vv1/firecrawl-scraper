@@ -5,10 +5,14 @@ Sources, in order:
   1. the remuneration report (a separate document, found by documents.Library);
   2. else the remuneration section of the annual report (UK and Swiss reports
      include it);
-  3. the remuneration policy, only for the STI/LTI target and maximum percentages
-     the report doesn't state.
+  3. the remuneration policy, only for the STI/LTI targets and maximums the report
+     doesn't state.
 Amounts are converted to full units like every other money value; the printed figure
-and unit, any bundled components and the LTI basis go in `note`. The stated total is
+and unit, any bundled components and the LTI form go in `note`. LTI is two fields:
+vested (paid out for the year) and granted (awarded in the year). Targets and maximums
+keep the form the report states (% of base, % of maximum, months of salary, an amount,
+a number of shares), with the form in `unit`; a target stated as a share of a maximum
+that is a % of base is also given as % of base (method DERIVED). The stated total is
 checked against the sum of its parts (a difference over 2% is noted).
 """
 
@@ -20,7 +24,7 @@ from . import llm
 from .apis import Found
 from .config import CACHE_DIR
 from .extract import full_value_quoted
-from .schemas import PayAmount, PayPercent, RemunerationFacts, RolePay
+from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
 
 log = logging.getLogger(__name__)
@@ -32,18 +36,21 @@ ROLE_POINTS = [
     "pay_currency",             # R03
     "base_salary",              # R04
     "sti_paid",                 # R05
-    "sti_target_pct", "sti_max_pct",        # R06
-    "lti_received", "lti_basis",            # R07
-    "lti_target_pct", "lti_max_pct",        # R08
+    "sti_target", "sti_max",                # R06
+    "lti_vested", "lti_granted",            # R07
+    "lti_target", "lti_max",                # R08
     "benefits_value",           # R09
     "pension_contribution",     # R10
     "total_remuneration",       # R11
 ]
-AMOUNTS = {"base_salary": "base_salary", "sti_paid": "sti_paid", "lti_received": "lti_received",
-           "benefits_value": "benefits", "pension_contribution": "pension",
-           "total_remuneration": "total"}
-PERCENTS = ("sti_target_pct", "sti_max_pct", "lti_target_pct", "lti_max_pct")
-PARTS = ("base_salary", "sti_paid", "lti_received", "benefits", "pension")
+AMOUNTS = {"base_salary": "base_salary", "sti_paid": "sti_paid", "lti_vested": "lti_vested",
+           "lti_granted": "lti_granted", "benefits_value": "benefits",
+           "pension_contribution": "pension", "total_remuneration": "total"}
+LTIS = ("lti_vested", "lti_granted")
+TARGETS = ("sti_target", "sti_max", "lti_target", "lti_max")
+TARGET_UNIT = {"pct_of_base": "% of base salary", "pct_of_max": "% of maximum",
+               "months_of_salary": "months of salary", "number_of_shares": "shares", "other": ""}
+PARTS = ("base_salary", "sti_paid", "benefits", "pension")    # + one LTI figure
 TOTAL_TOLERANCE = 0.02                       # protocol: a difference over 2% is noted
 PAY_WORDS = 12_000                           # words of a pay document sent to the AI
 
@@ -88,8 +95,8 @@ def role_names(roles: list[RolePay]) -> list[str]:
     return out
 
 
-def merge_policy(roles: list[RolePay], policy: list[RolePay]) -> dict[int, dict[str, PayPercent]]:
-    """Target/max percentages from the policy for roles whose report gives none: by the
+def merge_policy(roles: list[RolePay], policy: list[RolePay]) -> dict[int, dict[str, PayTarget]]:
+    """Targets and maximums from the policy for roles whose report gives none: by the
     same title, else from the policy's only executive entry (one rule for all)."""
     execs = [p for p in policy if p.executive]
     by_title = {_norm_title(p.role_title): p for p in execs}
@@ -100,7 +107,7 @@ def merge_policy(roles: list[RolePay], policy: list[RolePay]) -> dict[int, dict[
         src = by_title.get(_norm_title(r.role_title)) or (execs[0] if len(execs) == 1 else None)
         if src is None:
             continue
-        got = {k: getattr(src, k) for k in PERCENTS
+        got = {k: getattr(src, k) for k in TARGETS
                if getattr(r, k).value is None and getattr(src, k).value is not None}
         if got:
             out[i] = got
@@ -128,12 +135,34 @@ def has_pay(facts: RemunerationFacts) -> bool:
                for r in facts.roles)
 
 
-def _amount(a: PayAmount) -> float | None:
+def _amount(a) -> float | None:
     if a.value is None:
         return None
-    if a.unit is None:
+    if getattr(a, "form", None) == "number_of_instruments" or a.unit is None:
         return a.value
     return full_value_quoted(a.value, a.unit, a.quote)
+
+
+def _target(name: str, t: PayTarget) -> tuple[float, str]:
+    """(value, unit) of a target as stated: an amount in full units with its currency,
+    else the number with its form ('% of base salary', 'months of salary'...)."""
+    if t.form == "amount":
+        return (full_value_quoted(t.value, t.unit, t.quote) if t.unit else t.value), t.currency or ""
+    return t.value, TARGET_UNIT.get(t.form or "", "") if t.form else "% of base salary"
+
+
+def derived_target(target: Found, maximum: Found) -> Found | None:
+    """'Target: 50% of the maximum' with a maximum of 80% of base -> 40% of base."""
+    if target.unit != "% of maximum" or maximum.unit != "% of base salary":
+        return None
+    value = round(float(maximum.value) * float(target.value) / 100, 4)
+    return Found(target.data_point, value, unit="% of base salary", period_end=target.period_end,
+                 source=target.source, endpoint=target.endpoint, method="DERIVED",
+                 confidence=max(target.confidence or "C", maximum.confidence or "C",
+                                key="ABC".index),     # the weaker of the two
+                 note=f"derived: {target.value:g}% of the maximum of {maximum.value:g}% of base "
+                      f"salary; {target.note}",
+                 retrieved_at=target.retrieved_at, grain="role", role_row=target.role_row)
 
 
 def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | None = None,
@@ -176,24 +205,18 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 "aggregate_headcount", row, h.value, h, origin, unit="people",
                 extra=f"excludes {h.excludes}" if h.excludes else "")
         for name, field in AMOUNTS.items():
-            a: PayAmount = getattr(r, field)
+            a = getattr(r, field)
             if a.value is None or not a.quote:
                 continue
-            number = field == "lti_received" and r.lti_basis == "number_of_instruments"
+            number = getattr(a, "form", None) == "number_of_instruments"
             extra = [f"printed {a.value:g} {a.unit or ''}".strip()]
+            if getattr(a, "form", None):
+                extra.append(f"form: {a.form.replace('_', ' ')}")
             if a.includes:
                 extra.append(f"includes {a.includes}")
-            if field == "lti_received" and r.lti_basis:
-                extra.append(f"basis: {r.lti_basis.replace('_', ' ')}")
-            rows[name] = placed(name, row, a.value if number else _amount(a), a, origin,
+            rows[name] = placed(name, row, _amount(a), a, origin,
                                 unit="instruments" if number else (a.currency or ""),
                                 extra="; ".join(extra))
-        if r.lti_basis and "lti_received" in rows:
-            lti = rows["lti_received"]
-            rows["lti_basis"] = Found("lti_basis", r.lti_basis, source=lti.source,
-                                      endpoint=lti.endpoint, method=lti.method,
-                                      confidence=lti.confidence, note="how the LTI value is measured",
-                                      retrieved_at=lti.retrieved_at, grain="role", role_row=row)
         money = next((rows[k] for k in ("total_remuneration", "base_salary") if k in rows), None)
         unit_of = next((getattr(r, f) for f in ("total", "base_salary")
                         if getattr(r, f).value is not None and getattr(r, f).quote), None)
@@ -203,39 +226,52 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                                          confidence=money.confidence,
                                          note=f"table unit: {unit_of.unit or 'not stated'}",
                                          retrieved_at=money.retrieved_at, grain="role", role_row=row)
-        for name in PERCENTS:
-            p: PayPercent = getattr(r, name)
-            if p.value is not None and p.quote:
-                rows[name] = placed(name, row, p.value, p, origin, unit="% of base salary")
-        for name, p in from_policy.get(i, {}).items():
-            if p.quote:
-                rows[name] = placed(name, row, p.value, p, policy_origin, unit="% of base salary",
+        for name in TARGETS:
+            t: PayTarget = getattr(r, name)
+            if t.value is not None and t.quote:
+                value, unit = _target(name, t)
+                rows[name] = placed(name, row, value, t, origin, unit=unit)
+        for name, t in from_policy.get(i, {}).items():
+            if t.quote:
+                value, unit = _target(name, t)
+                rows[name] = placed(name, row, value, t, policy_origin, unit=unit,
                                     extra="from the remuneration policy")
+        for tgt, mx in (("sti_target", "sti_max"), ("lti_target", "lti_max")):
+            if tgt in rows and mx in rows:
+                d = derived_target(rows[tgt], rows[mx])
+                if d:
+                    rows[tgt] = d
         check_total(r, rows)
         for name in ROLE_POINTS[1:]:
             if name in rows:
                 out.append(rows[name])
             elif name == "aggregate_headcount" and not r.is_aggregate:
                 out.append(missing(name, row, "not applicable: one person"))
-            elif name == "lti_basis" and "lti_received" not in rows:
-                out.append(missing(name, row, "not applicable: no LTI value"))
             else:
                 out.append(missing(name, row))
     return out
 
 
 def check_total(r: RolePay, rows: dict[str, Found]) -> None:
-    """Protocol R11: the stated total against base + STI + LTI + benefits + pension."""
+    """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
+    LTI figure the total includes is the one that fits: vested, granted or none."""
     total = rows.get("total_remuneration")
-    parts = [_amount(getattr(r, p)) for p in PARTS
-             if getattr(r, p).value is not None
-             and not (p == "lti_received" and r.lti_basis == "number_of_instruments")]
-    if not total or not isinstance(total.value, (int, float)) or len(parts) < 2 or not total.value:
+    if not total or not isinstance(total.value, (int, float)) or not total.value:
         return
-    diff = (sum(parts) - total.value) / total.value
+    parts = [_amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None]
+    ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
+    ltis = [(k, v) for k, v in ltis if v is not None and not (
+        k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
+    if len(parts) < 2:
+        return
+    kind, lti = min(ltis, key=lambda kv: abs(sum(parts) + kv[1] - total.value))
+    s = sum(parts) + lti
+    diff = (s - total.value) / total.value
     if abs(diff) > TOTAL_TOLERANCE:
-        total.note += (f"; the parts found add up to {sum(parts):,.0f} ({diff:+.1%} against the "
+        total.note += (f"; the parts found add up to {s:,.0f} ({diff:+.1%} against the "
                        f"stated total){'' if len(parts) == len(PARTS) else ', some parts missing'}")
+    elif kind != "no":
+        total.note += f"; equals the parts with the LTI {kind}"
 
 
 def company_terms(facts: RemunerationFacts, origin) -> list[Found]:
@@ -252,5 +288,5 @@ def company_terms(facts: RemunerationFacts, origin) -> list[Found]:
 
 def needs_policy(facts: RemunerationFacts) -> bool:
     """Some executive role lacks a target or maximum percentage."""
-    return any(r.executive and any(getattr(r, k).value is None for k in PERCENTS)
+    return any(r.executive and any(getattr(r, k).value is None for k in TARGETS)
                for r in facts.roles)

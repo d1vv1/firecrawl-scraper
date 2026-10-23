@@ -685,8 +685,24 @@ def _pay_chunks(origin: Origin, words: int) -> list[Chunk]:
     return select_chunks(chunks, "remuneration", words)
 
 
+def fiscal_end_year(text: str | None) -> int | None:
+    """The year a fiscal year ends in: '2025' -> 2025, '2025/26' and '2025-2026' -> 2026."""
+    m = re.search(r"(20\d{2})(?:\s*[/-]\s*(\d{4}|\d{2}))?", text or "")
+    if not m:
+        return None
+    if not m.group(2):
+        return int(m.group(1))
+    end = m.group(2)
+    return int(end) if len(end) == 4 else int(m.group(1)[:2] + end)
+
+
+# Where the directors' remuneration report is a statutory part of the annual report.
+AR_PAY_FIRST = {"GB", "IE"}
+
+
 def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
-             report_key: str, period_end: str) -> tuple[list[Found], list[Found], list[str]]:
+             report_key: str, period_end: str, country: str | None = None,
+             report_year: int | None = None) -> tuple[list[Found], list[Found], list[str]]:
     """Role rows and the company-level pay terms, from the remuneration report (or the
     annual report's remuneration section), plus the remuneration policy for target and
     maximum percentages the report lacks. Returns (role rows, company values, sources)."""
@@ -696,6 +712,11 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         """Up to two remuneration documents, then the annual report's section. The
         second one comes from the first's links (a governance page linking the PDF) or
         from a map search for the type (Jumbo's report sits in an AGM folder)."""
+        ar = ((report, _pay_chunks(report, AR_PAY_WORDS),
+               "the remuneration section of the company's annual report", report_key)
+              if report else None)
+        if ar and country in AR_PAY_FIRST:
+            yield ar
         for attempt in range(2 if lib else 0):
             doc = lib.find("remuneration", search=attempt > 0)
             if doc is None:
@@ -703,9 +724,8 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             o = doc_origin(doc, 0)
             yield (o, _pay_chunks(o, pay.PAY_WORDS), "the company's remuneration report",
                    f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}")
-        if report:
-            yield (report, _pay_chunks(report, AR_PAY_WORDS),
-                   "the remuneration section of the company's annual report", report_key)
+        if ar and country not in AR_PAY_FIRST:
+            yield ar
 
     facts = origin = None
     for o, chunks, what, key in sources():
@@ -714,6 +734,13 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
         f = pay.ask_pay(name, o.url, chunks, what, key)
         read.append(o.source)
+        year = fiscal_end_year(f.fiscal_year)
+        if year and report_year and year < report_year:
+            # Shell: an investor-roadshow deck with the previous year's outcomes; Equinor:
+            # the FY2024 remuneration report when the annual report is FY2025
+            log.info("Pay: %s gives FY%s pay, the report is FY%s; skipped", o.url, year,
+                     report_year)
+            continue
         if pay.has_pay(f):
             facts, origin = f, o
             break
@@ -1061,10 +1088,12 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
 
         # 3. executive pay (role grain) and the company-level pay terms
         if not unlisted:
+            fy = fiscal_end_year(str((result or {}).get("fiscal_year") or ""))
             roles, terms, read = from_pay(
                 c.name, c.slug, lib, origin,
                 Path(result["debug"]["markdown_file"]).stem if origin else "",
-                (result or {}).get("period_end_date") or "")
+                (result or {}).get("period_end_date") or "",
+                (lei_record or {}).get("country") or c.country, fy)
             values += terms
             tried += [r for r in read if r not in tried]
             if not roles:

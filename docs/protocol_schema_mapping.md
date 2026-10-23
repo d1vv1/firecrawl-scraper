@@ -64,11 +64,11 @@ The protocol's status values map onto our columns as follows:
 | R01 | Who is disclosed | `role_disclosure` (`individual` / `aggregate`; the note says executive or non-executive board) |
 | R02 | Aggregate headcount, who is excluded | `aggregate_headcount` (exclusions in `note`) |
 | R03 | Currency and unit of the pay table | `pay_currency` (table unit in `note`) |
-| R04 | Base salary | `base_salary` |
+| R04 | Base salary | `base_salary`: fixed base salary only (no board fees, benefits, holiday-pay adjustments or salary additions; a figure that can't be separated says what it includes) |
 | R05 | STI paid | `sti_paid` |
-| R06 | STI target and maximum, % of base | `sti_target_pct`, `sti_max_pct` |
-| R07 | LTI received, and its basis | `lti_received`, `lti_basis` (grant value, vested value, accounting expense, number of instruments) |
-| R08 | LTI target and maximum, % of base | `lti_target_pct`, `lti_max_pct` |
+| R06 | STI target and maximum | `sti_target`, `sti_max`: in the form stated (`unit` = % of base salary, % of maximum, months of salary, a currency, shares); a target given as a share of a maximum that is a % of base is also derived as % of base (method DERIVED) |
+| R07 | LTI received, and its basis | `lti_vested` (vested, paid out or exercised for the year) and `lti_granted` (granted in the year), each with its form in `note` (cash, shares, options, number of instruments, accounting expense) |
+| R08 | LTI target and maximum | `lti_target`, `lti_max`, as for R06 |
 | R09 | Benefits value | `benefits_value` |
 | R10 | Pension contribution | `pension_contribution` |
 | R11 | Total as stated | `total_remuneration`; checked against R04 + R05 + R07 + R09 + R10, and a difference over 2% is noted |
@@ -78,7 +78,7 @@ The validation run listed seven things the scrape must handle. How each is cover
 | Issue | How it is handled |
 |---|---|
 | Units per table ("in T€" in one header cell) | The AI copies the figure as printed with the table's unit; we convert to full units and keep the printed figure in `note` |
-| LTI basis differs | `lti_basis` row for every LTI value |
+| LTI basis differs | Two fields, `lti_vested` and `lti_granted`, each with its form; the total check uses the one that fits |
 | Bundled components | `includes` in the AI answer, in `note` ("includes social security") |
 | Timing, report versions | Document year in `note`; the fiscal year comes from the report |
 | Document access | Remuneration reports are found like the other fallback documents; PDFs are downloaded directly |

@@ -183,8 +183,12 @@ class DataPointFacts(BaseModel):
 
 # --- executive pay, role grain (python -m extractor.datapoints) --------------------
 
-LtiBasis = Literal["grant_value", "vested_value", "accounting_expense", "number_of_instruments",
-                   "other"]
+# What an LTI figure is made of: cash paid, shares or options, or a number of instruments.
+LtiForm = Literal["cash", "shares", "options", "number_of_instruments", "accounting_expense",
+                  "other"]
+# How a target or maximum is stated (HANDOVER decision: keep the stated form).
+TargetForm = Literal["pct_of_base", "pct_of_max", "months_of_salary", "amount",
+                     "number_of_shares", "other"]
 
 
 class PayAmount(BaseModel):
@@ -196,8 +200,21 @@ class PayAmount(BaseModel):
     chunk_id: Optional[int]
 
 
-class PayPercent(BaseModel):
-    value: Optional[float]          # percent of base salary
+class LtiAmount(BaseModel):
+    value: Optional[float]          # exactly as printed
+    unit: Optional[Unit]
+    currency: Optional[str]         # null for a number of instruments
+    form: Optional[LtiForm]
+    includes: Optional[str]
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+class PayTarget(BaseModel):
+    value: Optional[float]          # as stated: 60 (% of base), 50 (% of max), 6 (months)
+    form: Optional[TargetForm]
+    currency: Optional[str]         # for an amount only
+    unit: Optional[Unit]            # for an amount only
     quote: Optional[str]
     chunk_id: Optional[int]
 
@@ -219,15 +236,15 @@ class RolePay(BaseModel):
     aggregate_headcount: RoleHeadcount
     base_salary: PayAmount
     sti_paid: PayAmount             # short-term incentive / bonus for the year
-    lti_received: PayAmount
-    lti_basis: Optional[LtiBasis]
+    lti_vested: LtiAmount           # vested, paid out or exercised for the year
+    lti_granted: LtiAmount          # granted (awarded) in the year
     benefits: PayAmount
     pension: PayAmount
     total: PayAmount                # as stated by the company
-    sti_target_pct: PayPercent
-    sti_max_pct: PayPercent
-    lti_target_pct: PayPercent
-    lti_max_pct: PayPercent
+    sti_target: PayTarget
+    sti_max: PayTarget
+    lti_target: PayTarget
+    lti_max: PayTarget
 
 
 class RemunerationFacts(BaseModel):

@@ -234,10 +234,11 @@ def _role(title, executive=True, aggregate=False, name=None, **pay):
     d = {"role_title": title, "person_name": name, "executive": executive, "is_aggregate": aggregate,
          "quote": "Net sales|3|2,326.2", "chunk_id": 0,
          "aggregate_headcount": {"value": None, "excludes": None, "quote": None, "chunk_id": None},
-         "lti_basis": None}
-    d |= {k: _amount() for k in ("base_salary", "sti_paid", "lti_received", "benefits", "pension",
-                                 "total")}
-    d |= {k: none_p for k in ("sti_target_pct", "sti_max_pct", "lti_target_pct", "lti_max_pct")}
+         }
+    d |= {k: _amount() for k in ("base_salary", "sti_paid", "benefits", "pension", "total")}
+    d |= {k: _amount() | {"form": None} for k in ("lti_vested", "lti_granted")}
+    d |= {k: none_p | {"form": None, "currency": None, "unit": None}
+          for k in ("sti_target", "sti_max", "lti_target", "lti_max")}
     return d | pay
 
 
@@ -254,10 +255,14 @@ def test_role_rows_for_executives_and_one_row_for_the_board():
     q = "Net sales|3|2,326.2"
     facts = _pay([
         _role("CEO", base_salary=_amount(1000, quote=q), sti_paid=_amount(400, quote=q),
-              lti_received=_amount(300, quote=q), lti_basis="vested_value",
+              lti_vested=_amount(300, quote=q) | {"form": "shares"},
+              lti_granted=_amount(450, quote=q) | {"form": "shares"},
               benefits=_amount(50, quote=q), pension=_amount(200, quote=q, includes="social security"),
               total=_amount(2000, quote=q),
-              sti_target_pct={"value": 60.0, "quote": q, "chunk_id": 0}),
+              sti_target={"value": 50.0, "form": "pct_of_max", "currency": None, "unit": None,
+                          "quote": q, "chunk_id": 0},
+              sti_max={"value": 120.0, "form": "pct_of_base", "currency": None, "unit": None,
+                       "quote": q, "chunk_id": 0}),
         _role("Board of directors (non-executive)", executive=False, aggregate=True)])
     rows = pay.role_found(facts, _origin(), period_end="2025-12-31")
     ceo = {f.data_point: f for f in rows if f.role_row == "CEO"}
@@ -265,10 +270,14 @@ def test_role_rows_for_executives_and_one_row_for_the_board():
     assert ceo["base_salary"].value == 1_000_000 and ceo["base_salary"].unit == "EUR"
     assert ceo["base_salary"].endpoint == "https://x.com/ar.pdf#page=7"
     assert ceo["pay_currency"].value == "EUR" and "thousands" in ceo["pay_currency"].note
-    assert ceo["lti_basis"].value == "vested_value"
+    assert ceo["lti_vested"].value == 300_000 and "form: shares" in ceo["lti_vested"].note
+    assert ceo["lti_granted"].value == 450_000
+    assert (ceo["sti_target"].value, ceo["sti_target"].unit, ceo["sti_target"].method) == (
+        60.0, "% of base salary", "DERIVED")                  # 50% of a 120% maximum
+    assert ceo["sti_max"].unit == "% of base salary"
     assert "includes social security" in ceo["pension_contribution"].note
     assert ceo["aggregate_headcount"].note == "not applicable: one person"
-    assert ceo["lti_target_pct"].value is None
+    assert ceo["lti_target"].value is None
     assert all(f.grain == "role" for f in rows)
     # 1000 + 400 + 300 + 50 + 200 = 1950 vs 2000 stated: -2.5%, over the 2% tolerance
     assert "-2.5% against the stated total" in ceo["total_remuneration"].note
@@ -283,9 +292,11 @@ def test_duplicate_titles_get_the_name_and_policy_fills_targets():
                   _role("Member of the Management Board", name="B. Weber")])
     assert pay.role_names(roles.roles) == ["Member of the Management Board (A. Meier)",
                                            "Member of the Management Board (B. Weber)"]
-    policy = _pay([_role("Management Board", sti_max_pct={"value": 150.0, "quote": q, "chunk_id": 0})])
+    policy = _pay([_role("Management Board", sti_max={"value": 150.0, "form": "pct_of_base",
+                                                      "currency": None, "unit": None,
+                                                      "quote": q, "chunk_id": 0})])
     rows = pay.role_found(roles, _origin(), policy, _origin())
-    got = [f for f in rows if f.data_point == "sti_max_pct" and f.value == 150.0]
+    got = [f for f in rows if f.data_point == "sti_max" and f.value == 150.0]
     assert len(got) == 2 and "from the remuneration policy" in got[0].note
 
 
@@ -410,3 +421,56 @@ def test_aggregate_rows_from_the_annual_report_complete_a_ceo_only_report(monkey
     rows = dp._aggregates_from_report("X", report_pay, rem, ar, "k", "2025-12-31", read)
     assert {r.role_row for r in rows} == {"Other members of group management"}   # not the CEO again
     assert read == ["Annual report (PDF)"]
+
+
+def test_targets_keep_their_stated_form():
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("CEO", base_salary=_amount(1000, quote=q),
+                        sti_max={"value": 6.0, "form": "months_of_salary", "currency": None,
+                                 "unit": None, "quote": q, "chunk_id": 0},
+                        lti_max={"value": 2.0, "form": "amount", "currency": "EUR",
+                                 "unit": "millions", "quote": q, "chunk_id": 0})])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    assert (rows["sti_max"].value, rows["sti_max"].unit) == (6.0, "months of salary")
+    assert (rows["lti_max"].value, rows["lti_max"].unit) == (2_000_000, "EUR")
+
+
+def test_pay_from_an_older_year_is_skipped_and_uk_reads_the_annual_report_first(monkeypatch):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    old = _pay([_role("CEO", total=_amount(8.6, unit="millions", quote=q))])
+    old = old.model_copy(update={"fiscal_year": "2024"})
+    new = _pay([_role("CEO", base_salary=_amount(1600, quote=q))])
+    asked = []
+
+    def fake_ask(name, url, chunks, what, key):
+        asked.append(url)
+        return old if "roadshow" in url else new
+    monkeypatch.setattr(pay, "ask_pay", fake_ask)
+    ar = _origin()
+
+    class Lib:
+        def __init__(self):
+            self.n = 0
+
+        def find(self, key, search=False):
+            from extractor.documents import DOC_TYPES, Document
+            self.n += 1
+            if key == "remuneration" and self.n == 1:
+                return Document("https://shell.com/remuneration-roadshow-q1-2025.pdf",
+                                DOC_TYPES["remuneration"], "pdf", ar.pages, 2025, "")
+            return None
+    roles, _, read = dp.from_pay("Shell", "shell", Lib(), ar, "k", "2025-12-31", "SE", 2025)
+    assert asked[0].endswith("roadshow-q1-2025.pdf") and asked[-1] == ar.url   # skipped, then AR
+    assert any(r.data_point == "base_salary" and r.value == 1_000_000 * 1.6 for r in roles)
+    asked.clear()
+    dp.from_pay("Shell", "shell", Lib(), ar, "k", "2025-12-31", "GB", 2025)
+    assert asked[0] == ar.url                                    # UK: the annual report first
+
+
+def test_fiscal_years_are_read_by_their_end():
+    assert dp.fiscal_end_year("2025") == 2025
+    assert dp.fiscal_end_year("2025/26") == 2026
+    assert dp.fiscal_end_year("FY 2025-2026") == 2026
+    assert dp.fiscal_end_year(None) is None

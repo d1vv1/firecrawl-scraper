@@ -166,8 +166,10 @@ period_end, source, endpoint, method, retrieved_at, confidence, note`
   board members get one `role_disclosure` row. Read from the remuneration report, else the
   annual report's remuneration section; target and maximum percentages missing there come
   from the remuneration policy. Pay amounts are in full units like all money; the printed
-  figure, bundled components and the LTI basis are in `note`, and a stated total that
-  differs from the sum of its parts by more than 2% is flagged there.
+  figure, bundled components and the LTI form are in `note`, and a stated total that
+  differs from the sum of its parts by more than 2% is flagged there. LTI is two fields,
+  `lti_vested` and `lti_granted`; targets and maximums keep the form the report states
+  (`unit`: % of base salary, % of maximum, months of salary, a currency, shares).
 
 Per company, cheapest and most exact first:
 0. **official APIs** (`--no-apis` to skip), free and cached for a week: GLEIF by LEI (LEI,

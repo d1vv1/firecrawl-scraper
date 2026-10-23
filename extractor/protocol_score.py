@@ -33,9 +33,9 @@ COMPANY_FIELDS = {
 }
 NOT_COLLECTED: dict[str, str] = {}
 NUMERIC = {"C12", "C13", "C14", "C16", "C17", "C18"}
-ROLE_FIELDS = {"R04": "base_salary", "R05": "sti_paid", "R07": "lti_received",
+ROLE_FIELDS = {"R04": "base_salary", "R05": "sti_paid", "R07": ("lti_vested", "lti_granted"),
                "R09": "benefits_value", "R10": "pension_contribution", "R11": "total_remuneration"}
-ROLE_PCT = {"R06": ("sti_target_pct", "sti_max_pct"), "R08": ("lti_target_pct", "lti_max_pct")}
+ROLE_PCT = {"R06": ("sti_target", "sti_max"), "R08": ("lti_target", "lti_max")}
 SCALE = {"units": 1, "thousands": 1e3, "millions": 1e6, "billions": 1e9}
 TOLERANCE = 0.01
 FOUND = ("found", "partial")
@@ -156,8 +156,10 @@ def score(ours_csv: Path, val_dir: Path) -> str:
                 if not nums:
                     continue
                 total += 1
-                want = ([n * scale_of(t["unit"]) for n in nums] if isinstance(dp, str) else []) + nums
-                if any(close(g, w) for g in got for w in want):
+                money = fid in ROLE_FIELDS
+                want = ([n * scale_of(t["unit"]) for n in nums] if money else []) + nums
+                # their percentages are often rounded to whole numbers (12.5% -> 13)
+                if any(close(g, w) or (not money and abs(g - w) <= 0.5) for g in got for w in want):
                     same += 1
                 elif got:
                     other += 1
