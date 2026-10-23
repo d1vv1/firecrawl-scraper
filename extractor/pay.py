@@ -50,7 +50,7 @@ LTIS = ("lti_vested", "lti_granted")
 TARGETS = ("sti_target", "sti_max", "lti_target", "lti_max")
 TARGET_UNIT = {"pct_of_base": "% of base salary", "pct_of_max": "% of maximum",
                "months_of_salary": "months of salary", "number_of_shares": "shares", "other": ""}
-PARTS = ("base_salary", "sti_paid", "benefits", "pension")    # + one LTI figure
+PARTS = ("base_salary", "sti_paid", "benefits", "pension", "pension_allowance")  # + one LTI
 TOTAL_TOLERANCE = 0.02                       # protocol: a difference over 2% is noted
 PAY_WORDS = 12_000                           # words of a pay document sent to the AI
 
@@ -158,6 +158,20 @@ def months_as_pct(f: Found) -> Found:
                     "note": f"derived: stated as {f.value:g} months of salary; {f.note}"})
 
 
+def with_allowance(pension: Found | None, allowance: Found) -> Found:
+    """Pension = pension cost + a salary addition paid instead of pension (the golden
+    definition for Norway: Equinor's EVP pension 123 = addition 93 + pension 30)."""
+    if pension is None or not isinstance(pension.value, (int, float)):
+        return Found(**{**allowance.__dict__, "method": "DERIVED",
+                        "note": f"salary addition in lieu of pension only; {allowance.note}"})
+    return Found(**{**pension.__dict__, "value": pension.value + allowance.value,
+                    "method": "DERIVED", "confidence": max(pension.confidence or "C",
+                                                           allowance.confidence or "C",
+                                                           key="ABC".index),
+                    "note": f"derived: pension {pension.value:,.0f} + salary addition in lieu of "
+                            f"pension {allowance.value:,.0f}; {pension.note}"})
+
+
 def derived_target(target: Found, maximum: Found) -> Found | None:
     """'Target: 50% of the maximum' with a maximum of 80% of base -> 40% of base."""
     if target.unit != "% of maximum" or maximum.unit != "% of base salary":
@@ -251,6 +265,13 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 d = derived_target(rows[tgt], rows[mx])
                 if d:
                     rows[tgt] = d
+        allowance = r.pension_allowance
+        if allowance.value is not None and allowance.quote:
+            rows["pension_contribution"] = with_allowance(
+                rows.get("pension_contribution"), placed(
+                    "pension_contribution", row, _amount(allowance), allowance, origin,
+                    unit=allowance.currency or "", extra=f"printed {allowance.value:g} "
+                                                         f"{allowance.unit or ''}".strip()))
         check_total(r, rows)
         for name in ROLE_POINTS[1:]:
             if name in rows:

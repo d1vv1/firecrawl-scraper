@@ -235,7 +235,8 @@ def _role(title, executive=True, aggregate=False, name=None, **pay):
          "quote": "Net sales|3|2,326.2", "chunk_id": 0,
          "aggregate_headcount": {"value": None, "excludes": None, "quote": None, "chunk_id": None},
          }
-    d |= {k: _amount() for k in ("base_salary", "sti_paid", "benefits", "pension", "total")}
+    d |= {k: _amount() for k in ("base_salary", "sti_paid", "benefits", "pension",
+                                 "pension_allowance", "total")}
     d |= {k: _amount() | {"form": None} for k in ("lti_vested", "lti_granted")}
     d |= {k: none_p | {"form": None, "currency": None, "unit": None}
           for k in ("sti_target", "sti_max", "lti_target", "lti_max")}
@@ -476,3 +477,40 @@ def test_fiscal_years_are_read_by_their_end():
     assert dp.fiscal_end_year("2025/26") == 2026
     assert dp.fiscal_end_year("FY 2025-2026") == 2026
     assert dp.fiscal_end_year(None) is None
+
+
+def test_supplied_report_urls_are_read_from_the_input(tmp_path):
+    p = tmp_path / "in.csv"
+    p.write_text("company_id,company_name,country,annual_report_url,remuneration_report_url\n"
+                 "eq,Equinor ASA,NO,https://cdn.example.com/files/9b3e.pdf?2025-annual-report.pdf,\n",
+                 encoding="utf-8")
+    t = dp.read_targets(p)[0]
+    assert t.annual_report_url.startswith("https://cdn.example.com/") and t.remuneration_report_url is None
+
+
+def test_a_supplied_document_is_read_first_and_skips_the_year_check(monkeypatch):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    old_year = _pay([_role("CEO", base_salary=_amount(1142, quote=q))]).model_copy(
+        update={"fiscal_year": "2024"})
+    asked = []
+    monkeypatch.setattr(pay, "ask_pay", lambda name, url, *a: asked.append(url) or old_year)
+    ar = _origin()
+    from extractor.documents import DOC_TYPES, Document
+    monkeypatch.setattr(dp, "supplied_doc", lambda slug, url, label, lib: Document(
+        url, DOC_TYPES["remuneration"], "pdf", ar.pages, 2025, ""))
+    roles, _, _ = dp.from_pay("Equinor", "eq", None, ar, "k", "", "NO", 2025,
+                              (("https://cdn.example.com/x.pdf", "Annual report"),))
+    assert asked[0] == "https://cdn.example.com/x.pdf"          # first, and accepted as given
+    assert any(r.data_point == "base_salary" and r.value == 1_142_000 for r in roles)
+
+
+def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("EVP Exploration", pension=_amount(30, quote=q),
+                        pension_allowance=_amount(93, quote=q))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin())}
+    p = rows["pension_contribution"]
+    assert (p.value, p.method) == (123_000, "DERIVED") and "salary addition in lieu" in p.note
+

@@ -51,7 +51,7 @@ import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from urllib.parse import quote as urlquote
+from urllib.parse import quote as urlquote, urlparse
 
 import httpx
 from firecrawl import PaymentRequiredError
@@ -60,10 +60,11 @@ from . import apis, edgar, llm, pay
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
-from .documents import DP_DOC_TYPES, Document, Library
+from .documents import DP_DOC_TYPES, Candidate, DocType, Document, Library
 from .extract import full_value, full_value_quoted
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei
+from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
 from .scraper import Page, markdown_to_pages
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
@@ -149,6 +150,10 @@ def _now() -> str:
 class Target:
     company: Company
     business_id: str | None = None
+    # Documents found by hand, read first in the pay step (no search, no year check):
+    # for reports no search reaches (Equinor's FY2025 report on a CDN under a hash).
+    remuneration_report_url: str | None = None
+    annual_report_url: str | None = None
 
 
 def read_targets(path: Path) -> list[Target]:
@@ -164,6 +169,7 @@ def read_targets(path: Path) -> list[Target]:
     c_id, c_name = col("company_id", "id"), col("company_name", "name", "legal_name")
     c_country, c_seg = col("country", "country_code"), col("segment")
     c_lei, c_bid = col("lei"), col("business_id", "registration_id", "org_number")
+    c_rem, c_ar = col("remuneration_report_url"), col("annual_report_url")
     if not c_id or not c_name:
         raise ValueError(f"{path} needs company_id and company_name columns")
     out: dict[str, Target] = {}
@@ -182,6 +188,10 @@ def read_targets(path: Path) -> list[Target]:
                                           lei if len(lei) == 20 else None))
         if bid and not t.business_id:
             t.business_id = bid
+        for attr, column in (("remuneration_report_url", c_rem), ("annual_report_url", c_ar)):
+            url = (r.get(column) or "").strip() if column else ""
+            if url.startswith("http") and not getattr(t, attr):
+                setattr(t, attr, url)
         if len(lei) == 20 and not t.company.lei:
             t.company.lei = lei
     return list(out.values())
@@ -700,9 +710,18 @@ def fiscal_end_year(text: str | None) -> int | None:
 AR_PAY_FIRST = {"GB", "IE"}
 
 
+def supplied_doc(slug: str, url: str, label: str, lib: Library | None) -> Document | None:
+    """A document given in the input (remuneration_report_url / annual_report_url),
+    fetched like any other: a PDF is downloaded and converted (no credits)."""
+    lib = lib or Library(slug, f"{urlparse(url).scheme}://{urlparse(url).netloc}", None, None)
+    return lib.fetch(Candidate(url, DocType("supplied", label, "", ()), 9, extract_year(url),
+                               is_pdf_url(url), 0))
+
+
 def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
              report_key: str, period_end: str, country: str | None = None,
-             report_year: int | None = None) -> tuple[list[Found], list[Found], list[str]]:
+             report_year: int | None = None,
+             supplied: tuple = ()) -> tuple[list[Found], list[Found], list[str]]:
     """Role rows and the company-level pay terms, from the remuneration report (or the
     annual report's remuneration section), plus the remuneration policy for target and
     maximum percentages the report lacks. Returns (role rows, company values, sources)."""
@@ -712,8 +731,16 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         """Up to two remuneration documents, then the annual report's section. The
         second one comes from the first's links (a governance page linking the PDF) or
         from a map search for the type (Jumbo's report sits in an AGM folder)."""
+        for url, label in supplied:
+            doc = supplied_doc(slug, url, label, lib)
+            if doc is None:
+                log.warning("Pay: the supplied %s %s could not be read", label.lower(), url)
+                continue
+            o = doc_origin(doc, 0)
+            yield (o, _pay_chunks(o, pay.PAY_WORDS), f"the company's {label.lower()}",
+                   f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}", True)
         ar = ((report, _pay_chunks(report, AR_PAY_WORDS),
-               "the remuneration section of the company's annual report", report_key)
+               "the remuneration section of the company's annual report", report_key, False)
               if report else None)
         if ar and country in AR_PAY_FIRST:
             yield ar
@@ -723,19 +750,19 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 continue
             o = doc_origin(doc, 0)
             yield (o, _pay_chunks(o, pay.PAY_WORDS), "the company's remuneration report",
-                   f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}")
+                   f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}", False)
         if ar and country not in AR_PAY_FIRST:
             yield ar
 
     facts = origin = None
-    for o, chunks, what, key in sources():
+    for o, chunks, what, key, given in sources():
         if not chunks:
             continue
         log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
         f = pay.ask_pay(name, o.url, chunks, what, key)
         read.append(o.source)
         year = fiscal_end_year(f.fiscal_year)
-        if year and report_year and year < report_year:
+        if year and report_year and year < report_year and not given:
             # Shell: an investor-roadshow deck with the previous year's outcomes; Equinor:
             # the FY2024 remuneration report when the annual report is FY2025
             log.info("Pay: %s gives FY%s pay, the report is FY%s; skipped", o.url, year,
@@ -1093,7 +1120,9 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 c.name, c.slug, lib, origin,
                 Path(result["debug"]["markdown_file"]).stem if origin else "",
                 (result or {}).get("period_end_date") or "",
-                (lei_record or {}).get("country") or c.country, fy)
+                (lei_record or {}).get("country") or c.country, fy,
+                tuple((u, label) for u, label in ((t.remuneration_report_url, "Remuneration report"),
+                                                  (t.annual_report_url, "Annual report")) if u))
             values += terms
             tried += [r for r in read if r not in tried]
             if not roles:

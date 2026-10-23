@@ -53,6 +53,10 @@ during the year (e.g. "Former CEO (until April 2025)").
     "accounting_expense" (IFRS 2 cost) or "other".
   - benefits: the value of other benefits (car, insurance, housing).
   - pension: the pension contribution or cost for the year.
+  - pension_allowance: a fixed salary addition or allowance paid instead
+    of (or in compensation for) pension, when the table shows it as its
+    own column (Norway: "fixed salary addition"). Never add it to pension
+    or base salary yourself.
   - total: the total remuneration as the company states it. Never add
     it up yourself.
 - sti_target, sti_max, lti_target, lti_max: the target and maximum

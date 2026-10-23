@@ -240,6 +240,7 @@ class RolePay(BaseModel):
     lti_granted: LtiAmount          # granted (awarded) in the year
     benefits: PayAmount
     pension: PayAmount
+    pension_allowance: PayAmount    # salary addition paid instead of pension (Norway)
     total: PayAmount                # as stated by the company
     sti_target: PayTarget
     sti_max: PayTarget
