@@ -19,6 +19,9 @@ from .config import CACHE_DIR
 
 log = logging.getLogger(__name__)
 
+# `source` names of the API step, as they appear in "not found in: ..." notes.
+API_SOURCES = ("GLEIF", "SEC EDGAR", "Brønnøysund", "Companies House", "PRH")
+
 API_CACHE_DAYS = 7
 GLEIF_RECORD = gleif.GLEIF_API + "/lei-records/{lei}"
 PRH_COMPANY = "https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId={bid}"
@@ -157,8 +160,6 @@ def edgar_values(cik: int) -> list[Found]:
         out.append(Found("exchange", "; ".join(x for x in sub["exchanges"] if x), **src))
     if sub.get("sic"):
         out.append(Found("sector_code", f"SIC {sub['sic']}", **src, note=sub.get("sicDescription") or ""))
-        if sub.get("sicDescription"):
-            out.append(Found("sub_sector", sub["sicDescription"], **src, note=f"SIC {sub['sic']}"))
     city = ((sub.get("addresses") or {}).get("business") or {}).get("city")
     if city:
         out.append(Found("head_office_city", city.title(), **src, note="business address"))
@@ -208,7 +209,6 @@ def brreg_values(orgnr: str) -> list[Found]:
     nace = ent.get("naeringskode1") or {}
     if nace.get("kode"):
         out.append(Found("sector_code", f"NACE {nace['kode']}", **src, note=nace.get("beskrivelse") or ""))
-        out.append(Found("sub_sector", nace.get("beskrivelse"), **src, note=f"NACE {nace['kode']}"))
     city = (ent.get("forretningsadresse") or {}).get("poststed")
     if city:
         out.append(Found("head_office_city", city.title(), **src, note="business address"))
@@ -297,8 +297,6 @@ def prh_values(business_id: str) -> list[Found]:
         desc = next((d["description"] for d in line.get("descriptions") or []
                      if str(d.get("languageCode")) == "3"), "")
         out.append(Found("sector_code", f"TOL/NACE {line['type']}", **src, note=desc))
-        if desc:
-            out.append(Found("sub_sector", desc, **src, note=f"TOL {line['type']}"))
     for a in c.get("addresses") or []:
         offices = a.get("postOffices") or []
         city = next((o["city"] for o in offices if str(o.get("languageCode")) == "1"), None) \

@@ -71,8 +71,8 @@ def test_every_data_point_gets_a_row_with_a_reason():
     assert by["ticker"].note.startswith("not applicable")
     assert by["cik"].note.startswith("not applicable")
     assert by["revenue"].note == "not found in: Annual report (PDF)"
-    assert by["lei"].note.startswith("not collected here")       # upstream API work
-    assert by["sector_code"].note.startswith("not collected here")
+    assert by["lei"].note.startswith("not found: only an official API")    # no API ran
+    assert by["sector_code"].note.startswith("not found: only an official API")
 
 
 def test_an_isin_makes_the_company_listed():
@@ -362,3 +362,51 @@ def test_a_report_by_another_legal_entity_is_graded_c():
     trade = [Found("legal_name", "Nokian Renkaat Oyj", source="AR", confidence="B")]
     dp.identity_check(trade, None, ["Nokian Tyres plc", "Nokian Renkaat Oyj"], "AR")   # LEI name
     assert trade[0].confidence == "B"
+
+
+def test_ifrs_revenue_with_the_broader_line_noted():
+    result = {"revenue": {"value": 1128843214, "value_full": 1128843214, "unit": "units",
+                          "currency": "EUR", "method": "xbrl_tag",
+                          "xbrl_concept": "ifrs-full:RevenueFromContractsWithCustomers"},
+              "filing": {"type": "esef", "report_url": "https://f/x.xhtml",
+                         "revenue_and_operating_income": 1292435282.0},
+              "period_end_date": "2025-12-31", "fiscal_year": "2025"}
+    rev = next(f for f in dp.from_result(result, None) if f.data_point == "revenue")
+    assert rev.value == 1128843214 and "revenue and operating income 1292435282" in rev.note
+
+
+def test_api_values_come_first_and_documents_fill_the_rest(monkeypatch):
+    from extractor import apis
+    gleif = [Found("lei", "529900UID9PCQXLG9479", source="GLEIF", method="API", confidence="A"),
+             Found("head_office_city", "Dierikon", source="GLEIF", method="API", confidence="A"),
+             Found("_gleif_isins", "CH0010702154", source="GLEIF ISIN map", method="API")]
+    monkeypatch.setattr(apis, "gleif_values", lambda lei: gleif)
+    monkeypatch.setattr(apis, "registry_values", lambda country, number: [])
+    t = dp.Target(Company("komax", "Komax Holding AG", "CH"))
+    values, answered, isins = dp.from_apis(t, None, {"lei": "529900UID9PCQXLG9479", "country": "CH"})
+    assert answered == ["GLEIF"] and isins == ["CH0010702154"]
+    doc = Found("head_office_city", "Luzern", source="Annual report (PDF)", method="PARSE", confidence="B")
+    isin = Found("isin", "CH0010702154", source="Annual report (PDF)", method="PARSE", confidence="B")
+    chosen = dp.best(values + [doc, isin])
+    assert chosen["head_office_city"].value == "Dierikon"
+    assert "other source says Luzern" in chosen["head_office_city"].note
+    rows = {r.data_point: r for r in dp.finish(t, chosen, answered, None, isins)}
+    assert rows["lei"].value == "529900UID9PCQXLG9479"
+    assert rows["isin"].confidence == "A" and "GLEIF ISIN map" in rows["isin"].note
+
+
+def test_aggregate_rows_from_the_annual_report_complete_a_ceo_only_report(monkeypatch):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    report_pay = _pay([_role("CEO", base_salary=_amount(1000, quote=q))])
+    ar_pay = _pay([_role("VD och koncernchef", base_salary=_amount(1000, quote=q)),
+                   _role("Other members of group management", aggregate=True,
+                         base_salary=_amount(9000, quote=q))])
+    monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: ar_pay)
+    ar = _origin()
+    rem = dp.Origin("pdf", "https://x.com/rem.pdf", "Remuneration report (PDF)", "PARSE", "", ar.pages,
+                    ar.chunks)
+    read = []
+    rows = dp._aggregates_from_report("X", report_pay, rem, ar, "k", "2025-12-31", read)
+    assert {r.role_row for r in rows} == {"Other members of group management"}   # not the CEO again
+    assert read == ["Annual report (PDF)"]

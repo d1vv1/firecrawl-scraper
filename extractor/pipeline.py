@@ -454,6 +454,8 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
                     "registry": getattr(filing, "registry", None),
                     "registration_number": getattr(filing, "org_number", None),
                     "employees_in_filing": getattr(filing, "employees", None),
+                    "revenue_and_operating_income": getattr(
+                        (getattr(filing, "figures", None) or {}).get("revenue_and_operating_income"), "value", None),
                     "report_url": filing.report_url, "viewer_url": filing.viewer_url,
                     "package_url": filing.package_url}
                    if filing else None),

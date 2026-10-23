@@ -399,3 +399,16 @@ def test_years_inside_dates_in_file_names():
     assert extract_year("https://x.gr/uploads/159286/51c9_jumboannualreport_31122025_en.pdf") == 2025
     assert extract_year("https://x.com/annual_report_20251231.pdf") == 2025
     assert extract_year("https://x.com/a/9f31122025aa.pdf") is None            # part of a hash
+
+
+def test_report_pdfs_in_event_folders_and_subsidiary_functions():
+    from extractor.report_finder import allowed_place_words, _rank
+    allowed = allowed_place_words("Aktiebolaget Volvo", ["SE"])
+    ar = classify("https://www.volvogroup.com/content/dam/volvo-group/markets/master/events/2026/"
+                  "volvo-group%E2%80%93annual-report-2025.pdf", allowed)
+    assert ar.kept and ar.year == 2025
+    assert not classify("https://x.com/events/2026/annual-report-2025.html", allowed).kept   # a page
+    treasury = classify("https://www.volvogroup.com/investors/debt-information/downloads/"
+                        "volvo-treasury-annual-report-2025.pdf", allowed)
+    assert treasury.unexplained == 1 and _rank(ar) > _rank(treasury)
+    assert classify("https://x.com/AB-Volvo-Annual-Report-2022.pdf", allowed).unexplained == 0

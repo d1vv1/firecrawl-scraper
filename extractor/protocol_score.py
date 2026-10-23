@@ -23,15 +23,15 @@ from pathlib import Path
 from .config import OUTPUT_DIR
 
 COMPANY_FIELDS = {
-    "C01": ["legal_name"], "C03": ["business_id"], "C04": ["isin"], "C05": ["ticker"],
+    "C01": ["legal_name"], "C02": ["lei"], "C03": ["business_id"], "C04": ["isin"], "C05": ["ticker"],
     "C06": ["exchange_segment"], "C07": ["listing_date"], "C08": ["country_code"],
-    "C09": ["website"], "C11": ["sub_sector"], "C12": ["revenue"], "C13": ["total_assets"],
+    "C09": ["website"], "C10": ["sector_code"], "C11": ["sub_sector"], "C12": ["revenue"], "C13": ["total_assets"],
     "C14": ["ebitda"], "C15": ["fiscal_year_end"], "C16": ["headcount", "fte"],
     "C17": ["shares_outstanding"], "C18": ["share_price"], "C19": ["largest_holders"],
     "C20": ["controlling_owner"], "C21": ["ultimate_parent"],
     "C22": ["revenue_by_segment", "revenue_by_country"], "C23": ["pension_type"],
 }
-NOT_COLLECTED = {"C02": "LEI: upstream API work", "C10": "industry code: left out"}
+NOT_COLLECTED: dict[str, str] = {}
 NUMERIC = {"C12", "C13", "C14", "C16", "C17", "C18"}
 ROLE_FIELDS = {"R04": "base_salary", "R05": "sti_paid", "R07": "lti_received",
                "R09": "benefits_value", "R10": "pension_contribution", "R11": "total_remuneration"}
@@ -78,6 +78,8 @@ def compare(fid: str, theirs: dict, ours: list[dict]) -> str:
         want = [n * scale_of(theirs["unit"]) for n in nums] + nums
         got = [float(v) for v in values if re.fullmatch(r"-?\d+(\.\d+)?", v)]
         return "match" if any(close(g, w) for g in got for w in want) else "differs"
+    if fid == "C02":
+        return "match" if any(v.upper() in tv.upper() for v in values) else "differs"
     if fid == "C04":
         codes = set(re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", tv.upper()))
         return "match" if any(c in codes for v in values for c in re.findall(

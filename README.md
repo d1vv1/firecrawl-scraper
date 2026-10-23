@@ -170,6 +170,13 @@ period_end, source, endpoint, method, retrieved_at, confidence, note`
   differs from the sum of its parts by more than 2% is flagged there.
 
 Per company, cheapest and most exact first:
+0. **official APIs** (`--no-apis` to skip), free and cached for a week: GLEIF by LEI (LEI,
+   legal and former names, register number, country, HQ city, ultimate parent, the ISIN
+   map that confirms a report's ISIN), the home register by register number (Brønnøysund
+   NO, PRH FI, Companies House UK with a live `COMPANIES_HOUSE_API_KEY`: industry code,
+   city, name; NO also headcount; UK also the controlling owner) and SEC EDGAR for SEC
+   registrants (`SEC_CONTACT` in `.env`). Their values win (method `API`, confidence A);
+   the steps below fill what they leave empty, and a differing value goes in `note`;
 1. the annual-report pipeline above (run first if the company has no result yet);
 2. one more AI pass over the same report for identity (legal name, register number,
    country, city, website, former names, parent), EBITDA, fiscal year end and accounting
@@ -192,9 +199,8 @@ Per company, cheapest and most exact first:
    report are skipped. Default cap: 10 credits per company (`--doc-credits`,
    `--no-docs`).
 
-The official APIs (GLEIF, SEC EDGAR, the registers) are not called here: that data is
-collected upstream, so `lei` and `sector_code` are left empty with the note "not collected
-here". The CIK still comes from an SEC filing when the report is one.
+`lei` and `sector_code` come only from the APIs. Not yet in the API step: ESMA FIRDS,
+exchange segment files, ECB exchange rates, Bolagsverket (SE) and CVR (DK).
 
 When several sources give a value, the most exact one wins (A before B before C, then
 XBRL, then report, then web). A different value from another source is mentioned in

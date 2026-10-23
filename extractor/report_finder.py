@@ -169,6 +169,11 @@ def _word_re(word: str) -> re.Pattern:
 _KEEP = [(fold(k).replace(" ", "-"), lang, w) for k, lang, w in KEEP_KEYWORDS]
 _TYPE = [(w, _word_re(fold(w))) for w in TYPE_EXCLUDES]
 _FILE_NAME_ONLY = {"presentation", "präsentation", "summary", "factsheet"}
+# Words for pages *about* a report (calendar entries, events, news). In a PDF they only
+# count in the file name: Volvo keeps its FY2025 report in an ".../events/2026/" folder.
+_PAGE_WORDS = {"calendar", "kalender", "kalenteri", "event", "events", "begivenhed", "evenemang",
+               "tapahtuma", "webcast", "news", "nyheder", "nyheter", "uutiset", "tidindi",
+               "aktuelles"}
 _TOPIC = [(w, _word_re(fold(w)),
            re.compile(rf"{_COMBINE_WORDS}-(?:[a-z0-9]+-){{0,2}}{re.escape(fold(w))}"))
           for w in TOPIC_EXCLUDES]
@@ -273,12 +278,23 @@ _NEUTRAL_WORDS = ({w for k, _, _ in _KEEP for w in k.split("-")} | EN_MARKERS | 
     "csrd", "esrs", "esef", "courtesy", "draft", "signed", "audited"})
 
 
+# Group functions that have their own entity and annual report.
+_SUBSIDIARY_WORDS = {"treasury", "finance", "funding", "insurance", "leasing", "pension",
+                     "pensionskassa", "foundation", "stiftelse", "bank", "credit", "capital",
+                     "realestate", "properties", "fastigheter"}
+# Legal-form abbreviations: not a sign of another entity on their own ("AB-Volvo-...").
+# ("se" is left out: in "attendo_ar25_se.pdf" it means Swedish, so it keeps counting.)
+_FORM_WORDS = {"ab", "abp", "oyj", "oy", "asa", "as", "publ", "sa", "nv", "hf", "spa"}
+
+
 def _unexplained(tokens: set[str], allowed_words: frozenset[str]) -> int:
     """Short alphabetic file-name words that are neither the company's name nor a
     keyword, year or language marker: 'sfm' in 'sfm-annual-report-2025.pdf' (a
-    subsidiary). Hash-like and numeric parts don't count."""
-    return sum(1 for t in tokens if t.isalpha() and 2 <= len(t) <= 6
-               and t not in _NEUTRAL_WORDS and t not in allowed_words)
+    subsidiary). Hash-like and numeric parts don't count. Words naming a group function
+    ('volvo-treasury-annual-report-2024.pdf') count at any length."""
+    return sum(1 for t in tokens if t.isalpha() and t not in allowed_words
+               and (t in _SUBSIDIARY_WORDS
+                    or (2 <= len(t) <= 6 and t not in _NEUTRAL_WORDS and t not in _FORM_WORDS)))
 
 
 def classify(url: str, allowed_words: frozenset[str] = frozenset()) -> ReportCandidate:
@@ -292,7 +308,8 @@ def classify(url: str, allowed_words: frozenset[str] = frozenset()) -> ReportCan
     for word, rx in _TYPE:
         # "presentation" etc. only count in the file name: IR folders are often called
         # "report-and-presentations" (Aker, Ørsted) and hold the annual report too.
-        if rx.search(file_name if word in _FILE_NAME_ONLY else u):
+        name_only = word in _FILE_NAME_ONLY or (word in _PAGE_WORDS and is_pdf_url(url))
+        if rx.search(file_name if name_only else u):
             return ReportCandidate(url, False, f"excluded: contains '{word}'")
     for word, rx, combined in _TOPIC:
         if rx.search(u) and not combined.search(u):

@@ -31,7 +31,7 @@ The protocol's status values map onto our columns as follows:
 | ID | Field | Our data point(s) | Read from today | Changed |
 |---|---|---|---|---|
 | C01 | Legal name, former names | `legal_name`, `other_names` | Annual report; legal notice, history page | — |
-| C02 | LEI | `lei` | Not collected here: from the upstream API work | — |
+| C02 | LEI | `lei` | GLEIF (API step) | API step |
 | C03 | Registration number | `business_id` | Annual report; legal notice (*Impressum*) | — |
 | C04 | ISIN | `isin` | Annual report; "The share" page | — |
 | C05 | Ticker, primary exchange | `ticker`, `exchange` | Annual report; share page | — |
@@ -39,7 +39,7 @@ The protocol's status values map onto our columns as follows:
 | C07 | Listing status, admission date | `listing_status`, `listing_date` | Annual report; listing notice, share page, history | — |
 | C08 | Country, HQ city | `country_code`, `head_office_city` | Annual report; legal notice | — |
 | C09 | Website domain | `website` | Annual report; legal notice, about page | **new** |
-| C10 | National industry code | `sector_code` | Not collected here (see the source check) | — |
+| C10 | National industry code | `sector_code` | Registers: Brønnøysund (NO), PRH (FI), Companies House (UK); SEC SIC for US registrants. Elsewhere not found | API step |
 | C11 | Business description | `sub_sector` | Annual report: now one sentence of the business description | prompt |
 | C12 | Revenue | `revenue` | XBRL tag or report | — |
 | C13 | Total assets | `total_assets` | XBRL tag or report | — |
@@ -110,7 +110,9 @@ Checked on 23 October 2026: live requests where possible, otherwise official doc
 | Italy Relazione, section II, tables 1, 3A, 3B | Confirmed: Consob Schema 7-bis, mandatory and standard | Same as remuneration reports; the fixed table layout helps the AI. |
 | National OAMs | One per country; only AFM (NL) has an export | Not needed while company sites work; a fallback for documents later. |
 
-## API step, later
+## API step
+
+Built (23 Oct 2026): GLEIF, the registers of NO, FI and the UK, and SEC EDGAR run before any document; documents fill the rest. Still to add, in this order:
 
 Once the document side is solid, the API step goes in front of it, for the fields where an API is exact:
 

@@ -56,7 +56,7 @@ from urllib.parse import quote as urlquote
 import httpx
 from firecrawl import PaymentRequiredError
 
-from . import edgar, llm, pay
+from . import apis, edgar, llm, pay
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
@@ -107,8 +107,8 @@ DATA_POINTS = [
     "pension_type", "benefits", "shareholding_requirement",   # C23
 ]
 NAMES = DATA_POINTS
-# Rarely printed in company documents: collected upstream from the official APIs.
-UPSTREAM = {"lei", "sector_code"}
+# Only an official API gives these (GLEIF, the registers, SEC EDGAR).
+API_ONLY = {"lei", "sector_code"}
 LISTED_ONLY = {"ticker", "isin", "exchange", "exchange_segment", "listing_date", "share_price",
                "market_cap_band", "cik"}
 # Pay facts are only published by listed companies (remuneration reports).
@@ -363,6 +363,12 @@ def _money_found(name: str, m: dict, result: dict, origin: Origin | None) -> Fou
                  note="; ".join(x for x in (where, printed, scope) if x), retrieved_at=at)
 
 
+# Which line is "revenue" when a filing tags two (CTT: revenue from contracts with
+# customers 1,129m; revenue and operating income 1,292m). "ifrs": the IFRS revenue line,
+# the broader one in the note; "broad": the broader line, IFRS revenue in the note.
+REVENUE_RULE = "ifrs"
+
+
 def from_result(result: dict, origin: Origin | None) -> list[Found]:
     """The figures and identifiers the pipeline found."""
     out: list[Found] = []
@@ -370,6 +376,16 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
         f = _money_found(name, result.get(name) or {}, result, origin)
         if f:
             out.append(f)
+    broad = (result.get("filing") or {}).get("revenue_and_operating_income")
+    rev = next((f for f in out if f.data_point == "revenue"), None)
+    if rev and broad is not None and _norm(broad) != _norm(rev.value):
+        if REVENUE_RULE == "broad":
+            rev.note = (f"revenue and operating income (ifrs-full:RevenueAndOperatingIncome); "
+                        f"IFRS revenue {fmt_number(rev.value)} {rev.unit}")
+            rev.value = broad
+        else:
+            rev.note += (f"; the filing also tags revenue and operating income "
+                         f"{fmt_number(broad)} {rev.unit} (ifrs-full:RevenueAndOperatingIncome)")
     period = result.get("period_end_date") or ""
     at = result.get("extracted_at") or ""
     money = next((f for f in out), None)
@@ -715,10 +731,36 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                                      f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}")
                 read.append(policy_origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
+    roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
     return roles, terms, read
+
+
+def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | None,
+                            report_key: str, period_end: str, read: list[str]) -> list[Found]:
+    """Swedish and Finnish remuneration reports cover the CEO only; the total for the
+    other executives is in the annual report (Volvo: 'Övriga medlemmar i
+    koncernledningen'). Add the annual report's aggregate executive rows that the
+    remuneration report lacks. Only aggregates: the CEO would otherwise appear twice
+    under two spellings of the title."""
+    if report is None or origin is report:
+        return []
+    chunks = _pay_chunks(report, AR_PAY_WORDS)
+    if not chunks:
+        return []
+    ar = pay.ask_pay(name, report.url, chunks,
+                     "the remuneration section of the company's annual report", report_key)
+    have = {pay._norm_title(r.role_title) for r in facts.roles}
+    extra = [r for r in ar.roles
+             if r.executive and r.is_aggregate and pay._norm_title(r.role_title) not in have]
+    more = ar.model_copy(update={"roles": extra})
+    if not extra or not pay.has_pay(more):
+        return []
+    read.append(report.source)
+    log.info("Pay: %d aggregate role(s) added from %s", len(extra), report.source)
+    return pay.role_found(more, report, period_end=period_end)
 
 
 def no_roles(why: str) -> list[Found]:
@@ -841,9 +883,15 @@ def _norm(v) -> str:
 
 
 def finish(t: Target, chosen: dict[str, Found], tried: list[str],
-           error: str | None) -> list[Found]:
+           error: str | None, gleif_isins=()) -> list[Found]:
     """One Found per data point, in DATA_POINTS order, with a reason for each gap."""
     us = t.company.country == "US" or t.company.segment == "us_listed"
+    isin = chosen.get("isin")
+    if isin and gleif_isins and isin.confidence != "A":
+        codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
+        if codes and all(code in gleif_isins for code in codes):
+            chosen["isin"] = Found(**{**asdict(isin), "confidence": "A",
+                                      "note": isin.note + "; confirmed in the GLEIF ISIN map"})
     listed = (chosen.get("listing_status").value == "listed") if chosen.get("listing_status") else None
     if listed is None and any(k in chosen for k in ("ticker", "exchange", "isin")):
         src = next(chosen[k] for k in ("ticker", "exchange", "isin") if k in chosen)
@@ -862,15 +910,15 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
         method = ""
         if name == "market_cap_band" and band_why and listed is not False:
             why = band_why
-        elif name in UPSTREAM:
-            why, method = "not collected here: comes from the upstream API collection", ""
+        elif name in API_ONLY and not any(s in ", ".join(tried) for s in apis.API_SOURCES):
+            why, method = "not found: only an official API gives it (API step off or no LEI)", ""
         elif name == "cik" and not us:
             why, method = "not applicable: no SEC filing found and not US-listed", ""
         elif listed is False and (name in LISTED_ONLY or name in LISTED_REPORTS_ONLY):
             why, method = "not applicable: the company is not listed", ""
         else:
             why = "not found in: " + ", ".join(tried) if tried else "no source reached"
-        if error and name not in UPSTREAM:
+        if error and name not in API_ONLY:
             why += f" (annual-report route failed: {clip(error, 140)})"
         rows.append(Found(name, None, method=method, note=why))
     return rows
@@ -902,9 +950,53 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
 NO_CREDITS = "Firecrawl is out of credits"
 
 
+def from_apis(t: Target, result: dict | None, lei_record: dict | None
+              ) -> tuple[list[Found], list[str], list[str]]:
+    """The official APIs, before any document: GLEIF (by LEI), the home register (NO,
+    FI, UK; by register number) and SEC EDGAR (SEC registrants). Free; responses cached
+    for a week. Returns (values, sources answered, GLEIF's ISINs). A failing API is
+    logged and skipped: documents still fill its fields."""
+    c = t.company
+    values: list[Found] = []
+    answered: list[str] = []
+    isins: list[str] = []
+    lei = (lei_record or {}).get("lei") or c.lei
+    if lei:
+        try:
+            g = apis.gleif_values(lei)
+            isins = next((f.value.split(";") for f in g if f.data_point == "_gleif_isins"), [])
+            values += g
+            answered.append("GLEIF")
+        except httpx.HTTPError as e:
+            log.warning("GLEIF failed: %s", str(e)[:150])
+    home = (lei_record or {}).get("country") or c.country
+    number = (t.business_id or (lei_record or {}).get("registered_as")
+              or ((result or {}).get("filing") or {}).get("registration_number")
+              or next((str(f.value) for f in values if f.data_point == "business_id"), None))
+    reg = apis.registry_values(home, number)
+    if reg:
+        values += reg
+        answered.append(reg[0].source)
+    cik = ((result or {}).get("filing") or {}).get("cik")
+    if not cik and (c.country == "US" or c.segment == "us_listed" or home == "US"):
+        try:
+            cik, why = edgar.find_cik(c.name)
+            log.info("SEC CIK: %s (%s)", cik, why)
+        except (httpx.HTTPError, edgar.SecContactMissing) as e:
+            log.warning("SEC lookup failed: %s", str(e)[:150])
+    if cik:
+        try:
+            values += apis.edgar_values(int(cik))
+            answered.append("SEC EDGAR")
+        except (httpx.HTTPError, edgar.SecContactMissing) as e:
+            log.warning("SEC EDGAR failed: %s", str(e)[:150])
+    log.info("API step: %d value(s) from %s", len(values), ", ".join(answered) or "no API")
+    return values, answered, isins
+
+
 def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS,
             error: str | None = None, flags: set | None = None,
-            meter: dict | None = None) -> list[Found]:
+            meter: dict | None = None, use_apis: bool = True) -> list[Found]:
     """`error`: why the annual-report pipeline has no result (if not in its error file).
     `flags` gets "no_credits" when Firecrawl refused for lack of credits; `meter`
     gets "credits", the Firecrawl credits spent here."""
@@ -925,7 +1017,13 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         except Exception as e:  # noqa: BLE001
             log.warning("LEI lookup failed: %s", e)
     if not c.lei and (lei_record or {}).get("lei"):
-        c.lei = lei_record["lei"]             # for the lei column only, not a data point
+        c.lei = lei_record["lei"]
+    gleif_isins: list[str] = []
+    if use_apis:
+        # 0. the official APIs first; the documents below fill what they leave empty
+        api_values, answered, gleif_isins = from_apis(t, result, lei_record)
+        values += api_values
+        tried += answered
     origin = report_origin(result) if result else None
     if result:
         values += from_result(result, origin)
@@ -994,7 +1092,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     if parent and any(same_company(parent.value, n) for n in
                       (c.name, getattr(chosen.get("legal_name"), "value", ""))):
         del chosen["ultimate_parent"]          # the company itself: it is the top of its group
-    return finish(t, chosen, tried, error) + (roles or no_roles(roles_why))
+    return finish(t, chosen, tried, error, gleif_isins) + (roles or no_roles(roles_why))
 
 
 def rows_for(t: Target, found: list[Found]) -> list[dict]:
@@ -1044,7 +1142,8 @@ def process(t: Target, opts: dict) -> dict:
     logging.getLogger().addHandler(handler)
     try:
         found = collect(t, docs=opts["docs"] and "no_credits" not in flags,
-                        doc_credits=opts["doc_credits"], error=error, flags=flags, meter=meter)
+                        doc_credits=opts["doc_credits"], error=error, flags=flags, meter=meter,
+                        use_apis=opts.get("apis", True))
     except FATAL as e:
         return {"kind": "fatal", "error": f"{type(e).__name__}: {e}", "credits": spent(meter)}
     except Exception as e:  # noqa: BLE001 - record and continue with the next company
@@ -1159,6 +1258,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--redo", action="store_true", help="Redo the data points of companies done before")
     p.add_argument("--retry-failed", action="store_true",
                    help="Re-run the annual-report pipeline for companies where it failed before")
+    p.add_argument("--no-apis", action="store_true",
+                   help="Skip the official APIs (GLEIF, registers, SEC EDGAR)")
     p.add_argument("--no-docs", "--no-web", dest="no_docs", action="store_true",
                    help="No document fallback (no Firecrawl credits for it)")
     p.add_argument("--doc-credits", "--web-credits", dest="doc_credits", type=int,
@@ -1187,7 +1288,7 @@ def main(argv: list[str] | None = None) -> int:
     todo = [t for t in targets if args.redo or not dp_path(t.company).exists()
             or no_credits_path(t.company).exists()]
     print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before")
-    opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits,
+    opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits, "apis": not args.no_apis,
             "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
 
     workers = max(1, args.workers)

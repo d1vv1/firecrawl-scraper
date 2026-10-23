@@ -31,6 +31,9 @@ MAX_FILINGS_TO_TRY = 4     # the newest filings can be quarterly; look a little 
 # Revenue is tagged with one of these (Volvo: Revenue; Nokia: RevenueFromContractsWithCustomers).
 REVENUE_CONCEPTS = ["ifrs-full:Revenue", "ifrs-full:RevenueFromContractsWithCustomers",
                     "ifrs-full:RevenueFromSaleOfGoods"]
+# A broader line some companies tag as well (CTT: revenue plus other operating income).
+# Kept next to revenue, never instead of it (see datapoints.REVENUE_RULE).
+BROAD_REVENUE_CONCEPT = "ifrs-full:RevenueAndOperatingIncome"
 ASSETS_CONCEPT = "ifrs-full:Assets"
 EQUITY_AND_LIABILITIES_CONCEPT = "ifrs-full:EquityAndLiabilities"
 # A fact with any other dimension (segment, geography, ...) is a breakdown, not the total.
@@ -117,7 +120,8 @@ def annual_figures(facts: dict, period_end: str) -> dict[str, TaggedFigure]:
             except ValueError:
                 pass
         if not unit.startswith("iso4217:") or concept not in (
-                *REVENUE_CONCEPTS, ASSETS_CONCEPT, EQUITY_AND_LIABILITIES_CONCEPT):
+                *REVENUE_CONCEPTS, BROAD_REVENUE_CONCEPT, ASSETS_CONCEPT,
+                EQUITY_AND_LIABILITIES_CONCEPT):
             continue
         try:
             value = float(f["value"])
@@ -135,6 +139,8 @@ def annual_figures(facts: dict, period_end: str) -> dict[str, TaggedFigure]:
     revenue = next((durations[c] for c in REVENUE_CONCEPTS if c in durations), None)
     if revenue:
         out["revenue"] = revenue
+    if BROAD_REVENUE_CONCEPT in durations:
+        out["revenue_and_operating_income"] = durations[BROAD_REVENUE_CONCEPT]
     if ASSETS_CONCEPT in instants:
         out["total_assets"] = instants[ASSETS_CONCEPT]
     if EQUITY_AND_LIABILITIES_CONCEPT in instants:
