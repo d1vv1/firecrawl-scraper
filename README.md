@@ -151,30 +151,57 @@ country for website scoring, and for the native report search term when no LEI i
 python -m extractor.datapoints golden_test_sample_5_per_segment_country_all.csv --workers 3
 ```
 
-This collects every field of the company-data schema (38 data points: reference, market,
-financials, ownership, pay, revenue and staff by country) for the companies in the CSV,
-and writes **`output/datapoints.csv`**, one row per company and data point:
+This collects the fields of the source-validation protocol
+(`Source_validation_listed_22Oct/PROTOCOL.md`; mapping in `docs/protocol_schema_mapping.md`)
+for the companies in the CSV, and writes **`output/datapoints.csv`**:
 
-`company_id, company_name, segment, country, lei, data_point, value, unit, period_end,
-source, endpoint, method, retrieved_at, confidence, note`
+`company_id, company_name, segment, country, lei, grain, role_row, data_point, value, unit,
+period_end, source, endpoint, method, retrieved_at, confidence, note`
+
+- **Company grain** (`grain` = `company`): 41 data points per company (protocol C01-C23),
+  one row each, including the ones not found.
+- **Role grain** (`grain` = `role`): executive pay (protocol R01-R11), one set of 14 rows per
+  disclosed executive role, `role_row` holding the role as stated ("CEO", "Other members of
+  group management"; the name is added only when two roles share a title). Non-executive
+  board members get one `role_disclosure` row. Read from the remuneration report, else the
+  annual report's remuneration section; target and maximum percentages missing there come
+  from the remuneration policy. Pay amounts are in full units like all money; the printed
+  figure, bundled components and the LTI basis are in `note`, and a stated total that
+  differs from the sum of its parts by more than 2% is flagged there.
 
 Per company, cheapest and most exact first:
 1. the annual-report pipeline above (run first if the company has no result yet);
-2. official APIs: GLEIF (record, ultimate parent, ISIN map), SEC EDGAR (submissions,
-   `dei` XBRL), Brønnøysund (NO), Companies House incl. the PSC register (UK), PRH (FI);
-3. one more AI pass over the same report for employees, owners, listing, pay, and revenue
-   and staff by country (`prompts/datapoints_system.md`);
-4. **HTML backup**: data points still missing are looked for on the company's own web
-   pages. Firecrawl maps the site, then scrapes the home page and the pages whose URLs
-   fit what's missing (about, owners, investors...). Default cap: 4 credits per company
-   (`--web-credits`, `--no-web`).
+2. one more AI pass over the same report for identity (legal name, register number,
+   country, city, website, former names, parent), EBITDA, fiscal year end and accounting
+   basis, employees, share data and year-end price, largest holders and owners, listing,
+   pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`);
+3. **executive pay**: the remuneration report (found like the fallback documents below)
+   and, if needed, the remuneration policy, read with `prompts/remuneration_system.md`;
+4. **document fallback** (`extractor/documents.py`): the data points still empty are
+   looked for in the company's other documents: remuneration report, AGM notice,
+   corporate-governance and sustainability reports, "The share" and shareholder pages,
+   legal notice (*Impressum*), year-end report, listing notice, history and about pages.
+   Each data point has its document types in order of likely yield; URL keywords cover
+   about 10 languages. Documents are found cheapest first: the site URLs the report
+   search already listed (free), one map of the site and a map search per document type
+   (1 credit each, cached), then links on the pages read. PDFs are downloaded for free;
+   web pages cost 1 credit. Up to 3 rounds of 3 documents; each round asks the AI only
+   for the remaining gaps, with only the relevant parts of each document, and stops when
+   the gaps are filled. Only the company's own site and the PDFs it links to are used;
+   blocked domains, news and blog pages, and documents more than 2 years older than the
+   report are skipped. Default cap: 10 credits per company (`--doc-credits`,
+   `--no-docs`).
+
+The official APIs (GLEIF, SEC EDGAR, the registers) are not called here: that data is
+collected upstream, so `lei` and `sector_code` are left empty with the note "not collected
+here". The CIK still comes from an SEC filing when the report is one.
 
 When several sources give a value, the most exact one wins (A before B before C, then
-API/XBRL, then report, then web). A different value from another source is mentioned in
-`note`.
+XBRL, then report, then web). A different value from another source is mentioned in
+`note`. Values from fallback documents carry the document's year (`document dated 2025`).
 
 **Where each value came from:**
-- `endpoint` is the exact URL: the API request, the XBRL filing, the **PDF with
+- `endpoint` is the exact URL: the XBRL filing, the **PDF with
   `#page=N`** (opens at that page), or the web page / filed HTML report with a
   `#:~:text=` fragment that Chrome, Edge and Safari scroll to.
 - `note` repeats the page and quote (`PDF page 45: "Net sales|3|2,326.2|1,827.3"`), the
@@ -182,7 +209,7 @@ API/XBRL, then report, then web). A different value from another source is menti
   not listed`, `not collected: market data … is bought`).
 - `method`: `API` (register field), `XBRL` (tagged figure), `PARSE` (read from a filed
   document), `SCRAPE` (read from a web page), `BUY` (market data: not collected).
-- `confidence`: `A` exact (register field or XBRL tag, or an ISIN confirmed by GLEIF);
+- `confidence`: `A` exact (register field or XBRL tag);
   `B` read by the AI and its quote found in the source; `C` read by the AI but the quote
   wasn't found word for word (check it).
 - Money is in full units with the ISO currency in `unit` (`2326200000`, `SEK`);

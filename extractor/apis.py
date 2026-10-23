@@ -37,6 +37,8 @@ class Found:
     confidence: str = ""      # A exact from a register or tag, B quote verified, C unverified
     note: str = ""
     retrieved_at: str = ""    # when the source was read (UTC, ISO 8601)
+    grain: str = "company"    # company, or role (executive pay per disclosed role)
+    role_row: str = ""        # role grain: the role as stated, e.g. "CEO"
 
 
 def _now() -> str:

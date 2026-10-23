@@ -78,6 +78,14 @@ REMUNERATION = [
     "ersättning", "ersättningar till ledande befattningshavare", "pensionsavsättning",
     "godtgjørelse", "lederlønn", "vederlag", "lønn til ledende ansatte",
     "palkitseminen", "palkitsemisraportti", "eläke", "toimitusjohtaja",
+    # pay tables (role grain)
+    "base salary", "fixed salary", "fixed pay", "short-term incentive", "long-term incentive",
+    "annual bonus", "variable remuneration", "total remuneration", "benefits", "target bonus",
+    "grundgehalt", "festvergütung", "kurzfristige variable vergütung", "langfristige variable",
+    "gesamtvergütung", "rémunération fixe", "rémunération variable", "vaste beloning",
+    "variabele beloning", "retribución fija", "retribución variable", "retribuzione fissa",
+    "compensi", "remuneração fixa", "grundlön", "rörlig ersättning", "fastlønn", "grundløn",
+    "peruspalkka", "lyhyen aikavälin kannustin",
 ]
 GEOGRAPHY = [
     "geographical information", "geographic information", "geographical areas",
@@ -89,9 +97,31 @@ PROFILE = [
     "registered office", "headquarters", "head office", "domicile", "corporate information",
     "general information", "reporting entity", "presentation currency", "functional currency",
     "säte", "huvudkontor", "hovedkontor", "forretningskontor", "hjemsted", "kotipaikka",
+    "registration number", "registered number", "corporate identity number", "legal form",
+    "public limited company", "formerly", "domiciled", "incorporated",
+    "organisationsnummer", "org.nr", "organisasjonsnummer", "cvr", "y-tunnus",
+    "handelsregister", "amtsgericht", "sitz der gesellschaft", "www.",
+]
+SEGMENTS = [
+    "segment information", "operating segments", "reportable segments", "segment reporting",
+    "ifrs 8", "by segment", "segment revenue",
+    "rörelsesegment", "segmentsinformation", "segmentinformasjon", "driftssegmenter",
+    "segmentoplysninger", "segmenttitiedot", "segmentberichterstattung", "segmentinformationen",
+    "gesegmenteerde informatie", "information sectorielle", "información por segmentos",
+    "informativa di settore", "informação por segmentos",
+]
+KEYFIGURES = [
+    "ebitda", "adjusted ebitda", "operating profit", "operating result", "ebit",
+    "key figures", "financial highlights", "five-year summary", "alternative performance measures",
+    "share price", "closing price", "market capitalisation", "market capitalization",
+    "basis of preparation", "accounting policies", "financial year", "fiscal year",
+    "rörelseresultat", "driftsresultat", "liiketulos", "betriebsergebnis", "nyckeltal",
+    "nøkkeltall", "hoved- og nøgletal", "tunnusluvut", "kennzahlen", "aktiekurs",
+    "aksjekurs", "osakekurssi", "schlusskurs", "börsvärde", "markedsverdi",
 ]
 DATAPOINT_TOPICS = {"ownership": OWNERSHIP, "employees": EMPLOYEES,
-                    "remuneration": REMUNERATION, "geography": GEOGRAPHY, "profile": PROFILE}
+                    "remuneration": REMUNERATION, "geography": GEOGRAPHY, "profile": PROFILE,
+                    "segments": SEGMENTS, "keyfigures": KEYFIGURES}
 KEYWORD_GROUPS = {"financials": FINANCIALS, "qualitative": QUALITATIVE, **DATAPOINT_TOPICS}
 
 # Headings of the primary statements. A chunk with one of these AND lots of

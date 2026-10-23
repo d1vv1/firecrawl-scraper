@@ -2,22 +2,24 @@
 each value came from.
 
     python -m extractor.datapoints golden_test_sample_5_per_segment_country_all.csv
-        [--workers 3] [--only ID,ID] [--limit N] [--retry-failed] [--redo] [--no-web]
+        [--workers 3] [--only ID,ID] [--limit N] [--retry-failed] [--redo] [--no-docs]
 
 Input: any CSV with company_id, company_name and (optional) segment, country, lei,
 business_id. Several rows per company are fine (the golden sample has one row per
 golden value); each company is processed once.
 
 For each company, cheapest and most exact first:
-  1. the annual-report pipeline (python -m extractor.batch): LEI, revenue and total
-     assets (XBRL tags or the report), revenue model, business structure;
-  2. official APIs: GLEIF (+ parents, ISINs), SEC EDGAR, Brønnøysund (NO),
-     Companies House (UK), PRH (FI);
-  3. one more LLM pass over the same report for the remaining facts (employees,
-     owners, listing, pay, revenue and staff by country), each with a quote that is
-     looked up in the report to find its page;
-  4. HTML backup: data points still missing are looked for on the company's own web
-     pages (Firecrawl map + scrape, at most --web-credits credits per company).
+  1. the annual-report pipeline (python -m extractor.batch): revenue and total assets
+     (XBRL tags or the report), revenue model, business structure;
+  2. one more LLM pass over the same report for the remaining facts (identity,
+     employees, owners, listing, pay, revenue and staff by country), each with a quote
+     that is looked up in the report to find its page;
+  3. document fallback: data points still missing are looked for in the company's
+     other documents (remuneration, governance and sustainability reports, "The share"
+     and shareholder pages, legal notice, year-end report...; see documents.py), in
+     rounds, at most --doc-credits Firecrawl credits per company.
+The official APIs (GLEIF, registers) are not used here: that data is collected upstream,
+so lei and sector_code are left to it.
 
 Output:
   output/datapoints.csv        one row per company and data point (15 columns)
@@ -26,7 +28,8 @@ Output:
                                input is the golden sample
 
 Where a value came from:
-  source      who published it (GLEIF, SEC EDGAR, Annual report (PDF), Company website...)
+  source      who published it (Annual report (PDF), SEC EDGAR filing, Remuneration
+              report (PDF), Share information (web page)...)
   endpoint    the exact URL: the API request, the filing, the PDF with #page=N, or the
               web page with a #:~:text= fragment that browsers scroll to
   method      API (register field), XBRL (tagged figure), PARSE (read from a filed
@@ -39,6 +42,7 @@ Where a value came from:
 import argparse
 import csv
 import datetime as dt
+import hashlib
 import json
 import logging
 import re
@@ -47,15 +51,16 @@ import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from urllib.parse import quote as urlquote, urlparse
+from urllib.parse import quote as urlquote
 
 import httpx
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, llm
+from . import edgar, llm, pay
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, load_settings
+from .documents import DP_DOC_TYPES, Document, Library
 from .extract import full_value
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei
@@ -63,46 +68,64 @@ from .schemas import DataPointFacts, Holder, NumberFact, TextFact
 from .scraper import Page, markdown_to_pages
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
 from .validate import quote_in_text
-from .website import WebsiteNotFoundError, registered_domain
+from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
 
-COLUMNS = ["company_id", "company_name", "segment", "country", "lei", "data_point", "value",
-           "unit", "period_end", "source", "endpoint", "method", "retrieved_at", "confidence",
-           "note"]
+COLUMNS = ["company_id", "company_name", "segment", "country", "lei", "grain", "role_row",
+           "data_point", "value", "unit", "period_end", "source", "endpoint", "method",
+           "retrieved_at", "confidence", "note"]
 
-# (data point, level) in output order. Names match the golden dataset's `field`.
+# Company-grain data points in output order (protocol field in the comment). Names
+# match the golden dataset's `field`. Role grain (R01-R11): pay.ROLE_POINTS.
 DATA_POINTS = [
-    ("legal_name", "reference"), ("lei", "reference"), ("business_id", "reference"),
-    ("cik", "reference"), ("other_names", "reference"), ("country_code", "reference"),
-    ("head_office_city", "reference"), ("legal_form", "reference"),
-    ("listing_status", "reference"), ("ticker", "reference"), ("isin", "reference"),
-    ("exchange", "reference"), ("exchange_segment", "reference"), ("listing_date", "reference"),
-    ("sector_code", "reference"), ("sub_sector", "reference"), ("reporting_currency", "reference"),
-    ("shares_outstanding", "market"), ("share_price", "market"), ("market_cap", "market"),
-    ("market_cap_band", "market"),
-    ("fiscal_year", "financials"), ("revenue", "financials"), ("total_assets", "financials"),
-    ("fte", "financials"), ("headcount", "financials"),
-    ("controlling_owner", "other"), ("controlling_owner_name", "other"),
-    ("ownership_type", "other"), ("pe_stake_5pct", "other"), ("ultimate_parent", "other"),
-    ("revenue_model", "other"), ("business_structure", "other"), ("segments", "other"),
-    ("revenue_by_country", "other"), ("staff_by_country", "other"), ("pension_type", "other"),
-    ("shareholding_requirement", "other"),
+    "legal_name", "other_names",                        # C01
+    "lei",                                              # C02
+    "business_id",                                      # C03
+    "cik",                                              # SEC registrants (golden dataset)
+    "isin",                                             # C04
+    "ticker", "exchange",                               # C05
+    "exchange_segment",                                 # C06
+    "listing_status", "listing_date",                   # C07
+    "country_code", "head_office_city",                 # C08
+    "website",                                          # C09
+    "sector_code",                                      # C10
+    "sub_sector",                                       # C11
+    "revenue",                                          # C12
+    "total_assets",                                     # C13
+    "ebitda",                                           # C14
+    "fiscal_year", "fiscal_year_end", "reporting_currency", "accounting_basis",   # C15
+    "headcount", "fte",                                 # C16
+    "shares_outstanding",                               # C17
+    "share_price",                                      # C18
+    "market_cap_band",                                  # derived from C17 x C18
+    "largest_holders",                                  # C19
+    "controlling_owner", "controlling_owner_name", "ownership_type", "pe_stake_5pct",   # C20
+    "ultimate_parent",                                  # C21
+    "revenue_by_segment", "staff_by_segment",           # C22
+    "revenue_by_country", "staff_by_country",           # C22
+    "pension_type", "benefits", "shareholding_requirement",   # C23
 ]
-NAMES = [d for d, _ in DATA_POINTS]
-BUY_ONLY = {"share_price", "market_cap", "market_cap_band"}
-LISTED_ONLY = {"ticker", "isin", "exchange", "exchange_segment", "listing_date",
-               "shares_outstanding", "share_price", "market_cap", "market_cap_band", "cik"}
+NAMES = DATA_POINTS
+# Rarely printed in company documents: collected upstream from the official APIs.
+UPSTREAM = {"lei", "sector_code"}
+LISTED_ONLY = {"ticker", "isin", "exchange", "exchange_segment", "listing_date", "share_price",
+               "market_cap_band", "cik"}
 # Pay facts are only published by listed companies (remuneration reports).
-LISTED_REPORTS_ONLY = {"pension_type", "shareholding_requirement"}
+LISTED_REPORTS_ONLY = {"pension_type", "benefits", "shareholding_requirement"}
+# Market cap bands in EUR (Nasdaq Nordic's cap segments; confirm against the CDP band
+# definition). Other currencies need a year-end EUR rate: an API step, not done here.
+MARKET_CAP_BANDS_EUR = [(1_000_000_000, "large"), (150_000_000, "mid"), (0, "small")]
 
 CONFIDENCE_RANK = {"A": 3, "B": 2, "C": 1, "": 0}
-METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "BUY": 0, "": 0}
+METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
 
 DP_DIR = OUTPUT_DIR / "datapoints"
-TOPIC_WORDS = 2_500                  # report words sent per topic (5 topics)
-WEB_PAGE_WORDS = 3_000               # words kept per scraped web page
-DEFAULT_WEB_CREDITS = 4              # map 1 + scrape 3
+TOPIC_WORDS = 2_500                  # report words sent per topic (7 topics)
+DOC_TOPIC_WORDS = 1_500              # words per needed topic from each fallback document
+DOC_ROUNDS = 3                       # AI calls over fallback documents, at most
+DOCS_PER_ROUND = 3                   # documents read per round
+DEFAULT_DOC_CREDITS = 10             # maps and page scrapes; PDFs are downloaded for free
 DEFAULT_PIPELINE_CREDITS = 6
 
 OWNER_CATEGORY = {"private_equity": "private_equity", "family_or_individual": "family",
@@ -232,6 +255,10 @@ class Origin:
     pages: list[Page]
     chunks: dict[int, Chunk]
     page_urls: dict[int, str] | None = None     # web: chunk id -> page URL
+    date: str = ""          # the document's date, for fallback documents ("2025")
+
+    def place(self, quote: str | None, chunk_id: int | None) -> tuple["Origin", str, str, str]:
+        return (self, *self.where(quote, chunk_id))
 
     def where(self, quote: str | None, chunk_id: int | None) -> tuple[str, str, str]:
         """(endpoint, confidence, location note) for a value with this quote."""
@@ -256,6 +283,26 @@ class Origin:
         # Filed XHTML / HTML report text has no fixed pages: link to the quote itself.
         return (text_fragment(self.url, quote) if loc.verified else self.url, conf,
                 f'report text: "{clip(quote)}"{tail}')
+
+
+@dataclass
+class Bundle:
+    """Several documents read in one AI call. Chunk ids are unique across them, so a
+    value is placed in the document its chunk came from; if its quote isn't there (the
+    model gave the wrong chunk id), in whichever document has it."""
+    origins: list[Origin]
+
+    def place(self, quote: str | None, chunk_id: int | None) -> tuple[Origin, str, str, str]:
+        first = next((o for o in self.origins if chunk_id in o.chunks), self.origins[0])
+        placed = first.place(quote, chunk_id)
+        if placed[2] == "B" or not quote:
+            return placed
+        for o in self.origins:
+            if o is not first:
+                other = o.place(quote, None)
+                if other[2] == "B":
+                    return other
+        return placed
 
 
 # --- 1. the annual-report pipeline's result -----------------------------------------------
@@ -331,6 +378,11 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
                          endpoint=money.endpoint.split("#")[0], method=money.method,
                          confidence=money.confidence, note="the year the figures are for",
                          retrieved_at=at))
+    if result.get("period_end_date") and money:
+        out.append(Found("fiscal_year_end", result["period_end_date"], period_end=period,
+                         source=money.source, endpoint=money.endpoint.split("#")[0],
+                         method=money.method, confidence=money.confidence,
+                         note="period end of the figures", retrieved_at=at))
     if money and money.unit:
         out.append(Found("reporting_currency", money.unit, period_end=period, source=money.source,
                          endpoint=money.endpoint, method=money.method, confidence=money.confidence,
@@ -350,58 +402,33 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
     return out
 
 
-def described_in_result(result: dict, origin: Origin | None) -> list[Found]:
-    """The pipeline's revenue model and business structure. They share one quote for
-    several facts, so a fact with its own quote (the data-point pass) wins a tie."""
-    out: list[Found] = []
-    if origin is None:
-        return out
-    period = result.get("period_end_date") or ""
-    at = result.get("extracted_at") or ""
+# --- 2. the AI pass over the report (and over fallback documents) ------------------------------
 
-    def described(name: str, value, d: dict, extra: str = ""):
-        if value in (None, "", []):
-            return
-        endpoint, conf, where = origin.where(d.get("quote"), d.get("chunk_id"))
-        out.append(Found(name, value, period_end=period, source=origin.source, endpoint=endpoint,
-                         method=origin.method, confidence=conf,
-                         note="; ".join(x for x in (extra, where) if x), retrieved_at=at))
-
-    rm = result.get("revenue_model") or {}
-    if rm.get("description") or rm.get("categories"):
-        described("revenue_model", " | ".join(x for x in (", ".join(rm.get("categories") or []),
-                                                          rm.get("description")) if x), rm)
-    bs = result.get("business_structure") or {}
-    described("business_structure", bs.get("description"), bs)
-    described("segments", "; ".join(bs.get("segments") or []), bs)
-    described("legal_form", bs.get("legal_form"), bs)
-    if bs.get("is_listed") is not None:
-        described("listing_status", "listed" if bs["is_listed"] else "unlisted", bs)
-    if bs.get("ultimate_parent"):
-        described("ultimate_parent", bs["ultimate_parent"], bs)
-    return out
-
-
-# --- 3. the AI pass over the report, and 4. over web pages ------------------------------
-
-def _user_prompt(name: str, url: str, chunks: list[Chunk], what: str) -> str:
+def _user_prompt(name: str, url: str, chunks: list[Chunk], what: str,
+                 wanted: list[str] | None = None) -> str:
     body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
-    return (f"Company legal name: {name}\nSource: {url}\n\n"
+    only = (f"Only these facts are needed: {', '.join(wanted)}. Set every other fact to "
+            f"null (empty list / empty items).\n\n" if wanted else "")
+    return (f"Company legal name: {name}\nSource: {url}\n\n{only}"
             f"Excerpts from {what} (tables are in markdown):\n\n{body}")
 
 
-def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str) -> DataPointFacts:
-    """The data-point LLM call, cached by the document and chunks it was given."""
+def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
+        wanted: list[str] | None = None) -> DataPointFacts:
+    """The data-point LLM call, cached by the document, the chunks it was given and the
+    facts asked for (`wanted`: DataPointFacts fields; None asks for all)."""
     path = CACHE_DIR / f"{cache_key}_datapoints_llm.json"
     ids = [c.id for c in chunks]
     if path.exists():
         saved = json.loads(path.read_text(encoding="utf-8"))
-        if saved.get("chunk_ids") == ids and saved.get("prompt") == llm.load_prompt("datapoints_system"):
+        if (saved.get("chunk_ids") == ids and saved.get("wanted") == wanted
+                and saved.get("prompt") == llm.load_prompt("datapoints_system")):
             return DataPointFacts.model_validate(saved["facts"])
-    facts = llm.call_llm(llm.load_prompt("datapoints_system"), _user_prompt(name, url, chunks, what),
-                         DataPointFacts)
+    facts = llm.call_llm(llm.load_prompt("datapoints_system"),
+                         _user_prompt(name, url, chunks, what, wanted), DataPointFacts)
     CACHE_DIR.mkdir(exist_ok=True)
-    path.write_text(json.dumps({"chunk_ids": ids, "prompt": llm.load_prompt("datapoints_system"),
+    path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted,
+                                "prompt": llm.load_prompt("datapoints_system"),
                                 "model": llm.model_name(), "facts": facts.model_dump()},
                                ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
@@ -415,28 +442,37 @@ def report_chunks(origin: Origin) -> list[Chunk]:
     return [picked[i] for i in sorted(picked)]
 
 
-def _country_list(b) -> str:
-    return "; ".join(f"{i.country}: {fmt_number(i.value)}" for i in b.items)
+def _breakdown(b) -> str:
+    return "; ".join(f"{getattr(i, 'country', None) or i.segment}: {fmt_number(i.value)}"
+                     for i in b.items)
 
 
-def from_facts(facts: DataPointFacts, origin: Origin) -> list[Found]:
-    """The AI's facts as Found values, each placed by its quote."""
+def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
+    """The AI's facts as Found values, each placed by its quote (in its document, when
+    several documents were read together)."""
     out: list[Found] = []
 
     def add(name: str, value, fact, unit: str = "", period: str = "", extra: str = ""):
         if value in (None, "", []) or not getattr(fact, "quote", None):
             return                      # no quote, no value: the prompt demands one
-        endpoint, conf, where = origin.where(fact.quote, fact.chunk_id)
-        out.append(Found(name, value, unit=unit, period_end=period or "", source=origin.source,
-                         endpoint=endpoint, method=origin.method, confidence=conf,
-                         note="; ".join(x for x in (extra, where) if x),
-                         retrieved_at=origin.retrieved_at))
+        doc, endpoint, conf, where = origin.place(fact.quote, fact.chunk_id)
+        dated = f"document dated {doc.date}" if doc.date else ""
+        out.append(Found(name, value, unit=unit, period_end=period or "", source=doc.source,
+                         endpoint=endpoint, method=doc.method, confidence=conf,
+                         note="; ".join(x for x in (extra, where, dated) if x),
+                         retrieved_at=doc.retrieved_at))
 
     for name in ("revenue", "total_assets"):
         n: NumberFact = getattr(facts, name)
         if n.value is not None and n.unit:
             add(name, full_value(n.value, n.unit), n, unit=n.currency or "", period=n.period_end,
                 extra=f"printed {fmt_number(n.value)} {n.unit}")
+    e = facts.ebitda
+    if e.value is not None and e.unit and e.measure:
+        what = e.measure.replace("_", " ") + (" (company-defined)" if e.company_defined else "")
+        add("ebitda", full_value(e.value, e.unit), e, unit=e.currency or "",
+            extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
+                  + (f" ({e.label_in_report})" if e.label_in_report else ""))
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         add(name, n.value, n, unit="employees", period=n.period_end)
@@ -444,11 +480,25 @@ def from_facts(facts: DataPointFacts, origin: Origin) -> list[Found]:
     if n.value is not None:
         add("shares_outstanding", full_value(n.value, n.unit or "units"), n, unit="shares",
             period=n.period_end)
-    for name in ("head_office_city", "ticker", "isin", "exchange", "exchange_segment",
-                 "listing_date", "sub_sector", "reporting_currency", "pension_type",
-                 "shareholding_requirement"):
+    p = facts.share_price
+    if p.value is not None and p.currency:
+        add("share_price", p.value, p, unit=p.currency, period=p.date or "",
+            extra=f"closing price {p.date}" if p.date else "closing price at year end")
+    for name in ("legal_name", "business_id", "other_names", "head_office_city", "ticker",
+                 "isin", "exchange", "exchange_segment", "listing_date", "sub_sector",
+                 "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
+                 "benefits", "shareholding_requirement"):
         t: TextFact = getattr(facts, name)
         add(name, t.value, t)
+    site = website_domain(facts.website.value)
+    if site:
+        add("website", site, facts.website)
+    cc = (facts.country_code.value or "").strip().upper()
+    if re.fullmatch(r"[A-Z]{2}", cc):
+        add("country_code", cc, facts.country_code)
+    if facts.ultimate_parent.value:
+        add("ultimate_parent", facts.ultimate_parent.value, facts.ultimate_parent,
+            extra="top company of the group")
     if facts.is_listed.value in ("listed", "unlisted"):
         add("listing_status", facts.is_listed.value, facts.is_listed)
 
@@ -461,132 +511,243 @@ def from_facts(facts: DataPointFacts, origin: Origin) -> list[Found]:
             add("controlling_owner", OWNER_CATEGORY[owner.holder_type], owner, extra=owner.name)
             add("ownership_type", OWNERSHIP_TYPE[owner.holder_type], owner,
                 extra=f"derived from the controlling owner ({owner.name})")
-            if owner.holder_type in ("listed_company", "other_company"):
-                add("ultimate_parent", owner.name, owner, extra="controlling company (immediate parent)")
+            if owner.holder_type in ("listed_company", "other_company") and (owner.stake_pct or 0) > 50:
+                add("ultimate_parent", owner.name, owner, extra="majority owner (immediate parent)")
     elif owner.quote:
-        add("controlling_owner", "none", owner, extra="no controlling shareholder")
-        add("ownership_type", "widely_held", owner, extra="no controlling shareholder")
+        add("controlling_owner", "none", owner, extra="no shareholder with 20% of the votes")
+        add("ownership_type", "widely_held", owner, extra="no shareholder with 20% of the votes")
 
     holders = [h for h in facts.major_shareholders if h.name and h.quote]
-    pe = [h for h in holders + ([owner] if owner.name and owner.quote else [])
+    if holders:
+        add("largest_holders", "; ".join(
+            f"{h.name} {fmt_number(h.stake_pct)}%" if h.stake_pct is not None else h.name
+            for h in holders), holders[0], extra=f"{len(holders)} holder(s) as listed")
+    big = [h for h in holders if h.stake_pct is not None and h.stake_pct >= 5]
+    pe = [h for h in big + ([owner] if owner.name and owner.quote else [])
           if h.holder_type == "private_equity" and (h.stake_pct is None or h.stake_pct >= 5)]
     if pe:
         h = pe[0]
         add("pe_stake_5pct", "yes", h, extra=f"{h.name}"
             + (f" {fmt_number(h.stake_pct)}%" if h.stake_pct is not None else ""))
-    elif holders:
-        add("pe_stake_5pct", "no", holders[0], extra="shareholders of 5% or more: " + "; ".join(
-            f"{h.name} {fmt_number(h.stake_pct)}%" if h.stake_pct is not None else h.name
-            for h in holders))
+    elif big:
+        add("pe_stake_5pct", "no", big[0], extra="no private equity among the holders of 5% or more")
 
-    for name in ("revenue_by_country", "staff_by_country"):
+    for name in ("revenue_by_country", "staff_by_country", "revenue_by_segment", "staff_by_segment"):
         b = getattr(facts, name)
         if b.items:
             unit = " ".join(x for x in (b.currency, b.unit if b.unit != "units" else "") if x) \
-                or ("employees" if name == "staff_by_country" else "")
-            add(name, _country_list(b), b, unit=unit, extra=b.basis or "")
+                or ("employees" if name.startswith("staff") else "")
+            add(name, _breakdown(b), b, unit=unit, extra=b.basis or "")
     return out
 
 
-# --- 4. HTML backup: the company's own web pages ---------------------------------------------
-
-PAGE_HINTS = {
-    "ownership": ["shareholder", "ownership", "owner", "aksjonaer", "aktieagare", "aktionaer",
-                  "osakkeenomistaj", "eier", "eigar", "agare", "ejer", "omistaj", "investor",
-                  "governance", "about", "om-oss", "om-os"],
-    "profile": ["about", "about-us", "company", "who-we-are", "om-oss", "om-os", "meista",
-                "ueber-uns", "uber-uns", "a-propos", "chi-siamo", "quienes-somos", "facts",
-                "key-figures", "contact", "kontakt", "history", "organisation", "organization"],
-    "listing": ["investor", "share", "stock", "aksjen", "aktien", "osake", "listing"],
-    "pay": ["remuneration", "governance", "compensation"],
-    "financials": ["key-figures", "financial", "results", "annual", "nokkeltall", "nyckeltal"],
-}
-TOPIC_OF = {"controlling_owner": "ownership", "controlling_owner_name": "ownership",
-            "ownership_type": "ownership", "pe_stake_5pct": "ownership", "ultimate_parent": "ownership",
-            "head_office_city": "profile", "fte": "profile", "headcount": "profile",
-            "sub_sector": "profile", "listing_status": "listing", "ticker": "listing",
-            "isin": "listing", "exchange": "listing", "exchange_segment": "listing",
-            "listing_date": "listing", "shares_outstanding": "listing",
-            "pension_type": "pay", "shareholding_requirement": "pay",
-            "revenue": "financials", "total_assets": "financials",
-            "revenue_by_country": "financials", "staff_by_country": "financials",
-            "reporting_currency": "financials"}
-SKIP_URL = re.compile(r"\.(pdf|jpe?g|png|gif|svg|zip|xlsx?|docx?|mp4)(\?|$)|/(news|press|blog|jobs?|"
-                      r"vacanc|career|product|shop|cart|login|cookie|privacy|terms)", re.I)
+def website_domain(text: str | None) -> str:
+    """'https://www.Yubico.com/investors' -> 'yubico.com'."""
+    m = re.search(r"(?:https?://)?(?:www\.)?([a-z0-9-]+(?:\.[a-z0-9-]+)+)", (text or "").lower())
+    return m.group(1) if m else ""
 
 
-def rank_pages(site: str, links: list[dict], missing: list[str], n: int) -> list[str]:
-    """The site's pages most likely to hold the missing data points, by URL words."""
-    topics = {TOPIC_OF[m] for m in missing if m in TOPIC_OF}
-    home = registered_domain(urlparse(site).netloc)
-    scored = []
-    for link in links:
-        url = (link.get("url") or "").split("#")[0]
-        p = urlparse(url)
-        if not url or registered_domain(p.netloc) != home or SKIP_URL.search(url):
+# --- 3. document fallback: the company's other documents ------------------------------------
+
+# Data points the AI pass can answer -> the DataPointFacts field asked for, and the
+# report topic (sections.DATAPOINT_TOPICS) whose chunks are sent for it.
+FACT_FIELD = {"controlling_owner_name": "controlling_owner", "ownership_type": "controlling_owner",
+              "pe_stake_5pct": "major_shareholders", "largest_holders": "major_shareholders",
+              "listing_status": "is_listed"}
+FACT_TOPIC = {
+    "controlling_owner": "ownership", "controlling_owner_name": "ownership",
+    "ownership_type": "ownership", "pe_stake_5pct": "ownership", "ultimate_parent": "ownership",
+    "largest_holders": "ownership",
+    "isin": "ownership", "ticker": "ownership", "exchange": "ownership",
+    "exchange_segment": "ownership", "listing_date": "ownership", "listing_status": "ownership",
+    "shares_outstanding": "ownership", "share_price": "keyfigures",
+    "fte": "employees", "headcount": "employees", "staff_by_country": "employees",
+    "staff_by_segment": "segments", "revenue_by_segment": "segments",
+    "pension_type": "remuneration", "benefits": "remuneration",
+    "shareholding_requirement": "remuneration",
+    "revenue_by_country": "geography", "revenue": "financials", "total_assets": "financials",
+    "ebitda": "keyfigures", "reporting_currency": "financials", "fiscal_year_end": "keyfigures",
+    "accounting_basis": "keyfigures", "legal_name": "profile", "website": "profile",
+    "business_id": "profile", "country_code": "profile", "head_office_city": "profile",
+    "other_names": "profile", "sub_sector": "profile"}
+assert set(FACT_TOPIC) == set(DP_DOC_TYPES)
+
+
+def gap_list(chosen: dict[str, Found]) -> list[str]:
+    """The data points still empty that a document can fill (not those of listed
+    companies when the company is known to be unlisted)."""
+    listed = chosen.get("listing_status")
+    unlisted = bool(listed and listed.value == "unlisted")
+    return [n for n in NAMES if n not in chosen and n in DP_DOC_TYPES
+            and not (unlisted and (n in LISTED_ONLY or n in LISTED_REPORTS_ONLY))]
+
+
+def wanted_fields(gaps: list[str]) -> list[str]:
+    return sorted({FACT_FIELD.get(g, g) for g in gaps})
+
+
+def doc_origin(doc: Document, first_id: int) -> Origin:
+    """A fallback document as an Origin, its chunk ids starting at first_id."""
+    chunks = {first_id + i: Chunk(first_id + i, c.text, c.pages)
+              for i, c in enumerate(split_chunks(doc.pages))}
+    date = str(doc.year) if doc.year else ""
+    if doc.kind == "pdf":
+        return Origin("pdf", doc.url, doc.source, "PARSE", doc.retrieved_at, doc.pages, chunks,
+                      date=date)
+    return Origin("web", doc.url, doc.source, "SCRAPE", doc.retrieved_at, doc.pages, chunks,
+                  {cid: doc.url for cid in chunks}, date=date)
+
+
+def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
+    """Only the parts relevant to the gaps: a short document whole, of a long one the
+    best chunks per needed topic."""
+    topics = sorted({FACT_TOPIC[g] for g in gaps})
+    picked: dict[int, Chunk] = {}
+    for o in origins:
+        chunks = list(o.chunks.values())
+        if sum(c.words for c in chunks) <= DOC_TOPIC_WORDS:
+            picked |= {c.id: c for c in chunks}
             continue
-        path = p.path.lower()
-        text = f"{path} {(link.get('title') or '').lower()}"
-        score = sum(2 if any(h in path for h in PAGE_HINTS[t]) else
-                    1 if any(h in text for h in PAGE_HINTS[t]) else 0 for t in topics)
-        if score:
-            score -= path.count("/") * 0.1 + len(path) / 500     # short, top-level pages first
-            scored.append((score, url))
-    seen, out = set(), []
-    for _, url in sorted(scored, key=lambda s: -s[0]):
-        key = urlparse(url).path.rstrip("/").lower()
-        if key not in seen:
-            seen.add(key)
-            out.append(url)
-    return out[:n]
+        for topic in topics:
+            picked |= {c.id: c for c in select_chunks(chunks, topic, DOC_TOPIC_WORDS)}
+    return [picked[i] for i in sorted(picked)]
 
 
-def _web_markdown(url: str, slug: str, fc: FirecrawlClient) -> str:
-    """A page as markdown via Firecrawl (cached: re-runs cost nothing)."""
-    import hashlib
-    path = CACHE_DIR / f"{slug}_web_{hashlib.sha1(url.encode()).hexdigest()[:16]}.md"
-    if path.exists():
-        return path.read_text(encoding="utf-8")
-    md = fc.scrape(url, formats=["markdown"])["markdown"]
-    CACHE_DIR.mkdir(exist_ok=True)
-    path.write_text(md, encoding="utf-8")
-    return md
-
-
-def _trim_words(text: str, n: int) -> str:
-    words = text.split(" ")
-    return text if len(words) <= n else " ".join(words[:n])
-
-
-def web_origin(name: str, slug: str, site: str, missing: list[str], fc: FirecrawlClient
-               ) -> Origin | None:
-    """Map the site (1 credit), scrape the home page and the best pages for what is
-    missing (1 credit each), as one document for the AI."""
-    try:
-        links = fc.map(site, search=None, limit=300)
-    except CreditBudgetExceeded:
-        return None
-    budget = (fc.max_credits or 99) - fc.credits.total
-    urls = [site] + [u for u in rank_pages(site, links, missing, 4)
-                     if u.rstrip("/") != site.rstrip("/")]
-    chunks, page_urls, pages = {}, {}, []
-    for url in urls[:max(budget, 0)]:
-        try:
-            md = _web_markdown(url, slug, fc)
-        except CreditBudgetExceeded:
+def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Library,
+                   fc: FirecrawlClient) -> tuple[list[Found], list[str]]:
+    """Rounds of: pick the most promising documents for the gaps, read them, ask the AI
+    only for the gaps; stop when the gaps are filled, nothing is left to read, or after
+    DOC_ROUNDS. Returns the values and the documents read (for "not found in")."""
+    values: list[Found] = []
+    read: list[str] = []
+    next_id = 0
+    for _ in range(DOC_ROUNDS):
+        if not gaps:
             break
-        except Exception as e:  # noqa: BLE001 - one page failing must not stop the others
-            log.warning("Scrape of %s failed: %s", url, str(e)[:150])
+        origins = []
+        for cand in lib.pick(gaps, DOCS_PER_ROUND):
+            doc = lib.fetch(cand)
+            if doc:
+                origins.append(doc_origin(doc, next_id))
+                next_id += len(origins[-1].chunks)
+        if not origins:
+            if lib.out_of_credits:
+                break
+            continue                     # every pick was unusable: try the next ones
+        read += [o.source for o in origins]
+        chunks = doc_chunks(origins, gaps)
+        if not chunks:
             continue
-        if len(md.strip()) < 200:
+        wanted = wanted_fields(gaps)
+        log.info("Documents: asking the AI about %d chunk(s) of %d document(s) for: %s",
+                 len(chunks), len(origins), ", ".join(gaps))
+        key = hashlib.sha1("|".join(o.url for o in origins).encode()).hexdigest()[:12]
+        facts = ask(name, origins[0].url if len(origins) == 1 else site, chunks,
+                    "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
+                    f"{slug}_docs_{key}", wanted)
+        got = [f for f in from_facts(facts, Bundle(origins)) if f.data_point in gaps]
+        for f in got:
+            year_check(f, lib.report_year)
+        values += got
+        gaps = [g for g in gaps if g not in {f.data_point for f in got}]
+    log.info("Documents: %d value(s) from %d document(s), %d Firecrawl credit(s)",
+             len(values), len(read), fc.credits.total)
+    return values, read
+
+
+# --- 4. executive pay, role grain -------------------------------------------------------------
+
+AR_PAY_WORDS = 8_000             # words of the annual report's remuneration section
+
+
+def _pay_chunks(origin: Origin, words: int) -> list[Chunk]:
+    chunks = list(origin.chunks.values())
+    if sum(c.words for c in chunks) <= words:
+        return chunks
+    return select_chunks(chunks, "remuneration", words)
+
+
+def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
+             report_key: str, period_end: str) -> tuple[list[Found], list[Found], list[str]]:
+    """Role rows and the company-level pay terms, from the remuneration report (or the
+    annual report's remuneration section), plus the remuneration policy for target and
+    maximum percentages the report lacks. Returns (role rows, company values, sources)."""
+    read: list[str] = []
+
+    def sources():
+        """Up to two remuneration documents (the second can come from the first's links,
+        e.g. a governance page linking the PDF), then the annual report's section."""
+        for _ in range(2 if lib else 0):
+            doc = lib.find("remuneration")
+            if doc is None:
+                break
+            o = doc_origin(doc, 0)
+            yield (o, _pay_chunks(o, pay.PAY_WORDS), "the company's remuneration report",
+                   f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}")
+        if report:
+            yield (report, _pay_chunks(report, AR_PAY_WORDS),
+                   "the remuneration section of the company's annual report", report_key)
+
+    facts = origin = None
+    for o, chunks, what, key in sources():
+        if not chunks:
             continue
-        cid = len(chunks)
-        chunks[cid] = Chunk(cid, _trim_words(md, WEB_PAGE_WORDS), [cid + 1])
-        page_urls[cid] = url
-        pages.append(Page(cid + 1, chunks[cid].text))
-    if not chunks:
-        return None
-    return Origin("web", site, "Company website", "SCRAPE", _now(), pages, chunks, page_urls)
+        log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
+        f = pay.ask_pay(name, o.url, chunks, what, key)
+        read.append(o.source)
+        if pay.has_pay(f):
+            facts, origin = f, o
+            break
+        log.info("Pay: no executive pay figures in %s", o.url)
+    if facts is None:
+        return [], [], read
+    policy = policy_origin = None
+    if lib and pay.needs_policy(facts):
+        pdoc = lib.find("remuneration_policy")
+        if pdoc:
+            policy_origin = doc_origin(pdoc, 0)
+            chunks = _pay_chunks(policy_origin, pay.PAY_WORDS)
+            if chunks:
+                policy = pay.ask_pay(name, pdoc.url, chunks, "the company's remuneration policy",
+                                     f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}")
+                read.append(policy_origin.source)
+    roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
+    terms = pay.company_terms(facts, origin)
+    if policy:
+        terms += pay.company_terms(policy, policy_origin)
+    return roles, terms, read
+
+
+def no_roles(why: str) -> list[Found]:
+    """The one role row of a company with no pay disclosure found."""
+    return [Found("role_disclosure", None, note=why, grain="role")]
+
+
+# Figures that change every year: from a fallback document they must be for the
+# report's fiscal year (a web page can hold an old year's figure).
+YEARLY = {"revenue", "total_assets", "ebitda", "revenue_by_segment", "staff_by_segment",
+          "revenue_by_country", "staff_by_country", "headcount", "fte", "shares_outstanding",
+          "share_price"}
+
+
+def year_check(f: Found, report_year: int | None) -> None:
+    """Grade C a yearly figure whose document isn't dated the report's year or later."""
+    if f.data_point not in YEARLY or not report_year:
+        return
+    dated = re.search(r"document dated (\d{4})", f.note)
+    period = re.match(r"(\d{4})", f.period_end or "")
+    year = int(period.group(1)) if period else int(dated.group(1)) if dated else None
+    if year is None or year < report_year:
+        f.confidence = "C"
+        f.note += (f"; check the year: the report is FY{report_year}, this document is "
+                   + (f"from {year}" if year else "undated"))
+
+
+def same_company(a: str, b: str) -> bool:
+    def key(s):
+        words = re.sub(r"[^a-z0-9]+", " ", (s or "").lower())       # "N.V." -> "n v"
+        return re.sub(r"\b(n v|nv|s a|sa|ag|ab|asa|oyj|plc|se|spa|gmbh|publ|holding)\b| ", "", words)
+    return bool(key(a)) and key(a) == key(b)
 
 
 def website_for(t: Target, result: dict | None, lei_record: dict | None,
@@ -636,16 +797,10 @@ def _norm(v) -> str:
     return re.sub(r"[^a-z0-9]", "", str(v).lower())
 
 
-def finish(t: Target, chosen: dict[str, Found], tried: list[str], gleif_isins: list[str],
+def finish(t: Target, chosen: dict[str, Found], tried: list[str],
            error: str | None) -> list[Found]:
     """One Found per data point, in DATA_POINTS order, with a reason for each gap."""
     us = t.company.country == "US" or t.company.segment == "us_listed"
-    isin = chosen.get("isin")
-    if isin and gleif_isins:
-        codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
-        if codes and all(c in gleif_isins for c in codes):
-            chosen["isin"] = Found(**{**asdict(isin), "confidence": "A",
-                                      "note": isin.note + "; confirmed in the GLEIF ISIN map"})
     listed = (chosen.get("listing_status").value == "listed") if chosen.get("listing_status") else None
     if listed is None and any(k in chosen for k in ("ticker", "exchange", "isin")):
         src = next(chosen[k] for k in ("ticker", "exchange", "isin") if k in chosen)
@@ -653,24 +808,50 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str], gleif_isins: l
                                             "value": "listed", "unit": "",
                                             "note": f"has a {src.data_point}: {clip(str(src.value), 60)}"})
         listed = True
+    band, band_why = market_cap_band(chosen)
+    if band:
+        chosen["market_cap_band"] = band
     rows = []
     for name in NAMES:
         if name in chosen:
             rows.append(chosen[name])
             continue
-        if name in BUY_ONLY:
-            why, method = "not collected: market data changes daily and is bought (vendor quote)", "BUY"
+        method = ""
+        if name == "market_cap_band" and band_why and listed is not False:
+            why = band_why
+        elif name in UPSTREAM:
+            why, method = "not collected here: comes from the upstream API collection", ""
         elif name == "cik" and not us:
             why, method = "not applicable: no SEC filing found and not US-listed", ""
         elif listed is False and (name in LISTED_ONLY or name in LISTED_REPORTS_ONLY):
             why, method = "not applicable: the company is not listed", ""
         else:
             why = "not found in: " + ", ".join(tried) if tried else "no source reached"
-            method = ""
-        if error and name not in BUY_ONLY:
+        if error and name not in UPSTREAM:
             why += f" (annual-report route failed: {clip(error, 140)})"
         rows.append(Found(name, None, method=method, note=why))
     return rows
+
+
+def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
+    """Shares outstanding x year-end share price, banded in EUR (MARKET_CAP_BANDS_EUR).
+    Returns (the band, or None with the reason)."""
+    shares, price = chosen.get("shares_outstanding"), chosen.get("share_price")
+    if not shares or not price:
+        missing = " and ".join(n for n, f in (("shares outstanding", shares), ("share price", price))
+                               if not f)
+        return None, f"not derived: no {missing}"
+    cap = float(shares.value) * float(price.value)
+    if price.unit != "EUR":
+        return None, (f"not derived: market cap {cap:,.0f} {price.unit}; the EUR band needs the "
+                      f"year-end exchange rate (API step)")
+    band = next(name for floor, name in MARKET_CAP_BANDS_EUR if cap >= floor)
+    worst = min((shares, price), key=lambda f: CONFIDENCE_RANK[f.confidence])
+    return Found("market_cap_band", band, unit="", period_end=price.period_end,
+                 source="derived", endpoint=price.endpoint, method="DERIVED",
+                 confidence=worst.confidence,
+                 note=f"market cap {cap:,.0f} EUR = shares outstanding x share price "
+                      f"({shares.source}; {price.source})"), ""
 
 
 # --- one company ------------------------------------------------------------------------------
@@ -678,10 +859,12 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str], gleif_isins: l
 NO_CREDITS = "Firecrawl is out of credits"
 
 
-def collect(t: Target, web: bool = True, web_credits: int = DEFAULT_WEB_CREDITS,
-            error: str | None = None, flags: set | None = None) -> list[Found]:
+def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS,
+            error: str | None = None, flags: set | None = None,
+            meter: dict | None = None) -> list[Found]:
     """`error`: why the annual-report pipeline has no result (if not in its error file).
-    `flags` gets "no_credits" when Firecrawl refused for lack of credits."""
+    `flags` gets "no_credits" when Firecrawl refused for lack of credits; `meter`
+    gets "credits", the Firecrawl credits spent here."""
     c = t.company
     flags = flags if flags is not None else set()
     result = json.loads(c.result_path.read_text(encoding="utf-8")) if c.result_path.exists() else None
@@ -698,44 +881,14 @@ def collect(t: Target, web: bool = True, web_credits: int = DEFAULT_WEB_CREDITS,
             lei_record = identify_lei(c.name, c.slug, c.lei, True, c.country)["record"]
         except Exception as e:  # noqa: BLE001
             log.warning("LEI lookup failed: %s", e)
+    if not c.lei and (lei_record or {}).get("lei"):
+        c.lei = lei_record["lei"]             # for the lei column only, not a data point
     origin = report_origin(result) if result else None
     if result:
         values += from_result(result, origin)
         tried.append(origin.source if origin else "annual report")
 
-    # 2. official APIs
-    lei = (lei_record or {}).get("lei") or c.lei
-    gleif_isins: list[str] = []
-    if lei:
-        try:
-            g = apis.gleif_values(lei)
-            gleif_isins = next((f.value.split(";") for f in g if f.data_point == "_gleif_isins"), [])
-            values += g
-            tried.append("GLEIF")
-        except httpx.HTTPError as e:
-            log.warning("GLEIF failed: %s", e)
-    home = (lei_record or {}).get("country") or c.country
-    number = t.business_id or (lei_record or {}).get("registered_as") \
-        or ((result or {}).get("filing") or {}).get("registration_number")
-    reg = apis.registry_values(home, number)
-    if reg:
-        values += reg
-        tried.append(reg[0].source)
-    cik = ((result or {}).get("filing") or {}).get("cik")
-    if not cik and (c.country == "US" or c.segment == "us_listed" or home == "US"):
-        try:
-            cik, why = edgar.find_cik(c.name)
-            log.info("SEC CIK: %s (%s)", cik, why)
-        except (httpx.HTTPError, edgar.SecContactMissing) as e:
-            log.warning("SEC lookup failed: %s", e)
-    if cik:
-        try:
-            values += apis.edgar_values(int(cik))
-            tried.append("SEC EDGAR")
-        except (httpx.HTTPError, edgar.SecContactMissing) as e:
-            log.warning("SEC EDGAR failed: %s", e)
-
-    # 3. the AI pass over the report
+    # 2. the AI pass over the report
     if origin:
         chunks = report_chunks(origin)
         if chunks:
@@ -743,39 +896,56 @@ def collect(t: Target, web: bool = True, web_credits: int = DEFAULT_WEB_CREDITS,
             facts = ask(c.name, origin.url, chunks, "the company's annual report",
                         Path(result["debug"]["markdown_file"]).stem)
             values += from_facts(facts, origin)
-        values += described_in_result(result, origin)
 
-    # 4. HTML backup for whatever is still missing
     chosen = best(values)
     listed = chosen.get("listing_status")
-    missing = [n for n in NAMES if n not in chosen and n in TOPIC_OF
-               and not (listed and listed.value == "unlisted"
-                        and (n in LISTED_ONLY or n in LISTED_REPORTS_ONLY))]
-    if web and missing:
-        fc = FirecrawlClient(load_settings(), max_credits=web_credits)
-        try:
+    unlisted = bool(listed and listed.value == "unlisted")
+    fc = lib = site = None
+    roles: list[Found] = []
+    roles_why = "not applicable: the company is not listed" if unlisted else ""
+    try:
+        if docs:
+            fc = FirecrawlClient(load_settings(), max_credits=doc_credits)
             site = website_for(t, result, lei_record, fc)
-        except PaymentRequiredError:
-            site = None
-            flags.add("no_credits")
-        if "no_credits" in flags:
-            tried.append(f"company website (skipped: {NO_CREDITS})")
-        elif site:
-            log.info("HTML backup on %s for: %s", site, ", ".join(missing))
-            try:
-                w = web_origin(c.name, c.slug, site, missing, fc)
-            except PaymentRequiredError:
-                w = None
-                flags.add("no_credits")
-                tried.append(f"company website (skipped: {NO_CREDITS})")
-            if w:
-                tried.append(f"company website ({len(w.chunks)} pages)")
-                facts = ask(c.name, site, list(w.chunks.values()), "the company's web pages",
-                            f"{c.slug}_web")
-                values += [f for f in from_facts(facts, w) if f.data_point in missing]
-            log.info("HTML backup used %d Firecrawl credit(s)", fc.credits.total)
+            if site:
+                year = str((result or {}).get("fiscal_year") or "")
+                lib = Library(c.slug, site, int(year) if year.isdigit() else None, fc,
+                              skip_urls=[(result or {}).get("report_url")])
+
+        # 3. executive pay (role grain) and the company-level pay terms
+        if not unlisted:
+            roles, terms, read = from_pay(
+                c.name, c.slug, lib, origin,
+                Path(result["debug"]["markdown_file"]).stem if origin else "",
+                (result or {}).get("period_end_date") or "")
+            values += terms
+            tried += [r for r in read if r not in tried]
+            if not roles:
+                roles_why = ("not found in: " + ", ".join(read) if read
+                             else "no remuneration report found")
+
+        # 4. document fallback for the company-grain data points still missing
         chosen = best(values)
-    return finish(t, chosen, tried, gleif_isins, error)
+        gaps = gap_list(chosen)
+        if lib and gaps:
+            log.info("Document fallback on %s for: %s", site, ", ".join(gaps))
+            found, read = from_documents(c.name, c.slug, site, gaps, lib, fc)
+            values += found
+            tried += list(dict.fromkeys(read)) or ["company documents (none usable found)"]
+    except PaymentRequiredError:
+        flags.add("no_credits")
+        tried.append(f"company documents (skipped: {NO_CREDITS})")
+        roles_why = roles_why or f"remuneration report not searched: {NO_CREDITS}"
+    if fc:
+        log.info("Documents used %d Firecrawl credit(s)", fc.credits.total)
+        if meter is not None:
+            meter["credits"] = fc.credits.total
+    chosen = best(values)
+    parent = chosen.get("ultimate_parent")
+    if parent and any(same_company(parent.value, n) for n in
+                      (c.name, getattr(chosen.get("legal_name"), "value", ""))):
+        del chosen["ultimate_parent"]          # the company itself: it is the top of its group
+    return finish(t, chosen, tried, error) + (roles or no_roles(roles_why))
 
 
 def rows_for(t: Target, found: list[Found]) -> list[dict]:
@@ -786,7 +956,7 @@ def rows_for(t: Target, found: list[Found]) -> list[dict]:
         value = fmt_number(f.value) if isinstance(f.value, (int, float)) else (f.value or "")
         rows.append({"company_id": c.company_id, "company_name": c.name,
                      "segment": c.segment or "", "country": c.country or "", "lei": lei,
-                     "data_point": f.data_point, "value": value, "unit": f.unit,
+                     "grain": f.grain, "role_row": f.role_row, "data_point": f.data_point, "value": value, "unit": f.unit,
                      "period_end": f.period_end, "source": f.source, "endpoint": f.endpoint,
                      "method": f.method, "retrieved_at": f.retrieved_at if f.value not in (None, "")
                      else "", "confidence": f.confidence, "note": f.note})
@@ -808,28 +978,30 @@ def process(t: Target, opts: dict) -> dict:
     c = t.company
     started = time.monotonic()
     flags: set = set()
+    meter = {"credits": 0}
     error = None
-    if not c.result_path.exists() and (not c.error_path.exists() or opts["retry_failed"]
-                                       or no_credits_path(c).exists()):
+    if needs_pipeline(c, opts):
         res = process_company(c, False, opts["pipeline_credits"])
+        meter["pipeline"] = res.get("credits", 0)
         if res["kind"] == "fatal" and "PaymentRequired" in res.get("error", ""):
             # The free routes (filings, registers, APIs) still work: carry on without
             # Firecrawl; the company is redone on the next run.
             flags.add("no_credits")
             error = f"{NO_CREDITS}: the website report search was skipped"
         elif res["kind"] in ("fatal", "offline"):
-            return res
+            return res | {"credits": meter["pipeline"]}
     handler = logging.FileHandler(OUTPUT_DIR / f"{c.slug}.log", mode="a", encoding="utf-8")
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-7s %(name)s: %(message)s"))
     logging.getLogger().addHandler(handler)
     try:
-        found = collect(t, web=opts["web"] and "no_credits" not in flags,
-                        web_credits=opts["web_credits"], error=error, flags=flags)
+        found = collect(t, docs=opts["docs"] and "no_credits" not in flags,
+                        doc_credits=opts["doc_credits"], error=error, flags=flags, meter=meter)
     except FATAL as e:
-        return {"kind": "fatal", "error": f"{type(e).__name__}: {e}"}
+        return {"kind": "fatal", "error": f"{type(e).__name__}: {e}", "credits": spent(meter)}
     except Exception as e:  # noqa: BLE001 - record and continue with the next company
         log.exception("Data points for %s failed", c.company_id)
-        return {"kind": "error", "error": f"{type(e).__name__}: {str(e)[:200]}"}
+        return {"kind": "error", "error": f"{type(e).__name__}: {str(e)[:200]}",
+                "credits": spent(meter)}
     finally:
         logging.getLogger().removeHandler(handler)
         handler.close()
@@ -840,8 +1012,24 @@ def process(t: Target, opts: dict) -> dict:
         no_credits_path(c).write_text(NO_CREDITS, encoding="utf-8")
     else:
         no_credits_path(c).unlink(missing_ok=True)
-    return {"kind": "done", "no_credits": "no_credits" in flags, "found": sum(1 for r in rows if r["value"]), "total": len(rows),
-            "seconds": time.monotonic() - started}
+    return {"kind": "done", "no_credits": "no_credits" in flags,
+            "found": sum(1 for r in rows if r["value"]), "total": len(rows),
+            "seconds": time.monotonic() - started, "credits": spent(meter)}
+
+
+def spent(meter: dict) -> int:
+    return meter.get("pipeline", 0) + meter.get("credits", 0)
+
+
+def needs_pipeline(c: Company, opts: dict) -> bool:
+    return not c.result_path.exists() and (not c.error_path.exists() or opts["retry_failed"]
+                                           or no_credits_path(c).exists())
+
+
+def worst_case(t: Target, opts: dict) -> int:
+    """The most Firecrawl credits one company can spend (both caps hold per company)."""
+    return ((opts["pipeline_credits"] if needs_pipeline(t.company, opts) else 0)
+            + (opts["doc_credits"] if opts["docs"] else 0))
 
 
 # --- outputs --------------------------------------------------------------------------------
@@ -895,7 +1083,8 @@ def write_golden_filled(src: Path, targets: list[Target], out: Path) -> Path | N
         p = dp_path(t.company)
         if p.exists():
             for r in json.loads(p.read_text(encoding="utf-8")):
-                ours[(r["company_id"], r["data_point"])] = r
+                if r.get("grain", "company") == "company":
+                    ours[(r["company_id"], r["data_point"])] = r
     alias = {"fte": "fte", "headcount": "headcount"}
     for r in rows:
         mine = ours.get((r["company_id"], alias.get(r["field"], r["field"])))
@@ -921,11 +1110,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--redo", action="store_true", help="Redo the data points of companies done before")
     p.add_argument("--retry-failed", action="store_true",
                    help="Re-run the annual-report pipeline for companies where it failed before")
-    p.add_argument("--no-web", action="store_true", help="No HTML backup (no Firecrawl credits for it)")
-    p.add_argument("--web-credits", type=int, default=DEFAULT_WEB_CREDITS,
-                   help=f"Firecrawl credits per company for the HTML backup (default {DEFAULT_WEB_CREDITS})")
+    p.add_argument("--no-docs", "--no-web", dest="no_docs", action="store_true",
+                   help="No document fallback (no Firecrawl credits for it)")
+    p.add_argument("--doc-credits", "--web-credits", dest="doc_credits", type=int,
+                   default=DEFAULT_DOC_CREDITS,
+                   help=f"Firecrawl credits per company for the document fallback (default {DEFAULT_DOC_CREDITS})")
     p.add_argument("--pipeline-credits", type=int, default=DEFAULT_PIPELINE_CREDITS,
                    help=f"Firecrawl credits per company for finding the report (default {DEFAULT_PIPELINE_CREDITS})")
+    p.add_argument("--max-run-credits", type=int,
+                   help="Firecrawl credits for the whole run. A company only starts if the credits "
+                        "spent plus the worst case of every company still running stay within it")
     args = p.parse_args(argv)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
@@ -944,15 +1138,20 @@ def main(argv: list[str] | None = None) -> int:
     todo = [t for t in targets if args.redo or not dp_path(t.company).exists()
             or no_credits_path(t.company).exists()]
     print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before")
-    opts = {"web": not args.no_web, "web_credits": args.web_credits,
+    opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits,
             "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
 
     workers = max(1, args.workers)
     code = 0
+    budget = Budget(args.max_run_credits)
     with _KeepAwake():
         if workers == 1:
             for i, t in enumerate(todo, 1):
+                if not budget.allows(t, opts, []):
+                    budget.skipped = len(todo) - i + 1
+                    break
                 res = process(t, opts)
+                budget.spent += res.get("credits", 0)
                 code = _report(i, len(todo), t, res) or code
                 if res["kind"] in ("fatal", "offline"):
                     break
@@ -963,6 +1162,10 @@ def main(argv: list[str] | None = None) -> int:
                 queue, running, i = list(todo), {}, 0
                 while queue or running:
                     while queue and len(running) < workers and not code:
+                        if not budget.allows(queue[0], opts, list(running.values())):
+                            if not running:                 # nothing will free up credits
+                                budget.skipped, queue = len(queue), []
+                            break
                         t = queue.pop(0)
                         running[ex.submit(process, t, opts)] = t
                     if not running:
@@ -975,14 +1178,34 @@ def main(argv: list[str] | None = None) -> int:
                             res = fut.result()
                         except Exception as e:  # noqa: BLE001
                             res = {"kind": "error", "error": f"worker crashed: {e}"}
+                        budget.spent += res.get("credits", 0)
                         code = _report(i, len(todo), t, res) or code
                         write_csv(everyone, args.out)
     n = write_csv(everyone, args.out)
     print(f"\n{n} rows: {args.out}")
+    print(f"Firecrawl credits used: {budget.spent}"
+          + (f" of the run's {budget.cap}" if budget.cap is not None else ""))
+    if budget.skipped:
+        print(f"{budget.skipped} companies not started: they could exceed --max-run-credits")
     filled = write_golden_filled(args.csv, everyone, OUTPUT_DIR / "golden_test_filled.csv")
     if filled:
         print(f"Golden sample with build_value: {filled}")
     return code
+
+
+@dataclass
+class Budget:
+    """--max-run-credits: a company starts only if the credits spent so far, plus the
+    worst case of every company still running and of this one, stay within the cap."""
+    cap: int | None
+    spent: int = 0
+    skipped: int = 0
+
+    def allows(self, t: Target, opts: dict, running: list[Target]) -> bool:
+        if self.cap is None:
+            return True
+        reserved = sum(worst_case(r, opts) for r in running)
+        return self.spent + reserved + worst_case(t, opts) <= self.cap
 
 
 def _report(i: int, n: int, t: Target, res: dict) -> int:

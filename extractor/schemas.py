@@ -108,13 +108,56 @@ class CountryBreakdown(BaseModel):
     chunk_id: Optional[int]
 
 
+class SegmentValue(BaseModel):
+    segment: str                    # reportable segment as written
+    value: float                    # as printed
+
+
+class SegmentBreakdown(BaseModel):
+    items: list[SegmentValue]
+    unit: Optional[Unit]
+    currency: Optional[str]         # null for staff numbers
+    basis: Optional[str]            # e.g. "external revenue", "FTE at year end"
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+ProfitMeasure = Literal["ebitda", "adjusted_ebitda", "operating_profit"]
+
+
+class ProfitFact(BaseModel):
+    value: Optional[float]          # exactly as printed
+    unit: Optional[Unit]
+    currency: Optional[str]
+    measure: Optional[ProfitMeasure]   # operating_profit only when EBITDA isn't reported
+    company_defined: Optional[bool]    # an alternative performance measure (not IFRS)
+    label_in_report: Optional[str]
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+class PriceFact(BaseModel):
+    value: Optional[float]          # closing share price at fiscal year end, as printed
+    currency: Optional[str]
+    date: Optional[str]             # YYYY-MM-DD of the price, if stated
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
 class DataPointFacts(BaseModel):
     """Everything the report (or a web page) can tell beyond the core figures."""
     revenue: NumberFact
     total_assets: NumberFact
+    ebitda: ProfitFact
     fte: NumberFact                 # average full-time equivalents
     headcount: NumberFact           # employees at year end
+    legal_name: TextFact
+    business_id: TextFact           # national register number
+    country_code: TextFact          # ISO 3166 alpha-2 of the registered office
+    other_names: TextFact           # former names
+    ultimate_parent: TextFact       # top company of the group, if a subsidiary
     head_office_city: TextFact
+    website: TextFact               # the company's own website domain
     ticker: TextFact
     isin: TextFact
     exchange: TextFact
@@ -122,11 +165,75 @@ class DataPointFacts(BaseModel):
     listing_date: TextFact
     is_listed: TextFact             # "listed" / "unlisted"
     sub_sector: TextFact
+    fiscal_year_end: TextFact       # YYYY-MM-DD
     reporting_currency: TextFact
+    accounting_basis: TextFact      # e.g. "IFRS as adopted by the EU", "HGB"
     shares_outstanding: NumberFact
-    controlling_owner: Holder       # name null if no one controls the company
-    major_shareholders: list[Holder]   # holders of 5% or more
+    share_price: PriceFact
+    controlling_owner: Holder       # 20%+ of votes; name null if no one has that
+    major_shareholders: list[Holder]   # the largest holders listed, with stakes
     revenue_by_country: CountryBreakdown
     staff_by_country: CountryBreakdown
+    revenue_by_segment: SegmentBreakdown
+    staff_by_segment: SegmentBreakdown
     pension_type: TextFact
+    benefits: TextFact              # company-level executive benefits
+    shareholding_requirement: TextFact
+
+
+# --- executive pay, role grain (python -m extractor.datapoints) --------------------
+
+LtiBasis = Literal["grant_value", "vested_value", "accounting_expense", "number_of_instruments",
+                   "other"]
+
+
+class PayAmount(BaseModel):
+    value: Optional[float]          # exactly as printed
+    unit: Optional[Unit]            # from the table header ("in T€" -> thousands)
+    currency: Optional[str]
+    includes: Optional[str]         # other components bundled in, e.g. "social security"
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+class PayPercent(BaseModel):
+    value: Optional[float]          # percent of base salary
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+class RoleHeadcount(BaseModel):
+    value: Optional[float]          # people in an aggregate row
+    excludes: Optional[str]         # who is left out, e.g. "the CEO"
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+class RolePay(BaseModel):
+    role_title: str                 # as stated: "CEO", "Other members of group management"
+    person_name: Optional[str]      # only to tell rows with the same title apart
+    executive: bool                 # false: non-executive board member(s)
+    is_aggregate: bool              # one row for several people
+    quote: Optional[str]            # where the role is disclosed
+    chunk_id: Optional[int]
+    aggregate_headcount: RoleHeadcount
+    base_salary: PayAmount
+    sti_paid: PayAmount             # short-term incentive / bonus for the year
+    lti_received: PayAmount
+    lti_basis: Optional[LtiBasis]
+    benefits: PayAmount
+    pension: PayAmount
+    total: PayAmount                # as stated by the company
+    sti_target_pct: PayPercent
+    sti_max_pct: PayPercent
+    lti_target_pct: PayPercent
+    lti_max_pct: PayPercent
+
+
+class RemunerationFacts(BaseModel):
+    """A remuneration report or policy: pay per executive role, plus company-level terms."""
+    fiscal_year: Optional[str]
+    roles: list[RolePay]
+    pension_type: TextFact
+    benefits: TextFact
     shareholding_requirement: TextFact

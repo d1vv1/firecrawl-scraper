@@ -9,3 +9,6 @@ cache/*
 # Generated results: per-company JSON, logs, summaries, datapoints.csv
 output/*
 !output/.gitkeep
+# Reference material from other teams (not part of this tool)
+annual_report_fetcher/
+Source_validation_listed_*/

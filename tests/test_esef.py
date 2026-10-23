@@ -161,3 +161,20 @@ def test_newer_website_report_beats_older_filing(monkeypatch, tmp_path):
     pipeline, used = _setup_routes(monkeypatch, tmp_path, _filing(2024), website_year=2025)
     r = pipeline.run("ACME AB", company_id="acme")
     assert r["data_source"] == "website" and used["tags"] is None
+
+
+def test_recent_foreign_language_filing_beats_an_older_english_website_report(monkeypatch, tmp_path):
+    # Rosenbauer: FY2025 filing in German; the website's English PDF was FY2024.
+    filing = _filing(2025)
+    filing.language = "de"
+    pipeline, used = _setup_routes(monkeypatch, tmp_path, filing, website_year=2024)
+    r = pipeline.run("ACME AB", company_id="acme")
+    assert r["data_source"] == "esef" and r["report_url"] == "https://filings/2025.xhtml"
+
+
+def test_same_year_english_website_report_reads_next_to_a_foreign_filing(monkeypatch, tmp_path):
+    filing = _filing(2025)
+    filing.language = "de"
+    pipeline, used = _setup_routes(monkeypatch, tmp_path, filing, website_year=2025)
+    r = pipeline.run("ACME AB", company_id="acme")
+    assert r["report_url"] == "https://acme.se/ar.pdf" and used["tags"] is not None

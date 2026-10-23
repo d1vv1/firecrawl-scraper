@@ -367,10 +367,14 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
             found = discover(legal_name, slug, fc, website, report_url, use_cache,
                              lei_info["record"], country)
             web_year = found.get("report_year")
-            if older and web_year and web_year < int(older.fiscal_year):
+            # A recent filing in another language (Rosenbauer files in German) or an
+            # older one: either way the filing wins over an even older website report.
+            # Otherwise the old report's text would be read next to the filing's tags.
+            ref = filing or older
+            if ref and web_year and web_year < int(ref.fiscal_year):
                 log.info("Website report is FY%s, older than the ESEF filing (FY%s); using the filing",
-                         web_year, older.fiscal_year)
-                filing, use_tags = older, True
+                         web_year, ref.fiscal_year)
+                filing, use_tags = ref, True
                 doc = _esef_doc_or_none(filing, slug, use_cache)
             if doc is None:
                 log.info("Step 4: fetching report")
