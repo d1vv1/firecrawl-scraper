@@ -432,7 +432,9 @@ def test_targets_keep_their_stated_form():
                         lti_max={"value": 2.0, "form": "amount", "currency": "EUR",
                                  "unit": "millions", "quote": q, "chunk_id": 0})])
     rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
-    assert (rows["sti_max"].value, rows["sti_max"].unit) == (6.0, "months of salary")
+    assert (rows["sti_max"].value, rows["sti_max"].unit, rows["sti_max"].method) == (
+        50.0, "% of base salary", "DERIVED")                     # 6 months = half a year
+    assert "stated as 6 months of salary" in rows["sti_max"].note
     assert (rows["lti_max"].value, rows["lti_max"].unit) == (2_000_000, "EUR")
 
 

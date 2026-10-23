@@ -151,6 +151,13 @@ def _target(name: str, t: PayTarget) -> tuple[float, str]:
     return t.value, TARGET_UNIT.get(t.form or "", "") if t.form else "% of base salary"
 
 
+def months_as_pct(f: Found) -> Found:
+    """'Up to 12 months of salary' -> 100% of base salary (12 months = one year's base)."""
+    return Found(**{**f.__dict__, "value": round(float(f.value) / 12 * 100, 4),
+                    "unit": "% of base salary", "method": "DERIVED",
+                    "note": f"derived: stated as {f.value:g} months of salary; {f.note}"})
+
+
 def derived_target(target: Found, maximum: Found) -> Found | None:
     """'Target: 50% of the maximum' with a maximum of 80% of base -> 40% of base."""
     if target.unit != "% of maximum" or maximum.unit != "% of base salary":
@@ -236,6 +243,9 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 value, unit = _target(name, t)
                 rows[name] = placed(name, row, value, t, policy_origin, unit=unit,
                                     extra="from the remuneration policy")
+        for name in TARGETS:
+            if name in rows and rows[name].unit == "months of salary":
+                rows[name] = months_as_pct(rows[name])
         for tgt, mx in (("sti_target", "sti_max"), ("lti_target", "lti_max")):
             if tgt in rows and mx in rows:
                 d = derived_target(rows[tgt], rows[mx])
