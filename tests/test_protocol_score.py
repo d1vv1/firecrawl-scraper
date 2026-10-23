@@ -16,3 +16,13 @@ def test_compare_numbers_and_codes():
                       [{"value": "CH0010702154"}]) == "match"
     assert ps.compare("C03", {"value": "FN 78543f", "unit": ""}, [{"value": "FN 78543 f"}]) == "match"
     assert ps.compare("C11", {"value": "anything", "unit": ""}, [{"value": "x"}]) == "found"
+
+
+def test_space_separators_and_identifiers_inside_text():
+    assert ps.numbers("6 228 784 092") == [6228784092.0]
+    assert ps.compare("C03", {"value": "NIF A31065618 (IARC cover A-31065618); GLEIF RA000533", "unit": ""},
+                      [{"value": "A-31.065.618"}]) == "match"
+    assert ps.compare("C03", {"value": "00881841001 (registeredAt RA000407)", "unit": ""},
+                      [{"value": "00881841001"}]) == "match"
+    assert ps.compare("C08", {"value": "Incorporated LU; HQ Betzdorf", "unit": ""},
+                      [{"value": "LU"}]) == "match"

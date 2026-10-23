@@ -47,11 +47,12 @@ def name_key(s: str) -> str:
 
 
 def numbers(text: str) -> list[float]:
-    """Numbers as written in English style: '1,242,715' -> 1242715, '209380.50'."""
+    """Numbers with ',' or ' ' as the thousands separator: '1,242,715', '1 292 435 282',
+    '209380.50'."""
     out = []
-    for m in re.findall(r"-?\d[\d,]*(?:\.\d+)?", text or ""):
+    for m in re.findall(r"-?\d{1,3}(?:[, ]\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?", text or ""):
         try:
-            out.append(float(m.replace(",", "")))
+            out.append(float(re.sub(r"[, ]", "", m)))
         except ValueError:
             pass
     return out
@@ -82,10 +83,12 @@ def compare(fid: str, theirs: dict, ours: list[dict]) -> str:
         return "match" if any(c in codes for v in values for c in re.findall(
             r"[A-Z]{2}[A-Z0-9]{9}\d", v.upper())) else "differs"
     if fid == "C03":
-        digits = re.sub(r"\D", "", tv)
-        return "match" if digits and any(re.sub(r"\D", "", v) == digits for v in values) else "differs"
+        # any identifier in their text ("NIF A31065618 (... A-31065618)"), digits only
+        theirs_ids = {re.sub(r"\D", "", t) for t in re.findall(r"[A-Z]*[\d][\d.\- ]{3,}\d", tv)}
+        return "match" if any(re.sub(r"\D", "", v) in theirs_ids for v in values) else "differs"
     if fid == "C08":
-        return "match" if any(v[:2].upper() == tv.strip()[:2].upper() for v in values) else "differs"
+        codes = set(re.findall(r"\b[A-Z]{2}\b", tv))
+        return "match" if any(v[:2].upper() in codes for v in values) else "differs"
     if fid == "C09":
         return "match" if any(v.lower() in tv.lower() or tv.lower() in v.lower() for v in values) \
             else "differs"

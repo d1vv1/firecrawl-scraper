@@ -19,7 +19,7 @@ import re
 from . import llm
 from .apis import Found
 from .config import CACHE_DIR
-from .extract import full_value
+from .extract import full_value_quoted
 from .schemas import PayAmount, PayPercent, RemunerationFacts, RolePay
 from .sections import Chunk
 
@@ -133,7 +133,7 @@ def _amount(a: PayAmount) -> float | None:
         return None
     if a.unit is None:
         return a.value
-    return full_value(a.value, a.unit)
+    return full_value_quoted(a.value, a.unit, a.quote)
 
 
 def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | None = None,

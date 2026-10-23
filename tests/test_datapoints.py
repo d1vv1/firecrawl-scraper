@@ -333,3 +333,15 @@ def test_run_budget_reserves_the_worst_case_of_running_companies(tmp_path, monke
     assert not b.allows(new, opts, [cached])             # 5 + 10 + 16 > 30
     assert b.allows(cached, opts, [cached])              # 5 + 10 + 10 <= 30
     assert dp.Budget(None).allows(new, opts, [new] * 9)
+
+
+def test_a_report_from_another_country_is_graded_c():
+    vals = [Found("country_code", "NL", source="Annual report (PDF)", confidence="B"),
+            Found("revenue", 1.2e9, source="Annual report (PDF)", method="PARSE", confidence="B"),
+            Found("revenue", 7.9e10, source="ESEF filing", method="XBRL", confidence="A")]
+    dp.country_check(vals, "DE", "Annual report (PDF)")
+    assert [v.confidence for v in vals] == ["C", "C", "A"]
+    assert "possibly a subsidiary's report" in vals[1].note
+    ok = [Found("country_code", "DE", source="Annual report (PDF)", confidence="B")]
+    dp.country_check(ok, "DE", "Annual report (PDF)")
+    assert ok[0].confidence == "B"

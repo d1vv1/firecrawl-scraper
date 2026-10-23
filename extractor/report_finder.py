@@ -141,8 +141,9 @@ NATIVE_MARKERS = {"de", "deu", "ger", "deutsch", "sv", "swe", "svenska", "no", "
                   "norsk", "da", "dan", "dk", "dansk", "fi", "fin", "suomi", "isl", "nl",
                   "nld", "fr", "fra", "es", "esp", "ita"}
 
-# A year must stand alone: "2025.pdf" yes, the "2059" inside hash "205966bf" no.
-_YEAR_RE = re.compile(r"(?<![0-9a-z])20\d{2}(?![0-9])")
+# A year must stand alone: "2025.pdf" yes, the "2059" inside hash "205966bf" no. A
+# fiscal-year prefix is allowed: "Annual-Financial-Report-FY2025.pdf" (Siemens), "GJ2025".
+_YEAR_RE = re.compile(r"(?<![0-9a-z])(?:fy|gj)?(20\d{2})(?![0-9])")
 _IR_PAGE_HINTS = ["annual-report", "report-and-accounts", "reports", "results", "berichte",
                   "rapporter", "raportit", "publications", "investor", "sijoittaj"]
 
@@ -180,6 +181,7 @@ class ReportCandidate:
     english: int = 0           # +1 English version, -1 another language, 0 unknown
     file_weight: int = 0       # keyword weight found in the file name
     path_weight: int = 0       # keyword weight found elsewhere in the URL
+    unexplained: int = 0       # file-name words that aren't the company, a keyword or a year
 
 
 @dataclass
@@ -253,6 +255,28 @@ _FOREIGN = [(w, re.compile(rf"(?<![a-z0-9]){re.escape(fold(w))}(?![a-z0-9])"))
             for ws in _COUNTRY_WORDS.values() for w in ws]
 
 
+# Legal forms in a file name. One the company doesn't have marks another entity's report.
+_LEGAL_FORMS = {"plc", "ltd", "limited", "oyj", "nv", "bv", "spa", "gmbh", "inc", "llc", "ag",
+                "asa", "sarl", "srl", "kgaa"}
+# File-name words that say nothing about whose report it is.
+_NEUTRAL_WORDS = ({w for k, _, _ in _KEEP for w in k.split("-")} | EN_MARKERS | NATIVE_MARKERS | {
+    "annual", "report", "reports", "financial", "statements", "statement", "and", "the", "of",
+    "group", "consolidated", "integrated", "combined", "management", "final", "web", "print",
+    "online", "version", "spread", "spreads", "original", "single", "pages", "full", "digital",
+    "interactive", "accounts", "review", "year", "fy", "gj", "ar", "ir", "doc", "document",
+    "download", "file", "media", "secured", "sec", "esef", "low", "high", "res", "book",
+    "accessible", "updated", "new", "copy", "pdf", "ua", "en", "gb", "eng", "incl", "inkl",
+    "csrd", "esrs", "esef", "courtesy", "draft", "signed", "audited"})
+
+
+def _unexplained(tokens: set[str], allowed_words: frozenset[str]) -> int:
+    """Short alphabetic file-name words that are neither the company's name nor a
+    keyword, year or language marker: 'sfm' in 'sfm-annual-report-2025.pdf' (a
+    subsidiary). Hash-like and numeric parts don't count."""
+    return sum(1 for t in tokens if t.isalpha() and 2 <= len(t) <= 6
+               and t not in _NEUTRAL_WORDS and t not in allowed_words)
+
+
 def classify(url: str, allowed_words: frozenset[str] = frozenset()) -> ReportCandidate:
     """Apply the keep/exclude filters to one URL and say why. `allowed_words`
     (see allowed_place_words) are country words that don't mark a subsidiary."""
@@ -276,6 +300,12 @@ def classify(url: str, allowed_words: frozenset[str] = frozenset()) -> ReportCan
                                                f"probably a subsidiary's or region's report")
 
     path, name = _split(url)
+    tokens = set(re.split(r"[^a-z0-9]+", name.rsplit(".", 1)[0]))
+    other_form = (tokens & _LEGAL_FORMS) - allowed_words
+    if allowed_words and other_form and not (tokens & _LEGAL_FORMS & allowed_words):
+        # "siemens-plc-annual-report-2025.pdf" on siemens.com, for Siemens AG
+        return ReportCandidate(url, False, f"excluded: names another legal entity "
+                                           f"('{sorted(other_form)[0]}'), probably a subsidiary's report")
     in_name = _keywords(name)
     # The GB abbreviation only counts in the file name; drop it from the path check.
     in_path = [k for k in _keywords(path) if k[0] != "gb-<year>"]
@@ -285,7 +315,8 @@ def classify(url: str, allowed_words: frozenset[str] = frozenset()) -> ReportCan
     return ReportCandidate(
         url, True, f"keyword {words}", extract_year(url), is_pdf_url(url),
         english=_language(url, in_name + in_path),
-        file_weight=sum(w for _, _, w in in_name), path_weight=sum(w for _, _, w in in_path))
+        file_weight=sum(w for _, _, w in in_name), path_weight=sum(w for _, _, w in in_path),
+        unexplained=_unexplained(tokens, allowed_words))
 
 
 def _is_doc(c: ReportCandidate) -> bool:
@@ -301,7 +332,8 @@ def _rank(c: ReportCandidate, today: dt.date | None = None) -> tuple:
     year = c.year or 0
     fresh = year >= (today or dt.date.today()).year - FRESH_MIN_AGE_YEARS
     head = (c.is_pdf, year) if fresh else (year, c.is_pdf)
-    return (_is_doc(c), fresh, *head, c.english, c.file_weight, c.path_weight, -len(c.url))
+    return (_is_doc(c), fresh, *head, c.english, -c.unexplained, c.file_weight, c.path_weight,
+            -len(c.url))
 
 
 def pick_best(candidates: list[ReportCandidate]) -> ReportCandidate | None:

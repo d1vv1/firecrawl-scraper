@@ -370,3 +370,26 @@ def test_prescaled_value_is_corrected():
 def test_value_in_quote_swiss_apostrophe():
     from extractor.validate import match_value
     assert match_value(414843, "Net sales 414'843", "thousands") == "exact"     # R&S Group
+
+
+def test_fiscal_year_prefix_and_subsidiary_files():
+    from extractor.report_finder import allowed_place_words
+    assert extract_year("https://x.com/Annual-Financial-Report-FY2025.pdf") == 2025
+    assert extract_year("https://x.com/a/205966bf.pdf") is None          # still not a hash
+    allowed = allowed_place_words("Siemens AG", ["DE"])
+    plc = classify("https://x.com/siemens-plc-annual-report-and-financial-statements-2025.pdf", allowed)
+    assert not plc.kept and "another legal entity" in plc.reason
+    own = classify("https://x.com/Annual-Financial-Report-FY2025.pdf", allowed)
+    sub = classify("https://x.com/sfm-annual-report-2025.pdf", allowed)
+    assert pick_best([sub, own]).url == own.url                         # 'sfm' is unexplained
+    assert classify("https://x.com/acme-ab-annual-report-2025.pdf",
+                    allowed_place_words("Acme AB", ["SE"])).kept        # its own legal form
+
+
+def test_a_value_the_ai_already_scaled_is_not_scaled_again():
+    from extractor.extract import full_value_quoted
+    assert full_value_quoted(13380, "millions", "EBITDA 13,380") == 13_380_000_000
+    assert full_value_quoted(13_380_000_000, "millions", "EBITDA 13,380") == 13_380_000_000
+    assert full_value_quoted(2326.2, "millions", "Net sales|3|2,326.2") == 2_326_200_000
+    assert full_value_quoted(1050, "thousands", "Base salary|1.050|1.000") == 1_050_000
+    assert full_value_quoted(5, "millions", None) == 5_000_000          # no quote: as before

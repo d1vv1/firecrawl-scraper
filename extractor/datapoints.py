@@ -61,7 +61,7 @@ from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, load_settings
 from .documents import DP_DOC_TYPES, Document, Library
-from .extract import full_value
+from .extract import full_value, full_value_quoted
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
@@ -465,12 +465,13 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
     for name in ("revenue", "total_assets"):
         n: NumberFact = getattr(facts, name)
         if n.value is not None and n.unit:
-            add(name, full_value(n.value, n.unit), n, unit=n.currency or "", period=n.period_end,
+            add(name, full_value_quoted(n.value, n.unit, n.quote), n, unit=n.currency or "",
+                period=n.period_end,
                 extra=f"printed {fmt_number(n.value)} {n.unit}")
     e = facts.ebitda
     if e.value is not None and e.unit and e.measure:
         what = e.measure.replace("_", " ") + (" (company-defined)" if e.company_defined else "")
-        add("ebitda", full_value(e.value, e.unit), e, unit=e.currency or "",
+        add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
             extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
     for name in ("fte", "headcount"):
@@ -478,7 +479,8 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
         add(name, n.value, n, unit="employees", period=n.period_end)
     n = facts.shares_outstanding
     if n.value is not None:
-        add("shares_outstanding", full_value(n.value, n.unit or "units"), n, unit="shares",
+        add("shares_outstanding", full_value_quoted(n.value, n.unit or "units", n.quote), n,
+            unit="shares",
             period=n.period_end)
     p = facts.share_price
     if p.value is not None and p.currency:
@@ -675,12 +677,13 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
     read: list[str] = []
 
     def sources():
-        """Up to two remuneration documents (the second can come from the first's links,
-        e.g. a governance page linking the PDF), then the annual report's section."""
-        for _ in range(2 if lib else 0):
-            doc = lib.find("remuneration")
+        """Up to two remuneration documents, then the annual report's section. The
+        second one comes from the first's links (a governance page linking the PDF) or
+        from a map search for the type (Jumbo's report sits in an AGM folder)."""
+        for attempt in range(2 if lib else 0):
+            doc = lib.find("remuneration", search=attempt > 0)
             if doc is None:
-                break
+                continue
             o = doc_origin(doc, 0)
             yield (o, _pay_chunks(o, pay.PAY_WORDS), "the company's remuneration report",
                    f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}")
@@ -741,6 +744,24 @@ def year_check(f: Found, report_year: int | None) -> None:
         f.confidence = "C"
         f.note += (f"; check the year: the report is FY{report_year}, this document is "
                    + (f"from {year}" if year else "undated"))
+
+
+def country_check(values: list[Found], expected: str | None, source: str) -> None:
+    """The report says the company is registered in another country than the company
+    list: probably a subsidiary's report (Siemens: a Dutch financing company's). Every
+    value read from that report is graded C with a warning; XBRL tags of a filing found
+    by the company's LEI are left alone."""
+    stated = next((f.value for f in values if f.data_point == "country_code"
+                   and f.source == source and f.value), None)
+    if not expected or not stated or stated == expected:
+        return
+    log.warning("The report says country %s, the company list says %s", stated, expected)
+    for f in values:
+        if f.source == source and f.method != "XBRL":
+            f.confidence = "C"
+            f.note = "; ".join(x for x in (
+                f.note, f"check: the report says the company is in {stated}, the company list "
+                        f"says {expected}: possibly a subsidiary's report") if x)
 
 
 def same_company(a: str, b: str) -> bool:
@@ -895,7 +916,12 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
             log.info("Data points: asking the AI about %d report chunks", len(chunks))
             facts = ask(c.name, origin.url, chunks, "the company's annual report",
                         Path(result["debug"]["markdown_file"]).stem)
-            values += from_facts(facts, origin)
+            report_values = from_facts(facts, origin)
+            # The LEI record's legal country first: the input's country can be the
+            # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
+            country_check(report_values + values, (lei_record or {}).get("country") or c.country,
+                          origin.source)
+            values += report_values
 
     chosen = best(values)
     listed = chosen.get("listing_status")

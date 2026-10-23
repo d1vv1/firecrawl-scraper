@@ -97,6 +97,41 @@ def full_value(value: float | None, unit: str | None) -> float | None:
     return value * UNIT_MULTIPLIERS[unit]
 
 
+_QUOTE_NUMBER = re.compile(r"\d{1,3}(?:[,.  ']\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?")
+
+
+def _quote_numbers(quote: str) -> set[float]:
+    """Numbers in a quote, read with ',' / '.' / space as either separator."""
+    out = set()
+    for m in _QUOTE_NUMBER.findall(quote or ""):
+        digits = re.sub(r"[^\d.,]", "", m)
+        for dec in (".", ","):                      # 1,234.5 and 1.234,5
+            other = "," if dec == "." else "."
+            s = digits.replace(other, "")
+            parts = s.split(dec)
+            if len(parts) == 2 and len(parts[1]) == 3 and other not in digits:
+                s = s.replace(dec, "")             # '13,380' is thirteen thousand
+            try:
+                out.add(float(s.replace(dec, ".")))
+            except ValueError:
+                pass
+    return out
+
+
+def full_value_quoted(value: float | None, unit: str | None, quote: str | None) -> float | None:
+    """full_value, guarding against a value the AI already scaled: printed '13,380' in
+    a "€ million" table but returned as 13380000000 with unit "millions". If the value
+    isn't in the quote but value / multiplier is, the value is already in full units."""
+    if value is None or unit is None:
+        return None
+    mult = UNIT_MULTIPLIERS[unit]
+    nums = _quote_numbers(quote)
+    if mult > 1 and nums and value not in nums and any(abs(value / mult - n) < 1e-6 * max(1, n)
+                                                     for n in nums):
+        return value
+    return value * mult
+
+
 def iso_period_end(raw: str | None, fiscal_year: str | None) -> str | None:
     """'2025-12-31' / '31 December 2025' / '31 December' (+ fiscal year 2025) -> '2025-12-31'.
     Returns None when the date can't be pinned down."""

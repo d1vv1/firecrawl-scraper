@@ -231,12 +231,13 @@ def classify(url: str, doc_type: DocType, title: str = "",
 
 
 def _rank(c: Candidate, report_year: int | None) -> tuple:
-    """Best keyword match first; for report types a PDF before a web page about it; then
-    the report's year or newer, then the newest; then English; then the shortest URL
-    (top-level pages over deep ones)."""
+    """Best keyword match in the URL first (link text only breaks ties after the year: a
+    2024 report whose link says "Remuneration report 2024" must not beat the 2025 one);
+    for report types a PDF before a web page about it; then the report's year or newer,
+    then the newest; then English; then the shortest URL (top-level pages first)."""
     current = bool(c.year and report_year and c.year >= report_year)
-    return (c.score, c.is_pdf and c.doc_type.pdf_first, current, c.year or 0, c.english,
-            -len(c.url))
+    return (min(c.score, 2), c.is_pdf and c.doc_type.pdf_first, current, c.year or 0, c.score,
+            c.english, -len(c.url))
 
 
 @dataclass
@@ -360,8 +361,13 @@ class Library:
         self.tries[dt_.key] = self.tries.get(dt_.key, 0) + 1
         return cands[0]
 
-    def find(self, key: str) -> Document | None:
-        """The best document of one type, fetched; the next candidate if one is unusable."""
+    def find(self, key: str, search: bool = False) -> Document | None:
+        """The best document of one type, fetched; the next candidate if one is unusable.
+        `search`: run the type's map search first even if cached URLs have candidates
+        (the first document found was the wrong kind, e.g. a committee page, and the
+        real report sits in a folder no cached list reaches; 1 credit)."""
+        if search:
+            self._map(DOC_TYPES[key].search)
         for _ in range(MAX_DOCS_PER_TYPE):
             c = self._best(DOC_TYPES[key])
             if c is None:

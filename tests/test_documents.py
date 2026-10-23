@@ -101,3 +101,12 @@ def test_a_page_with_and_without_trailing_slash_is_one_page(tmp_path, monkeypatc
     lib = Library("x", "https://www.acme.com", 2025, None)
     lib._add({"https://www.acme.com/investors/owners": "", "https://www.acme.com/investors/owners/": ""})
     assert list(lib.pool) == ["https://www.acme.com/investors/owners"]
+
+
+def test_link_text_does_not_beat_a_newer_year():
+    from extractor.documents import _rank
+    rem = DOC_TYPES["remuneration"]
+    old = classify("https://acme.com/media/d05/11_top6_remuneration_report_2024.pdf", rem,
+                   "Remuneration report 2024", 2025)
+    new = classify("https://acme.com/media/arn/11_top6_remuneration_report_2025.pdf", rem, "", 2025)
+    assert old.score > new.score and _rank(new, 2025) > _rank(old, 2025)
