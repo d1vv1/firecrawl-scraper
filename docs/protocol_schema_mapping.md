@@ -39,7 +39,7 @@ The protocol's status values map onto our columns as follows:
 | C07 | Listing status, admission date | `listing_status`, `listing_date` | Annual report; listing notice, share page, history | — |
 | C08 | Country, HQ city | `country_code`, `head_office_city` | Annual report; legal notice | — |
 | C09 | Website domain | `website` | Annual report; legal notice, about page | **new** |
-| C10 | National industry code | `sector_code` | Registers: Brønnøysund (NO), PRH (FI), Companies House (UK); SEC SIC for US registrants. Elsewhere not found | API step |
+| C10 | National industry code | `sector_code` | Registers: Brønnøysund (NO), PRH (FI), Companies House (UK, working since 25 Oct 2026); SEC SIC for US registrants. Elsewhere not found. Register codes often describe the listed holding company (Shell, AO World: SIC 70100 "activities of head offices") | API step |
 | C11 | Business description | `sub_sector` | Annual report: now one sentence of the business description | prompt |
 | C12 | Revenue | `revenue` | XBRL tag or report | — |
 | C13 | Total assets | `total_assets` | XBRL tag or report | — |

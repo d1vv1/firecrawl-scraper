@@ -1067,7 +1067,7 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
     number = (t.business_id or (lei_record or {}).get("registered_as")
               or ((result or {}).get("filing") or {}).get("registration_number")
               or next((str(f.value) for f in values if f.data_point == "business_id"), None))
-    reg = apis.registry_values(home, number)
+    reg = apis.registry_values(home, number, (lei_record or {}).get("legal_name") or c.name)
     if reg:
         values += reg
         answered.append(reg[0].source)

@@ -170,3 +170,26 @@ def test_uk_ixbrl_group_turnover_and_computed_total_assets():
     assert figs["total_assets"].concept == "core:FixedAssets + core:CurrentAssets"
     assert "total_equity_and_liabilities" not in figs
     assert employees == 120
+
+
+def test_psc_bands_and_the_protocol_controlling_owner(monkeypatch):
+    from extractor import apis
+    assert apis.psc_band({"natures_of_control": ["ownership-of-shares-25-to-50-percent"]}) == 25
+    assert apis.psc_band({"natures_of_control": ["voting-rights-75-to-100-percent",
+                                                 "ownership-of-shares-50-to-75-percent"]}) == 75
+    assert apis.psc_band({"natures_of_control": ["significant-influence-or-control"]}) == 0
+    responses = {
+        "/company/SC205718": {"company_number": "SC205718", "company_name": "TWMA GROUP LIMITED",
+                              "type": "ltd", "sic_codes": ["70100"],
+                              "registered_office_address": {"locality": "Aberdeen"}},
+        "/company/SC205718/persons-with-significant-control": {"items": [
+            {"name": "Bp Inv3 Bidco Limited", "kind": "corporate-entity-person-with-significant-control",
+             "natures_of_control": ["ownership-of-shares-25-to-50-percent"]}]},
+    }
+    monkeypatch.setattr(apis, "_cached", lambda url, fetch: responses.get(
+        url.replace(apis.registries.CH_API, "")))
+    monkeypatch.setattr(apis.registries, "ch_key", lambda: "key")
+    got = {f.data_point: f for f in apis.companies_house_values("SC205718")}
+    assert got["controlling_owner_name"].value == "Bp Inv3 Bidco Limited"   # 25%+ counts (20% rule)
+    assert got["controlling_owner"].value == "corporate"
+    assert "ultimate_parent" not in got                                      # under 50%: not the parent

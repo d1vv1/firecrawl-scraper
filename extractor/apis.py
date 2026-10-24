@@ -252,20 +252,21 @@ def companies_house_values(number: str) -> list[Found]:
     psc_url = purl + "/persons-with-significant-control"
     psc = _cached(psc_url, fetch(f"/company/{number}/persons-with-significant-control"))
     active = [p for p in (psc or {}).get("items") or [] if not p.get("ceased_on")]
-    major = [p for p in active if any("75-to-100" in n or "more-than-50" in n
-                                      for n in p.get("natures_of_control") or [])]
-    if major:
-        p = major[0]
-        corporate = "corporate" in (p.get("kind") or "") or "legal-person" in (p.get("kind") or "")
-        out.append(Found("controlling_owner_name", p.get("name"), source="Companies House PSC register",
-                         endpoint=psc_url, method="API", confidence="A",
-                         note="; ".join(p.get("natures_of_control") or []),
-                         retrieved_at=retrieved_at(psc_url)))
-        if corporate:
-            out.append(Found("ultimate_parent", p.get("name"), source="Companies House PSC register",
-                             endpoint=psc_url, method="API", confidence="B",
-                             note="corporate PSC with control of more than half (immediate parent)",
-                             retrieved_at=retrieved_at(psc_url)))
+    top = max(active, key=psc_band, default=None)
+    if top is not None and psc_band(top) >= 25:
+        # The protocol's controlling owner holds 20%+ of the votes; the register gives
+        # bands (25-50, 50-75, 75-100%), so its lowest band already qualifies.
+        band = psc_band(top)
+        corporate = "corporate" in (top.get("kind") or "") or "legal-person" in (top.get("kind") or "")
+        src = dict(source="Companies House PSC register", endpoint=psc_url, method="API",
+                   retrieved_at=retrieved_at(psc_url))
+        out.append(Found("controlling_owner_name", top.get("name"), confidence="A", **src,
+                         note=f"{band}%+ band; " + "; ".join(top.get("natures_of_control") or [])))
+        out.append(Found("controlling_owner", "corporate" if corporate else "family", confidence="B",
+                         **src, note=f"{top.get('kind')}: {top.get('name')}"))
+        if corporate and band >= 50:
+            out.append(Found("ultimate_parent", top.get("name"), confidence="B", **src,
+                             note="corporate PSC with control of more than half (immediate parent)"))
     elif psc is not None and active:
         out.append(Found("_psc_none_major", "; ".join(p.get("name", "") for p in active),
                          source="Companies House PSC register", endpoint=psc_url, method="API"))
@@ -307,8 +308,23 @@ def prh_values(business_id: str) -> list[Found]:
     return out
 
 
-def registry_values(country: str | None, number: str | None) -> list[Found]:
-    """The home register's facts, where it is open and we have the number."""
+def psc_band(p: dict) -> int:
+    """The lowest bound of a PSC's ownership or voting band: 'ownership-of-shares-25-to-50-
+    percent' -> 25; 'more-than-50' -> 50; significant influence only -> 0."""
+    bounds = [int(m.group(1) or m.group(2)) for n in p.get("natures_of_control") or []
+              if (m := re.search(r"(\d+)-to-\d+-percent|more-than-(\d+)", n))]
+    return max(bounds, default=0)
+
+
+def registry_values(country: str | None, number: str | None, name: str | None = None) -> list[Found]:
+    """The home register's facts, where it is open and we have the number (for the
+    UK, a Companies House name search when there is none)."""
+    if not number and country == "GB" and name and registries.ch_key():
+        try:
+            number, how = registries._gb_find_number(name)
+            log.info("Companies House number for %r: %s (%s)", name, number, how)
+        except (httpx.HTTPError, registries.RegistryUnavailable) as e:
+            log.warning("Companies House search failed: %s", str(e)[:150])
     if not number:
         return []
     try:

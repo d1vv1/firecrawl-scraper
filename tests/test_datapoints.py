@@ -393,7 +393,7 @@ def test_api_values_come_first_and_documents_fill_the_rest(monkeypatch):
              Found("head_office_city", "Dierikon", source="GLEIF", method="API", confidence="A"),
              Found("_gleif_isins", "CH0010702154", source="GLEIF ISIN map", method="API")]
     monkeypatch.setattr(apis, "gleif_values", lambda lei: gleif)
-    monkeypatch.setattr(apis, "registry_values", lambda country, number: [])
+    monkeypatch.setattr(apis, "registry_values", lambda country, number, name=None: [])
     t = dp.Target(Company("komax", "Komax Holding AG", "CH"))
     values, answered, isins = dp.from_apis(t, None, {"lei": "529900UID9PCQXLG9479", "country": "CH"})
     assert answered == ["GLEIF"] and isins == ["CH0010702154"]
