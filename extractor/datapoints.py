@@ -150,6 +150,7 @@ def _now() -> str:
 class Target:
     company: Company
     business_id: str | None = None
+    isin: str | None = None          # optional: finds the LEI when the name doesn't
     # Documents found by hand, read first in the pay step (no search, no year check):
     # for reports no search reaches (Equinor's FY2025 report on a CDN under a hash).
     remuneration_report_url: str | None = None
@@ -170,6 +171,7 @@ def read_targets(path: Path) -> list[Target]:
     c_country, c_seg = col("country", "country_code"), col("segment")
     c_lei, c_bid = col("lei"), col("business_id", "registration_id", "org_number")
     c_rem, c_ar = col("remuneration_report_url"), col("annual_report_url")
+    c_isin = col("isin")
     if not c_id or not c_name:
         raise ValueError(f"{path} needs company_id and company_name columns")
     out: dict[str, Target] = {}
@@ -188,6 +190,9 @@ def read_targets(path: Path) -> list[Target]:
                                           lei if len(lei) == 20 else None))
         if bid and not t.business_id:
             t.business_id = bid
+        isin = (r.get(c_isin) or "").strip().upper() if c_isin else ""
+        if re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}\d", isin) and not t.isin:
+            t.isin = isin
         for attr, column in (("remuneration_report_url", c_rem), ("annual_report_url", c_ar)):
             url = (r.get(column) or "").strip() if column else ""
             if url.startswith("http") and not getattr(t, attr):
@@ -1070,11 +1075,16 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
     us = c.country == "US" or c.segment == "us_listed" or home == "US"
     if not cik:
         # Foreign companies with US-listed shares file 20-Fs too (Equinor: CIK 1140625).
-        try:
-            cik, why = edgar.find_cik(c.name)
-            log.info("SEC CIK: %s (%s)", cik, why)
-        except (httpx.HTTPError, edgar.SecContactMissing) as e:
-            log.warning("SEC lookup failed: %s", str(e)[:150])
+        # The input name first, then the LEI's legal name ("Nokia Oyj" in GLEIF).
+        for name in dict.fromkeys(n for n in (c.name, (lei_record or {}).get("legal_name")) if n):
+            try:
+                cik, why = edgar.find_cik(name)
+                log.info("SEC CIK for %r: %s (%s)", name, cik, why)
+            except (httpx.HTTPError, edgar.SecContactMissing) as e:
+                log.warning("SEC lookup failed: %s", str(e)[:150])
+                break
+            if cik:
+                break
     if cik:
         try:
             sec = apis.edgar_values(int(cik))
@@ -1226,6 +1236,7 @@ def process(t: Target, opts: dict) -> dict:
     flags: set = set()
     meter = {"credits": 0}
     error = None
+    resolve_lei(t)
     if needs_pipeline(c, opts):
         res = process_company(c, False, opts["pipeline_credits"])
         meter["pipeline"] = res.get("credits", 0)
@@ -1262,6 +1273,23 @@ def process(t: Target, opts: dict) -> dict:
     return {"kind": "done", "no_credits": "no_credits" in flags,
             "found": sum(1 for r in rows if r["value"]), "total": len(rows),
             "seconds": time.monotonic() - started, "credits": spent(meter)}
+
+
+def resolve_lei(t: Target) -> None:
+    """No LEI in the input: try the ISIN or register number in GLEIF before the
+    pipeline's name search, which misses companies listed under another name."""
+    c = t.company
+    if c.lei or not (t.isin or t.business_id):
+        return
+    from .lei import find_lei_by_id
+    try:
+        rec, how = find_lei_by_id(t.business_id, c.country, t.isin)
+    except Exception as e:  # noqa: BLE001 - GLEIF down: the name search still runs
+        log.warning("LEI lookup by identifier failed: %s", str(e)[:150])
+        return
+    if rec:
+        log.info("LEI %s for %s (%s)", rec.lei, c.name, how)
+        c.lei = rec.lei
 
 
 def spent(meter: dict) -> int:

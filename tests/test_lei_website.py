@@ -245,3 +245,29 @@ def test_name_search_miss_falls_through_to_paid_search(monkeypatch):
     monkeypatch.setattr(pipeline, "website_for_name", lambda clean, country: (None, "no match"))
     r = pipeline.find_official_website("Unilever PLC", fc=None, lei_record=LEI_REC)
     assert r["website_source"] == "search+lei" and calls.search == ["GB"]
+
+
+def test_legal_forms_written_as_separate_letters():
+    from extractor.lei import match_level
+    assert match_level("Novo Nordisk A/S", "NOVO NORDISK A S") == "exact"     # the SEC's spelling
+    assert match_level("Banco Santander SA", "BANCO SANTANDER S A") == "exact"
+    assert match_level("ASML Holding N.V.", "ASML HOLDING N V") == "exact"
+    assert match_level("Krones AG", "Krones Inc") is None
+
+
+def test_lei_by_isin_or_register_number(monkeypatch):
+    from extractor import lei
+    rec = {"type": "lei-records", "id": "549300DAQ1CVT6CXN342", "attributes": {
+        "lei": "549300DAQ1CVT6CXN342", "registration": {"status": "ISSUED"},
+        "entity": {"legalName": {"name": "NOVO NORDISK A/S"}, "legalAddress": {"country": "DK"},
+                   "jurisdiction": "DK", "legalForm": {"id": "ZRPO"}, "status": "ACTIVE",
+                   "registeredAs": "24256790"}}}
+    seen = []
+    monkeypatch.setattr(lei, "_get", lambda path, params: seen.append(params) or {"data": [rec]})
+    r, how = lei.find_lei_by_id(registered_as="24256790", country="DK")
+    assert r.lei == "549300DAQ1CVT6CXN342" and "register number" in how
+    assert seen[-1] == {"filter[entity.registeredAs]": "24256790",
+                        "filter[entity.legalAddress.country]": "DK"}
+    monkeypatch.setattr(lei, "_get", lambda path, params: {"data": [rec, {**rec, "id": "OTHER000000000000000", "attributes": {
+        **rec["attributes"], "lei": "OTHER000000000000000"}}]})
+    assert lei.find_lei_by_id(isin="DK0062498333")[0] is None             # ambiguous: no answer

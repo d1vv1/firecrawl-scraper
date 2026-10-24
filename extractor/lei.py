@@ -88,6 +88,11 @@ def name_key(name: str) -> NameKey:
     t = fold(name).replace("&", " and ").replace("a/s", " as ").replace("p/f", " pf ")
     t = re.sub(r"(?<=\b[a-z])\.(?=[a-z]\b)", "", t)    # n.v. -> nv., p.l.c -> plc
     t = re.sub(r"[^a-z0-9]+", " ", t)
+    # A legal form spelled as separate letters at the end: the SEC's "NOVO NORDISK A S",
+    # "... S A", "... N V", "... S P A" -> "as", "sa", "nv", "spa".
+    t = re.sub(r"((?:\b[a-z]\s+)+[a-z])\s*$",
+               lambda m: " " + m.group(1).replace(" ", "")
+               if m.group(1).replace(" ", "") in _FORM_TOKENS else m.group(0), t)
     for phrase, short in _FORM_PHRASES:
         t = re.sub(rf"\b{phrase}\b", f" {short} ", t)
     base, forms = [], set()
@@ -191,6 +196,26 @@ def _names(item: dict) -> list[str]:
 def fetch_by_lei(lei: str) -> LeiRecord | None:
     data = _get("lei-records", {"filter[lei]": lei.strip().upper()})["data"]
     return _to_record(data[0]) if data else None
+
+
+def find_lei_by_id(registered_as: str | None = None, country: str | None = None,
+                   isin: str | None = None) -> tuple[LeiRecord | None, str]:
+    """The LEI by a unique identifier instead of the name: the ISIN of the company's
+    shares, or its national register number (with its country). Only an unambiguous
+    answer counts. Returns (record, how)."""
+    tries = []
+    if isin:
+        tries.append(({"filter[isin]": isin.strip().upper()}, f"ISIN {isin}"))
+    if registered_as:
+        p = {"filter[entity.registeredAs]": registered_as.strip()}
+        if country:
+            p["filter[entity.legalAddress.country]"] = country.upper()
+        tries.append((p, f"register number {registered_as}"))
+    for params, how in tries:
+        recs = _narrow([_to_record(d) for d in _get("lei-records", params).get("data") or []])
+        if len({r.lei for r in recs}) == 1:
+            return recs[0], f"found by {how}"
+    return None, "no unique GLEIF record for the identifiers"
 
 
 def _in_country(rec: LeiRecord, country: str | None) -> bool:

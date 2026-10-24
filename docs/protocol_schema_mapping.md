@@ -144,11 +144,11 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
 
 ## Nordic/UK test against data/golden_UK_Nordics_22Oct
 
-Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 24 October 2026. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
+Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 25 October 2026. SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
 
 | Measure | Result |
 |---|---|
-| Company fields filled | 80% (321 of 403) |
+| Company fields filled | 80% (324 of 404) |
 | Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
 | Golden pay figures | 119 match, 18 differ, 11 missing (of 148) |
 | Equinor pay (13 executives) | 89 of 91, found automatically through its 20-F exhibit |
