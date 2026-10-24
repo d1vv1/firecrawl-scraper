@@ -2,6 +2,65 @@
 
 Open problems found during test runs, to pick up later. Newest first.
 
+| # | Issue | Status | Needs |
+|---|---|---|---|
+| 11 | Golden file values that look like a different fiscal year | open | client answer |
+| 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
+| 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | open | build FIRDS + exchange files |
+| 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
+| 7 | Register industry codes describe the holding company | open | client's chosen approach not built |
+| 6 | Holding companies' own filed accounts give no group figures | open | consolidated accounts |
+| 5 | Run-to-run variation in AI answers | open | small change |
+| 4 | Report finder can still pick a subsidiary's or a placeholder report | partly fixed | more guards |
+| 3 | SEC name lookup misses some registrants | fixed | — |
+| 2 | PDF tables converted with merged columns | open | better table extraction |
+| 1 | Report downloads behind buttons | fixed | — |
+
+## 11. Golden file values that look like a different fiscal year
+
+*Found 24 October 2026, Nordic/UK test.* Some golden values don't match the report year we read, though our values match the reports exactly:
+
+- **Nokia:** golden revenue €19,220m and total assets €39,149m are labelled FY2025; our FY2025 tagged figures are €19,889m and €37,597m. €19,220m appears to be Nokia's FY2024 net sales.
+- **Bang & Olufsen:** golden pay is labelled 2025; we read the FY2025/26 report (year to May 2026), and the golden values look like FY2024/25.
+
+**Needs:** the client to confirm which fiscal year the golden files are meant to hold. Until then these count as differences in `output/golden_uk_nordics_check.md`.
+
+## 10. Definitions the client still has to settle
+
+*Found 23–24 October 2026.* The code follows a default for each; each is a one-line switch once decided.
+
+| Question | Our default | Seen in |
+|---|---|---|
+| Base salary: fixed salary only, or total fixed pay (base + benefits)? | fixed salary only (the client's own decision) | BioArctic: golden CEO base 4,967k = our base 4,846k + benefits 122k |
+| Revenue when a filing tags both "revenue" and "revenue and operating income" | IFRS revenue, the other in `note` (`datapoints.REVENUE_RULE`) | CTT: 1,129m vs 1,292m |
+| Market-cap band thresholds | €1bn / €150m, a placeholder (`datapoints.MARKET_CAP_BANDS_EUR`); non-EUR companies need a year-end EUR rate | all |
+
+The client's field definitions are said to be in a HANDOVER.md that we have not received.
+
+## 9. Exchange fields weak from documents
+
+*Found 23 October 2026, validation run.* ISIN, ticker, exchange segment and listing date are each found for only 25–58% of companies from documents, below the protocol's 60% line. The planned sources are not built yet: ESMA FIRDS (ISIN and trading venue; **never** its admission date, which is a placeholder for old listings) and the free exchange files (Deutsche Börse, SIX, Euronext) for segments. See `docs/protocol_schema_mapping.md`, "API step".
+
+## 8. Sweden and Denmark registers not connected
+
+*Parked 25 October 2026.* Bolagsverket (SE) and CVR (DK) would give industry codes, and for private companies filed accounts (SE) and owners (DK). For listed companies they add little: identity comes from GLEIF, owners from the annual report, and Danish filed accounts already come from virk.dk without a login. Access: Bolagsverket by a free request form that sends keys by SMS (a Swedish phone number may be needed); CVR by email to cvrselvbetjening@erst.dk. **Revisit if the company list has many Swedish private companies.** Code to port: the colleague's `extras/collect_company_data.py`. Variables: `BOLAG_CLIENT_ID`, `BOLAG_CLIENT_SECRET`, `CVR_USER`, `CVR_PASSWORD`.
+
+## 7. Register industry codes describe the holding company
+
+*Found 25 October 2026.* Companies House gives Shell plc and AO World plc the code SIC 70100 ("activities of head offices"): the register codes the listed parent, not the business. The client's validation noted the same and decided to **derive the sector from the business description (found for 97%) with the Allshares taxonomy**. That classification is not built: it needs the taxonomy from the client, then an AI classification of `sub_sector`.
+
+## 6. Holding companies' own filed accounts give no group figures
+
+*Found 25 October 2026.* For a UK holding company, Companies House holds the parent's own accounts: TWMA Group Limited's tagged accounts have only investments, no revenue, and 0 employees (the staff are in its subsidiaries). The group figures are in consolidated accounts filed by the group's top company, or on its website. Fix option: when the latest accounts are parent-only (no revenue tag), look for the consolidated accounts of the same company or its parent.
+
+## 5. Run-to-run variation in AI answers
+
+*Found 24 October 2026.* Re-asking the AI the same question can move a few values (e.g. a merged table cell read as 156 one time and 53 the next, see issue 2), and a changed prompt re-asks every company. Answers are cached per prompt, so a run without prompt changes is stable. Fix options: set the model's temperature to 0 in `llm.py`; keep a reviewed snapshot of the cache before prompt changes.
+
+## 4. Report finder can still pick a subsidiary's or a placeholder report
+
+*Found 23–24 October 2026.* Fixed so far: Siemens (a Dutch financing subsidiary's report; now "plc"/legal-form and unexplained-word guards), Volvo (Volvo Treasury AB's report; now group-function words such as "treasury" rank lower, and report PDFs in event folders are kept), Rosenbauer (an older English report beat a current German filing), Jumbo (a year written as a date, `31122025`). An identity check grades values C when the report's own company name or country differs. **Still open:** a dated placeholder page can outrank a report-downloads page (Equinor's "annual-report-2025" vs "annual-reports"); subsidiaries with unremarkable file names are not caught before extraction. Fix options: prefer report-hub pages when choosing which page to scan; check the report's cover page before extracting from it.
+
 ## 3. SEC name lookup misses some registrants (Novo Nordisk) — fixed
 
 *Found 24 October 2026; **fixed 25 October 2026**: name matching now joins a legal form written as separate letters ("A S" = "A/S", "S A", "N V", "S P A"), and the SEC lookup also tries the LEI's legal name. Novo Nordisk is found (CIK 353278). A company without an LEI can also be identified in GLEIF by its ISIN or register number (optional `isin` input column).*
