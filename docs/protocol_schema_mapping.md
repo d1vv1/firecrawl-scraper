@@ -141,3 +141,15 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
   - Komax registration number: ours (`CHE-103.285.290`) is quoted from Komax's own legal notice; the validation file has `CHE-103.485.290`. One of the two is a typo; check the register.
   - Komax EBIT: a fallback web page gave an older year's figure. Yearly figures from fallback documents that aren't dated for the report's year are now graded C, with a note.
 - Fixed during the test: shares *outstanding* (not issued); a 20–50% holder is no longer taken as the parent; the company itself is never its own parent; a governance web page without figures no longer counts as the remuneration report; non-executive board members become one row; role titles use the person's function and include people who left during the year.
+
+## Nordic/UK test against golden_UK_Nordics_22Oct
+
+Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 24 October 2026. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
+
+| Measure | Result |
+|---|---|
+| Company fields filled | 80% (321 of 403) |
+| Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
+| Golden pay figures | 119 match, 18 differ, 11 missing (of 148) |
+| Equinor pay (13 executives) | 89 of 91, found automatically through its 20-F exhibit |
+| Bang & Olufsen pay | 4 of 17: we read FY2025/26, the golden file holds FY2024/25 |

@@ -2,6 +2,10 @@
 
 Open problems found during test runs, to pick up later. Newest first.
 
+## 3. SEC name lookup misses some registrants (Novo Nordisk)
+
+*Found 24 October 2026.* `edgar.find_cik` matches on the company name only, and Novo Nordisk A/S (an SEC registrant with ADRs, ticker NVO) is not matched ("no SEC registrant with this name"), presumably because the SEC spells the name differently. Fix options: look the CIK up by ticker or ISIN as well; or accept the LEI's legal name and former names as alternatives; or list known name variants ("A/S" = "A S").
+
 ## 2. PDF tables converted with merged columns (Equinor pay table)
 
 *Found 24 October 2026.*
