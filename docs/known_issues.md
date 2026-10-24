@@ -19,9 +19,15 @@ Open problems found during test runs, to pick up later. Newest first.
 
 **Fix options.** Keep column boundaries in the conversion (pymupdf4llm table settings, or a table extractor such as pdfplumber/camelot for pages with pay tables); or read pay tables from the PDF layout (cell positions) rather than from converted text; or a consistency check that flags a role whose parts don't add up to its stated total (the R11 check already notes this).
 
-## 1. Report downloads behind buttons, with the file URL only in the page's data (Equinor)
+## 1. Report downloads behind buttons, with the file URL only in the page's data (Equinor) — fixed
 
-*Found 24 October 2026, Nordic/UK test run (`output/nordic_uk_10.csv`). Worked around with a supplied URL; the automatic fix is open.*
+*Found 24 October 2026, Nordic/UK test run (`output/nordic_uk_10.csv`). **Fixed the same day**: without any supplied URL, Equinor now matches 89 of 91 golden pay figures, at 0 Firecrawl credits.*
+
+**The fix, in two routes:**
+- **SEC filings.** The API step looks up the CIK of every company, not only US ones, and the pay step reads SEC documents first: exhibits of the latest 10-K/20-F labelled as a remuneration or compensation report (Equinor's 20-F attaches its 2025 Remuneration Report as Exhibit 15.6), and the proxy statement (DEF 14A) for US filers. Free, no bot checks. Equinor was missed before because its recent ESEF filing meant the SEC was never asked, and the API step only looked up US companies.
+- **Report download pages.** Before its second search for a remuneration report, the pay step opens the site's report hub (`annual-reports`, `reports`, `downloads`, `publications` and local equivalents), and every web page read now also yields the PDF addresses kept in its page data (from the plain HTML download, no extra credit). Equinor's reports page yields all 13 report PDFs, including `equinor 2025 remuneration report.pdf`. This covers companies that are not SEC registrants.
+
+The original analysis follows.
 
 **Symptom.** Without help, Equinor ASA gets no executive pay for FY2025. The golden file (`golden_UK_Nordics_22Oct/golden_role_pay.csv`) has FY2025 pay for the CEO and 12 EVPs.
 

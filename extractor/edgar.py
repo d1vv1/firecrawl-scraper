@@ -234,3 +234,46 @@ def download_report(filing: EdgarFiling) -> str:
     r = _get(filing.report_url)
     r.encoding = r.encoding or "utf-8"
     return r.text
+
+
+# --- pay documents (python -m extractor.datapoints) -------------------------------
+
+PROXY_FORMS = ("DEF 14A",)       # not DEFA14A: additional materials only
+_ANCHOR = re.compile(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', re.I | re.S)
+_PAY_LABEL = re.compile(r"remuneration|compensation report|executive compensation", re.I)
+
+
+def latest_proxy(cik: int) -> dict | None:
+    """The newest proxy statement (DEF 14A): where US companies publish executive pay."""
+    rec = _get(SUBMISSIONS_URL.format(cik=cik)).json()
+    recent = rec.get("filings", {}).get("recent", {})
+    for i, form in enumerate(recent.get("form", [])):
+        if form in PROXY_FORMS and recent["primaryDocument"][i]:
+            return {"accession": recent["accessionNumber"][i], "filed": recent["filingDate"][i],
+                    "document": recent["primaryDocument"][i]}
+    return None
+
+
+def pay_documents(cik: int) -> list[tuple[str, str]]:
+    """(url, label) of the SEC documents holding executive pay, best first: exhibits of
+    the latest annual filing labelled as a remuneration / compensation report (a
+    foreign issuer's 20-F attaches its home-country report: Equinor's Exhibit 15.6),
+    then the latest proxy statement (DEF 14A) for US filers. Free, no Firecrawl."""
+    out: list[tuple[str, str]] = []
+    meta = latest_annual(cik)
+    if meta:
+        folder = ARCHIVE_URL.format(cik=cik, accession=meta["accession"].replace("-", ""),
+                                    document="")
+        html = _get(folder + meta["document"]).text
+        for href, text in _ANCHOR.findall(html):
+            label = re.sub(r"<[^>]+>|\s+", " ", text).strip()
+            if _PAY_LABEL.search(label) and "policy" not in label.lower() \
+                    and re.search(r"\.(htm|html|pdf)$", href, re.I):
+                url = href if href.startswith("http") else folder + href.split("/")[-1]
+                if url not in (u for u, _ in out):
+                    out.append((url, f"{label} ({meta['form']} exhibit)"))
+    proxy = latest_proxy(cik)
+    if proxy:
+        out.append((ARCHIVE_URL.format(cik=cik, accession=proxy["accession"].replace("-", ""),
+                                       document=proxy["document"]), "Proxy statement (DEF 14A)"))
+    return out

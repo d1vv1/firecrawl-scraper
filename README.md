@@ -184,8 +184,11 @@ Per company, cheapest and most exact first:
    country, city, website, former names, parent), EBITDA, fiscal year end and accounting
    basis, employees, share data and year-end price, largest holders and owners, listing,
    pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`);
-3. **executive pay**: the remuneration report (found like the fallback documents below)
-   and, if needed, the remuneration policy, read with `prompts/remuneration_system.md`;
+3. **executive pay**: documents supplied in the input (`remuneration_report_url`,
+   `annual_report_url`), then SEC documents for SEC registrants (a 20-F's remuneration
+   report exhibit, a US proxy statement; free), then the remuneration report found like the
+   fallback documents below (including PDFs behind a site's download buttons), and, if
+   needed, the remuneration policy, read with `prompts/remuneration_system.md`;
 4. **document fallback** (`extractor/documents.py`): the data points still empty are
    looked for in the company's other documents: remuneration report, AGM notice,
    corporate-governance and sustainability reports, "The share" and shareholder pages,

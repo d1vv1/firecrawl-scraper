@@ -18,6 +18,7 @@ Everything is cached, so re-runs cost nothing.
 
 import datetime as dt
 import hashlib
+import html
 import json
 import logging
 import re
@@ -107,6 +108,10 @@ DOC_TYPES = {d.key: d for d in [
     DocType("history", "Company history", "history", (
         "history", "our-history", "milestones", "historia", "historie", "historik",
         "geschichte", "histoire", "storia", "geschiedenis")),
+    DocType("report_hub", "Report downloads page", "reports", (
+        "annual-reports", "reports", "reports-and-presentations", "downloads", "publications",
+        "download-centre", "download-center", "reporting-centre", "rapporter", "berichte",
+        "publikationen", "julkaisut", "publicaties", "rapports", "informes", "relazioni")),
     DocType("about", "Company profile", "about us", (
         "about-us", "about", "who-we-are", "at-a-glance", "in-brief", "om-oss", "om-os",
         "über-uns", "unternehmen", "à-propos", "qui-sommes-nous", "chi-siamo",
@@ -272,6 +277,30 @@ def _mtime(path) -> str:
 _PDF_LINK = re.compile(r"(https?://[^)\s\]\"'<>]+\.pdf[^)\s\]\"'<>]*)", re.I)
 
 
+_FILE_FIELD = re.compile(
+    r'"(?:originalFilename|fileName|filename|title|label|name)"\s*:\s*"([^"]{3,200})"'
+    r'[^{}]{0,400}?"(?:url|href|src|downloadUrl)"\s*:\s*"(https?://[^"]+\.pdf[^"]*)"'
+    r'|"(?:url|href|src|downloadUrl)"\s*:\s*"(https?://[^"]+\.pdf[^"]*)"'
+    r'[^{}]{0,400}?"(?:originalFilename|fileName|filename|title|label|name)"\s*:\s*"([^"]{3,200})"')
+_ANY_PDF = re.compile(r'(https?://[^"\'\s<>()]+\.pdf)(?![a-z])', re.I)
+
+
+def embedded_files(raw_html: str) -> dict[str, str]:
+    """PDF addresses kept in a page's data rather than in links: download buttons whose
+    file URL sits in the page's embedded JSON (Equinor's reports page:
+    "originalFilename":"equinor-2025-remuneration-report.pdf","url":"https://cdn...").
+    url -> label (the file name or title given next to it, else the URL's file name)."""
+    text = html.unescape(raw_html or "").replace("\\/", "/").replace("\\", "")
+    out: dict[str, str] = {}
+    for m in _FILE_FIELD.finditer(text):
+        label, url = (m.group(1), m.group(2)) if m.group(2) else (m.group(4), m.group(3))
+        out.setdefault(url, label.replace("-", " ").replace("_", " "))
+    for url in _ANY_PDF.findall(text):
+        out.setdefault(url, urlparse(url).path.rsplit("/", 1)[-1].replace("-", " ")
+                       .replace("_", " "))
+    return out
+
+
 def links_in(markdown: str, base: str) -> dict[str, str]:
     """Every link on a page: url -> link text ("" if none)."""
     out = {u: t.replace("-", " ") for u, t in _link_titles(markdown, base).items()}
@@ -405,14 +434,19 @@ class Library:
         md_path = CACHE_DIR / f"{_stem(self.slug, c.url)}.md"
         pdf_path = md_path.with_suffix(".pdf")
         try:
+            files_path = md_path.with_suffix(".files.json")
             if md_path.exists():
                 pages = markdown_to_pages(md_path.read_text(encoding="utf-8"))
                 kind, at = ("pdf" if pdf_path.exists() else "web"), _mtime(md_path)
+                files = json.loads(files_path.read_text(encoding="utf-8")) \
+                    if files_path.exists() else {}
             else:
-                pages, kind = self._download(c, pdf_path)
+                pages, kind, files = self._download(c, pdf_path)
                 at = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
                 CACHE_DIR.mkdir(exist_ok=True)
                 md_path.write_text(pages_to_markdown(pages), encoding="utf-8")
+                if files:
+                    files_path.write_text(json.dumps(files), encoding="utf-8")
         except CreditBudgetExceeded as e:
             log.info("Documents: %s", e)
             self.out_of_credits = True
@@ -430,11 +464,14 @@ class Library:
         doc = Document(c.url, c.doc_type, kind, pages, c.year, at)
         if kind == "web":
             doc.links = links_in("\n".join(p.text for p in pages), c.url)
+            for url, label in files.items():           # download buttons (page data)
+                doc.links.setdefault(url, label)
             self._add(doc.links, own_page=True)       # step 3: follow its links
         log.info("Documents: read %s %s (%d page(s))", doc.source, c.url, len(pages))
         return doc
 
-    def _download(self, c: Candidate, pdf_path) -> tuple[list[Page], str]:
+    def _download(self, c: Candidate, pdf_path) -> tuple[list[Page], str, dict[str, str]]:
+        """(pages, kind, files): files are PDF addresses found in a web page's data."""
         body, ct = None, None
         if c.is_pdf:
             body, ct = download(c.url)
@@ -447,8 +484,11 @@ class Library:
             pdf_path.write_bytes(body)
             pages = pdf_to_pages(pdf_path)
             check_not_scanned(pages)
-            return pages, "pdf"
+            return pages, "pdf", {}
         if c.is_pdf:
             raise DownloadError(f"Expected a PDF from {c.url} but got {ct!r}")
+        # The raw HTML from the plain download holds file addresses kept in the page's
+        # data (download buttons); the readable text comes from Firecrawl.
+        files = embedded_files(body.decode("utf-8", "replace")) if body else {}
         md = self.fc.scrape(c.url, formats=["markdown"])["markdown"]
-        return [Page(1, md)], "web"
+        return [Page(1, md)], "web", files

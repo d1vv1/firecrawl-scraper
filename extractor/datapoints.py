@@ -66,7 +66,7 @@ from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei
 from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
-from .scraper import Page, markdown_to_pages
+from .scraper import Page, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
 from .validate import quote_in_text
 from .website import WebsiteNotFoundError
@@ -710,6 +710,24 @@ def fiscal_end_year(text: str | None) -> int | None:
 AR_PAY_FIRST = {"GB", "IE"}
 
 
+def sec_doc(slug: str, url: str, label: str, year: int | None) -> Document | None:
+    """An SEC document (a 20-F exhibit, a proxy statement) as page-like text, cached.
+    The SEC wants its own User-Agent, so it is fetched through edgar, not Firecrawl."""
+    from .xhtml_text import html_to_text, text_to_pages
+    path = CACHE_DIR / f"{slug}_sec_{hashlib.sha1(url.encode()).hexdigest()[:16]}.md"
+    try:
+        if path.exists():
+            pages = markdown_to_pages(path.read_text(encoding="utf-8"))
+        else:
+            pages = text_to_pages(html_to_text(edgar._get(url).text))
+            CACHE_DIR.mkdir(exist_ok=True)
+            path.write_text(pages_to_markdown(pages), encoding="utf-8")
+    except (httpx.HTTPError, edgar.SecContactMissing) as e:
+        log.warning("SEC document %s unreadable: %s", url, str(e)[:150])
+        return None
+    return Document(url, DocType("sec", label, "", ()), "web", pages, year, _now())
+
+
 def supplied_doc(slug: str, url: str, label: str, lib: Library | None) -> Document | None:
     """A document given in the input (remuneration_report_url / annual_report_url),
     fetched like any other: a PDF is downloaded and converted (no credits)."""
@@ -720,8 +738,8 @@ def supplied_doc(slug: str, url: str, label: str, lib: Library | None) -> Docume
 
 def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
              report_key: str, period_end: str, country: str | None = None,
-             report_year: int | None = None,
-             supplied: tuple = ()) -> tuple[list[Found], list[Found], list[str]]:
+             report_year: int | None = None, supplied: tuple = (),
+             cik: int | None = None) -> tuple[list[Found], list[Found], list[str]]:
     """Role rows and the company-level pay terms, from the remuneration report (or the
     annual report's remuneration section), plus the remuneration policy for target and
     maximum percentages the report lacks. Returns (role rows, company values, sources)."""
@@ -739,12 +757,29 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             o = doc_origin(doc, 0)
             yield (o, _pay_chunks(o, pay.PAY_WORDS), f"the company's {label.lower()}",
                    f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}", True)
+        if cik:
+            # SEC filings: free, no bot checks (a 20-F attaches the home-country report)
+            try:
+                found = edgar.pay_documents(int(cik))
+            except (httpx.HTTPError, edgar.SecContactMissing) as e:
+                log.warning("SEC pay documents: %s", str(e)[:150])
+                found = []
+            for url, label in found:
+                doc = sec_doc(slug, url, label, report_year)
+                if doc:
+                    o = doc_origin(doc, 0)
+                    yield (o, _pay_chunks(o, pay.PAY_WORDS), f"the company's {label}",
+                           f"{slug}_pay_{hashlib.sha1(url.encode()).hexdigest()[:12]}", False)
         ar = ((report, _pay_chunks(report, AR_PAY_WORDS),
                "the remuneration section of the company's annual report", report_key, False)
               if report else None)
         if ar and country in AR_PAY_FIRST:
             yield ar
         for attempt in range(2 if lib else 0):
+            if attempt == 1:
+                # before searching again: open the site's report downloads page, whose
+                # files (also those behind download buttons) join the URL pool
+                lib.find("report_hub")
             doc = lib.find("remuneration", search=attempt > 0)
             if doc is None:
                 continue
@@ -1032,7 +1067,9 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
         values += reg
         answered.append(reg[0].source)
     cik = ((result or {}).get("filing") or {}).get("cik")
-    if not cik and (c.country == "US" or c.segment == "us_listed" or home == "US"):
+    us = c.country == "US" or c.segment == "us_listed" or home == "US"
+    if not cik:
+        # Foreign companies with US-listed shares file 20-Fs too (Equinor: CIK 1140625).
         try:
             cik, why = edgar.find_cik(c.name)
             log.info("SEC CIK: %s (%s)", cik, why)
@@ -1040,7 +1077,10 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
             log.warning("SEC lookup failed: %s", str(e)[:150])
     if cik:
         try:
-            values += apis.edgar_values(int(cik))
+            sec = apis.edgar_values(int(cik))
+            # For a foreign issuer the SEC's ticker and exchange are its US listing (an
+            # ADR on the NYSE), not its home market: keep only the identifiers.
+            values += sec if us else [f for f in sec if f.data_point in ("cik", "other_names")]
             answered.append("SEC EDGAR")
         except (httpx.HTTPError, edgar.SecContactMissing) as e:
             log.warning("SEC EDGAR failed: %s", str(e)[:150])
@@ -1122,7 +1162,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 (result or {}).get("period_end_date") or "",
                 (lei_record or {}).get("country") or c.country, fy,
                 tuple((u, label) for u, label in ((t.remuneration_report_url, "Remuneration report"),
-                                                  (t.annual_report_url, "Annual report")) if u))
+                                                  (t.annual_report_url, "Annual report")) if u),
+                next((int(f.value) for f in values if f.data_point == "cik" and f.value), None))
             values += terms
             tried += [r for r in read if r not in tried]
             if not roles:

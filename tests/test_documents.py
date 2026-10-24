@@ -110,3 +110,23 @@ def test_link_text_does_not_beat_a_newer_year():
                    "Remuneration report 2024", 2025)
     new = classify("https://acme.com/media/arn/11_top6_remuneration_report_2025.pdf", rem, "", 2025)
     assert old.score > new.score and _rank(new, 2025) > _rank(old, 2025)
+
+
+def test_files_behind_download_buttons_are_read_from_the_page_data():
+    from extractor.documents import embedded_files
+    raw = ('<button title="2025 Remuneration report"></button><script>self.__next_f.push(['
+           '"{\\"file\\":{\\"extension\\":\\"pdf\\",\\"originalFilename\\":'
+           '\\"equinor-2025-remuneration-report.pdf\\",\\"title\\":null,\\"url\\":'
+           '\\"https://cdn.sanity.io/files/h61q9gi9/global/1512fd6a.pdf\\"}}"])</script>')
+    files = embedded_files(raw)
+    assert files == {"https://cdn.sanity.io/files/h61q9gi9/global/1512fd6a.pdf":
+                     "equinor 2025 remuneration report.pdf"}
+    url, label = next(iter(files.items()))
+    c = classify(url, DOC_TYPES["remuneration"], label, 2025)
+    assert c and c.year == 2025                       # recognised by its file name
+
+
+def test_report_download_pages_are_a_document_type():
+    hub = DOC_TYPES["report_hub"]
+    assert classify("https://www.equinor.com/investors/annual-reports", hub)
+    assert classify("https://www.acme.de/investor-relations/publikationen", hub)
