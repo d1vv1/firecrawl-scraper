@@ -142,7 +142,7 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
   - Komax EBIT: a fallback web page gave an older year's figure. Yearly figures from fallback documents that aren't dated for the report's year are now graded C, with a note.
 - Fixed during the test: shares *outstanding* (not issued); a 20–50% holder is no longer taken as the parent; the company itself is never its own parent; a governance web page without figures no longer counts as the remuneration report; non-executive board members become one row; role titles use the person's function and include people who left during the year.
 
-## Nordic/UK test against golden_UK_Nordics_22Oct
+## Nordic/UK test against data/golden_UK_Nordics_22Oct
 
 Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 24 October 2026. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
 

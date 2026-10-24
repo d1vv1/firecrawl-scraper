@@ -1,7 +1,7 @@
 """Every data point for a list of companies, one row per value, with the exact place
 each value came from.
 
-    python -m extractor.datapoints golden_test_sample_5_per_segment_country_all.csv
+    python -m extractor.datapoints data/golden_test_sample_5_per_segment_country_all.csv
         [--workers 3] [--only ID,ID] [--limit N] [--retry-failed] [--redo] [--no-docs]
 
 Input: any CSV with company_id, company_name and (optional) segment, country, lei,

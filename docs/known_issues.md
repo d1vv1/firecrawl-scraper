@@ -33,7 +33,7 @@ Open problems found during test runs, to pick up later. Newest first.
 
 The original analysis follows.
 
-**Symptom.** Without help, Equinor ASA gets no executive pay for FY2025. The golden file (`golden_UK_Nordics_22Oct/golden_role_pay.csv`) has FY2025 pay for the CEO and 12 EVPs.
+**Symptom.** Without help, Equinor ASA gets no executive pay for FY2025. The golden file (`data/golden_UK_Nordics_22Oct/golden_role_pay.csv`) has FY2025 pay for the CEO and 12 EVPs.
 
 **Cause.** Three things, all of which an automatic fix has to solve:
 

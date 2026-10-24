@@ -62,7 +62,7 @@ Firecrawl calls. It does call the LLM again.
 ## Batch runs
 
 Input: a CSV with a header row, saved as UTF-8 ("CSV UTF-8" in Excel). Comma- and
-semicolon-separated files both work. See `companies.example.csv`.
+semicolon-separated files both work. See `data/companies.example.csv`.
 
 ```
 company_id;company_name;country_code
@@ -71,12 +71,12 @@ DK001;Novo Nordisk A/S;DK
 ```
 
 ```bash
-python -m extractor.batch companies.csv --dry-run                # free: GLEIF + Wikidata only, estimates credits
-python -m extractor.batch companies.csv --limit 10 --max-credits 50
-python -m extractor.batch companies.csv                          # all; re-run the same command to resume
-python -m extractor.batch companies.csv --retry-failed           # also retry companies that errored
-python -m extractor.batch companies.csv --only SE001,DK001       # just these ids
-python -m extractor.batch companies.csv --refresh                # redo processed companies under the current rules
+python -m extractor.batch data/companies.csv --dry-run                # free: GLEIF + Wikidata only, estimates credits
+python -m extractor.batch data/companies.csv --limit 10 --max-credits 50
+python -m extractor.batch data/companies.csv                          # all; re-run the same command to resume
+python -m extractor.batch data/companies.csv --retry-failed           # also retry companies that errored
+python -m extractor.batch data/companies.csv --only SE001,DK001       # just these ids
+python -m extractor.batch data/companies.csv --refresh                # redo processed companies under the current rules
 ```
 
 - **One file per company:** `output/<company_id>.json` (same format as the CLI),
@@ -84,7 +84,7 @@ python -m extractor.batch companies.csv --refresh                # redo processe
 - **`output/fill_rate.md`:** fill rate per data point and country segment ("companies with
   a value / companies processed (rate)"), with *verified* rows counting only status `ok`.
   It's written at the end of every batch run; regenerate any time with
-  `python -m extractor.report companies.csv`.
+  `python -m extractor.report data/companies.csv`.
 - **`output/summary.csv`:** one row per company with status, LEI, website, report URL,
   fiscal year, revenue, total assets, failed checks, credits and error. It's rewritten after
   every company, so it's current even if the run is interrupted. Excel opens it with
@@ -122,12 +122,12 @@ python -m extractor.batch companies.csv --refresh                # redo processe
 ### Monday build test
 
 ```bash
-python -m extractor.batch companies.csv --sample 30 --max-credits 350
-python -m extractor.monday companies.csv          # rebuild the table any time
+python -m extractor.batch data/companies.csv --sample 30 --max-credits 350
+python -m extractor.monday data/companies.csv          # rebuild the table any time
 ```
 
 `--sample 30` picks 30 companies per parse-route segment (nordic_listed, europe_uk_listed,
-us_listed, nordic_uk_unlisted) from `golden_values.csv`. Companies with golden revenue,
+us_listed, nordic_uk_unlisted) from `data/golden_values.csv`. Companies with golden revenue,
 total assets or employee figures come first. The seed is fixed (`--seed`), so the same
 sample can be re-run. The sample is saved to `output/sample_companies.csv`, and at the end
 of the run `output/monday_table.csv` is written in the PO's format (one row per fact and
@@ -148,7 +148,7 @@ country for website scoring, and for the native report search term when no LEI i
 ### All data points, with the exact source of each value
 
 ```bash
-python -m extractor.datapoints golden_test_sample_5_per_segment_country_all.csv --workers 3
+python -m extractor.datapoints data/golden_test_sample_5_per_segment_country_all.csv --workers 3
 ```
 
 This collects the fields of the source-validation protocol

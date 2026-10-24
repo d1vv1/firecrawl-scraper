@@ -1,6 +1,6 @@
 """Batch runner: one CSV of companies in, one JSON per company + summary.csv out.
 
-    python -m extractor.batch companies.csv [--dry-run] [--limit N] [--max-credits N]
+    python -m extractor.batch data/companies.csv [--dry-run] [--limit N] [--max-credits N]
                                             [--retry-failed] [--force] [--only ID,ID]
 
 CSV columns (header required, comma or semicolon separated, UTF-8):
@@ -658,7 +658,7 @@ def main(argv: list[str] | None = None) -> int:
                         "dataset (fixed seed); writes output/sample_companies.csv and, at the "
                         "end, output/monday_table.csv")
     p.add_argument("--seed", type=int, default=7, help="Random seed for --sample (default 7)")
-    p.add_argument("--golden", type=Path, default=PROJECT_ROOT / "golden_values.csv",
+    p.add_argument("--golden", type=Path, default=PROJECT_ROOT / "data" / "golden_values.csv",
                    help="Golden dataset for --sample and the Monday table")
     p.add_argument("--max-credits", type=int,
                    help=f"Stop before Firecrawl spend could exceed this (assumes "

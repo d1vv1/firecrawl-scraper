@@ -1,6 +1,6 @@
 """Fill-rate report: how many companies got each data point, per country segment.
 
-    python -m extractor.report companies.csv [--out output/fill_rate.md]
+    python -m extractor.report data/companies.csv [--out output/fill_rate.md]
 
 Each cell is "companies with a value / companies processed in the segment (fill rate)".
 "Processed" = has a result or an error file; companies not reached yet are listed

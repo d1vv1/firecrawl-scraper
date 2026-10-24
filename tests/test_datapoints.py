@@ -177,7 +177,7 @@ def test_gap_list_skips_listed_only_points_for_unlisted_companies():
 
 
 def test_golden_sample_reads_one_target_per_company():
-    targets = dp.read_targets(ROOT / "golden_test_sample_5_per_segment_country_all.csv")
+    targets = dp.read_targets(ROOT / "data" / "golden_test_sample_5_per_segment_country_all.csv")
     ids = [t.company.company_id for t in targets]
     assert len(ids) == len(set(ids)) == 196
     none_country = [t for t in targets if t.company.segment == "other_unlisted_or_unknown"

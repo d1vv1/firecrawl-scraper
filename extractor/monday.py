@@ -1,6 +1,6 @@
 """The Monday build-test table: one row per fact and segment, in the PO's format.
 
-    python -m extractor.monday companies.csv [--golden golden_values.csv]
+    python -m extractor.monday data/companies.csv [--golden data/golden_values.csv]
                                [--sample-file output/sample_companies.csv]
                                [--out output/monday_table.csv]
 
@@ -238,7 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m extractor.monday",
                                 description="Monday build-test table from batch output.")
     p.add_argument("csv", type=Path, help="The full company CSV")
-    p.add_argument("--golden", type=Path, default=PROJECT_ROOT / "golden_values.csv")
+    p.add_argument("--golden", type=Path, default=PROJECT_ROOT / "data" / "golden_values.csv")
     p.add_argument("--sample-file", type=Path, default=OUTPUT_DIR / "sample_companies.csv",
                    help="Companies to score (written by the batch runner's --sample)")
     p.add_argument("--out", type=Path, default=OUTPUT_DIR / "monday_table.csv")
