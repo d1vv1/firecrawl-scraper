@@ -6,11 +6,11 @@ Open problems found during test runs, to pick up later. Newest first.
 |---|---|---|---|
 | 11 | Golden file values that look like a different fiscal year | open | client answer |
 | 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
-| 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | open | build FIRDS + exchange files |
+| 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | partly fixed | exchange segment files (Large/Mid/Small Cap, Prime Standard) |
 | 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
 | 7 | Register industry codes describe the holding company | open | client's chosen approach not built |
 | 6 | Holding companies' own filed accounts give no group figures | open | consolidated accounts |
-| 5 | Run-to-run variation in AI answers | open | small change |
+| 5 | Run-to-run variation in AI answers | open | caused by issue 2; cache snapshot |
 | 4 | Report finder can still pick a subsidiary's or a placeholder report | partly fixed | more guards |
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | open | better table extraction |
@@ -37,9 +37,18 @@ Open problems found during test runs, to pick up later. Newest first.
 
 The client's field definitions are said to be in a HANDOVER.md that we have not received.
 
-## 9. Exchange fields weak from documents
+## 9. Exchange fields weak from documents — partly fixed
 
-*Found 23 October 2026, validation run.* ISIN, ticker, exchange segment and listing date are each found for only 25–58% of companies from documents, below the protocol's 60% line. The planned sources are not built yet: ESMA FIRDS (ISIN and trading venue; **never** its admission date, which is a placeholder for old listings) and the free exchange files (Deutsche Börse, SIX, Euronext) for segments. See `docs/protocol_schema_mapping.md`, "API step".
+*Found 23 October 2026; **partly fixed 26 October 2026** (`extractor/listing.py`, in the API step):*
+
+- **ESMA FIRDS** (the EU regulator's list of every share traded on an EU venue), searched by LEI: ISIN, the exchange where the company itself asked to be listed, and listing status. All graded A.
+- **ISO 10383 MIC list:** the exchange's name, which exchange a segment code belongs to, and regulated market vs MTF. An MTF growth market (First North, Euronext Growth) is written as the segment.
+- **OpenFIGI:** the ticker, in Bloomberg spelling ("VOLVB"); a document's own spelling ("VOLV B") is kept when it agrees. UK and Swiss companies (not in FIRDS) get their ISIN, exchange and ticker here.
+- **Listing date:** FIRDS's first trading date only for listings since 2000 and not on a known system date, graded C, so a document's date wins.
+
+Nordic/UK test: ISIN 10 of 10 (was 5), exchange fields 51 of 60 (was 47); Novo Nordisk's ticker went from its New York ADR (NVO) to NOVOB. Aker Carbon Capture has no FIRDS records.
+
+**Still open:** the segment within a regulated market (Nasdaq Nordic Large/Mid/Small Cap, Deutsche Börse Prime/General Standard, SIX segments). It needs the exchanges' own files (Deutsche Börse xlsx, SIX csv, Nasdaq Nordic lists); until then it comes from documents. Old listing dates stay a document field.
 
 ## 8. Sweden and Denmark registers not connected
 
@@ -55,7 +64,9 @@ The client's field definitions are said to be in a HANDOVER.md that we have not 
 
 ## 5. Run-to-run variation in AI answers
 
-*Found 24 October 2026.* Re-asking the AI the same question can move a few values (e.g. a merged table cell read as 156 one time and 53 the next, see issue 2), and a changed prompt re-asks every company. Answers are cached per prompt, so a run without prompt changes is stable. Fix options: set the model's temperature to 0 in `llm.py`; keep a reviewed snapshot of the cache before prompt changes.
+*Found 24 October 2026; **tested 26 October 2026**.* The temperature was already 0 (`llm._parse`). Asking Gemini 2.5 Flash the same Equinor pay question three times still changed 25 of 136 values; a fixed seed (36 changed) and the thinking levels `minimal` (18) and `low` (25) did not fix it (`high` timed out). **Every value that changed was in the merged table columns of issue 2** (benefits, pension allowance, other fees); clean columns came back identical each time. So the fix is issue 2, not a model setting.
+
+Meanwhile answers are cached per prompt and chunks, so a run without prompt changes is stable. A changed gap list or prompt asks again and can move such values: when the exchange lists filled Equinor's ISIN, the document step asked for a different set of facts and Equinor's `staff_by_country` was not found that time. Mitigations: keep a reviewed snapshot of the cache before prompt changes; flag a role whose parts don't add up to its total (already noted by the R11 check).
 
 ## 4. Report finder can still pick a subsidiary's or a placeholder report
 
@@ -83,6 +94,11 @@ The client's field definitions are said to be in a HANDOVER.md that we have not 
 "Other fees" (96) and "Fringe benefits" (23) share one cell, so every label after it sits partly over the wrong number. The AI usually still reads it right, but not always; telling it to split such cells made it shift every later column by one (LTI 0 of 13), so that instruction was reverted.
 
 **Fix options.** Keep column boundaries in the conversion (pymupdf4llm table settings, or a table extractor such as pdfplumber/camelot for pages with pay tables); or read pay tables from the PDF layout (cell positions) rather than from converted text; or a consistency check that flags a role whose parts don't add up to its stated total (the R11 check already notes this).
+
+**Parked idea: re-read only flagged pages with a layout-aware reader** (discussed 26 October 2026). A layout model such as OXR (SoMark, 1.3B parameters, tables out as HTML, also reads scanned pages) would fix merged cells, but is overkill as the main converter: about 1.8 million pages for 6,000 companies, self-hosting needs Linux and a 24 GB NVIDIA GPU, and the free hosted API is not for production. Use it only on the 1–3 pay-table pages per company that a check flags: parts don't add up to the total, a cell holds two numbers (`96<br>23`), or the page has no text layer. Order of trials:
+1. Render the flagged page as an image and ask Gemini (already in use) for the table: no new service, about 30 minutes to test on Equinor's pay page.
+2. If that is unreliable, try OXR's free demo on the same page.
+3. CPU-only alternatives for text PDFs: pdfplumber or camelot.
 
 ## 1. Report downloads behind buttons, with the file URL only in the page's data (Equinor) — fixed
 

@@ -20,7 +20,8 @@ from .config import CACHE_DIR
 log = logging.getLogger(__name__)
 
 # `source` names of the API step, as they appear in "not found in: ..." notes.
-API_SOURCES = ("GLEIF", "SEC EDGAR", "Brønnøysund", "Companies House", "PRH")
+API_SOURCES = ("GLEIF", "SEC EDGAR", "Brønnøysund", "Companies House", "PRH",
+               "ESMA FIRDS", "OpenFIGI")
 
 API_CACHE_DAYS = 7
 GLEIF_RECORD = gleif.GLEIF_API + "/lei-records/{lei}"

@@ -56,7 +56,7 @@ from urllib.parse import quote as urlquote, urlparse
 import httpx
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, llm, pay
+from . import apis, edgar, listing, llm, pay
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
@@ -962,6 +962,14 @@ def best(values: list[Found]) -> dict[str, Found]:
     for name, fs in by.items():
         fs.sort(key=lambda f: (-CONFIDENCE_RANK[f.confidence], -METHOD_RANK[f.method]))
         top = fs[0]
+        if name == "ticker" and top.source == "OpenFIGI":
+            # OpenFIGI drops the space of the share class ("VOLVB"); a document that
+            # gives the same ticker has the exchange's own spelling ("VOLV B").
+            same = next((f for f in fs[1:] if _norm(f.value) == _norm(top.value)
+                         and f.value != top.value), None)
+            if same:
+                top = Found(**{**asdict(top), "value": same.value,
+                               "note": f"OpenFIGI {top.value}; spelling from {same.source}"})
         other = next((f for f in fs[1:] if _norm(f.value) != _norm(top.value)), None)
         if other:
             top = Found(**{**asdict(top), "note": "; ".join(x for x in (
@@ -1046,8 +1054,9 @@ NO_CREDITS = "Firecrawl is out of credits"
 
 def from_apis(t: Target, result: dict | None, lei_record: dict | None
               ) -> tuple[list[Found], list[str], list[str]]:
-    """The official APIs, before any document: GLEIF (by LEI), the home register (NO,
-    FI, UK; by register number) and SEC EDGAR (SEC registrants). Free; responses cached
+    """The official APIs, before any document: GLEIF (by LEI), ESMA FIRDS and OpenFIGI
+    (exchange data, by LEI), the home register (NO, FI, UK; by register number) and
+    SEC EDGAR (SEC registrants). Free; responses cached
     for a week. Returns (values, sources answered, GLEIF's ISINs). A failing API is
     logged and skipped: documents still fill its fields."""
     c = t.company
@@ -1064,6 +1073,13 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
         except httpx.HTTPError as e:
             log.warning("GLEIF failed: %s", str(e)[:150])
     home = (lei_record or {}).get("country") or c.country
+    if lei:
+        try:
+            ex = listing.listing_values(lei, home, isins)
+            values += ex
+            answered += list(dict.fromkeys(f.source for f in ex))
+        except (httpx.HTTPError, ValueError, KeyError) as e:
+            log.warning("Exchange lists (FIRDS/OpenFIGI) failed: %s", str(e)[:150])
     number = (t.business_id or (lei_record or {}).get("registered_as")
               or ((result or {}).get("filing") or {}).get("registration_number")
               or next((str(f.value) for f in values if f.data_point == "business_id"), None))

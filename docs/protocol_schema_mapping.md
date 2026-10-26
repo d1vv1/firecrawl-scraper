@@ -33,10 +33,10 @@ The protocol's status values map onto our columns as follows:
 | C01 | Legal name, former names | `legal_name`, `other_names` | Annual report; legal notice, history page | — |
 | C02 | LEI | `lei` | GLEIF (API step) | API step |
 | C03 | Registration number | `business_id` | Annual report; legal notice (*Impressum*) | — |
-| C04 | ISIN | `isin` | Annual report; "The share" page | — |
-| C05 | Ticker, primary exchange | `ticker`, `exchange` | Annual report; share page | — |
+| C04 | ISIN | `isin` | ESMA FIRDS by LEI (UK/CH: OpenFIGI on the home exchange); annual report, "The share" page | API step (26 Oct 2026) |
+| C05 | Ticker, primary exchange | `ticker`, `exchange` | Exchange: FIRDS venue + ISO MIC list. Ticker: OpenFIGI (Bloomberg spelling, "VOLVB"; a document's "VOLV B" spelling is kept when it agrees). Annual report; share page | API step (26 Oct 2026) |
 | C06 | Segment | `exchange_segment` | Annual report; share page. The prompt now says when the market is an MTF | prompt |
-| C07 | Listing status, admission date | `listing_status`, `listing_date` | Annual report; listing notice, share page, history | — |
+| C07 | Listing status, admission date | `listing_status`, `listing_date` | Status: FIRDS (active, issuer-requested listing). Date: annual report, listing notice, share page, history; FIRDS first trading date only for listings since 2000, graded C | API step (26 Oct 2026) |
 | C08 | Country, HQ city | `country_code`, `head_office_city` | Annual report; legal notice | — |
 | C09 | Website domain | `website` | Annual report; legal notice, about page | **new** |
 | C10 | National industry code | `sector_code` | Registers: Brønnøysund (NO), PRH (FI), Companies House (UK, working since 25 Oct 2026); SEC SIC for US registrants. Elsewhere not found. Register codes often describe the listed holding company (Shell, AO World: SIC 70100 "activities of head offices") | API step |
@@ -101,7 +101,7 @@ Checked on 23 October 2026: live requests where possible, otherwise official doc
 | Source in the protocol | Verdict | For us |
 |---|---|---|
 | **GLEIF API** | Works, free, no login, current | The API step's anchor for C01–C04, C08, C21. Catches: the parent endpoints return 404 for a group's top company (then read the reporting-exception endpoint); the ISIN list is incomplete (4 for Siemens). Missed parents in AT, PT and DE in the validation run. |
-| **ESMA FIRDS** | Free Solr API and files; ISIN, venue (MIC) and LEI reliable | **Never for the listing date:** old listings show placeholders (Siemens 1899-12-31; Euronext Paris listings show 2000-09-25, the Euronext merger). Admission date stays a document field. |
+| **ESMA FIRDS** | Free Solr API and files; ISIN, venue (MIC) and LEI reliable | Built (`extractor/listing.py`). **Listing date only as a C-graded fallback:** old listings show placeholders (Siemens 1899-12-31; Euronext Paris 2000-09-25, the Euronext merger; MiFID dates 2007-11-01, 2017-06-07, 2018-01-03), and a new ISIN after a share change looks like a new listing (Novo Nordisk 2023-09-13). No UK or Swiss venues: London records end 2020-12-31 (Brexit). |
 | **filings.xbrl.org** | Works; xBRL-JSON available | FY2025 coverage is partial: good for NL, ES, AT, PT; sparse for BE; **none for DE ever**; GR and LU feeds stalled since May 2025. We already use it (ESEF route). |
 | National registers (C03, C10) | Free machine access only in CH (Zefix, credentials by email), BE (KBO, free registration) and GR (GEMI, API key). NL KvK is cheap but paid. IT, ES and PT need paid extracts; LU and DE are website-only. | C03 comes from documents and GLEIF `registeredAs`. **C10 national industry code failed the validation (0 found)** and the registers are mostly paid: leave it out of the scrape, or buy it. |
 | Exchange segment lists (C05–C06) | Free files: Deutsche Börse (xlsx by segment), SIX (csv), Euronext (csv, market only, no A/B/C compartments, no Athens) | Useful later for C06. BME, LuxSE, Wiener Börse, Athex: no download found. |
@@ -112,12 +112,12 @@ Checked on 23 October 2026: live requests where possible, otherwise official doc
 
 ## API step
 
-Built (23 Oct 2026): GLEIF, the registers of NO, FI and the UK, and SEC EDGAR run before any document; documents fill the rest. Still to add, in this order:
+Built (23 Oct 2026): GLEIF, the registers of NO, FI and the UK, and SEC EDGAR run before any document; documents fill the rest. Added 26 Oct 2026: ESMA FIRDS, the ISO 10383 MIC list and OpenFIGI for ISIN, exchange, ticker, listing status, MTF segments and recent listing dates (no keys needed; `OPENFIGI_API_KEY` in `.env` is optional and raises OpenFIGI's limit from 25 to 250 requests a minute). Still to add, in this order:
 
 Once the document side is solid, the API step goes in front of it, for the fields where an API is exact:
 
 1. **GLEIF:** LEI, legal name and former names, registration number, country and HQ city, parent (direct and ultimate, with the reporting exception), ISINs.
-2. **ESMA FIRDS:** ISIN and trading venue (MIC → exchange). Not the admission date.
+2. **ESMA FIRDS:** ISIN and trading venue (MIC → exchange). Not the admission date. *Built 26 Oct 2026.*
 3. **filings.xbrl.org:** already in the pipeline for revenue and total assets; extend to EBITDA where tagged, fiscal year end, currency.
 4. **Exchange files** (Deutsche Börse, SIX, Euronext): segment.
 5. **AFM export** (NL): major holdings.
@@ -144,11 +144,12 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
 
 ## Nordic/UK test against data/golden_UK_Nordics_22Oct
 
-Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 25 October 2026. SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
+Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 26 October 2026 (exchange lists added). SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
 
 | Measure | Result |
 |---|---|
-| Company fields filled | 80% (324 of 404) |
+| Company fields filled | 80% (328 of 410) |
+| Exchange fields filled (ISIN, ticker, exchange, segment, status, date) | 51 of 60, was 47; ISIN 10 of 10 (was 5); Novo Nordisk's ticker is now NOVOB, not its NYSE ADR NVO |
 | Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
 | Golden pay figures | 119 match, 18 differ, 11 missing (of 148) |
 | Equinor pay (13 executives) | 89 of 91, found automatically through its 20-F exhibit |
