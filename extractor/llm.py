@@ -4,6 +4,7 @@ Uses structured outputs (`chat.completions.parse` with a pydantic model). If the
 deployment doesn't support them we stop; we never fall back to parsing free text.
 """
 
+import base64
 import logging
 from functools import lru_cache
 from typing import TypeVar
@@ -100,13 +101,23 @@ def _vertex_client(s) -> tuple[OpenAI, str]:
 _no_temperature: set[str] = set()   # deployments that rejected temperature=0
 
 
+def _user_content(user_prompt: str, images: list[bytes] | None):
+    """The user message: text, followed by PNG images (pages of a PDF) if any."""
+    if not images:
+        return user_prompt
+    return [{"type": "text", "text": user_prompt}] + [
+        {"type": "image_url",
+         "image_url": {"url": "data:image/png;base64," + base64.b64encode(png).decode()}}
+        for png in images]
+
+
 def _parse(client: OpenAI, deployment: str, system_prompt: str, user_prompt: str,
-           schema: type[T]):
+           schema: type[T], images: list[bytes] | None = None):
     """temperature=0 for repeatable extractions. Some models (reasoning models)
     reject the parameter; then we retry once without it and remember that."""
     kwargs = dict(model=deployment, response_format=schema,
                   messages=[{"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt}])
+                            {"role": "user", "content": _user_content(user_prompt, images)}])
     if deployment not in _no_temperature:
         try:
             return client.chat.completions.parse(temperature=0, **kwargs)
@@ -150,10 +161,12 @@ def _log_retry(retry_state) -> None:
 @retry(retry=retry_if_exception_type((openai.RateLimitError, openai.APIConnectionError,
                                       openai.APITimeoutError, openai.InternalServerError)),
        stop=stop_after_attempt(8), wait=_wait, before_sleep=_log_retry, reraise=True)
-def call_llm(system_prompt: str, user_prompt: str, schema: type[T]) -> T:
+def call_llm(system_prompt: str, user_prompt: str, schema: type[T],
+             images: list[bytes] | None = None) -> T:
+    """`images`: PNG pages shown to the model next to the text (pay tables)."""
     client, deployment = _client()
     try:
-        completion = _parse(client, deployment, system_prompt, user_prompt, schema)
+        completion = _parse(client, deployment, system_prompt, user_prompt, schema, images)
     except openai.BadRequestError as e:
         msg = str(e).lower()
         if any(k in msg for k in ("response_format", "json_schema", "structured output")):

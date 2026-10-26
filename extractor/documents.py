@@ -23,7 +23,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass, field
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
 
 import httpx
@@ -254,6 +254,7 @@ class Document:
     year: int | None
     retrieved_at: str
     links: dict[str, str] = field(default_factory=dict)    # url -> link text
+    path: Path | None = None     # the cached PDF (kind "pdf"), for page images
 
     @property
     def source(self) -> str:
@@ -461,7 +462,8 @@ class Library:
             return None
         if sum(len(p.text.strip()) for p in pages) < MIN_TEXT_CHARS:
             return None
-        doc = Document(c.url, c.doc_type, kind, pages, c.year, at)
+        doc = Document(c.url, c.doc_type, kind, pages, c.year, at,
+                       path=pdf_path if kind == "pdf" and pdf_path.exists() else None)
         if kind == "web":
             doc.links = links_in("\n".join(p.text for p in pages), c.url)
             for url, label in files.items():           # download buttons (page data)

@@ -412,3 +412,28 @@ def test_report_pdfs_in_event_folders_and_subsidiary_functions():
                         "volvo-treasury-annual-report-2025.pdf", allowed)
     assert treasury.unexplained == 1 and _rank(ar) > _rank(treasury)
     assert classify("https://x.com/AB-Volvo-Annual-Report-2022.pdf", allowed).unexplained == 0
+
+
+def test_quote_read_off_a_page_image_matches_its_table_row():
+    # The AI reads the column from the image and drops the other columns of the row.
+    src = ("Remuneration of the President and CEO\n"
+           "|Salary|1 410 500|38 %|1 057 875|38 %|352 625|38 %|\n"
+           "|Short-term incentive|2 271 787|62 %|1 703 840|62 %|567 947|62 %|\n")
+    assert quote_in_text("Salary|352 625|38 %", src) == "loose"
+    assert quote_in_text("Short-term incentive|567 947|62 %", src) == "loose"
+    # the label and the figure must be in the same row, in that order
+    assert quote_in_text("Salary|567 947", src) is None
+    assert quote_in_text("352 625|Salary", src) is None
+    # prose lines are not table rows
+    assert quote_in_text("Salary 352 625", "Salary was raised. In total 352 625 was paid") is None
+
+
+def test_quote_can_join_a_name_row_to_the_figures_row_below_it():
+    # Bang & Olufsen: the person's name sits on its own row, the figures on the next
+    src = ("|**Kristian Teär, Chief Executive Offi**|**cer (until 06-01-26)**|||||\n"
+           "||**2025/26**|5,345|702|-|4,000|\n"
+           "|Other|1|2|3|4|5|\n")
+    assert quote_in_text("Kristian Teär 2025/26|5,345", src) == "loose"
+    # a full figures row is not a label row: "Salary" doesn't join the row below
+    full = "|Salary|100|38 %|200|\n|Bonus|300|62 %|400|\n"
+    assert quote_in_text("Salary|400", full) is None

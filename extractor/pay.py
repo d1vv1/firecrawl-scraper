@@ -14,11 +14,19 @@ keep the form the report states (% of base, % of maximum, months of salary, an a
 a number of shares), with the form in `unit`; a target stated as a share of a maximum
 that is a % of base is also given as % of base (method DERIVED). The stated total is
 checked against the sum of its parts (a difference over 2% is noted).
+
+Pay tables are wide, and the PDF-to-text conversion can merge two neighbouring columns
+into one cell ("96<br>23"); the AI then reads them differently from run to run. So for
+a PDF, the pages that look like pay tables are also shown to the AI as images
+(table_pages, page_images). Off unless PAY_PAGE_IMAGES=1: see PAGE_IMAGES and
+docs/known_issues.md, issue 2.
 """
 
 import json
 import logging
+import os
 import re
+from pathlib import Path
 
 from . import llm
 from .apis import Found
@@ -53,24 +61,84 @@ TARGET_UNIT = {"pct_of_base": "% of base salary", "pct_of_max": "% of maximum",
 PARTS = ("base_salary", "sti_paid", "benefits", "pension", "pension_allowance")  # + one LTI
 TOTAL_TOLERANCE = 0.02                       # protocol: a difference over 2% is noted
 PAY_WORDS = 12_000                           # words of a pay document sent to the AI
+MAX_IMAGE_PAGES = 4                          # pay-table pages shown as images, at most
+# Off by default: on Equinor's table alone the image gave 5 of 5 fully right answers, but
+# in full runs of the 10-company set the golden pay match moved 119 -> 121 -> 119 -> 109
+# with small changes to IMAGE_NOTE, and more quotes failed verification (issue 2).
+PAGE_IMAGES = os.getenv("PAY_PAGE_IMAGES", "").lower() in ("1", "true", "yes")
+IMAGE_DPI = 150                              # about 1,900 tokens for a landscape page
+IMAGE_NOTE = ("\n\nImages of the pay-table pages are attached (PDF pages {pages}). The text "
+              "above comes from an automatic PDF conversion that can merge neighbouring "
+              "table columns; read each figure from its own column in the images. Copy "
+              "quotes from the text above.")   # the best-scoring wording tried (121 of 148)
+# Words of pay-table headers, in the languages of the company lists.
+PAY_TABLE_WORDS = re.compile(
+    r"salary|base pay|fixed pay|bonus|incentive|pension|benefit|fees|remuneration|"
+    r"compensation|total|lön|ersättning|lønn|godtgjørelse|vederlag|pensjon|palkka|"
+    r"palkkio|eläke|vergütung|gehalt|rémunération|salaire|retribución|sueldo|"
+    r"retribuzione|compenso|remuneração|bezoldiging|vergoeding|salaris|αποδοχές", re.I)
+_YEAR = re.compile(r"(19|20)\d{2}")                 # years in prose are not table figures
+_NUMBER = re.compile(r"(?<![\w.])\d{1,3}(?:[ ,.\u00a0]\d{3})+(?:[.,]\d+)?(?!\w)"
+                     r"|(?<![\w.])\d+(?:[.,]\d+)?(?!\w)")
 
 
-def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str) -> RemunerationFacts:
-    """The remuneration LLM call, cached by the document and chunks it was given."""
+def table_pages(chunks: list[Chunk], page_text: dict[int, str],
+                n: int = MAX_IMAGE_PAGES) -> list[int]:
+    """The pages of these chunks that look like pay tables: many numbers and several
+    pay words. At most n, the strongest first; returned in page order."""
+    scored = []
+    for number in sorted({p for c in chunks for p in c.pages}):
+        text = page_text.get(number) or ""
+        numbers = sum(1 for n in _NUMBER.findall(text) if not _YEAR.fullmatch(n))
+        words = len(PAY_TABLE_WORDS.findall(text))
+        if numbers >= 20 and words >= 3:
+            scored.append((min(numbers, 200) * min(words, 20), number))
+    return sorted(number for _, number in sorted(scored, reverse=True)[:n])
+
+
+def page_images(pdf: Path, pages: list[int], dpi: int = IMAGE_DPI) -> list[bytes]:
+    """PNG renderings of PDF pages (1-based numbers, as in the page markers)."""
+    import pymupdf
+    with pymupdf.open(pdf) as doc:
+        return [doc[p - 1].get_pixmap(dpi=dpi).tobytes("png")
+                for p in pages if 1 <= p <= doc.page_count]
+
+
+def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
+            pdf: Path | None = None, page_text: dict[int, str] | None = None) -> RemunerationFacts:
+    """The remuneration LLM call, cached by the document, the chunks and the page
+    images it was given. With the document's PDF (`pdf`) and its page texts, the
+    pay-table pages are attached as images."""
     path = CACHE_DIR / f"{cache_key}_pay_llm.json"
     ids = [c.id for c in chunks]
     prompt = llm.load_prompt("remuneration_system")
+    shown = (table_pages(chunks, page_text or {})
+             if PAGE_IMAGES and pdf and Path(pdf).exists() else [])
     if path.exists():
         saved = json.loads(path.read_text(encoding="utf-8"))
-        if saved.get("chunk_ids") == ids and saved.get("prompt") == prompt:
+        if (saved.get("chunk_ids") == ids and saved.get("prompt") == prompt
+                and saved.get("image_pages", []) == shown
+                and saved.get("image_note") == (IMAGE_NOTE if shown else None)):
             return RemunerationFacts.model_validate(saved["facts"])
     body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
-    facts = llm.call_llm(prompt, f"Company legal name: {name}\nSource: {url}\n\nExcerpts from "
-                                 f"{what} (tables are in markdown):\n\n{body}", RemunerationFacts)
+    user = (f"Company legal name: {name}\nSource: {url}\n\nExcerpts from {what} (tables are "
+            f"in markdown):\n\n{body}")
+    images = []
+    if shown:
+        try:
+            images = page_images(Path(pdf), shown)
+        except Exception as e:  # noqa: BLE001 - a broken render must not cost the text answer
+            log.warning("Pay: page images of %s failed: %s", pdf, str(e)[:150])
+            shown = []
+    if images:
+        log.info("Pay: showing PDF page(s) %s as images", ", ".join(map(str, shown)))
+        user += IMAGE_NOTE.format(pages=", ".join(map(str, shown)))
+    facts = llm.call_llm(prompt, user, RemunerationFacts, images=images or None)
     CACHE_DIR.mkdir(exist_ok=True)
-    path.write_text(json.dumps({"chunk_ids": ids, "prompt": prompt, "model": llm.model_name(),
-                                "facts": facts.model_dump()}, ensure_ascii=False, indent=1),
-                    encoding="utf-8")
+    path.write_text(json.dumps({"chunk_ids": ids, "prompt": prompt, "image_pages": shown,
+                                "image_note": IMAGE_NOTE if shown else None,
+                                "model": llm.model_name(), "facts": facts.model_dump()},
+                               ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
 
 

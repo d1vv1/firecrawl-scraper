@@ -275,6 +275,10 @@ class Origin:
     chunks: dict[int, Chunk]
     page_urls: dict[int, str] | None = None     # web: chunk id -> page URL
     date: str = ""          # the document's date, for fallback documents ("2025")
+    pdf: Path | None = None  # the cached PDF, for page images of pay tables
+
+    def page_text(self) -> dict[int, str]:
+        return {p.number: p.text for p in self.pages}
 
     def place(self, quote: str | None, chunk_id: int | None) -> tuple["Origin", str, str, str]:
         return (self, *self.where(quote, chunk_id))
@@ -346,8 +350,9 @@ def report_origin(result: dict) -> Origin | None:
                   + (f" {filing.get('form')}" if filing.get("type") == "edgar" else ""))
     else:
         source = "Annual report (PDF)" if kind == "pdf" else "Annual report (web page)"
+    pdf = (CACHE_DIR / md_name).with_suffix(".pdf")
     return Origin(kind, result["report_url"], source, "PARSE", result.get("extracted_at") or _now(),
-                  pages, chunks)
+                  pages, chunks, pdf=pdf if kind == "pdf" and pdf.exists() else None)
 
 
 def _money_found(name: str, m: dict, result: dict, origin: Origin | None) -> Found | None:
@@ -651,7 +656,7 @@ def doc_origin(doc: Document, first_id: int) -> Origin:
     date = str(doc.year) if doc.year else ""
     if doc.kind == "pdf":
         return Origin("pdf", doc.url, doc.source, "PARSE", doc.retrieved_at, doc.pages, chunks,
-                      date=date)
+                      date=date, pdf=doc.path)
     return Origin("web", doc.url, doc.source, "SCRAPE", doc.retrieved_at, doc.pages, chunks,
                   {cid: doc.url for cid in chunks}, date=date)
 
@@ -824,7 +829,7 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         if not chunks:
             continue
         log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
-        f = pay.ask_pay(name, o.url, chunks, what, key)
+        f = pay.ask_pay(name, o.url, chunks, what, key, o.pdf, o.page_text())
         read.append(o.source)
         year = fiscal_end_year(f.fiscal_year)
         if year and report_year and year < report_year and not given:
@@ -847,7 +852,8 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             chunks = _pay_chunks(policy_origin, pay.PAY_WORDS)
             if chunks:
                 policy = pay.ask_pay(name, pdoc.url, chunks, "the company's remuneration policy",
-                                     f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}")
+                                     f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}",
+                                     policy_origin.pdf, policy_origin.page_text())
                 read.append(policy_origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
@@ -870,7 +876,8 @@ def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | N
     if not chunks:
         return []
     ar = pay.ask_pay(name, report.url, chunks,
-                     "the remuneration section of the company's annual report", report_key)
+                     "the remuneration section of the company's annual report", report_key,
+                     report.pdf, report.page_text())
     have = {pay._norm_title(r.role_title) for r in facts.roles}
     extra = [r for r in ar.roles
              if r.executive and r.is_aggregate and pay._norm_title(r.role_title) not in have]

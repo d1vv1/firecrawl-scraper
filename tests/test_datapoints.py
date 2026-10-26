@@ -448,7 +448,7 @@ def test_pay_from_an_older_year_is_skipped_and_uk_reads_the_annual_report_first(
     new = _pay([_role("CEO", base_salary=_amount(1600, quote=q))])
     asked = []
 
-    def fake_ask(name, url, chunks, what, key):
+    def fake_ask(name, url, chunks, what, key, pdf=None, page_text=None):
         asked.append(url)
         return old if "roadshow" in url else new
     monkeypatch.setattr(pay, "ask_pay", fake_ask)

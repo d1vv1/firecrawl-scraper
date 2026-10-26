@@ -95,6 +95,33 @@ Meanwhile answers are cached per prompt and chunks, so a run without prompt chan
 
 **Fix options.** Keep column boundaries in the conversion (pymupdf4llm table settings, or a table extractor such as pdfplumber/camelot for pages with pay tables); or read pay tables from the PDF layout (cell positions) rather than from converted text; or a consistency check that flags a role whose parts don't add up to its stated total (the R11 check already notes this).
 
+**Tested 26 October 2026: send the pay-table page as an image too.** Equinor's 2025 remuneration report, the same prompt and text, with PDF page 15 rendered at 150 dpi attached and one added sentence (the text conversion can merge columns; read each figure from its own column in the image; copy quotes from the text). Scored against the printed table (13 executives × 7 fields = 91):
+
+| | Run 1 | Run 2 | Run 3 | Run 4 | Run 5 |
+|---|---|---|---|---|---|
+| Text only (today) | 67 | 91 | 91 | 67 | 84 |
+| Text + page image | 91 | 91 | 91 | 91 | 91 |
+
+The bad text-only runs put the salary addition into benefits (CEO: 343 = 224 + 96 + 23) and leave the allowance empty, or drop an executive. With the image all five answers were identical and fully right. Cost: about 1,900 more prompt tokens per page (+7% on this call). Quotes still come from the text, with the merged cell written as two cells ("96|23"), which the quote lookup matches.
+
+**Built and tested on the 10-company set, 26 October 2026: not a reliable win, so off by default** (`PAY_PAGE_IMAGES=1` in `.env` turns it on; `pay.table_pages`, `pay.page_images`). The pay step shows up to 4 pages that look like pay tables (many numbers, several pay words). Each answer is now repeatable for a given input, but small changes to the added instruction moved the golden pay match a lot:
+
+| Run | Golden pay match (of 148) | Equinor (of 91) | Role values graded C |
+|---|---|---|---|
+| Text only, before | 119 | 89 | 10 |
+| Images, "copy quotes from the text" | 121 | 88 | 38, then 22 after the row-quote fix |
+| Images, "quote the row, starting with the person" | 119 | — | 33 |
+| Images, "quote the row exactly as the text gives it" | 109 | 77 | 40 |
+| Text only again, asked afresh (images off) | 98 | 66 | 43 |
+
+**The last row changes the reading.** Text only, asked afresh with the same code and inputs as the first row, scored 98 instead of 119: the 119 was one lucky answer kept in the cache. Text-only answers are a lottery (issue 5); with images each input gets the same answer every time (Equinor, 3 repeats each: 85/85/85, 86/86/86, 73/73/73), but which answer depends on the wording and the pages. Single runs can't separate the two; a fair comparison needs several fresh runs per setting. `IMAGE_NOTE` is set to the best wording tried (121).
+
+What went wrong: with the full pay document (not one page), the extra pages and instructions changed other judgements, e.g. whether Equinor's share savings plan (SSP) counts as LTI, or which policy target is the CEO's; and the AI often quoted what it saw in the image ("Salary|352 625|38 %") or stitched a header onto a figure, which the text doesn't contain, so values dropped to C. Kept from this work: quotes may now match within one table row (or a name row plus the figures row below it), which a shortened row from any source needs.
+
+Next options, if picked up: show only the single strongest page; or use the image only to re-check figures that fail the parts-vs-total check; or Camelot's column-preserving text for the pay pages (tested: right columns, but the AI still varied on SSP).
+
+**Camelot (tested 26 October 2026).** Its "stream" mode extracts Equinor's pay table with every column right (lattice mode finds nothing: no ruled lines), 0.2 s a page, no AI. Given to Gemini next to the text, 5 runs scored 86, 91, 86, 73, 86 of 91: better than text alone, less stable than the single-page image.
+
 **Parked idea: re-read only flagged pages with a layout-aware reader** (discussed 26 October 2026). A layout model such as OXR (SoMark, 1.3B parameters, tables out as HTML, also reads scanned pages) would fix merged cells, but is overkill as the main converter: about 1.8 million pages for 6,000 companies, self-hosting needs Linux and a 24 GB NVIDIA GPU, and the free hosted API is not for production. Use it only on the 1–3 pay-table pages per company that a check flags: parts don't add up to the total, a cell holds two numbers (`96<br>23`), or the page has no text layer. Order of trials:
 1. Render the flagged page as an image and ask Gemini (already in use) for the table: no new service, about 30 minutes to test on Equinor's pay page.
 2. If that is unreliable, try OXR's free demo on the same page.

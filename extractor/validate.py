@@ -84,7 +84,32 @@ def quote_in_text(quote: str, source: str) -> str | None:
             pos = pos + 1 + window.index(tok)
         if ok:
             return "loose"
+    if len(qt) >= 2 and any(t[0].isdigit() for t in qt) and _in_one_row(qt, source):
+        return "loose"
     return None
+
+
+def _in_one_row(qt: list[str], source: str) -> bool:
+    """The quote's tokens in order, with any gaps, within one table row of the source,
+    or two neighbouring rows (converted tables can put a person's name on one line and
+    their figures on the next). A quote read off a page image keeps the label and the
+    figure but drops the other columns: "Salary|352 625|38 %" from the row
+    "Salary|1 410 500|38 %|...|352 625|38 %"."""
+    lines = [l for l in source.splitlines() if "|" in l]
+    for i in range(len(lines)):
+        # the next row joins only a label row: one whose cells are mostly empty
+        row = lines[i].strip()
+        cells = [c.strip() for c in row[row.startswith("|"):len(row) - row.endswith("|")].split("|")]
+        label_row = sum(not c for c in cells) >= len(cells) / 2
+        lt, pos = _tokens(normalize(" ".join(lines[i:i + 2] if label_row else lines[i:i + 1]))), 0
+        for tok in qt:
+            try:
+                pos = lt.index(tok, pos) + 1
+            except ValueError:
+                break
+        else:
+            return True
+    return False
 
 
 # Scale words printed next to a number ("$37.4 billion", "SEK 1.2bn", "393 MSEK").
