@@ -316,8 +316,10 @@ def _identifier(filing) -> str:
 
 def run(legal_name: str, website: str | None = None, report_url: str | None = None,
         use_cache: bool = True, lei: str | None = None, company_id: str | None = None,
-        country: str | None = None, fc: FirecrawlClient | None = None) -> dict:
-    """One company, steps 1-7. `company_id` (if given) names the cache/output files;
+        country: str | None = None, fc: FirecrawlClient | None = None,
+        qualitative: bool = True) -> dict:
+    """One company, steps 1-7. `qualitative=False` skips the revenue-model and
+    business-structure LLM call (the data-point collector doesn't use them). `company_id` (if given) names the cache/output files;
     `country` (ISO alpha-2) helps the LEI search and is the fallback country when no
     LEI is found. Pass `fc` to read its credit meter even if the run fails."""
     # Step 1
@@ -401,13 +403,14 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
     log.info("Step 5: selecting relevant sections")
     chunks = split_chunks(doc.pages)
     fin_chunks = select_chunks(chunks, "financials")
-    qual_chunks = select_chunks(chunks, "qualitative")
+    qual_chunks = select_chunks(chunks, "qualitative") if qualitative else []
 
     # Step 6
     log.info("Step 6: extracting with the LLM")
     ex = extract(legal_name, doc.source_url, fin_chunks, qual_chunks,
                  tags=filing.figures if use_tags else None,
-                 period_end=filing.period_end if use_tags else None)
+                 period_end=filing.period_end if use_tags else None,
+                 qualitative=qualitative)
 
     # Step 7
     log.info("Step 7: validating")
@@ -469,8 +472,8 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
         "period_end_date_raw": fin.period_end_date,
         "revenue": money("revenue", fin.revenue),
         "total_assets": money("total_assets", fin.total_assets),
-        "revenue_model": with_pages(qual.revenue_model.model_dump()),
-        "business_structure": with_pages(qual.business_structure.model_dump()),
+        "revenue_model": with_pages(qual.revenue_model.model_dump()) if qual else {},
+        "business_structure": with_pages(qual.business_structure.model_dump()) if qual else {},
         "cross_check": {
             "total_equity_and_liabilities":
                 money("total_equity_and_liabilities", fin.total_equity_and_liabilities),

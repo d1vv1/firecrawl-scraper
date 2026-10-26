@@ -144,12 +144,12 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
 
 ## Nordic/UK test against data/golden_UK_Nordics_22Oct
 
-Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 26 October 2026 (exchange lists added). SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
+Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 26 October 2026 (exchange lists added; the report's AI pass now asks only for what the APIs left open, so every company was asked afresh once: 53 company values moved, mostly wording, fill unchanged). SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
 
 | Measure | Result |
 |---|---|
-| Company fields filled | 80% (328 of 410) |
-| Exchange fields filled (ISIN, ticker, exchange, segment, status, date) | 51 of 60, was 47; ISIN 10 of 10 (was 5); Novo Nordisk's ticker is now NOVOB, not its NYSE ADR NVO |
+| Company fields filled | 80% (327 of 410) |
+| Exchange fields filled (ISIN, ticker, exchange, segment, status, date) | 50 of 60 (51 before the index-is-not-a-segment rule), was 47; ISIN 10 of 10 (was 5); Novo Nordisk's ticker is now NOVOB, not its NYSE ADR NVO |
 | Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
 | Golden pay figures | 119 match, 18 differ, 11 missing (of 148) |
 | Equinor pay (13 executives) | 89 of 91, found automatically through its 20-F exhibit |

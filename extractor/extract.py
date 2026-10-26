@@ -1,4 +1,4 @@
-"""Step 6: two LLM calls (financials, qualitative), then unit conversion in code."""
+"""Step 6: up to two LLM calls (financials, qualitative), then unit conversion in code."""
 
 import datetime as dt
 import logging
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class Extraction:
     financials: FinancialsResult
-    qualitative: QualitativeResult
+    qualitative: QualitativeResult | None      # None when not asked for
     financial_chunks: list[Chunk]
     qualitative_chunks: list[Chunk]
     # figures read from XBRL tags (no AI): target -> tag concept, e.g. "ifrs-full:Revenue"
@@ -60,10 +60,11 @@ def tagged_figure(tag) -> MoneyFigure:
 
 def extract(legal_name: str, source_url: str, financial_chunks: list[Chunk],
             qualitative_chunks: list[Chunk], tags: dict | None = None,
-            period_end: str | None = None) -> Extraction:
+            period_end: str | None = None, qualitative: bool = True) -> Extraction:
     """Two LLM calls, except when `tags` (ESEF/XBRL figures) already give revenue,
     total assets and total equity and liabilities: then the financials call is
-    skipped. Tagged values always win over values the AI read from the text."""
+    skipped. Tagged values always win over values the AI read from the text.
+    `qualitative=False` skips the second call (revenue model, business structure)."""
     tags = tags or {}
     if all(k in tags for k in _FIGURES):
         log.info("Financial figures all come from XBRL tags; skipping the financials LLM call")
@@ -82,10 +83,12 @@ def extract(legal_name: str, source_url: str, financial_chunks: list[Chunk],
                 setattr(fin, k, tagged_figure(tags[k]))
         if tags and period_end:
             fin.fiscal_year, fin.period_end_date = period_end[:4], period_end
-    log.info("LLM call 2/2: qualitative (%d chunks)", len(qualitative_chunks))
-    qual = llm.call_llm(llm.load_prompt("qualitative_system"),
-                        build_user_prompt(legal_name, source_url, qualitative_chunks),
-                        QualitativeResult)
+    qual = None
+    if qualitative:
+        log.info("LLM call 2/2: qualitative (%d chunks)", len(qualitative_chunks))
+        qual = llm.call_llm(llm.load_prompt("qualitative_system"),
+                            build_user_prompt(legal_name, source_url, qualitative_chunks),
+                            QualitativeResult)
     return Extraction(fin, qual, financial_chunks, qualitative_chunks,
                       {k: tags[k].concept for k in _FIGURES if k in tags})
 

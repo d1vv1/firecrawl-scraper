@@ -114,7 +114,7 @@ def _setup_routes(monkeypatch, tmp_path, filing, website_year=None, website_fail
     monkeypatch.setattr(pipeline, "_esef_doc_or_none", lambda f, *a: used.setdefault(
         "doc", ReportDocument(f.report_url, "xhtml", pages, tmp_path / "e.md", None, True)))
 
-    def fake_extract(name, url, fin, qual, tags=None, period_end=None):
+    def fake_extract(name, url, fin, qual, tags=None, period_end=None, qualitative=True):
         used["tags"] = tags
         return _ex_with(tags, period_end)
     monkeypatch.setattr(pipeline, "extract", fake_extract)

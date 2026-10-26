@@ -515,3 +515,53 @@ def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     p = rows["pension_contribution"]
     assert (p.value, p.method) == (123_000, "DERIVED") and "salary addition in lieu" in p.note
 
+
+
+def test_report_pass_asks_only_for_what_the_apis_left_open():
+    api = [Found("legal_name", "EQUINOR ASA", source="GLEIF", method="API", confidence="A"),
+           Found("isin", "NO0010096985", source="ESMA FIRDS", method="API", confidence="A"),
+           Found("listing_status", "listed", source="ESMA FIRDS", method="API", confidence="A"),
+           Found("listing_date", "2017-10-12", source="ESMA FIRDS", method="API", confidence="C"),
+           Found("revenue", 1.0, source="ESEF filing", method="XBRL", confidence="A")]
+    gaps = dp.report_gaps(dp.best(api))
+    assert "isin" not in gaps and "revenue" not in gaps and "legal_name" not in gaps
+    assert "listing_date" in gaps                       # only a C value: the report may beat it
+    assert "fte" in gaps and "controlling_owner" in gaps
+    assert "lei" not in gaps and "market_cap_band" not in gaps   # API-only / derived
+    wanted = dp.wanted_fields(gaps + list(dp.IDENTITY_FIELDS))
+    assert "legal_name" in wanted and "country_code" in wanted   # for the identity check
+    assert "is_listed" not in wanted and "isin" not in wanted
+    assert "major_shareholders" in wanted                # largest_holders -> its fact field
+
+
+def test_report_chunks_cover_only_the_needed_topics(monkeypatch):
+    asked = []
+    monkeypatch.setattr(dp, "select_chunks", lambda chunks, topic, words: asked.append(topic) or [])
+    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], {})
+    dp.report_chunks(origin, ["fte", "revenue_by_country"])
+    assert sorted(asked) == ["employees", "geography", "profile"]
+    asked.clear()
+    dp.report_chunks(origin)
+    assert len(asked) == len(dp.DATAPOINT_TOPICS)
+
+
+def test_qualitative_call_can_be_skipped(monkeypatch):
+    from extractor import extract as ex_mod
+    calls = []
+    monkeypatch.setattr(ex_mod.llm, "call_llm", lambda system, user, schema: calls.append(schema.__name__))
+    monkeypatch.setattr(ex_mod.llm, "load_prompt", lambda name: name)
+    tags = {k: type("T", (), {"value": 1.0, "currency": "EUR", "concept": "ifrs-full:X",
+                              "period": "2025", "scope": "consolidated"})()
+            for k in ("revenue", "total_assets", "total_equity_and_liabilities")}
+    out = ex_mod.extract("X", "u", [], [], tags=tags, period_end="2025-12-31", qualitative=False)
+    assert calls == [] and out.qualitative is None
+
+
+def test_employee_counts_printed_in_thousands_are_scaled():
+    fte = {"value": 88, "unit": "thousands", "currency": None, "period_end": None,
+           "quote": "Average employee numbers Thousand 2025 Total 88", "chunk_id": 0}
+    head = {"value": 470, "unit": "units", "currency": None, "period_end": None,
+            "quote": "around 470 employees", "chunk_id": 0}
+    found = {f.data_point: f for f in dp.from_facts(_facts(fte=fte, headcount=head), _origin())}
+    assert found["fte"].value == 88000 and "printed 88 thousands" in found["fte"].note
+    assert found["headcount"].value == 470 and "printed" not in found["headcount"].note

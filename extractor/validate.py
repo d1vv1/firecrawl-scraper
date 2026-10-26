@@ -286,10 +286,11 @@ def run_checks(ex: Extraction) -> list[Check]:
             checks.append(check_sanity(name, fig))
     checks.append(check_balance(fin.total_assets, fin.total_equity_and_liabilities))
     checks.append(check_fiscal_year(fin.fiscal_year))
-    checks.append(check_quote("revenue_model", qual.revenue_model.quote,
-                              qual.revenue_model.chunk_id, ex.qualitative_chunks))
-    checks.append(check_quote("business_structure", qual.business_structure.quote,
-                              qual.business_structure.chunk_id, ex.qualitative_chunks))
+    if qual is not None:
+        checks.append(check_quote("revenue_model", qual.revenue_model.quote,
+                                  qual.revenue_model.chunk_id, ex.qualitative_chunks))
+        checks.append(check_quote("business_structure", qual.business_structure.quote,
+                                  qual.business_structure.chunk_id, ex.qualitative_chunks))
     return checks
 
 

@@ -469,9 +469,14 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
     return facts
 
 
-def report_chunks(origin: Origin) -> list[Chunk]:
+def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
+    """The report's best chunks per topic: every topic, or only those of `gaps`
+    (plus the profile, for the identity check)."""
+    topics = list(DATAPOINT_TOPICS) if gaps is None else sorted(
+        {"profile"} | {FACT_TOPIC[g] for g in gaps if FACT_TOPIC.get(g) in DATAPOINT_TOPICS}
+        | ({"keyfigures"} if any(FACT_TOPIC.get(g) == "financials" for g in gaps) else set()))
     picked: dict[int, Chunk] = {}
-    for topic in DATAPOINT_TOPICS:
+    for topic in topics:
         for c in select_chunks(list(origin.chunks.values()), topic, TOPIC_WORDS):
             picked[c.id] = c
     return [picked[i] for i in sorted(picked)]
@@ -511,7 +516,10 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
-        add(name, n.value, n, unit="employees", period=n.period_end)
+        # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
+        scaled = n.unit not in (None, "units")
+        add(name, full_value_quoted(n.value, n.unit or "units", n.quote), n, unit="employees",
+            period=n.period_end, extra=f"printed {fmt_number(n.value)} {n.unit}" if scaled else "")
     n = facts.shares_outstanding
     if n.value is not None:
         add("shares_outstanding", full_value_quoted(n.value, n.unit or "units", n.quote), n,
@@ -620,7 +628,20 @@ def gap_list(chosen: dict[str, Found]) -> list[str]:
 
 
 def wanted_fields(gaps: list[str]) -> list[str]:
-    return sorted({FACT_FIELD.get(g, g) for g in gaps})
+    return sorted({FACT_FIELD.get(g, g) for g in gaps} & set(DataPointFacts.model_fields))
+
+
+# Always read from the report, even when an API gave them: identity_check compares the
+# legal name and country; the report's ticker keeps the exchange's spelling ("VOLV B",
+# where OpenFIGI gives "VOLVB").
+IDENTITY_FIELDS = ("legal_name", "country_code", "ticker")
+
+
+def report_gaps(chosen: dict[str, Found]) -> list[str]:
+    """What the annual report's AI pass should look for: data points no API or tag
+    gave, plus those with only a C-graded value (a FIRDS listing date)."""
+    weak = [n for n, f in chosen.items() if f.confidence == "C" and n in DP_DOC_TYPES]
+    return [n for n in NAMES if n in gap_list(chosen) or n in weak]
 
 
 def doc_origin(doc: Document, first_id: int) -> Origin:
@@ -1153,13 +1174,18 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         values += from_result(result, origin)
         tried.append(origin.source if origin else "annual report")
 
-    # 2. the AI pass over the report
-    if origin:
-        chunks = report_chunks(origin)
+    # 2. the AI pass over the report, only for what the APIs and tags left open (and
+    # a C-graded value, which a quoted one beats); the report's own legal name and
+    # country are always asked for, for the identity check
+    gaps = report_gaps(best(values))
+    if origin and gaps:
+        chunks = report_chunks(origin, gaps)
         if chunks:
-            log.info("Data points: asking the AI about %d report chunks", len(chunks))
+            log.info("Data points: asking the AI about %d report chunks for %d open data "
+                     "point(s)", len(chunks), len(gaps))
             facts = ask(c.name, origin.url, chunks, "the company's annual report",
-                        Path(result["debug"]["markdown_file"]).stem)
+                        Path(result["debug"]["markdown_file"]).stem,
+                        wanted_fields(gaps + list(IDENTITY_FIELDS)))
             report_values = from_facts(facts, origin)
             # The LEI record's legal country first: the input's country can be the
             # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
@@ -1258,7 +1284,7 @@ def process(t: Target, opts: dict) -> dict:
     error = None
     resolve_lei(t)
     if needs_pipeline(c, opts):
-        res = process_company(c, False, opts["pipeline_credits"])
+        res = process_company(c, False, opts["pipeline_credits"], qualitative=False)
         meter["pipeline"] = res.get("credits", 0)
         if res["kind"] == "fatal" and "PaymentRequired" in res.get("error", ""):
             # The free routes (filings, registers, APIs) still work: carry on without

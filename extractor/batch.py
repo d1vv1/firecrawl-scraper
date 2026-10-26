@@ -432,10 +432,12 @@ def _worker_init(workers: int) -> None:
     wikidata._MIN_INTERVAL_S *= workers
 
 
-def process_company(c: Company, force: bool, per_company_cap: int) -> dict:
+def process_company(c: Company, force: bool, per_company_cap: int,
+                    qualitative: bool = True) -> dict:
     """Run one company, waiting out internet outages. Returns
     {"kind": "done"|"error"|"fatal"|"offline", "status", "credits", "seconds", "error"}.
-    Runs in a worker process when --workers > 1."""
+    Runs in a worker process when --workers > 1. `qualitative`: also ask for the revenue
+    model and business structure (the monday.com board; the data points don't use them)."""
     fc = FirecrawlClient(load_settings(), max_credits=per_company_cap)
     started = time.monotonic()
     network_tries = 0
@@ -450,7 +452,7 @@ def process_company(c: Company, force: bool, per_company_cap: int) -> dict:
         with _CompanyLog(c):
             try:
                 r = run(c.name, company_id=c.company_id, country=c.country, fc=fc,
-                        use_cache=not force, lei=c.lei)
+                        use_cache=not force, lei=c.lei, qualitative=qualitative)
                 c.error_path.unlink(missing_ok=True)
                 return result("done", status=r["status"])
             except FATAL as e:

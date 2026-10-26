@@ -53,7 +53,7 @@ def _fake_run(outcomes):
     """outcomes: company name -> 'ok' | exception instance. Writes result files like run()."""
     calls = []
 
-    def fake(name, company_id, country, fc, use_cache, lei=None):
+    def fake(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         calls.append(company_id)
         fc.credits.add("map", "x", 2)
         o = outcomes[name]
@@ -147,7 +147,7 @@ def test_network_outage_waits_and_retries_same_company(out, monkeypatch, tmp_pat
     cs = batch.read_companies(_csv(tmp_path, "company_id,company_name\nA,One AB\nB,Two AB\n"))
     attempts = []
 
-    def flaky(name, company_id, country, fc, use_cache, lei=None):
+    def flaky(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         attempts.append(company_id)
         if company_id == "A" and attempts.count("A") == 1:
             raise socket.gaierror(11001, "getaddrinfo failed")
@@ -168,7 +168,7 @@ def test_long_outage_stops_the_batch(out, monkeypatch, tmp_path):
     cs = batch.read_companies(_csv(tmp_path, "company_id,company_name\nA,One AB\nB,Two AB\n"))
     calls = []
 
-    def down(name, company_id, country, fc, use_cache, lei=None):
+    def down(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         calls.append(company_id)
         raise socket.gaierror(11001, "getaddrinfo failed")
     monkeypatch.setattr(batch, "run", down)
@@ -195,7 +195,7 @@ def test_connection_error_with_internet_up_is_a_normal_failure(out, monkeypatch,
     cs = batch.read_companies(_csv(tmp_path, "company_id,company_name\nA,One AB\nB,Two AB\n"))
     calls = []
 
-    def ssl_fail(name, company_id, country, fc, use_cache, lei=None):
+    def ssl_fail(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         calls.append(company_id)
         if company_id == "A":
             raise httpx.ConnectError("[SSL: CERTIFICATE_VERIFY_FAILED]")
@@ -246,7 +246,7 @@ def test_lei_from_csv_is_passed_to_the_pipeline(out, monkeypatch, tmp_path):
     cs = batch.read_companies(_csv(tmp_path, "company_id,company_name,lei\nA,One AB,5299003VKVDCUPSS5X23\n"))
     seen = {}
 
-    def fake(name, company_id, country, fc, use_cache, lei=None):
+    def fake(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         seen["lei"] = lei
         raise ValueError("stop")
     monkeypatch.setattr(batch, "run", fake)
@@ -266,7 +266,7 @@ def test_workers_run_companies_at_the_same_time(out, monkeypatch, tmp_path):
                                    "".join(f"C{i},Co {i} AB\n" for i in range(6))))
     active, peak, lock = [0], [0], threading.Lock()
 
-    def slow(name, company_id, country, fc, use_cache, lei=None):
+    def slow(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         with lock:
             active[0] += 1
             peak[0] = max(peak[0], active[0])
@@ -300,7 +300,7 @@ def test_fatal_error_stops_new_work_with_workers(out, monkeypatch, tmp_path):
     cs = batch.read_companies(_csv(tmp_path, "company_id,company_name\n" +
                                    "".join(f"C{i},Co {i} AB\n" for i in range(5))))
 
-    def fatal(name, company_id, country, fc, use_cache, lei=None):
+    def fatal(name, company_id, country, fc, use_cache, lei=None, qualitative=True):
         raise ConfigError("no key")
     monkeypatch.setattr(batch, "run", fatal)
     args = _Args(); args.workers = 2; args.executor_factory = _threads(2)

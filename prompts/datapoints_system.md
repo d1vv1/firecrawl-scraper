@@ -42,7 +42,9 @@ Facts:
   "www.yubico.com"); not a page of another site.
 - ticker, isin, exchange, exchange_segment (e.g. "Large Cap", "Main
   Market", "Prime Standard", "First North Growth Market"; say "MTF" in the
-  value if the text says the market is a multilateral trading facility),
+  value if the text says the market is a multilateral trading facility;
+  never a stock index such as OBX, FTSE 250, DAX or OMXS30: index
+  membership is not a segment),
   listing_date (YYYY-MM-DD, or the year): only for the company's own
   shares.
 - is_listed: "listed" if the text says the company's shares trade on a
