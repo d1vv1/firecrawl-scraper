@@ -5,24 +5,28 @@ each value came from.
         [--workers 3] [--only ID,ID] [--limit N] [--retry-failed] [--redo] [--no-docs]
 
 Input: any CSV with company_id, company_name and (optional) segment, country, lei,
-business_id. Several rows per company are fine (the golden sample has one row per
-golden value); each company is processed once.
+business_id, isin, annual_report_url, remuneration_report_url. Several rows per company
+are fine (the golden sample has one row per golden value); each company is processed once.
 
-For each company, cheapest and most exact first:
-  1. the annual-report pipeline (python -m extractor.batch): revenue and total assets
-     (XBRL tags or the report), revenue model, business structure;
-  2. one more LLM pass over the same report for the remaining facts (identity,
-     employees, owners, listing, pay, revenue and staff by country), each with a quote
-     that is looked up in the report to find its page;
-  3. document fallback: data points still missing are looked for in the company's
-     other documents (remuneration, governance and sustainability reports, "The share"
-     and shareholder pages, legal notice, year-end report...; see documents.py), in
+For each company, in order of precedence (most exact first). In run order, the
+annual-report pipeline (2) runs first (process_company), then collect() does the rest:
+  1. the official APIs (from_apis): GLEIF, ESMA FIRDS + OpenFIGI (listing.py), the home
+     register (NO, FI, UK) and SEC EDGAR;
+  2. the annual-report pipeline (python -m extractor.batch): an ESEF/SEC/register filing
+     or the website's report; revenue and total assets from XBRL tags or the report;
+  3. one LLM pass over the same report for the remaining facts, each with a quote that
+     is looked up in the report to find its page;
+  4. executive pay per role (from_pay): a supplied URL, SEC exhibits, the remuneration
+     report on the site, the annual report's remuneration section;
+  5. document fallback: data points still missing are looked for in the company's
+     other documents (governance and sustainability reports, "The share" and
+     shareholder pages, legal notice, year-end report...; see documents.py), in
      rounds, at most --doc-credits Firecrawl credits per company.
-The official APIs (GLEIF, registers) are not used here: that data is collected upstream,
-so lei and sector_code are left to it.
+See docs/pipeline_flow.html for the whole flow.
 
 Output:
-  output/datapoints.csv        one row per company and data point (15 columns)
+  <--out>.csv                  one row per company and data point, and per role and pay
+                               field (17 columns, COLUMNS)
   output/datapoints/<id>.json  the same rows per company (re-runs skip done companies)
   output/golden_test_filled.csv  the input CSV with build_value filled in, when the
                                input is the golden sample
@@ -33,7 +37,7 @@ Where a value came from:
   endpoint    the exact URL: the API request, the filing, the PDF with #page=N, or the
               web page with a #:~:text= fragment that browsers scroll to
   method      API (register field), XBRL (tagged figure), PARSE (read from a filed
-              document), SCRAPE (read from a web page), BUY (market data, not collected)
+              document), SCRAPE (read from a web page), DERIVED (computed from other values)
   confidence  A exact (register field or XBRL tag); B read by the AI, quote found in
               the source; C read by the AI, quote not found verbatim (check it)
   note        the page and quote, the tag name, or why there is no value
