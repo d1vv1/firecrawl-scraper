@@ -151,6 +151,6 @@ Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, 
 | Company fields filled | 80% (327 of 410) |
 | Exchange fields filled (ISIN, ticker, exchange, segment, status, date) | 50 of 60 (51 before the index-is-not-a-segment rule), was 47; ISIN 10 of 10 (was 5); Novo Nordisk's ticker is now NOVOB, not its NYSE ADR NVO |
 | Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
-| Golden pay figures | 119 match, 18 differ, 11 missing (of 148) |
-| Equinor pay (13 executives) | 89 of 91, found automatically through its 20-F exhibit |
+| Golden pay figures | 98 to 121 match (of 148) depending on the AI's answer: the latest run 98; the same input has scored 119 (issue 5) |
+| Equinor pay (13 executives) | 66 to 89 of 91 (latest 66), found automatically through its 20-F exhibit; the spread is the merged-column problem (issues 2 and 5) |
 | Bang & Olufsen pay | 4 of 17: we read FY2025/26, the golden file holds FY2024/25 |
