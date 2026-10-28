@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Point Pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F4F8FC; --paper:#FFFFFF; --fg:#0E1B2C; --muted:#4A5B70; --faint:#7B8BA0; --line:#C6D2E0; --tile:#EDF2F8;
+  --navy:#1E3A5F; --accent:#1F6FB2; --accent-soft:#E1EEFA;
+  --api:#1E3A5F; --api-fg:#FFFFFF; --parse:#8FB3D9; --parse-fg:#0E1B2C;
+  --scrape:#F2C879; --scrape-fg:#4A3000; --buy:#DDE3EA; --buy-fg:#3C4A5C;
+  --ok:#1E7A4F; --ok-soft:#E3F3EA; --warn:#9A5B00; --warn-soft:#FBF0DD; --bad:#A33A2C; --bad-soft:#F8E6E3;
+  --display:Anton,"Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1522; --paper:#111D2E; --fg:#E4ECF5; --muted:#9CB0C6; --faint:#71849B; --line:#2C3D55; --tile:#16243A;
+  --navy:#9CC3EA; --accent:#6FAEE8; --accent-soft:#16304D;
+  --api:#6FAEE8; --api-fg:#0C1522; --parse:#2F557F; --parse-fg:#E4ECF5;
+  --scrape:#8C6420; --scrape-fg:#FFF3DC; --buy:#26354A; --buy-fg:#B9C7D8;
+  --ok:#6BCB9A; --ok-soft:#123326; --warn:#E8B262; --warn-soft:#3A2C12; --bad:#EE8B7C; --bad-soft:#3A1A16;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1522; --paper:#111D2E; --fg:#E4ECF5; --muted:#9CB0C6; --faint:#71849B; --line:#2C3D55; --tile:#16243A;
+  --navy:#9CC3EA; --accent:#6FAEE8; --accent-soft:#16304D;
+  --api:#6FAEE8; --api-fg:#0C1522; --parse:#2F557F; --parse-fg:#E4ECF5;
+  --scrape:#8C6420; --scrape-fg:#FFF3DC; --buy:#26354A; --buy-fg:#B9C7D8;
+  --ok:#6BCB9A; --ok-soft:#123326; --warn:#E8B262; --warn-soft:#3A2C12; --bad:#EE8B7C; --bad-soft:#3A1A16;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);padding:0 16px 72px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2{font-family:var(--display);font-weight:400;color:var(--navy);letter-spacing:.01em;margin:0;text-wrap:balance}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.08}
+h2{font-size:clamp(21px,3vw,26px);line-height:1.2}
+h3{margin:0;font-size:15.5px;font-weight:600}
+p{margin:0}
+code{font-family:var(--mono);font-size:12.5px;background:var(--tile);padding:1px 5px;border-radius:4px;word-break:break-word}
+.eyebrow{font:500 11.5px/1.3 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.sub{color:var(--muted);max-width:78ch}
+header{padding:36px 0 24px;border-bottom:3px solid var(--navy);display:grid;gap:14px}
+section{padding-top:36px;display:grid;gap:16px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+
+/* ---------- flowchart ---------- */
+.flow{display:grid;gap:0;justify-items:center}
+.node{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:10px;position:relative}
+.node.stage{border-left:5px solid var(--accent)}
+.node .head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.num{font:400 26px/1 var(--display);color:var(--accent);flex:none}
+.node .what{color:var(--muted);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:600 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:4px;white-space:nowrap}
+.t-api{background:var(--api);color:var(--api-fg)} .t-parse{background:var(--parse);color:var(--parse-fg)}
+.t-scrape{background:var(--scrape);color:var(--scrape-fg)} .t-buy{background:var(--buy);color:var(--buy-fg)}
+.t-free{background:var(--ok-soft);color:var(--ok)} .t-cost{background:var(--warn-soft);color:var(--warn)}
+.arrow{width:2px;height:30px;background:var(--faint);position:relative;margin:0 auto}
+.arrow::after{content:"";position:absolute;bottom:-1px;left:50%;width:9px;height:9px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:translate(-50%,0) rotate(45deg)}
+.arrow .lab{position:absolute;left:12px;top:5px;font:500 11.5px/1.2 var(--mono);color:var(--muted);white-space:nowrap}
+
+.split{display:grid;grid-template-columns:1fr 64px 1fr;align-items:stretch;width:100%}
+.split .col{display:grid;gap:10px;align-content:start}
+.branch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px/1.25 var(--mono);color:var(--muted);text-align:center}
+.branch .h{width:100%;height:2px;background:var(--faint);position:relative}
+.branch .h::after{content:"";position:absolute;right:-1px;top:50%;width:9px;height:9px;border-right:2px solid var(--faint);border-top:2px solid var(--faint);transform:translate(0,-50%) rotate(45deg)}
+.sub-node{background:var(--tile);border:1px solid var(--line);border-radius:8px;padding:11px 13px;display:grid;gap:6px;font-size:14px}
+.sub-node b{font-size:14px}
+.sub-node .key{font:500 12px/1.35 var(--mono);color:var(--muted)}
+.decision{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1.2 var(--mono);color:var(--ok)}
+.decision::before{content:"";width:10px;height:10px;background:var(--ok);transform:rotate(45deg);flex:none}
+.coltitle{font:600 12px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--navy)}
+.steps{margin:0;padding-left:20px;display:grid;gap:5px;font-size:14px}
+details{border-top:1px dashed var(--line);padding-top:8px}
+summary{cursor:pointer;font-size:13.5px;color:var(--accent);font-weight:500;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+ ";font-family:var(--mono)}
+details[open] summary::before{content:"− "}
+details .more{margin-top:8px;display:grid;gap:8px;font-size:14px;color:var(--fg)}
+details ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.converge{width:100%;display:grid;grid-template-columns:1fr 64px 1fr}
+.converge>div{height:26px;border-bottom:2px solid var(--faint);border-left:2px solid var(--faint);border-right:2px solid var(--faint);border-radius:0 0 8px 8px}
+.converge>div:first-child{grid-column:1/4;margin:0 25%}
+.row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:10px}
+@media (max-width:760px){
+  .split{grid-template-columns:1fr}
+  .branch{flex-direction:row;padding:10px 0}
+  .branch .h{width:2px;height:24px}
+  .branch .h::after{right:auto;left:50%;top:auto;bottom:-1px;transform:translate(-50%,0) rotate(135deg)}
+  .converge{display:none}
+}
+
+/* ---------- example + confidence ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:860px}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 10.5px/1.3 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--tile)}
+tr:last-child td{border-bottom:0}
+td.mono{font-family:var(--mono);font-size:12px;word-break:break-all}
+.conf{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.conf>div{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.big{font:400 30px/1 var(--display)}
+.cA{color:var(--ok)} .cB{color:var(--accent)} .cC{color:var(--warn)}
+.conf p{font-size:13.5px;color:var(--muted)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px}
+nav.toc a{font-size:13px;color:var(--navy);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--paper)}
+nav.toc a:hover{border-color:var(--accent)}
+.schema td:first-child{font-family:var(--mono);font-size:12.5px;font-weight:500;white-space:nowrap}
+.schema td:nth-child(3){font-family:var(--mono);font-size:12px;color:var(--muted);word-break:break-all}
+.dpgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.dpgroup{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:8px;align-content:start}
+.dpgroup dl{margin:0;display:grid;gap:0;font-size:13px}
+.dpgroup dt{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--fg);padding-top:8px;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.dpgroup dt:first-of-type{border-top:0;padding-top:0}
+.dpgroup dd{margin:2px 0 8px;color:var(--muted)}
+.anatomy{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;gap:10px}
+.anatomy .cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:8px}
+.anatomy .cell{border-left:3px solid var(--accent);padding:4px 10px;display:grid;gap:2px}
+.anatomy .cell b{font-family:var(--mono);font-size:12px}
+.anatomy .cell span{font-size:13px;word-break:break-word}
+.anatomy .cell i{font-style:normal;font-size:12.5px;color:var(--muted)}
+.faq{display:grid;gap:10px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 16px;border-top:1px solid var(--line)}
+.faq summary{font-size:15px;font-weight:600;color:var(--fg)}
+.faq summary::before{color:var(--accent)}
+.faq .more{font-size:14px}
+.faq ol{margin:0;padding-left:20px;display:grid;gap:5px}
+.faq .eg{background:var(--tile);border-radius:6px;padding:10px 12px;font-size:13px}
+.faq .eg code{background:var(--paper)}
+.node.flagged{border:2px solid var(--bad);border-left:6px solid var(--bad);background:var(--bad-soft)}
+.node.flagged .num,.node.flagged h3{color:var(--bad)}
+.node.flagged .sub-node{background:var(--paper);border-color:var(--bad)}
+.t-flag{background:var(--bad);color:#FFFFFF}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">firecrawl-scraper · python -m extractor.datapoints · as of 26 October 2026</div>
+  <h1>How one company becomes 41 sourced data points, plus executive pay per role</h1>
+  <p class="sub">Each company goes through seven stages: free official sources first, then the annual report, then the remuneration report, then other company documents for whatever is still missing. Every value keeps the exact place it came from: an API URL, an XBRL tag, a PDF page, or a web page. The fields follow the client's source-validation protocol: company grain C01–C23, role grain R01–R11. Open any box marked "+" for the detail.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--api)"></i>API / XBRL: exact, no AI</span>
+    <span><i class="sw" style="background:var(--parse)"></i>PARSE: AI reads a filed document (PDF, XHTML)</span>
+    <span><i class="sw" style="background:var(--scrape)"></i>SCRAPE: AI reads a web page</span>
+    <span><i class="sw" style="background:var(--buy)"></i>DERIVED: computed from other values</span>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#flow">The flow</a><a href="#schema">Output schema</a><a href="#datapoints">The data points</a><a href="#walkthrough">Worked example: Equinor</a><a href="#faq">Questions and answers</a><a href="#confidence">Confidence</a><a href="#limits">Known limits</a>
+  </nav>
+</header>
+
+<section id="flow">
+  <div class="eyebrow">The flow</div>
+  <h2>Stage by stage</h2>
+
+  <div class="flow">
+
+    <div class="node">
+      <div class="head"><h3>Input row</h3><span class="what">company_id, company_name; optional: country, segment, lei, business_id, isin, annual_report_url, remuneration_report_url</span></div>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 1 -->
+    <div class="node stage">
+      <div class="head"><span class="num">1</span><h3>Identify the company</h3><span class="what">GLEIF: name, ISIN or register number → LEI</span></div>
+      <div class="tags"><span class="tag t-api">API</span><span class="tag t-free">free</span></div>
+      <details><summary>How the match works</summary><div class="more">
+        <ul>
+          <li>An LEI in the input is used as given. Otherwise the name must match GLEIF's legal name, ignoring case, accents and how the legal form is written (AB = Aktiebolag, "A S" = "A/S" = "AS", Oyj = plc).</li>
+          <li>It must be registered in the expected country. If several companies match, none is used: the code never guesses.</li>
+          <li>No name match: GLEIF is searched by the ISIN or the national register number, when the input has them.</li>
+          <li>The LEI is the key for most of what follows: ESEF filings, FIRDS, the parent company, and (through GLEIF's <code>registeredAs</code>) the national registers.</li>
+        </ul>
+      </div></details>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 2 -->
+    <div class="node stage">
+      <div class="head"><span class="num">2</span><h3>Official APIs first</h3><span class="what">exact register fields, no AI, cached for a week</span></div>
+      <div class="row3">
+        <div class="sub-node"><b>GLEIF</b><span class="key">legal and former names, register no., country, HQ city, ultimate parent, ISIN list</span></div>
+        <div class="sub-node"><b>ESMA FIRDS + ISO MIC list</b><span class="key">ISIN, home exchange, listing status, MTF segment (EU/EEA venues)</span></div>
+        <div class="sub-node"><b>OpenFIGI</b><span class="key">ticker; UK and Swiss listings (not in FIRDS)</span></div>
+        <div class="sub-node"><b>Brønnøysund (NO) · PRH (FI)</b><span class="key">industry code (NACE), employees, address</span></div>
+        <div class="sub-node"><b>Companies House (UK)</b><span class="key">SIC code; PSC register: a 25%+ owner becomes the controlling owner</span></div>
+        <div class="sub-node"><b>SEC EDGAR</b><span class="key">CIK for every company (foreign issuers with US shares file 20-Fs too); for US companies also ticker, SIC, shares</span></div>
+      </div>
+      <div class="tags"><span class="tag t-api">API</span><span class="tag t-free">free</span></div>
+      <details><summary>Why APIs first, and what they can't do</summary><div class="more">
+        <ul>
+          <li>A register field is exact (confidence A) and costs nothing, so it beats anything read from a document. Documents still fill everything the APIs leave empty.</li>
+          <li>A failing API is logged and skipped: one being down never stops a company.</li>
+          <li><b>Run order:</b> in the code, the annual-report search (stage 3, <code>process_company</code>) runs first, because every company needs the report anyway (no API gives revenue, employees, owners or pay) and the API step uses the filing's CIK and register number. The APIs then run before any AI reads the report, and the AI is asked only for what they left open.</li>
+          <li>Not connected: Sweden (Bolagsverket) and Denmark (CVR) need credentials; parked, because for listed companies they add little.</li>
+          <li>Register industry codes often describe the listed holding company, not the business (Shell, AO World: SIC 70100 "activities of head offices").</li>
+        </ul>
+      </div></details>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 3 -->
+    <div class="node stage">
+      <div class="head"><span class="num">3</span><h3>Find one annual-report document</h3><span class="what">free filings first; the website only when no filing is recent</span></div>
+
+      <div class="split">
+        <div class="col">
+          <div class="coltitle">a–c · Filings, looked up by identifier</div>
+          <div class="sub-node">
+            <b>a. ESEF index (filings.xbrl.org)</b>
+            <span class="key">by LEI · EU, EEA &amp; UK listed</span>
+            <span class="decision">recent annual filing? → use it</span>
+          </div>
+          <div class="sub-node">
+            <b>b. SEC EDGAR</b>
+            <span class="key">10-K / 20-F / 40-F</span>
+            <span class="decision">recent? → use it</span>
+          </div>
+          <div class="sub-node">
+            <b>c. Home register</b>
+            <span class="key">Brønnøysund (NO), virk.dk (DK), Companies House (UK)</span>
+            <span class="decision">recent? → use it</span>
+          </div>
+          <div class="tags"><span class="tag t-api">XBRL</span><span class="tag t-free">free</span></div>
+        </div>
+
+        <div class="branch"><div class="h"></div>none recent<br>(older one kept as fallback)</div>
+
+        <div class="col">
+          <div class="coltitle">d · Website route (Firecrawl)</div>
+          <div class="sub-node">
+            <b>Find the website</b>
+            <span class="key">Wikidata by LEI → Wikidata by name → web search (2 credits)</span>
+          </div>
+          <div class="sub-node">
+            <b>Find the report on the site</b>
+            <span class="key">map "annual report" → scrape the investor page → map the native term → "integrated report" / "investors" · 1 credit each, stops at the first recent PDF</span>
+          </div>
+          <div class="sub-node">
+            <b>Pick and download</b>
+            <span class="key">classify + rank URLs, with guards → download the PDF directly (free) or scrape an HTML report</span>
+          </div>
+          <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-cost">≤ 6 credits</span></div>
+        </div>
+      </div>
+
+      <details><summary>What "recent" means, and which one wins</summary><div class="more">
+        <ul>
+          <li>Recent = covers last year or later (FY2025 or newer during 2026). An older filing is kept; if the website has nothing newer, the older filing is used after all.</li>
+          <li>ESEF: the newest filing whose tagged figures cover a full 12 months. Filed under the company's own LEI, so its identity is certain.</li>
+          <li>Revenue and total assets come from XBRL tags when the filing has them (no AI). When a filing tags both "revenue" and "revenue and other operating income", IFRS revenue is used and the other goes in <code>note</code> (a client decision still pending).</li>
+          <li>A filing in Norwegian or Swedish still gives the tagged figures; the AI reads the text in that language and quotes it as printed.</li>
+          <li>An annual report URL given in the input skips the search.</li>
+        </ul>
+      </div></details>
+      <details><summary>Guards against the wrong report</summary><div class="more">
+        <ul>
+          <li><b>Wrong year:</b> years written as dates (<code>31122025</code>) and fiscal-year prefixes (<code>fy25</code>) are read; a newer year beats a better-looking link text (Rosenbauer, Jumbo).</li>
+          <li><b>A subsidiary's report:</b> a file naming another legal form ("…plc" for an AG, "N.V." for a German company), or group-function words such as "treasury" or "finance", ranks lower (Siemens' Dutch financing arm, Volvo Treasury AB).</li>
+          <li><b>Identity check after reading:</b> if the report's own text gives another country or another legal name, every value from it is graded C with the reason.</li>
+          <li><b>Rejected outright:</b> quarterly reports, presentations, press releases, teaser pages (under 20,000 characters for an HTML report), reports over 3 years old, scanned PDFs (they would need OCR).</li>
+        </ul>
+      </div></details>
+    </div>
+    <div class="arrow"></div>
+
+    <div class="node">
+      <div class="head"><h3>Document as page-tagged text</h3><span class="what">PDF converted locally (pymupdf4llm): real page numbers · filed XHTML/HTML: text blocks</span></div>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 4 -->
+    <div class="node stage">
+      <div class="head"><span class="num">4</span><h3>Data-point AI pass on the annual report</h3><span class="what">only the data points the APIs and XBRL tags left open</span></div>
+      <ol class="steps">
+        <li>The AI is asked only for what stages 2–3 left empty or graded C, plus the report's own legal name, country and ticker (for the identity check and the exchange's ticker spelling).</li>
+        <li>The document is cut into ~1,500-word chunks, each remembering its PDF pages.</li>
+        <li>Keywords (English, Nordic and other European languages) score each chunk for the topics of the open data points (of 7: ownership, employees, remuneration, geography, profile, segments, key figures).</li>
+        <li>The best chunks per topic (~2,500 words each) go to Gemini 2.5 Flash, which must return an exact quote for every value, or no value. Output is forced into a fixed schema.</li>
+        <li>The quote is searched in the document's own text: on the cited chunk's pages first, then everywhere. The page where it's found becomes <code>…pdf#page=N</code>.</li>
+      </ol>
+      <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-free">no Firecrawl</span></div>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 5 -->
+    <div class="node stage">
+      <div class="head"><span class="num">5</span><h3>Executive pay, one row per role</h3><span class="what">role grain R01–R11, plus company pay terms (C23)</span></div>
+      <div class="coltitle">Sources, tried in this order until one has pay for the right year</div>
+      <ol class="steps">
+        <li><b>A remuneration report URL from the input</b> (skips the year check).</li>
+        <li><b>SEC filings</b>, when the company has a CIK: exhibits of the latest 20-F / 10-K labelled remuneration or compensation (Equinor's 20-F attaches its remuneration report), and the proxy statement (DEF 14A) for US filers. Free.</li>
+        <li><b>UK and Ireland:</b> the annual report's remuneration section first (UK reports carry the full pay tables).</li>
+        <li><b>The remuneration report on the company's site.</b> Second try: open the site's report-downloads page first, whose files join the pool (also files behind download buttons, read from the page's data), then a map search for "remuneration report".</li>
+        <li><b>The annual report's remuneration section.</b></li>
+      </ol>
+      <details><summary>Checks on the pay figures</summary><div class="more">
+        <ul>
+          <li><b>Year check:</b> a document whose pay is for an older year than the annual report is skipped (Shell's roadshow deck; Equinor's FY2024 report). Split years such as "2025/26" count by their end year.</li>
+          <li><b>Remuneration policy:</b> read when targets or maxima are missing (STI/LTI as % of salary).</li>
+          <li><b>Aggregates:</b> Swedish and Finnish remuneration reports cover the CEO only; the annual report's "other executives" total is added.</li>
+          <li><b>Derived values (method DERIVED):</b> pension = pension + salary addition in lieu of pension; target as % of salary from "% of maximum" or "months of salary".</li>
+          <li><b>Total check:</b> the parts must add up to the stated total within 2% (tried with vested LTI, granted LTI, or no LTI); a mismatch is noted.</li>
+          <li><b>Scaling guard:</b> "1,242" in a "USD thousand" table becomes 1,242,000 in code; a value the AI already multiplied is caught by comparing it with the quote.</li>
+        </ul>
+      </div></details>
+      <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-api">SEC</span><span class="tag t-cost">shares the document credits</span></div>
+    </div>
+    <div class="arrow"><span class="lab">anything still missing?</span></div>
+
+    <!-- 6 -->
+    <div class="node stage" style="border-left-color:var(--scrape)">
+      <div class="head"><span class="num">6</span><h3>Document fallback: the company's other documents</h3><span class="what">only for company data points no earlier stage found</span></div>
+      <ol class="steps">
+        <li>Each missing data point has a list of document types likely to hold it: share page, shareholder page, governance report, sustainability report, legal notice, year-end report, listing notice, history, about page, AGM notice, report downloads page, remuneration report and policy.</li>
+        <li>Candidate URLs come from the report search's lists first (free), then a plain map of the site, then a map search per type (1 credit each, each once).</li>
+        <li>Up to 3 rounds; each round reads the best 3 documents and asks the AI only for the gaps. PDFs are downloaded for free; web pages cost 1 credit.</li>
+        <li>A yearly figure (revenue, headcount, share price…) from a document not dated for the report's year is graded C.</li>
+      </ol>
+      <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-scrape">SCRAPE</span><span class="tag t-cost">≤ 10 credits (--doc-credits)</span></div>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 7 -->
+    <div class="node stage">
+      <div class="head"><span class="num">7</span><h3>Pick the best value per data point</h3><span class="what">A before B before C, then API/XBRL before document before web page before derived</span></div>
+      <p style="font-size:14px">A different value from another source is kept in <code>note</code> for review. An ISIN read from a document and found in GLEIF's ISIN list becomes A. A ticker, exchange or ISIN implies "listed". The market-cap band is derived from shares × year-end price (EUR companies only, until year-end exchange rates are added). Every one of the 41 data points gets a row, plus one row per role and pay field; gaps say why. Output: <code>output/datapoints/&lt;id&gt;.json</code> → the CSV given with <code>--out</code>.</p>
+    </div>
+
+  </div>
+</section>
+
+<section id="schema">
+  <div class="eyebrow">Output schema</div>
+  <h2>One row per company and data point, and per role and pay field</h2>
+  <p class="sub">Every company gets exactly 41 company rows, even when nothing was found (then <code>value</code> is empty and <code>note</code> says why), plus 14 rows for each executive role found (or one row saying why there are none). The examples are Equinor's real rows: revenue (company grain) and the CEO's base salary (role grain).</p>
+  <div class="tablewrap"><table class="schema">
+    <thead><tr><th>Column</th><th>What it holds</th><th>Example (Equinor)</th></tr></thead>
+    <tbody>
+      <tr><td>company_id</td><td>The ID from the input CSV, unchanged.</td><td>equinor-asa</td></tr>
+      <tr><td>company_name</td><td>The name from the input CSV.</td><td>Equinor ASA</td></tr>
+      <tr><td>segment</td><td>The segment from the input CSV.</td><td>nordic_listed</td></tr>
+      <tr><td>country</td><td>The country from the input CSV. The country we <i>found</i> is the <code>country_code</code> data point.</td><td>NO</td></tr>
+      <tr><td>lei</td><td>The LEI, repeated on every row for easy filtering.</td><td>OW6OFBNCKXC4US5C7523</td></tr>
+      <tr><td>grain</td><td><code>company</code> (C01–C23) or <code>role</code> (executive pay, R01–R11).</td><td>company · role</td></tr>
+      <tr><td>role_row</td><td>Role grain only: the role as the report states it; the person's name only when needed to tell roles apart.</td><td>President and chief executive officer (CEO)</td></tr>
+      <tr><td>data_point</td><td>Which field this row is. Names match the golden dataset's <code>field</code> where they overlap.</td><td>revenue · base_salary</td></tr>
+      <tr><td>value</td><td>Money and counts as plain numbers in full units (no separators, not in millions). Text as found. Empty if not found.</td><td>106462000000 · 1242000</td></tr>
+      <tr><td>unit</td><td>ISO currency for money, <code>employees</code>, <code>shares</code>, <code>% of base salary</code> for targets…</td><td>USD</td></tr>
+      <tr><td>period_end</td><td>The date the value relates to (balance-sheet date for financials and pay).</td><td>2025-12-31</td></tr>
+      <tr><td>source</td><td>Who published it, in words.</td><td>ESEF filing (filings.xbrl.org) · Remuneration report (PDF)</td></tr>
+      <tr><td>endpoint</td><td>The exact address: the API request, the filing, the PDF opened <b>at the page</b> (<code>#page=N</code>), or a web page with a <code>#:~:text=</code> link that scrolls to the quote.</td><td>https://cdn.sanity.io/files/h61q9gi9/global/1512fd6a4bc0558a1be62359c47ca08b6ab0ac12.pdf#page=15</td></tr>
+      <tr><td>method</td><td><code>API</code> register field · <code>XBRL</code> tagged figure · <code>PARSE</code> AI read a filed document · <code>SCRAPE</code> AI read a web page · <code>DERIVED</code> computed from other values.</td><td>XBRL · PARSE</td></tr>
+      <tr><td>retrieved_at</td><td>When the source was read (UTC). For cached responses: when they were really fetched.</td><td>2026-10-23T15:16:19+00:00</td></tr>
+      <tr><td>confidence</td><td><code>A</code> exact · <code>B</code> AI, quote found in the source · <code>C</code> AI, quote not found, or a check failed. See <a href="#confidence">Confidence</a>.</td><td>A · B</td></tr>
+      <tr><td>note</td><td>The page and the exact quote, the XBRL tag, the number as printed, a disagreeing source, or why there's no value.</td><td>printed 1242 thousands; PDF page 15: "Anders Opedal|1,242|224|96 23|292|306|0|0|30|2,213|73% / 27%"</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="anatomy">
+    <div class="eyebrow">Reading the CEO's base-salary row</div>
+    <div class="cells">
+      <div class="cell"><b>value + unit</b><span>1242000 USD</span><i>The table is headed "USD thousand" and prints 1,242; the multiplication is done in code, not by the AI.</i></div>
+      <div class="cell"><b>endpoint</b><span>…1512fd6a….pdf#page=15</span><i>Click it: the 2025 remuneration report opens on page 15, the pay table.</i></div>
+      <div class="cell"><b>note</b><span>"Anders Opedal|1,242|224|96 23|…"</span><i>The table row as the AI copied it; the pipes are cell borders. "96 23" is two columns merged into one cell by the PDF conversion (known issue 2).</i></div>
+      <div class="cell"><b>confidence B</b><span>quote found on page 15</span><i>The AI read it and the quote was found in that page's text, so anyone can check it.</i></div>
+    </div>
+  </div>
+</section>
+
+<section id="datapoints">
+  <div class="eyebrow">The data points</div>
+  <h2>41 company fields and 14 pay fields per role, and where they usually come from</h2>
+  <div class="dpgrid">
+    <div class="dpgroup"><b>Identity and listing (C01–C09)</b><dl>
+      <dt>legal_name, other_names</dt><dd>GLEIF, SEC former names, report</dd>
+      <dt>lei</dt><dd>GLEIF (API only)</dd>
+      <dt>business_id</dt><dd>GLEIF <code>registeredAs</code>, register, legal notice</dd>
+      <dt>cik</dt><dd>SEC EDGAR; "not applicable" when not an SEC registrant</dd>
+      <dt>isin</dt><dd>FIRDS (UK/CH: OpenFIGI); report, checked against GLEIF's ISIN list</dd>
+      <dt>ticker, exchange</dt><dd>OpenFIGI, FIRDS + MIC list; report, share page</dd>
+      <dt>exchange_segment</dt><dd>MTF from FIRDS; Large/Mid/Small Cap etc. from documents</dd>
+      <dt>listing_status, listing_date</dt><dd>FIRDS; date from documents (FIRDS only for recent listings, C)</dd>
+      <dt>country_code, head_office_city</dt><dd>GLEIF legal and HQ address</dd>
+      <dt>website</dt><dd>report, Wikidata</dd>
+    </dl></div>
+    <div class="dpgroup"><b>Sector and financials (C10–C18)</b><dl>
+      <dt>sector_code</dt><dd>register NACE/SIC (NO, FI, UK, SEC); API only</dd>
+      <dt>sub_sector</dt><dd>the report's one-sentence business description</dd>
+      <dt>revenue, total_assets</dt><dd>XBRL tag, else the statements</dd>
+      <dt>ebitda</dt><dd>as reported, else operating profit (noted)</dd>
+      <dt>fiscal_year, fiscal_year_end, reporting_currency, accounting_basis</dt><dd>filing, report</dd>
+      <dt>headcount, fte</dt><dd>register, report</dd>
+      <dt>shares_outstanding</dt><dd>report share note, governance page, SEC</dd>
+      <dt>share_price</dt><dd>report share section, share page</dd>
+      <dt>market_cap_band</dt><dd>DERIVED: shares × price, banded in EUR (thresholds are placeholders)</dd>
+    </dl></div>
+    <div class="dpgroup"><b>Ownership, breakdowns, pay terms (C19–C23)</b><dl>
+      <dt>largest_holders</dt><dd>report shareholder table, shareholder page</dd>
+      <dt>controlling_owner</dt><dd>private_equity, family, state, corporate, foundation, institutional, employees, other, none</dd>
+      <dt>controlling_owner_name</dt><dd>report; UK: PSC register (25%+)</dd>
+      <dt>ownership_type, pe_stake_5pct</dt><dd>derived from the owners, with the basis in <code>note</code></dd>
+      <dt>ultimate_parent</dt><dd>GLEIF level 2, PSC (50%+), report</dd>
+      <dt>revenue/staff by segment, by country</dt><dd>"Norway: 20336; …" from the segment note</dd>
+      <dt>pension_type, benefits, shareholding_requirement</dt><dd>remuneration report and policy</dd>
+    </dl></div>
+    <div class="dpgroup"><b>Per executive role (R01–R11)</b><dl>
+      <dt>role_disclosure</dt><dd>individual or aggregate</dd>
+      <dt>aggregate_headcount</dt><dd>people in an aggregate row</dd>
+      <dt>pay_currency</dt><dd>currency of the pay table</dd>
+      <dt>base_salary</dt><dd>fixed salary only (client decision pending: or base + benefits?)</dd>
+      <dt>sti_paid, sti_target, sti_max</dt><dd>bonus paid; target and maximum as stated (% of salary…)</dd>
+      <dt>lti_vested, lti_granted, lti_target, lti_max</dt><dd>long-term incentive, with its form</dd>
+      <dt>benefits_value, pension_contribution</dt><dd>pension includes a salary addition in lieu of pension (DERIVED)</dd>
+      <dt>total_remuneration</dt><dd>stated total, checked against the parts (2%)</dd>
+    </dl></div>
+  </div>
+</section>
+
+<section id="walkthrough">
+  <div class="eyebrow">Worked example, end to end</div>
+  <h2>Equinor ASA, traced through every stage</h2>
+  <p class="sub">What happened for one company in the 26 October 2026 run (Nordic/UK test set). Equinor is a Norwegian company listed in Oslo and New York, so it touches almost every source. Result: 35 of 41 company fields and 13 executives' pay, 0 Firecrawl credits on the re-run (everything cached).</p>
+  <div class="faq">
+    <details open><summary>Stage 1 · Who is it? → LEI OW6OFBNCKXC4US5C7523</summary><div class="more">
+      <p>The input gave the LEI. GLEIF's record: <b>EQUINOR ASA</b>, registered in Norway, register number <code>923 609 016</code>, HQ Stavanger, former name StatoilHydro ASA.</p>
+    </div></details>
+    <details open><summary>Stage 2 · APIs: 23 values from GLEIF, FIRDS, OpenFIGI, Brønnøysund and SEC</summary><div class="more">
+      <ul>
+        <li><b>GLEIF:</b> names, register number, country, city; ultimate parent "none (top of group)" (reporting exception NATURAL_PERSONS).</li>
+        <li><b>FIRDS:</b> ISIN <code>NO0010096985</code>, issuer-requested and active on Oslo Børs (MIC XOSL, regulated market) → listed. Its London line ended in 2017, so it is ignored.</li>
+        <li><b>OpenFIGI:</b> ticker <code>EQNR</code> on Oslo.</li>
+        <li><b>Brønnøysund:</b> industry code NACE 06.100 ("Utvinning av råolje"), 21,231 employees.</li>
+        <li><b>SEC EDGAR:</b> CIK 1140625 (Equinor files 20-Fs for its New York shares). As a foreign issuer, only the CIK and former names are kept: SEC's ticker would be the New York one.</li>
+      </ul>
+    </div></details>
+    <details open><summary>Stage 3 · Annual report: the FY2025 ESEF filing, in Norwegian</summary><div class="more">
+      <p>filings.xbrl.org has Equinor's FY2025 annual filing (period end 2025-12-31), found by LEI. Its tags give <b>revenue USD 106,462 million</b> (<code>ifrs-full:Revenue</code>) and <b>total assets USD 131,727 million</b>, confidence A, with a link to the XBRL viewer. A second figure for revenue (105,828 million) is kept in <code>note</code> for review. Its text is Norwegian; that's fine, quotes stay in Norwegian.</p>
+    </div></details>
+    <details open><summary>Stage 4 · AI pass on the report: 20 chunks → owner, FTEs, EBITDA, segments…</summary><div class="more">
+      <div class="tablewrap"><table>
+        <thead><tr><th>Data point</th><th>Value</th><th>Quote (shortened)</th><th>Conf.</th></tr></thead>
+        <tbody>
+          <tr><td>controlling_owner</td><td>state (den norske stat, 67%)</td><td>"den norske stat som hovedaksjonær…"</td><td class="cB">B</td></tr>
+          <tr><td>fte</td><td>21400</td><td>"Gjennomsnittlig antall ansatte | 21.400"</td><td class="cB">B</td></tr>
+          <tr><td>ebitda</td><td>25352000000</td><td>operating profit as printed (noted as such)</td><td class="cB">B</td></tr>
+          <tr><td>revenue_by_segment</td><td>E&amp;P Norway: 307; E&amp;P International: 57…</td><td>"Eksterne salgsinntekter…"</td><td class="cB">B</td></tr>
+          <tr><td>listing_date</td><td>2001</td><td>"I 2001 ble vi børsnotert både på Oslo Børs og…"</td><td class="cB">B</td></tr>
+        </tbody>
+      </table></div>
+    </div></details>
+    <details open><summary>Stage 5 · Executive pay: 13 executives from the 2025 remuneration report</summary><div class="more">
+      <p><b>How it is found without help:</b> SEC EDGAR lists the exhibits of Equinor's latest 20-F; Exhibit 15.6 is the "2025 Remuneration Report". The same PDF is also among the 13 files on <code>equinor.com/reports</code>, where the download is a button and the file address sits in the page's data (on <code>cdn.sanity.io</code>). Before these fixes, Equinor got no pay at all. (In this run the URL was also given in the input, which is read first.)</p>
+      <p><b>What came out:</b> the CEO and 12 EVPs, each with base salary, bonus paid, LTI granted, benefits, pension and total, all linked to page 15; targets and maxima from pages 9 and 35. The CEO's pension, 254,000, is DERIVED: 30,000 pension + 224,000 "salary addition in lieu of pension". Against the golden file: <b>89 of 91 figures match</b>.</p>
+      <p><b>The weak spot:</b> the PDF conversion merges two columns of the pay table ("96 23"), so the AI can assign "other fees" and "fringe benefits" differently from run to run (known issues 2 and 5).</p>
+    </div></details>
+    <details open><summary>Stage 6 · Document fallback: 9 documents read → 4 more values</summary><div class="more">
+      <p>Still missing after stages 2–5: share data, holders, breakdowns by country, the shareholding requirement. Over 3 rounds the fallback read the share page, a shareholder PDF, the governance page, the remuneration policy, a year-end page and others (852 candidate URLs were already known from the report search; on this re-run everything was cached). Found: shares outstanding 2,390,749,040 (governance page), share price NOK 442.8, the largest holder ("The Norwegian state 67%"), and "no PE holder over 5%".</p>
+    </div></details>
+    <details open><summary>Stage 7 · Result: 35 of 41 company fields</summary><div class="more">
+      <p>Where sources disagreed, the more exact one won: FIRDS's "Oslo Børs" (A) beat the report's "Oslo Børs; New York Stock Exchange" (B), which stays in <code>note</code>. Empty: exchange_segment (Oslo has no cap segments in FIRDS), staff by segment, revenue and staff by country, shareholding requirement, and market_cap_band: market cap NOK 1,059 billion, but the EUR band needs a year-end exchange rate that isn't built yet.</p>
+    </div></details>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="eyebrow">Questions and answers</div>
+  <h2>How the mechanism works</h2>
+  <div class="faq">
+
+    <details><summary>How are we finding the company's website?</summary><div class="more">
+      <ol>
+        <li><b>Wikidata by LEI</b> (free): items carry the LEI (P1278) and the official website (P856).</li>
+        <li><b>Wikidata by name and country</b> (free).</li>
+        <li><b>Firecrawl web search</b> (2 credits): <code>"&lt;legal name&gt;" official website investor relations</code>. Domains and titles are scored against the name; news sites, LinkedIn, Bloomberg and data portals are blocked. Below a score of 0.5, no website is used rather than a wrong one.</li>
+      </ol>
+    </div></details>
+
+    <details><summary>How are we finding documents on company websites?</summary><div class="more">
+      <p>Firecrawl's <b>map</b> returns the URLs it knows on a site for a search term (1 credit). We never crawl the whole site. For the annual report: "annual report", then the investor page's PDF links, then the native term ("årsrapport", "geschäftsbericht"…), then "integrated report" and "investors". For other documents, the URLs already found are reused first; a plain map, then a map search per document type, only when nothing fits.</p>
+      <p>Report-downloads pages (<code>/reports</code>, <code>/downloads</code>, <code>/publications</code> and local words) are read for file addresses kept in the page's data, which catches downloads behind buttons. File names say what a link is; when they say nothing (<code>…/8769e063.pdf</code>), the link text is judged instead.</p>
+    </div></details>
+
+    <details><summary>How do we know the document belongs to the right company and year?</summary><div class="more">
+      <ul>
+        <li><b>Filings</b> (ESEF, SEC, registers) are found by the company's own identifier: identity is certain.</li>
+        <li><b>Website documents</b>: ranking penalises other legal forms and group-function words; after reading, the identity check compares the report's own legal name and country with the company's, and grades everything C on a mismatch.</li>
+        <li><b>Year</b>: pay documents for an older year are skipped; yearly figures from fallback documents not dated for the report's year are graded C.</li>
+      </ul>
+    </div></details>
+
+    <details><summary>How do we find the right part of a 300-page report?</summary><div class="more">
+      <ol>
+        <li>The report becomes text with one marker per PDF page, cut into chunks of up to ~1,500 words along headings, each remembering its pages.</li>
+        <li>Each chunk is scored per topic with keyword lists in several languages; a keyword in a heading counts extra; statement tables get a boost for financials; tables of contents are skipped.</li>
+        <li>The best chunks per topic go to the AI, about 2,500 words per topic, so it reads a fraction of the report.</li>
+      </ol>
+    </div></details>
+
+    <details><summary>How do you know which page had the value?</summary><div class="more">
+      <ol>
+        <li><b>The AI must quote:</b> a passage under 25 words copied from one chunk, plus the chunk's number. No quote, no value.</li>
+        <li><b>We search for the quote ourselves</b>, after normalising both (case, table borders, thousands separators, quote marks).</li>
+        <li><b>Cited chunk's pages first, then the whole document;</b> exact match first, then a loose one (the words in order, a few extra words allowed).</li>
+        <li>Found → <code>#page=N</code> and confidence B. Not found → confidence C, "quote not found verbatim".</li>
+      </ol>
+      <p>The page is the PDF's own page number (what <code>#page=</code> opens), which can differ from the printed one. Filed XHTML has no pages, so those rows link with <code>#:~:text=</code>.</p>
+    </div></details>
+
+    <details><summary>How do we stop the AI from inventing values?</summary><div class="more">
+      <ul>
+        <li>It only sees document text, is told never to use outside knowledge, and must fill a fixed schema (structured output).</li>
+        <li>Every value needs an exact quote, which we verify; unverified ones are C.</li>
+        <li>Numbers are copied as printed with their unit; conversion is done in code, with a guard against values the AI already multiplied.</li>
+        <li>Exact sources (tags, registers) always beat AI-read values.</li>
+        <li>Classifications (owner type, PE stake) show their basis in <code>note</code>; computed values say DERIVED.</li>
+      </ul>
+    </div></details>
+
+    <details><summary>What if two sources disagree?</summary><div class="more">
+      <p>Confidence A before B before C, then API/XBRL before a filed document before a web page before a derived value. The other value is kept in <code>note</code> ("other source says …"), so differences are visible, not hidden. One exception: a ticker from OpenFIGI ("VOLVB") takes a document's spelling ("VOLV B") when the two agree.</p>
+    </div></details>
+
+    <details><summary>What does an empty value mean?</summary><div class="more">
+      <ul>
+        <li><code>not found in: GLEIF, ESMA FIRDS, …, Annual report (PDF), Share information (web page)</code>: every source listed was checked.</li>
+        <li><code>not applicable: …</code>: listing fields for unlisted companies, <code>cik</code> for non-SEC registrants, pay for unlisted companies.</li>
+        <li><code>not derived: …</code>: market-cap band for non-EUR companies.</li>
+        <li>For pay: one role row saying why ("no remuneration report found", "not found in: …").</li>
+      </ul>
+    </div></details>
+
+    <details><summary>What does it cost, and how do re-runs work?</summary><div class="more">
+      <ul>
+        <li><b>Free:</b> GLEIF, FIRDS, OpenFIGI, registers, SEC, ESEF, Wikidata, and every PDF download (converted locally).</li>
+        <li><b>Firecrawl</b>, capped per company: up to 6 credits to find the annual report, up to 10 for pay and fallback documents (<code>--doc-credits</code>); <code>--max-run-credits</code> caps a whole run. Out of credits: the run continues on free sources and flags the company.</li>
+        <li><b>Gemini 2.5 Flash on Vertex AI</b> for the AI calls (a few per company).</li>
+        <li><b>Caching:</b> API answers for a week; documents, maps and AI answers (keyed by prompt and chunks) on disk, so a re-run with nothing changed costs nothing. Finished companies are skipped unless <code>--redo</code>.</li>
+      </ul>
+    </div></details>
+
+  </div>
+</section>
+
+<section id="confidence">
+  <div class="eyebrow">Confidence</div>
+  <h2>What each grade means</h2>
+  <div class="conf">
+    <div><span class="big cA">A</span><b>Exact</b><p>A register field or an XBRL tag, or an ISIN from a document confirmed in GLEIF's ISIN list. The endpoint is the API URL or the filing.</p></div>
+    <div><span class="big cB">B</span><b>Read by the AI, quote found</b><p>The quote was found in the source text, so the value can be checked on the linked page. Also: OpenFIGI tickers (Bloomberg spelling).</p></div>
+    <div><span class="big cC">C</span><b>Check first</b><p>The quote wasn't found word for word; or the report failed the identity check; or a yearly figure came from a document not dated for the report's year; or a FIRDS listing date.</p></div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="eyebrow">Known limits</div>
+  <h2>What doesn't work yet (docs/known_issues.md)</h2>
+  <div class="faq">
+    <details open><summary>Open</summary><div class="more">
+      <ul>
+        <li><b>Merged table columns (issue 2):</b> the PDF conversion can merge two columns of a pay table; the AI then reads those cells inconsistently between runs (issue 5). Planned: re-read only flagged pay pages as images.</li>
+        <li><b>Segments within a regulated market (issue 9):</b> Large/Mid/Small Cap, Prime Standard need the exchanges' own files.</li>
+        <li><b>Holding companies (issues 6, 7):</b> a UK holding company's own filed accounts have no group figures; register industry codes describe the holding company.</li>
+        <li><b>Report finder (issue 4):</b> a placeholder page can still outrank a downloads page; a subsidiary's report with a plain file name isn't caught before reading.</li>
+        <li><b>Scanned PDFs</b> are skipped (no OCR).</li>
+      </ul>
+    </div></details>
+    <details open><summary>Waiting on the client</summary><div class="more">
+      <ul>
+        <li>Definitions (issue 10): base salary with or without benefits; which revenue line; market-cap band thresholds.</li>
+        <li>The Allshares industry taxonomy, to classify sub-sector from the business description (issue 7).</li>
+        <li>Which fiscal year the golden files hold (issue 11).</li>
+      </ul>
+    </div></details>
+  </div>
+</section>
+
+<footer>
+  Code: <code>extractor/datapoints.py</code> (the whole flow: <code>collect()</code>; stages 2, 4–7), <code>extractor/pipeline.py</code> (stages 1, 3), <code>extractor/apis.py</code> and <code>extractor/listing.py</code> (stage 2), <code>extractor/pay.py</code> and <code>extractor/edgar.py</code> (stage 5), <code>extractor/documents.py</code> (stage 6), <code>prompts/</code>. Firecrawl caps per company: 6 credits for the annual report, 10 for pay and fallback documents.
+</footer>
+</div>
+</body>
+</html>
