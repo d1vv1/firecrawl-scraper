@@ -12,3 +12,10 @@ output/*
 # Reference material from other teams (not part of this tool)
 annual_report_fetcher/
 Source_validation_listed_*/
+# Datasets: company lists, golden values, validation results (not committed).
+# The small input-format example stays.
+*.csv
+!data/companies.example.csv
+# Client and colleague material: only the colleague's API script is committed
+extras/*
+!extras/collect_company_data.py
