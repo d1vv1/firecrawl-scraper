@@ -10,10 +10,10 @@ Open problems found during test runs, to pick up later. Newest first.
 | 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
 | 7 | Register industry codes describe the holding company | open | client's chosen approach not built |
 | 6 | Holding companies' own filed accounts give no group figures | open | consolidated accounts |
-| 5 | Run-to-run variation in AI answers | open | caused by issue 2; cache snapshot |
+| 5 | Run-to-run variation in AI answers | mostly fixed | pay tables Camelot can't use (no total column, people as columns) |
 | 4 | Report finder can still pick a subsidiary's or a placeholder report | partly fixed | more guards |
 | 3 | SEC name lookup misses some registrants | fixed | — |
-| 2 | PDF tables converted with merged columns | open | better table extraction |
+| 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
 
 ## 11. Golden file values that look like a different fiscal year
@@ -66,6 +66,8 @@ Nordic/UK test: ISIN 10 of 10 (was 5), exchange fields 51 of 60 (was 47); Novo N
 
 *Found 24 October 2026; **tested 26 October 2026**.* The temperature was already 0 (`llm._parse`). Asking Gemini 2.5 Flash the same Equinor pay question three times still changed 25 of 136 values; a fixed seed (36 changed) and the thinking levels `minimal` (18) and `low` (25) did not fix it (`high` timed out). **Every value that changed was in the merged table columns of issue 2** (benefits, pension allowance, other fees); clean columns came back identical each time. So the fix is issue 2, not a model setting.
 
+**29 October 2026: pay amounts now come from the table where one is usable** (issue 2, `extractor/pay_tables.py`). Three fresh runs of the 10-company set (pay answers and table mappings cleared before each) scored 118, 120 and 120 of 148 golden pay figures, against 98 to 121 before. Equinor scored 91 of 91 and Novo Nordisk the same in all three runs. The rest of the spread is Bang & Olufsen (1 to 3 of 17), whose table has no total column and so keeps the AI's reading.
+
 Meanwhile answers are cached per prompt and chunks, so a run without prompt changes is stable. A changed gap list or prompt asks again and can move such values: when the exchange lists filled Equinor's ISIN, the document step asked for a different set of facts and Equinor's `staff_by_country` was not found that time. Mitigations: keep a reviewed snapshot of the cache before prompt changes; flag a role whose parts don't add up to its total (already noted by the R11 check).
 
 ## 4. Report finder can still pick a subsidiary's or a placeholder report
@@ -80,7 +82,30 @@ Meanwhile answers are cached per prompt and chunks, so a run without prompt chan
 
 ## 2. PDF tables converted with merged columns (Equinor pay table)
 
-*Found 24 October 2026.*
+*Found 24 October 2026; **fixed for pay tables with a total column, 29 October 2026**.*
+
+**The fix (built from `docs/pay_table_plan.md`).** pymupdf4llm still converts every page, and its text is what the AI reads and what quotes are checked against. On the pages that look like pay tables (`pay.table_pages`, up to 6), `extractor/pay_tables.py` then:
+1. reads each table with Camelot (stream mode), dropping prose read as columns;
+2. asks one small AI call, cached per table, which rows are this year's executives and which columns make up which field (rules in `prompts/pay_columns_system.md`), from the grid by row and column number, each column's header words and the page text;
+3. adds up the mapped cells in code;
+4. keeps a row only if its parts add up to the table's own total (2%).
+
+A table is not used when it is for another year (Equinor's 2024 table on page 16), has no total column, maps one column to two fields, or has no base salary. Each checked row replaces the amounts of the role the pay AI call found for it (matched by name, title or base salary); titles, targets and maxima stay from the AI. Quotes are the person plus the cells added ("Anders Opedal | 96 | 23"), graded B with the page. `PAY_TABLES=0` turns it off.
+
+| 10-company set, golden pay figures (of 148) | Result |
+|---|---|
+| Cached AI answers, before | 98 |
+| The same cached AI answers, with tables | 123 |
+| Three fresh runs, with tables | 118, 120, 120 |
+
+**Not covered yet**, so these still rely on the AI's reading of the converted text:
+- tables with people as columns (Nokia, Marimekko; rejected because one column maps to several fields);
+- tables without a total column (Bang & Olufsen, whose figures then vary between runs);
+- pay given in prose, and non-PDF sources (ESEF XHTML: Shell, AO World).
+
+A missing column smaller than 2% of the total passes the check: leaving out Equinor's CEO's fringe benefits (23 of 2,213) would not be caught.
+
+The original analysis follows.
 
 **Symptom.** Equinor's executive pay matches the golden file on one run (89 of 91 figures) and not on another. Benefits once matched 1 of 13.
 

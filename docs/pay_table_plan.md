@@ -1,6 +1,12 @@
 # Plan: reading executive pay tables reliably
 
-*26 October 2026. Status: proposed, not built. Related: `docs/known_issues.md`, issues 2 (merged table columns) and 5 (run-to-run variation).*
+*26 October 2026. Status: **built 29 October 2026** (`extractor/pay_tables.py`, `prompts/pay_columns_system.md`, `tests/test_pay_tables.py`); results and what changed from this plan are in `docs/known_issues.md`, issue 2. Related: issues 2 (merged table columns) and 5 (run-to-run variation).*
+
+**Changed from the plan while building it:**
+- The mapping call sees the whole small grid with row and column numbers, not just the header row. Real tables spread headers over several rows and put names on their own row, and code can't find the header and data rows reliably. Code adds each column's joined header words and the page text (for the caption, year and unit).
+- The table route doesn't replace the pay AI call. That call still runs and gives role titles, targets, maxima and company terms; the table replaces only the amounts of the roles it matches.
+- A table needs a total column. Without one nothing checks the mapping, so it isn't used.
+- Results: 118, 120 and 120 of 148 over three fresh runs. That is close to the same score every time, but just under the 121 target; the spread left is Bang & Olufsen, whose table has no total column.
 
 ## In short
 

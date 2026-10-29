@@ -144,13 +144,13 @@ Three of the validation team's companies (Kendrion NL, Komax CH, Rosenbauer AT) 
 
 ## Nordic/UK test against data/golden_UK_Nordics_22Oct
 
-Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 26 October 2026 (exchange lists added; the report's AI pass now asks only for what the APIs left open, so every company was asked afresh once: 53 company values moved, mostly wording, fill unchanged). SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
+Ten companies (Shell, AO World, Volvo, BioArctic, Equinor, Aker Carbon Capture, Novo Nordisk, Bang & Olufsen, Nokia, Marimekko), last run 29 October 2026 (pay tables read by Camelot); before that 26 October 2026 (exchange lists added; the report's AI pass now asks only for what the APIs left open, so every company was asked afresh once: 53 company values moved, mostly wording, fill unchanged). SEC registrants found: Shell, Equinor, Novo Nordisk, Nokia. Details: `output/golden_uk_nordics_check.md`; data: `output/nordic_uk_10_datapoints.csv`.
 
 | Measure | Result |
 |---|---|
 | Company fields filled | 80% (327 of 410) |
 | Exchange fields filled (ISIN, ticker, exchange, segment, status, date) | 50 of 60 (51 before the index-is-not-a-segment rule), was 47; ISIN 10 of 10 (was 5); Novo Nordisk's ticker is now NOVOB, not its NYSE ADR NVO |
 | Golden company values matched | 16 of 18 (the two Nokia misses look like FY2024 golden values) |
-| Golden pay figures | 98 to 121 match (of 148) depending on the AI's answer: the latest run 98; the same input has scored 119 (issue 5) |
-| Equinor pay (13 executives) | 66 to 89 of 91 (latest 66), found automatically through its 20-F exhibit; the spread is the merged-column problem (issues 2 and 5) |
-| Bang & Olufsen pay | 4 of 17: we read FY2025/26, the golden file holds FY2024/25 |
+| Golden pay figures | 118 to 120 match (of 148) over three fresh runs on 29 October 2026, with pay amounts read from the table where one is usable (`extractor/pay_tables.py`); before, 98 to 121 on the same input (issue 5). The remaining spread is Bang & Olufsen, whose table has no total column |
+| Equinor pay (13 executives) | 91 of 91 in all three fresh runs (was 66 to 89), found automatically through its 20-F exhibit; the table on page 15 is read by Camelot |
+| Bang & Olufsen pay | 1 to 3 of 17: we read FY2025/26, the golden file holds FY2024/25 |

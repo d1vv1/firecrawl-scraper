@@ -248,6 +248,30 @@ class RolePay(BaseModel):
     lti_max: PayTarget
 
 
+class MappedRow(BaseModel):
+    row: int                        # number of the row holding the figures
+    label: str                      # the person or role as printed
+
+
+class ColumnMap(BaseModel):
+    """Which rows and columns of a pay table make up which field (pay_tables.py).
+    Row and column numbers only: the figures are read by code."""
+    is_pay_table: bool              # pay of executives per person or role
+    year: Optional[str]             # the year the mapped rows are for
+    unit: Optional[Unit]            # from the caption or header ("USD thousand")
+    currency: Optional[str]
+    rows: list[MappedRow]           # executives, the latest year only; no totals or board
+    base_salary: list[int]          # column numbers added up for each field
+    sti_paid: list[int]
+    lti_vested: list[int]
+    lti_granted: list[int]
+    benefits: list[int]
+    pension: list[int]
+    pension_allowance: list[int]
+    other_in_total: list[int]       # in the total but none of the fields above
+    total: Optional[int]            # the table's own total column
+
+
 class RemunerationFacts(BaseModel):
     """A remuneration report or policy: pay per executive role, plus company-level terms."""
     fiscal_year: Optional[str]

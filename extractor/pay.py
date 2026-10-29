@@ -17,9 +17,11 @@ checked against the sum of its parts (a difference over 2% is noted).
 
 Pay tables are wide, and the PDF-to-text conversion can merge two neighbouring columns
 into one cell ("96<br>23"); the AI then reads them differently from run to run. So for
-a PDF, the pages that look like pay tables are also shown to the AI as images
-(table_pages, page_images). Off unless PAY_PAGE_IMAGES=1: see PAGE_IMAGES and
-docs/known_issues.md, issue 2.
+a PDF, the amounts of roles found in a pay table are taken from the table itself
+(pay_tables.py: Camelot reads it, a small AI call maps its columns, code adds up), and
+the pages that look like pay tables (table_pages) are the ones it reads. Showing those
+pages to the AI as images (page_images) is off unless PAY_PAGE_IMAGES=1: see PAGE_IMAGES
+and docs/known_issues.md, issue 2.
 """
 
 import json

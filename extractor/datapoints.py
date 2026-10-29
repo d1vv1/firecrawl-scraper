@@ -17,7 +17,8 @@ annual-report pipeline (2) runs first (process_company), then collect() does the
   3. one LLM pass over the same report for the remaining facts, each with a quote that
      is looked up in the report to find its page;
   4. executive pay per role (from_pay): a supplied URL, SEC exhibits, the remuneration
-     report on the site, the annual report's remuneration section;
+     report on the site, the annual report's remuneration section; amounts in a pay
+     table of a PDF come from the table itself (pay_tables.py);
   5. document fallback: data points still missing are looked for in the company's
      other documents (governance and sustainability reports, "The share" and
      shareholder pages, legal notice, year-end report...; see documents.py), in
@@ -60,7 +61,7 @@ from urllib.parse import quote as urlquote, urlparse
 import httpx
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, listing, llm, pay
+from . import apis, edgar, listing, llm, pay, pay_tables
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
@@ -839,7 +840,9 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                      report_year)
             continue
         if pay.has_pay(f):
-            facts, origin = f, o
+            # the amounts of roles found in a checked pay table come from the table
+            facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text())
+            origin = o
             break
         log.info("Pay: no executive pay figures in %s", o.url)
     if facts is None:

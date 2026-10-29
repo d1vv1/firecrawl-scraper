@@ -6,6 +6,8 @@ tenacity>=9
 httpx[http2]>=0.28
 curl_cffi>=0.11
 pymupdf4llm>=1.28
+camelot-py>=2.0           # pay tables (extractor/pay_tables.py)
+opencv-python-headless>=4.10  # needed by camelot
 pytest>=8
 azure-identity>=1.19      # Foundry sign-in when key login is disabled
 google-auth>=2.35         # Vertex AI sign-in (LLM_PROVIDER=vertex)

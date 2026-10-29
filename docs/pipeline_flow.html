@@ -304,6 +304,16 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
         <li><b>The remuneration report on the company's site.</b> Second try: open the site's report-downloads page first, whose files join the pool (also files behind download buttons, read from the page's data), then a map search for "remuneration report".</li>
         <li><b>The annual report's remuneration section.</b></li>
       </ol>
+      <details><summary>Pay tables in a PDF: read by Camelot, not by the AI</summary><div class="more">
+        <p>The pay AI call reads the whole document and gives every role with titles, targets and figures. Then, for the pages that look like pay tables (many numbers, several pay words; up to 6), <code>extractor/pay_tables.py</code>:</p>
+        <ol>
+          <li><b>Reads</b> each table with Camelot (stream mode): the right columns, no AI. Prose read as columns (few figures) is dropped.</li>
+          <li><b>Maps</b> it with one small AI call that sees only the grid by row and column number, each column's header words, and the page text for the caption: which rows are this year's executives, and which columns make up which field (rules in <code>prompts/pay_columns_system.md</code>: other fees count as benefits, share savings plans as LTI, a salary addition in lieu of pension as pension). It gives numbers of rows and columns, never figures. Cached per table, so the same table maps the same way every run.</li>
+          <li><b>Adds up</b> the mapped cells of each row in code, with the table's unit.</li>
+          <li><b>Checks</b> that the parts add up to the table's own total (2%). A table is not used when it is for another year, has no total column, maps one column to two fields (a table with people as columns), or has no base salary.</li>
+        </ol>
+        <p>Each checked row replaces the amounts of the role it belongs to (matched by name, title or base salary); titles, targets and maxima stay from the AI call. The quote is the person and the cells added ("Anders Opedal | 96 | 23"), graded B with the page; the note names the columns ("includes table: Other fees + Fringe benefits"). Anything not covered keeps the AI's reading. <code>PAY_TABLES=0</code> turns it off.</p>
+      </div></details>
       <details><summary>Checks on the pay figures</summary><div class="more">
         <ul>
           <li><b>Year check:</b> a document whose pay is for an older year than the annual report is skipped (Shell's roadshow deck; Equinor's FY2024 report). Split years such as "2025/26" count by their end year.</li>
@@ -462,7 +472,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
     <details open><summary>Stage 5 · Executive pay: 13 executives from the 2025 remuneration report</summary><div class="more">
       <p><b>How it is found without help:</b> SEC EDGAR lists the exhibits of Equinor's latest 20-F; Exhibit 15.6 is the "2025 Remuneration Report". The same PDF is also among the 13 files on <code>equinor.com/reports</code>, where the download is a button and the file address sits in the page's data (on <code>cdn.sanity.io</code>). Before these fixes, Equinor got no pay at all. (In this run the URL was also given in the input, which is read first.)</p>
       <p><b>What came out:</b> the CEO and 12 EVPs, each with base salary, bonus paid, LTI granted, benefits, pension and total, all linked to page 15; targets and maxima from pages 9 and 35. The CEO's pension, 254,000, is DERIVED: 30,000 pension + 224,000 "salary addition in lieu of pension". Against the golden file: <b>89 of 91 figures match</b>.</p>
-      <p><b>The weak spot:</b> the PDF conversion merges two columns of the pay table ("96 23"), so the AI can assign "other fees" and "fringe benefits" differently from run to run (known issues 2 and 5).</p>
+      <p><b>The pay table:</b> the PDF conversion merges two columns of the table ("96 23"), so the AI alone assigned "other fees" and "fringe benefits" differently from run to run (known issues 2 and 5). Camelot reads the table on page 15 with every column right, and all 13 executives' amounts come from it; the 2024 table on page 16 is skipped by the year check.</p>
     </div></details>
     <details open><summary>Stage 6 · Document fallback: 9 documents read → 4 more values</summary><div class="more">
       <p>Still missing after stages 2–5: share data, holders, breakdowns by country, the shareholding requirement. Over 3 rounds the fallback read the share page, a shareholder PDF, the governance page, the remuneration policy, a year-end page and others (852 candidate URLs were already known from the report search; on this re-run everything was cached). Found: shares outstanding 2,390,749,040 (governance page), share price NOK 442.8, the largest holder ("The Norwegian state 67%"), and "no PE holder over 5%".</p>
@@ -568,7 +578,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
   <div class="faq">
     <details open><summary>Open</summary><div class="more">
       <ul>
-        <li><b>Merged table columns (issue 2):</b> the PDF conversion can merge two columns of a pay table; the AI then reads those cells inconsistently between runs (issue 5). Planned: re-read only flagged pay pages as images.</li>
+        <li><b>Pay tables not read by Camelot (issue 2):</b> tables with people as columns (Nokia, Marimekko), tables without a total column (Bang &amp; Olufsen) and pay given in prose still rely on the AI's reading of the converted text, which can vary between runs (issue 5).</li>
         <li><b>Segments within a regulated market (issue 9):</b> Large/Mid/Small Cap, Prime Standard need the exchanges' own files.</li>
         <li><b>Holding companies (issues 6, 7):</b> a UK holding company's own filed accounts have no group figures; register industry codes describe the holding company.</li>
         <li><b>Report finder (issue 4):</b> a placeholder page can still outrank a downloads page; a subsidiary's report with a plain file name isn't caught before reading.</li>
@@ -586,7 +596,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
 </section>
 
 <footer>
-  Code: <code>extractor/datapoints.py</code> (the whole flow: <code>collect()</code>; stages 2, 4–7), <code>extractor/pipeline.py</code> (stages 1, 3), <code>extractor/apis.py</code> and <code>extractor/listing.py</code> (stage 2), <code>extractor/pay.py</code> and <code>extractor/edgar.py</code> (stage 5), <code>extractor/documents.py</code> (stage 6), <code>prompts/</code>. Firecrawl caps per company: 6 credits for the annual report, 10 for pay and fallback documents.
+  Code: <code>extractor/datapoints.py</code> (the whole flow: <code>collect()</code>; stages 2, 4–7), <code>extractor/pipeline.py</code> (stages 1, 3), <code>extractor/apis.py</code> and <code>extractor/listing.py</code> (stage 2), <code>extractor/pay.py</code>, <code>extractor/pay_tables.py</code> and <code>extractor/edgar.py</code> (stage 5), <code>extractor/documents.py</code> (stage 6), <code>prompts/</code>. Firecrawl caps per company: 6 credits for the annual report, 10 for pay and fallback documents.
 </footer>
 </div>
 </body>
