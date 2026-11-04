@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Allshares Part 1 accuracy report</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230077BB'/%3E%3Crect x='3' y='8' width='2.5' height='5' fill='white'/%3E%3Crect x='6.75' y='5' width='2.5' height='8' fill='white'/%3E%3Crect x='10.5' y='2' width='2.5' height='11' fill='white'/%3E%3C/svg%3E">
+<script>
+/*__SCHEMA__*/
+</script>
+<script>
+/*__CORE__*/
+</script>
+<script>
+/*__CHARTS__*/
+</script>
+<style>
+/*__CSS__*/
+</style></head>
+<body>
+<div class="top">
+  <div class="brand">Allshares Part 1 accuracy</div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-p="overview" aria-selected="true">Overview</button>
+    <button class="tab" role="tab" data-p="paycomp" aria-selected="false">Pay vs company</button>
+    <button class="tab" role="tab" data-p="countries" aria-selected="false">Countries</button>
+    <button class="tab" role="tab" data-p="fields" aria-selected="false">Fields</button>
+    <button class="tab" role="tab" data-p="empty" aria-selected="false">Empty fields</button>
+    <button class="tab" role="tab" data-p="companies" aria-selected="false">Companies</button>
+    <button class="tab" role="tab" data-p="failures" aria-selected="false">Failures</button>
+    <button class="tab" role="tab" data-p="steps" aria-selected="false">Validation steps</button>
+    <button class="tab" role="tab" data-p="ranges" aria-selected="false">Ranges</button>
+    <button class="tab" role="tab" data-p="trend" aria-selected="false">Trend</button>
+    <button class="tab" role="tab" data-p="metrics" aria-selected="false">Metric register</button>
+    <button class="tab" role="tab" data-p="import" aria-selected="false">Import data</button>
+  </div>
+  <div class="meta" id="meta"></div>
+</div>
+<aside class="slicers">
+  <div class="slicer"><h4>Country</h4><select id="fCountry"></select></div>
+  <div class="slicer"><h4>Source</h4><select id="fSource"><option value="all">All sources</option><option value="T">Tracker (50 IDs, 49 companies)</option><option value="I">Imported</option></select></div>
+  <div class="slicer"><h4>Data type</h4><select id="fType"><option value="all">Company and pay</option><option value="company">Company data</option><option value="pay">Pay data</option></select></div>
+  <div class="slicer"><h4>Field group</h4><select id="fCat"></select></div>
+  <div class="slicer"><h4>Company</h4><select id="fCompany"></select></div>
+  <div class="slicer"><h4>Score status</h4><select id="fStatus"></select></div>
+  <div><button class="linkbtn" id="fClear">Clear filters</button></div>
+</aside>
+<main>
+  <div class="kstrip" id="kstrip"></div>
+
+  <section class="page on" id="p-overview">
+    <div class="title" id="ovTitle"></div><div class="sub" id="ovSub"></div>
+    <div class="attn info" id="dupNote"></div>
+    <div class="grid">
+      <div class="vis"><h3>Companies run by country</h3><div id="chCompanies"></div></div>
+      <div class="vis"><h3>Value status</h3><div id="chStatus"></div><div class="legend" id="lgStatus"></div></div>
+    </div>
+    <div class="vis"><h3>Country summary</h3><div class="tbl"><table><thead><tr><th>Country</th><th class="n">Companies</th><th class="n">Values</th><th class="n">Found</th><th class="n">Partial</th><th class="n">Not found</th><th class="n">Found %</th></tr></thead><tbody id="ovTable"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-paycomp">
+    <div class="title" id="pcTitle"></div><div class="sub">Pay data: policy, role and all pay fields. Company data: identity, listing, financials, workforce, ownership, segments.</div>
+    <div class="grid">
+      <div class="vis"><h3>Status by data type</h3><div id="chPC"></div><div class="legend" id="lgPC"></div></div>
+      <div class="vis"><h3>Share of values</h3><div id="chPCpie"></div></div>
+    </div>
+    <div class="vis"><h3>Pay vs company by country</h3><div class="tbl"><table><thead><tr><th>Country</th><th class="n">Company values</th><th class="n">Company found %</th><th class="n">Pay values</th><th class="n">Pay found %</th></tr></thead><tbody id="pcTable"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-countries">
+    <div class="title" id="cnTitle"></div><div class="sub">Status of values by country, with the companies run in each.</div>
+    <div class="grid">
+      <div class="vis"><h3>Status by country</h3><div id="chCountry"></div><div class="legend" id="lgCountry"></div></div>
+      <div class="vis"><h3>Companies by country</h3><div id="chCountryCo"></div></div>
+    </div>
+    <div class="vis"><h3>Detail by country and data type</h3><div class="tbl"><table><thead><tr><th>Country</th><th>Data type</th><th class="n">Values</th><th class="n">Found</th><th class="n">Partial</th><th class="n">Not found</th></tr></thead><tbody id="cnTable"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-fields">
+    <div class="title" id="fdTitle"></div><div class="sub">Each data point: how many values were found, and how its scored values came out (Pass, Review, Incomplete, Fail, Fail (hard)). Click a field to see every value.</div>
+    <div class="vis"><h3 id="fdChartTitle">Score status by field</h3><div id="chFields"></div><div class="legend" id="lgFields"></div></div>
+    <div class="vis"><div class="bar"><div class="opt" style="flex:1 1 240px"><h4>Search fields</h4><input type="search" id="fdSearch" placeholder="Field, ID or group"></div></div>
+      <div class="tbl tall"><table><thead><tr><th data-sort="d">Field</th><th data-sort="f">ID</th><th data-sort="k">Group</th><th class="n" data-sort="rows">Rows</th><th class="n" data-sort="found">Found</th><th class="n" data-sort="partial">Partial</th><th class="n" data-sort="nf">Not found</th><th class="n" data-sort="P">Pass</th><th class="n" data-sort="R">Review</th><th class="n" data-sort="I">Incomplete</th><th class="n" data-sort="F">Fail</th><th class="n" data-sort="H">Fail (hard)</th><th class="n" data-sort="passPct">Pass %</th><th class="n" data-sort="avg">Avg score</th><th></th></tr></thead><tbody id="fdTable"></tbody></table></div></div>
+    <div id="fdDetail"></div>
+  </section>
+
+  <section class="page" id="p-empty">
+    <div class="title" id="emTitle"></div><div class="sub">Values with no result in any source tried (status not_found). Click a company to open its detail.</div>
+    <div class="grid">
+      <div class="vis"><h3 id="emChartTitle">Fields empty most often (top 12)</h3><div id="chEmpty"></div></div>
+      <div class="vis"><h3>Empty values by data type</h3><div id="chEmptyType"></div></div>
+    </div>
+    <div class="vis"><h3>Empty by field</h3><div class="tbl"><table><thead><tr><th>Field</th><th>Group</th><th>Grain</th><th class="n">Rows</th><th class="n">Empty</th><th class="n">Empty %</th><th class="n">Companies with it empty</th></tr></thead><tbody id="emFields"></tbody></table></div></div>
+    <div class="vis"><h3>Empty by company</h3><div class="tbl"><table><thead><tr><th>Company</th><th>Country</th><th class="n">Rows</th><th class="n">Empty</th><th class="n">Empty %</th><th>Empty fields</th><th></th></tr></thead><tbody id="emCompanies"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-companies">
+    <div class="title" id="coTitle"></div><div class="sub">One row per company, counted by LEI. Click a company to drill into its values and gate results.</div>
+    <div id="coList">
+      <div class="vis"><div class="bar"><div class="opt" style="flex:1 1 240px"><h4>Search companies</h4><input type="search" id="coSearch" placeholder="Name, ID or LEI"></div></div>
+        <div class="tbl tall"><table><thead><tr><th data-sort="o">Company</th><th data-sort="c">Country</th><th>IDs</th><th class="n" data-sort="rows">Rows</th><th class="n" data-sort="found">Found</th><th class="n" data-sort="partial">Partial</th><th class="n" data-sort="nf">Not found</th><th class="n" data-sort="P">Pass</th><th class="n" data-sort="R">Review</th><th class="n" data-sort="I">Incomplete</th><th class="n" data-sort="F">Fail</th><th class="n" data-sort="H">Fail (hard)</th><th class="n" data-sort="avg">Avg score</th><th></th></tr></thead><tbody id="coTable"></tbody></table></div></div>
+    </div>
+    <div id="coDetail"></div>
+  </section>
+
+  <section class="page" id="p-failures">
+    <div class="title" id="flTitle"></div><div class="sub">Gate results from the scoring run, for the values in view. Imported values are not gate-scored.</div>
+    <div class="attn" id="attn"></div>
+    <div class="grid">
+      <div class="vis"><h3>Fails by check (top 12)</h3><div id="chChecks"></div><div class="legend"><span><i style="background:#CC3311"></i>Hard</span><span><i style="background:#EE7733"></i>Soft</span></div></div>
+      <div class="vis"><h3>Hard vs soft fails</h3><div id="chSev"></div></div>
+      <div class="vis"><h3>Fail rate by module (% of run checks)</h3><div id="chModule"></div></div>
+      <div class="vis"><h3>Fail rate by field (top 12)</h3><div id="chField"></div></div>
+    </div>
+    <div class="vis"><h3>Fails by field</h3><div class="tbl"><table><thead><tr><th>Field</th><th>Group</th><th class="n">Runs</th><th class="n">Fail</th><th class="n">Hard fail</th><th class="n">Not run</th><th class="n">Fail rate</th></tr></thead><tbody id="flTable"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-steps"><div id="stBody"></div></section>
+
+  <section class="page" id="p-ranges">
+    <div class="title" id="rgTitle"></div>
+    <div class="sub">Provisional ranges from the sample: NOT Allshares-approved and not used in scoring (NUM-04 stays NOT RUN). Linear-interpolation percentiles, as Excel PERCENTILE.INC. Global filters apply.</div>
+    <div class="vis"><h3>Range options</h3>
+      <div class="bar">
+        <div class="opt"><h4>Field</h4><select id="rgField"></select></div>
+        <div class="opt"><h4>Unit / currency</h4><select id="rgUnit"></select></div>
+        <div class="opt"><h4>Grain</h4><select id="rgGrain"><option value="">All</option><option value="company">Company</option><option value="role">Role</option></select></div>
+        <div class="opt"><h4>Method</h4><select id="rgMethod"></select></div>
+        <div class="opt"><h4>Include values</h4><select id="rgInclude"><option value="all">All found values</option><option value="nohard">Exclude hard fails</option><option value="passreview">Pass and Review only</option></select></div>
+        <div class="opt" style="flex-basis:90px"><h4>Low pct</h4><input type="number" id="rgLow" min="0" max="100" value="5"></div>
+        <div class="opt" style="flex-basis:90px"><h4>High pct</h4><input type="number" id="rgHigh" min="0" max="100" value="95"></div>
+        <div class="opt" style="flex-basis:90px"><h4>Min n</h4><input type="number" id="rgMinN" min="1" value="1"></div>
+      </div>
+      <div class="bar">
+        <label><input type="checkbox" id="rgZeros"> Exclude zeros</label>
+        <label><input type="checkbox" id="rgUnknown"> Exclude unknown or non-ISO units</label>
+        <label><input type="checkbox" id="rgByCountry"> Split by country</label>
+        <button class="btn" id="rgReset">Reset options</button>
+        <a class="btn" id="rgExport" href="#" download="allshares_provisional_ranges.csv">Export CSV</a>
+      </div>
+    </div>
+    <div class="vis"><h3>Values per range row (top 12; grey when n is under 10)</h3><div id="chRanges"></div></div>
+    <div class="vis"><div class="tbl tall"><table><thead id="rgHead"></thead><tbody id="rgBody"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-trend">
+    <div class="title" id="trTitle"></div>
+    <div class="sub">Checks passing and found %, from the tracker baseline and after each import. Tracker: share of run checks that passed. Imports: share of rows passing every schema check; found % is across all values after the import.</div>
+    <div class="vis"><h3>Trend</h3><div id="chTrend"></div><div class="legend" id="lgTrend"></div></div>
+    <div class="vis"><h3>Schema checks by import (% of rows passing)</h3><div class="tbl"><table><thead id="trHead"></thead><tbody id="trBody"></tbody></table></div>
+      <div class="note">Import checks are the schema rules run on each file. Gate checks are not run on imports yet.</div></div>
+  </section>
+
+  <section class="page" id="p-metrics">
+    <div class="title">Metric register: what each KPI measures and where it comes from</div>
+    <div class="sub">Live for the current filters. Targets are shown only where agreed; owners are not assigned until Allshares names them.</div>
+    <div class="vis"><div style="margin-bottom:8px"><a class="btn" id="mtExport" href="#" download="allshares_metric_register.csv">Export CSV</a></div>
+      <div class="tbl tall"><table><thead><tr><th>Metric</th><th>Category</th><th>Source module</th><th>Formula or method</th><th>Period</th><th class="n">Value</th><th class="n">Target</th><th>Trend</th><th>Owner</th><th>Last updated</th><th>Metric ID</th></tr></thead><tbody id="mtBody"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-import">
+    <div class="title">Import data</div>
+    <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the tracker values.</div>
+    <div class="vis">
+      <h3>1. Choose a file</h3>
+      <input type="file" id="impFile" accept=".csv,text/csv">
+      <div style="margin-top:8px"><a id="tplLink" class="mono" href="#" download="allshares_results_template.csv">Download blank template</a></div>
+      <div id="impReport" style="margin-top:10px"></div>
+      <div style="margin-top:10px">
+        <button class="btn" id="impGo" disabled>Import valid rows</button>
+        <button class="btn" id="impClear">Reset to tracker values</button>
+        <span id="impCount" class="hint"></span>
+      </div>
+    </div>
+    <div class="vis"><h3>2. Errors (first 50)</h3><div class="tbl"><table><thead><tr><th>Row</th><th>Column</th><th>Problem</th></tr></thead><tbody id="errTable"></tbody></table></div></div>
+    <div class="grid">
+      <div class="vis"><h3>Schema columns</h3><div class="tbl"><table><thead><tr><th>Column</th><th>Required</th><th>Allowed / notes</th></tr></thead><tbody id="schemaCols"></tbody></table></div></div>
+      <div class="vis"><h3>Protocol field IDs</h3><div class="tbl"><table><thead><tr><th>ID</th><th>Field</th></tr></thead><tbody id="schemaIds"></tbody></table></div></div>
+    </div>
+    <details class="vis"><summary style="cursor:pointer;font-weight:600">Full schema (JSON)</summary><pre id="schemaJson" class="mono" style="white-space:pre-wrap;max-height:360px;overflow:auto"></pre></details>
+  </section>
+
+  <div class="ftr" id="ftr"></div>
+</main>
+
+<script>
+/*__DATA__*/
+</script>
+<script>
+(function(){
+  var C = window.ReportCore, G = window.ReportCharts, S = window.ALLSHARES_IMPORT_SCHEMA;
+  var M = C.createModel(DATA);
+  var F = Object.assign({}, C.EMPTY_FILTERS);
+  var UI = {fieldSort: {k: "problems", dir: -1}, coSort: {k: "c", dir: 1}, field: null, company: null, coMode: "all", step: {gate: "", dp: "", mode: "all"}, ranges: Object.assign({}, C.RANGE_DEFAULTS)};
+  var pending = null;
+  var esc = G.esc, fmt = C.fmt;
+  function $(id){ return document.getElementById(id); }
+  function view(){ return C.filterValues(M.recs, F); }
+  function rows(html, cols, empty){ return html.join("") || '<tr><td colspan="'+cols+'">'+(empty||"No data for this selection.")+'</td></tr>'; }
+  function chip(sc, name){ return '<span class="chip '+(sc||(name==="Empty"?"E":"X"))+'">'+esc(name)+'</span>'; }
+  function dataUrl(text){ return "data:text/csv;charset=utf-8," + encodeURIComponent(text); }
+  function sortBy(arr, s){ return arr.slice().sort(function(a,b){ var x=a[s.k], y=b[s.k]; if (x==null) x=-1; if (y==null) y=-1; return (typeof x==="string" ? x.localeCompare(y) : x-y) * s.dir; }); }
+  function issues(list){ return list.map(function(i){ return '<div class="iss"><b>'+esc(i.gate)+'</b> '+(i.sev==="Hard"?"hard ":"")+esc(i.res)+(i.reason?': '+esc(i.reason):'')+'</div>'; }).join(""); }
+
+  function overview(vs){
+    var o = C.overview(vs);
+    $("chCompanies").innerHTML = G.bars(o.byCountryCompanies.map(function(x,i){ return {label:x.c, value:x.n, color:C.PAL[i%5]}; }));
+    var pie = C.VSTAT.map(function(x){ return {label:x[1], value:o.st[x[0]], color:x[2]}; });
+    $("chStatus").innerHTML = G.pie(pie); $("lgStatus").innerHTML = G.legend(pie);
+    $("ovTable").innerHTML = rows(o.rows.map(function(r){ return '<tr><td>'+r.c+'</td><td class="n">'+r.companies+'</td><td class="n">'+fmt(r.n)+'</td><td class="n">'+fmt(r.found)+'</td><td class="n">'+fmt(r.partial)+'</td><td class="n">'+fmt(r.nf)+'</td><td class="n">'+r.foundPct+'%</td></tr>'; }), 7);
+    $("ovSub").textContent = "Source: " + (F.source==="all"?"tracker and imported":F.source==="T"?"tracker":"imported") + ". Country: " + (F.country||"all") + ". " + fmt(o.n) + " values from " + o.companies + " companies.";
+    var d = DATA.meta.duplicates[0];
+    $("dupNote").textContent = d ? "Data note: the tracker has "+DATA.meta.companyIds+" company IDs, but "+d.ids.join(" and ")+" share one LEI ("+d.lei+"), so they count as one company: "+DATA.meta.companies+" companies. Rows for both IDs remain in the values." : "";
+  }
+  function paycomp(vs){
+    var p = C.payComp(vs);
+    var series = C.VSTAT.map(function(x){ return {name:x[1], color:x[2], values:[p.sc[x[0]], p.sp[x[0]]]}; });
+    $("chPC").innerHTML = G.stacked(["Company data","Pay data"], series); $("lgPC").innerHTML = G.legend(C.VSTAT.map(function(x){ return {label:x[1], color:x[2]}; }));
+    $("chPCpie").innerHTML = G.pie([{label:"Company data", value:p.co, color:"#0077BB"},{label:"Pay data", value:p.pa, color:"#EE7733"}]);
+    $("pcTable").innerHTML = rows(p.rows.map(function(r){ return '<tr><td>'+r.c+'</td><td class="n">'+fmt(r.co)+'</td><td class="n">'+r.coFound+'%</td><td class="n">'+fmt(r.pa)+'</td><td class="n">'+r.paFound+'%</td></tr>'; }), 5);
+  }
+  function countries(vs){
+    var c = C.countriesPage(vs);
+    $("chCountry").innerHTML = G.stacked(c.countries, c.series); $("lgCountry").innerHTML = G.legend(C.VSTAT.map(function(x){ return {label:x[1], color:x[2]}; }));
+    $("chCountryCo").innerHTML = G.hbars(c.companies.map(function(x,i){ return {label:x.c, value:x.n, color:C.PAL[i%5], sub:"companies"}; }));
+    $("cnTable").innerHTML = rows(c.rows.map(function(r){ return '<tr><td>'+r.c+'</td><td>'+r.type+'</td><td class="n">'+fmt(r.n)+'</td><td class="n">'+fmt(r.found)+'</td><td class="n">'+fmt(r.partial)+'</td><td class="n">'+fmt(r.nf)+'</td></tr>'; }), 6);
+  }
+
+  function fields(vs){
+    var ft = C.fieldTable(M, vs);
+    var top = ft.filter(function(x){ return x.scored; }).slice(0,12);
+    $("fdChartTitle").textContent = top.length && top[0].problems ? top[0].d + " has the most failing values (" + fmt(top[0].problems) + "); top 12 fields by failures" : "Score status by field";
+    var series = C.SSTAT.map(function(s){ return {key:s[0], name:s[1], color:s[2]}; });
+    $("chFields").innerHTML = G.stackedH(top.map(function(x){ var o = {label:x.d}; series.forEach(function(s){ o[s.key]=x[s.key]; }); return o; }), series);
+    $("lgFields").innerHTML = G.legend(C.SSTAT.map(function(s){ return {label:s[1], color:s[2]}; }));
+    var q = $("fdSearch").value.trim().toLowerCase();
+    var list = sortBy(ft.filter(function(x){ return !q || (x.d+" "+x.f+" "+x.k).toLowerCase().indexOf(q) >= 0; }), UI.fieldSort);
+    $("fdTable").innerHTML = rows(list.map(function(x){
+      return '<tr class="click'+(UI.field===x.d?' sel':'')+'" tabindex="0" data-field="'+esc(x.d)+'"><td>'+esc(x.d)+'</td><td>'+esc(x.f)+'</td><td>'+esc(x.k)+'</td><td class="n">'+fmt(x.rows)+'</td><td class="n">'+fmt(x.found)+'</td><td class="n">'+fmt(x.partial)+'</td><td class="n">'+fmt(x.nf)+'</td><td class="n">'+fmt(x.P)+'</td><td class="n">'+fmt(x.R)+'</td><td class="n">'+fmt(x.I)+'</td><td class="n">'+fmt(x.F)+'</td><td class="n">'+fmt(x.H)+'</td><td class="n">'+(x.scored?x.passPct+'%':'–')+'</td><td class="n">'+(x.avg==null?'–':x.avg)+'</td><td>›</td></tr>';
+    }), 15);
+    fieldDetail(vs);
+  }
+  function fieldDetail(vs){
+    if (!UI.field){ $("fdDetail").innerHTML = ""; return; }
+    var d = C.fieldDetail(M, vs, UI.field);
+    $("fdDetail").innerHTML = '<div class="vis"><div class="back"><button class="linkbtn" id="fdClose">← Close field</button></div><h3>'+esc(d.dp)+' ('+esc(d.meta.f||"")+', '+esc(d.meta.k||"")+'): '+fmt(d.values.length)+' values, '+fmt(d.empty.length)+' empty</h3>'+
+      '<div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Role</th><th>Value</th><th>Unit</th><th>Period</th><th>Status</th><th class="n">Score</th><th>Failed / not run gates</th></tr></thead><tbody>'+
+      rows(d.values.map(function(v){ return '<tr class="click" tabindex="0" data-co="'+esc(v.key)+'"><td>'+esc(v.o)+'</td><td>'+v.c+'</td><td>'+esc(v.r)+'</td><td>'+esc(String(v.v).slice(0,120))+'</td><td>'+esc(v.u)+'</td><td>'+esc(v.pe)+'</td><td>'+chip(v.sc, v.scName)+'</td><td class="n">'+(v.sp==null?'–':v.sp)+'</td><td>'+issues(v.issues)+'</td></tr>'; }), 9)+
+      '</tbody></table></div>'+(d.empty.length ? '<h3 style="margin-top:12px">Empty for</h3><div class="tbl"><table><thead><tr><th>Company</th><th>Country</th><th>Role</th><th>Note</th></tr></thead><tbody>'+
+      d.empty.map(function(e){ return '<tr class="click" tabindex="0" data-co="'+esc(e.key)+'"><td>'+esc(e.o)+'</td><td>'+e.c+'</td><td>'+esc(e.r)+'</td><td>'+esc(e.note)+'</td></tr>'; }).join("")+'</tbody></table></div>' : '')+'</div>';
+    $("fdClose").addEventListener("click", function(){ UI.field = null; refresh(); });
+  }
+
+  function emptyPage(vs){
+    var e = C.emptyTables(M, vs);
+    $("emChartTitle").textContent = e.fields.length ? "Fields empty most often: " + e.fields[0].d + " leads with " + fmt(e.fields[0].empty) : "Fields empty most often";
+    $("chEmpty").innerHTML = G.hbars(e.fields.slice(0,12).map(function(x){ return {label:x.d, value:x.empty, color:"#CC3311", sub:x.pct+"%"}; }));
+    $("chEmptyType").innerHTML = G.pie(e.byType);
+    $("emFields").innerHTML = rows(e.fields.map(function(x){ return '<tr><td>'+esc(x.d)+'</td><td>'+esc(x.k)+'</td><td>'+x.g+'</td><td class="n">'+fmt(x.rows)+'</td><td class="n">'+fmt(x.empty)+'</td><td class="n">'+x.pct+'%</td><td class="n">'+x.companies+'</td></tr>'; }), 7, "No empty values in this selection.");
+    $("emCompanies").innerHTML = rows(e.companies.filter(function(c){ return c.empty; }).map(function(c){ return '<tr class="click" tabindex="0" data-co="'+esc(c.key)+'"><td>'+esc(c.o)+'</td><td>'+c.c+'</td><td class="n">'+fmt(c.rows)+'</td><td class="n">'+fmt(c.empty)+'</td><td class="n">'+c.pct+'%</td><td class="iss">'+esc(c.fieldList.join(", "))+'</td><td>›</td></tr>'; }), 7, "No empty values in this selection.");
+  }
+
+  function companies(vs){
+    var list = C.companyTable(M, vs), q = $("coSearch").value.trim().toLowerCase();
+    var shown = sortBy(list.filter(function(x){ return !q || (x.o+" "+x.key+" "+x.idList.join(" ")).toLowerCase().indexOf(q) >= 0; }), UI.coSort);
+    var worst = list.slice().sort(function(a,b){ return b.H-a.H; })[0];
+    $("coTitle").textContent = list.length ? list.length + " companies in view" + (worst && worst.H ? "; " + worst.o + " has the most hard fails (" + worst.H + ")" : "") : "No companies in this selection";
+    $("coTable").innerHTML = rows(shown.map(function(x){
+      return '<tr class="click'+(UI.company===x.key?' sel':'')+'" tabindex="0" data-co="'+esc(x.key)+'"><td>'+esc(x.o)+'</td><td>'+x.c+'</td><td class="mono">'+esc(x.idList.join(", "))+'</td><td class="n">'+fmt(x.rows)+'</td><td class="n">'+fmt(x.found)+'</td><td class="n">'+fmt(x.partial)+'</td><td class="n">'+fmt(x.nf)+'</td><td class="n">'+fmt(x.P)+'</td><td class="n">'+fmt(x.R)+'</td><td class="n">'+fmt(x.I)+'</td><td class="n">'+fmt(x.F)+'</td><td class="n">'+fmt(x.H)+'</td><td class="n">'+(x.avg==null?'–':x.avg)+'</td><td>›</td></tr>';
+    }), 14);
+    companyDetail(vs);
+  }
+  function companyDetail(vs){
+    var d = UI.company && C.companyDetail(M, vs, UI.company, UI.coMode);
+    if (!d){ $("coDetail").innerHTML = UI.company ? '<div class="vis">This company has no values in the current filters.</div>' : ""; $("coList").style.display = ""; return; }
+    $("coList").style.display = "none";
+    var pie = C.SSTAT.map(function(s){ return {label:s[1], value:d.sc[s[0]], color:s[2]}; });
+    var fails = d.gates.checks.filter(function(c){ return c.fail; }).slice(0,12);
+    $("coDetail").innerHTML =
+      '<div class="back"><button class="linkbtn" id="coBack">← Back to companies</button></div>'+
+      '<div class="title">'+esc(d.name)+': '+fmt(d.sc.P)+' of '+fmt(d.sc.scored)+' scored values pass, '+fmt(d.sc.H)+' blocked by a hard fail</div>'+
+      '<div class="sub">'+d.country+' · IDs '+esc(d.ids.join(", "))+(d.lei?' · LEI <span class="mono">'+d.lei+'</span>':'')+' · '+fmt(d.st.found)+' found, '+fmt(d.st.partial)+' partial, '+fmt(d.st.not_found)+' empty</div>'+
+      (d.duplicate ? '<div class="attn info">Same company under IDs '+esc(d.duplicate.ids.join(" and "))+' (one LEI). Rows for both IDs are shown.</div>' : '')+
+      '<div class="grid"><div class="vis"><h3>Scored values by status ('+fmt(d.st.not_found)+' empty values not scored)</h3>'+G.pie(pie)+'</div><div class="vis"><h3>'+(fails.length ? 'Failing gates: '+esc(fails[0].id)+' fails most ('+fails[0].fail+')' : 'No failing gates')+'</h3>'+
+      G.hbars(fails.map(function(c){ return {label:c.id+" "+c.name, value:c.fail, color:c.sev==="Hard"?"#CC3311":"#EE7733", sub:c.sev}; }))+'</div></div>'+
+      '<div class="vis"><div class="bar"><div class="opt"><h4>Show</h4><select id="coMode"><option value="all">All values</option><option value="problems">Problems only</option><option value="empty">Empty only</option></select></div></div>'+
+      '<div class="tbl tall"><table><thead><tr><th>Group</th><th>Field</th>'+(d.ids.length>1?'<th>ID</th>':'')+'<th>Role</th><th>Value</th><th>Unit</th><th>Period</th><th>Method</th><th>Status</th><th class="n">Score</th><th>Failed / not run gates</th><th>Source</th></tr></thead><tbody>'+
+      rows(d.values.map(function(v){
+        return '<tr><td>'+esc(v.k)+'</td><td>'+esc(v.d)+' <span class="hint">'+esc(v.f)+'</span></td>'+(d.ids.length>1?'<td class="mono">'+esc(v.id)+'</td>':'')+'<td>'+esc(v.r)+'</td><td>'+esc(String(v.v).slice(0,160))+'</td><td>'+esc(v.u)+'</td><td>'+esc(v.pe)+'</td><td>'+esc(v.me)+'</td><td>'+chip(v.sc, v.scName)+'</td><td class="n">'+(v.sp==null?'–':v.sp)+'</td><td>'+issues(v.issues)+(v.st==="not_found"&&v.nt?'<div class="iss">'+esc(v.nt)+'</div>':'')+'</td><td>'+esc(v.so)+(/^https?:\/\//.test(v.ep)?' <a href="'+esc(v.ep)+'" target="_blank" rel="noopener noreferrer">locator</a>':'')+'</td></tr>';
+      }), 11, "No values for this view.")+'</tbody></table></div></div>';
+    $("coMode").value = UI.coMode;
+    $("coMode").addEventListener("change", function(){ UI.coMode = this.value; refresh(); });
+    $("coBack").addEventListener("click", function(){ UI.company = null; UI.coMode = "all"; refresh(); });
+  }
+
+  function failures(vs){
+    var g = C.gateStats(M, vs);
+    var top = g.checks.filter(function(x){ return x.fail; }).slice(0,12);
+    $("chChecks").innerHTML = G.hbars(top.map(function(x){ return {label:x.id+" "+x.name, value:x.fail, color:x.sev==="Hard"?"#CC3311":"#EE7733", sub:x.sev}; }));
+    $("chSev").innerHTML = G.pie([{label:"Hard", value:g.hard, color:"#CC3311"},{label:"Soft", value:g.soft, color:"#EE7733"}]);
+    $("chModule").innerHTML = G.bars(g.modules.map(function(m,i){ return {label:m.name.replace("Company and ownership","Company & own.").replace("Reference data","Reference"), value:m.rate, color:C.PAL[i%5]}; }), {max:100, suffix:"%"});
+    $("chField").innerHTML = G.hbars(g.ranked.slice(0,12).map(function(x){ return {label:x.name, value:x.rate, color:"#CC3311", sub:x.fail+" fails"}; }), {max:100, suffix:"%"});
+    $("flTable").innerHTML = rows(g.fields.map(function(x){ return '<tr><td>'+esc(x.name)+'</td><td>'+esc(x.cat)+'</td><td class="n">'+fmt(x.runs)+'</td><td class="n">'+fmt(x.fail)+'</td><td class="n">'+fmt(x.hard)+'</td><td class="n">'+fmt(x.nr)+'</td><td class="n">'+x.rate+'%</td></tr>'; }), 7);
+    $("attn").textContent = C.attention(M, vs).text;
+  }
+
+  // ---- validation steps (SPEC 6.3, 7a): steps › one step › one step on one field ----
+  function resultChip(res, sev){ var cls = res==="P" ? "P" : res==="N" ? "I" : sev==="Hard" ? "H" : "F"; return '<span class="chip '+cls+'">'+(res==="P"?"PASS":res==="N"?"NOT RUN":"FAIL")+'</span>'; }
+  function plural(n, one, many){ return n === 1 ? one : many; }
+  function stepsPage(vs){
+    var st = UI.step, html = '<div class="crumbs"><button class="linkbtn" data-step="">Validation steps</button>' +
+      (st.gate ? ' › <button class="linkbtn" data-step="'+esc(st.gate)+'">'+esc(st.gate)+'</button>' : '') + (st.dp ? ' › '+esc(st.dp) : '') + '</div>';
+    if (!st.gate){
+      var s = C.validationSteps(M, vs), byF = {};
+      s.steps.forEach(function(x){ (byF[x.family] = byF[x.family] || []).push(x); });
+      var low = s.families.filter(function(f){ return f.runs - f.nr; }).sort(function(a,b){ return a.passPct - b.passPct; })[0];
+      html += '<div class="title">'+esc(s.title)+'</div><div class="sub">Each gate is one validation step. Steps run in families, from core checks on every value to cross-field checks. Pass rate counts run checks only (NOT RUN excluded). Click a step to see which fields it runs on.</div>' +
+        '<div class="vis"><h3>'+(low ? 'Pass rate by family: '+esc(low.name)+' is lowest at '+low.passPct+'%' : 'Pass rate by family')+'</h3>' +
+        G.bars(s.families.map(function(f){ return {label:f.name, value:f.passPct, color:f.passPct>=95?"#009988":f.passPct>=80?"#0077BB":"#CC3311"}; }), {max:100, suffix:"%"}) + '</div>' +
+        '<div class="vis"><div class="tbl tall"><table><thead><tr><th>Step</th><th>Check</th><th>Type</th><th class="n">Fields</th><th class="n">Runs</th><th class="n">PASS</th><th class="n">FAIL</th><th class="n">NOT RUN</th><th class="n">Pass rate</th><th>Most common reason</th><th></th></tr></thead><tbody>' +
+        rows(s.families.map(function(f){
+          return '<tr class="group"><td colspan="11"><b>'+esc(f.name)+'</b> · '+f.steps+' '+plural(f.steps,'step','steps')+' · '+fmt(f.fail)+' '+plural(f.fail,'fail','fails')+' · '+(f.runs - f.nr ? f.passPct+'% pass' : 'not run')+'</td></tr>' +
+            byF[f.key].map(function(x){ return '<tr class="click" tabindex="0" data-step="'+x.id+'"><td class="mono">'+x.id+'</td><td>'+esc(x.name)+'</td><td>'+x.sev+'</td><td class="n">'+x.fields+'</td><td class="n">'+fmt(x.runs)+'</td><td class="n">'+fmt(x.pass)+'</td><td class="n">'+fmt(x.fail)+'</td><td class="n">'+fmt(x.nr)+'</td><td class="n">'+(x.runs - x.nr ? x.passPct+'%' : '–')+'</td><td class="iss">'+(x.top ? esc(x.top.text)+' ('+fmt(x.top.n)+')' : '')+'</td><td>›</td></tr>'; }).join("");
+        }), 11, "No scored values in this selection.") + '</tbody></table></div></div>';
+    } else {
+      var d = C.stepDetail(M, vs, st.gate);
+      if (!d) html += '<div class="vis">Unknown step '+esc(st.gate)+'.</div>';
+      else if (!st.dp){
+        var fails = d.fields.filter(function(f){ return f.fail; });
+        html += '<div class="title">'+d.id+' '+esc(d.name)+': '+fmt(d.counts.fail)+' '+plural(d.counts.fail,'fail','fails')+', '+fmt(d.counts.nr)+' not run, across '+d.fields.length+' '+plural(d.fields.length,'field','fields')+'</div>' +
+          '<div class="sub">'+esc(d.family)+' · '+d.sev+' gate'+(d.sev==="Hard" ? ': a FAIL blocks the value (Fail (hard))' : ': a FAIL lowers the score')+' · '+fmt(d.counts.runs)+' runs, '+(d.counts.runs - d.counts.nr ? d.counts.passPct+'% of run checks pass' : 'none run')+'.</div>' +
+          '<div class="grid"><div class="vis"><h3>'+(fails.length ? 'Fails by field: '+esc(fails[0].d)+' fails most ('+fails[0].fail+')' : 'No fails for this step')+'</h3>' +
+          G.hbars(fails.slice(0,12).map(function(f){ return {label:f.d, value:f.fail, color:d.sev==="Hard"?"#CC3311":"#EE7733", sub:f.failRate+"%"}; })) + '</div>' +
+          '<div class="vis"><h3>Why values fail or are not run</h3><div class="tbl"><table><thead><tr><th>Result</th><th>Reason</th><th class="n">Values</th><th>Fields</th></tr></thead><tbody>' +
+          rows(d.reasons.map(function(r){ return '<tr><td>'+resultChip(r.res==="FAIL"?"F":r.res==="PASS"?"P":"N", d.sev)+'</td><td>'+esc(r.text)+'</td><td class="n">'+fmt(r.n)+'</td><td class="iss">'+esc(r.fieldList.join(", "))+'</td></tr>'; }), 4, "Every value passes this step.") + '</tbody></table></div></div></div>' +
+          '<div class="vis"><h3>Fields this step runs on (click a field for its values)</h3><div class="tbl tall"><table><thead><tr><th>Field</th><th>ID</th><th>Group</th><th class="n">Runs</th><th class="n">PASS</th><th class="n">FAIL</th><th class="n">NOT RUN</th><th class="n">Fail rate</th><th></th></tr></thead><tbody>' +
+          rows(d.fields.map(function(f){ return '<tr class="click" tabindex="0" data-stepfield="'+esc(f.d)+'"><td>'+esc(f.d)+'</td><td>'+esc(f.f)+'</td><td>'+esc(f.k)+'</td><td class="n">'+fmt(f.runs)+'</td><td class="n">'+fmt(f.pass)+'</td><td class="n">'+fmt(f.fail)+'</td><td class="n">'+fmt(f.nr)+'</td><td class="n">'+(f.runs - f.nr ? f.failRate+'%' : '–')+'</td><td>›</td></tr>'; }), 9) + '</tbody></table></div></div>';
+      } else {
+        var fc = d.fields.filter(function(f){ return f.d === st.dp; })[0] || {runs:0, fail:0, nr:0};
+        var vals = C.stepFieldValues(M, vs, st.gate, st.dp, st.mode);
+        html += '<div class="title">'+d.id+' on '+esc(st.dp)+': '+fmt(fc.fail)+' of '+fmt(fc.runs)+' values fail, '+fmt(fc.nr)+' not run</div>' +
+          '<div class="sub">'+d.id+' '+esc(d.name)+' ('+d.sev+'). Every value of '+esc(st.dp)+' this step checked. Click a company to open it.</div>' +
+          '<div class="vis"><div class="bar"><div class="opt"><h4>Show</h4><select id="stMode"><option value="all">All results</option><option value="F">FAIL only</option><option value="N">NOT RUN only</option><option value="P">PASS only</option></select></div></div>' +
+          '<div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Role</th><th>Value</th><th>Unit</th><th>Period</th><th>Result</th><th>Reason</th><th>Value status</th><th class="n">Score</th></tr></thead><tbody>' +
+          rows(vals.map(function(v){ return '<tr class="click" tabindex="0" data-co="'+esc(v.key)+'"><td>'+esc(v.o)+'</td><td>'+v.c+'</td><td>'+esc(v.r)+'</td><td>'+esc(String(v.v).slice(0,120))+'</td><td>'+esc(v.u)+'</td><td>'+esc(v.pe)+'</td><td>'+resultChip(v.res, d.sev)+'</td><td class="iss">'+esc(v.reason)+'</td><td>'+chip(v.sc, v.scName)+'</td><td class="n">'+(v.sp==null?'–':v.sp)+'</td></tr>'; }), 10, "No values for this view.") +
+          '</tbody></table></div></div>';
+      }
+    }
+    $("stBody").innerHTML = html;
+    if ($("stMode") && $("stMode").addEventListener){ $("stMode").value = st.mode; $("stMode").addEventListener("change", function(){ UI.step.mode = this.value; refresh(); }); }
+  }
+  function openStep(gate, dp){ UI.step = {gate: gate || "", dp: dp || "", mode: "all"}; show("steps"); }
+
+  function rangesPage(vs){
+    var opts = C.rangeOptions(vs), o = UI.ranges;
+    fillSelect($("rgField"), [["","All fields"]].concat(opts.fields.map(function(f){ return [f,f]; })), o.field);
+    fillSelect($("rgUnit"), [["","All units"]].concat(opts.units.map(function(u){ return [u,u]; })), o.unit);
+    fillSelect($("rgMethod"), [["","All methods"]].concat(opts.methods.map(function(u){ return [u,u]; })), o.method);
+    var res = C.ranges(vs, o);
+    var small = res.rows.filter(function(r){ return r.n < 10; }).length;
+    $("rgTitle").textContent = res.rows.length ? res.rows.length + " range rows from " + fmt(res.rows.reduce(function(a,r){ return a+r.n; },0)) + " values; " + small + " have n under 10 (indicative only)" : "No numeric values for these options";
+    $("chRanges").innerHTML = G.hbars(res.rows.slice().sort(function(a,b){ return b.n-a.n; }).slice(0,12).map(function(r){ return {label:r.d+" · "+r.unit+(r.c?" · "+r.c:""), value:r.n, color:r.n<10?"#888888":"#0077BB"}; }));
+    $("rgHead").innerHTML = '<tr><th>Field</th><th>Unit / currency</th>'+(o.byCountry?'<th>Country</th>':'')+'<th class="n">Values (n)</th><th class="n">Companies</th><th class="n">Min</th><th class="n">'+res.lowLabel+'th percentile</th><th class="n">Median</th><th class="n">'+res.highLabel+'th percentile</th><th class="n">Max</th><th>Data caveat</th></tr>';
+    $("rgBody").innerHTML = rows(res.rows.map(function(r){ return '<tr><td>'+esc(r.d)+'</td><td>'+esc(r.unit)+'</td>'+(o.byCountry?'<td>'+r.c+'</td>':'')+'<td class="n">'+r.n+'</td><td class="n">'+r.companies+'</td><td class="n">'+fmt(r.min)+'</td><td class="n">'+fmt(r.low)+'</td><td class="n">'+fmt(r.median)+'</td><td class="n">'+fmt(r.high)+'</td><td class="n">'+fmt(r.max)+'</td><td class="iss">'+esc(r.caveat)+'</td></tr>'; }), 11);
+    $("rgExport").setAttribute("href", dataUrl(C.rangesCSV(res)));
+    $("rgGrain").value = o.grain; $("rgInclude").value = o.include; $("rgLow").value = o.low; $("rgHigh").value = o.high; $("rgMinN").value = o.minN;
+    $("rgZeros").checked = !!o.excludeZeros; $("rgUnknown").checked = !!o.excludeUnknownUnits; $("rgByCountry").checked = !!o.byCountry;
+  }
+
+  function trend(){
+    var pts = M.hist.map(function(p,i){ return {label:p.label, short: i===0 ? "Tracker" : "#"+i, checks:p.checks, found:p.found}; });
+    $("chTrend").innerHTML = G.line(pts, DATA.meta.target);
+    $("lgTrend").innerHTML = G.legend([{label:"Checks passing %", color:"#0077BB"},{label:"Found %", color:"#009988"},{label:"Target "+DATA.meta.target+"%", color:"#888888"}]);
+    $("trHead").innerHTML = '<tr><th>Import</th><th class="n">Rows</th><th class="n">Checks passing</th><th class="n">Found % (all values)</th><th class="n">Found % (file)</th>' + C.GROUPS.map(function(g){ return '<th class="n">'+esc(g)+'</th>'; }).join("") + '</tr>';
+    $("trBody").innerHTML = M.hist.map(function(p,i){ var g = p.groups || {};
+      return '<tr><td>'+esc(i===0?"Tracker (baseline)":p.label)+'</td><td class="n">'+(p.n==null?"–":fmt(p.n))+'</td><td class="n"><b>'+p.checks+'%</b></td><td class="n">'+p.found+'%</td><td class="n">'+(p.fileFound==null?"–":p.fileFound+"%")+'</td>' + C.GROUPS.map(function(x){ return '<td class="n">'+(g[x]==null?"–":g[x]+'%')+'</td>'; }).join("") + '</tr>'; }).join("");
+  }
+  function metricsPage(vs){
+    var ms = C.metrics(M, vs);
+    $("mtBody").innerHTML = ms.map(function(m){ return '<tr><td><b>'+esc(m.metric)+'</b></td><td>'+esc(m.category)+'</td><td>'+esc(m.module)+'</td><td>'+esc(m.formula)+'</td><td>'+esc(m.period)+'</td><td class="n">'+(m.value==null?'–':fmt(m.value))+'</td><td class="n">'+esc(m.target)+'</td><td>'+esc(m.trend)+'</td><td>'+esc(m.owner)+'</td><td>'+esc(m.updated)+'</td><td class="mono">'+m.id+'</td></tr>'; }).join("");
+    $("mtExport").setAttribute("href", dataUrl(C.metricsCSV(ms)));
+  }
+
+  // ---- import ----
+  function renderPreview(res){
+    var c = res.preview.counts, allErr = res.errs.concat(res.preview.errs), hardErr = allErr.filter(function(e){ return !e.warn; });
+    $("errTable").innerHTML = allErr.slice(0,50).map(function(e){ return '<tr><td>'+(e.row||"header")+'</td><td>'+esc(e.col)+'</td><td class="'+(e.warn?"ok":"err")+'">'+esc(e.msg)+'</td></tr>'; }).join("") || '<tr><td colspan="3" class="ok">No errors.</td></tr>';
+    $("impReport").innerHTML = '<div>Rows in file: <b>'+res.rows+'</b>. Valid rows: <b>'+res.good.length+'</b>.</div>' +
+      '<div style="margin-top:6px" id="impPreview">If imported: <b>'+c.added+'</b> added, <b>'+c.updated+'</b> updated, <b>'+c.same+'</b> unchanged, <b>'+c.dupes+'</b> duplicate rows in file (last row wins), <b>'+c.ambiguous+'</b> ambiguous (need data_point).</div>' +
+      (hardErr.length ? '<div class="err" style="margin-top:6px">Rows with errors are skipped. Fix the file to import them.</div>' : '<div class="ok" style="margin-top:6px">File matches the schema.</div>');
+    $("impGo").disabled = res.good.length === 0;
+  }
+  function previewText(text, name){ pending = C.previewImport(M, S, text, name); renderPreview(pending); return pending; }
+  function applyPending(){
+    if (!pending || !pending.good.length) return null;
+    var res = C.commitImport(M, pending), c = res.counts;
+    $("impCount").textContent = "Applied: "+c.added+" added, "+c.updated+" updated, "+c.same+" unchanged.";
+    $("impGo").disabled = true;
+    $("impReport").insertAdjacentHTML("beforeend", '<div class="ok" style="margin-top:8px">Import applied. Source = Imported and all pages now use the new values.</div>');
+    pending = null; refresh(); return res;
+  }
+  function resetAll(){
+    C.resetModel(M); pending = null;
+    $("impCount").textContent = "Reset to tracker values. All imports removed.";
+    $("impReport").innerHTML = ""; $("errTable").innerHTML = ""; $("impGo").disabled = true; $("impFile").value = "";
+    refresh();
+  }
+  $("impFile").addEventListener("change", function(){
+    var f = this.files[0]; if (!f) return;
+    var rd = new FileReader(); rd.onload = function(){ previewText(String(rd.result), f.name); }; rd.readAsText(f);
+  });
+  $("impGo").addEventListener("click", applyPending);
+  $("impClear").addEventListener("click", resetAll);
+  function buildSchemaTables(){
+    $("schemaCols").innerHTML = S.columns.map(function(c){ var allowed = c.allowed ? c.allowed.join(", ") : ""; return '<tr><td><span class="mono">'+esc(c.name)+'</span></td><td>'+(c.required?"Yes":"No")+'</td><td>'+esc(allowed||c.description)+'</td></tr>'; }).join("");
+    $("schemaJson").textContent = JSON.stringify(S, null, 2);
+    $("schemaIds").innerHTML = Object.keys(S.field_ids).map(function(k){ return '<tr><td>'+k+'</td><td>'+esc(S.field_ids[k])+(S.ambiguous_field_ids.indexOf(k)>=0?' <span class="hint">(needs data_point)</span>':'')+'</td></tr>'; }).join("");
+    $("tplLink").setAttribute("href", dataUrl(S.columns.map(function(c){ return c.name; }).join(",") + "\n"));
+  }
+
+  // ---- shell ----
+  function fillSelect(el, opts, val){ el.innerHTML = opts.map(function(o){ return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'; }).join(""); el.value = val || ""; }
+  function fillFilters(){
+    var o = C.filterOptions(M);
+    fillSelect($("fCountry"), [["","All countries"]].concat(o.countries.map(function(c){ return [c,c]; })), F.country);
+    fillSelect($("fCat"), [["","All field groups"]].concat(o.categories.map(function(c){ return [c,c]; })), F.cat);
+    fillSelect($("fCompany"), [["","All companies"]].concat(o.companies.map(function(c){ return [c.key,c.label]; })), F.company);
+    fillSelect($("fStatus"), [["","All statuses"]].concat(o.statuses.map(function(s){ return [s.key,s.label]; })), F.status);
+    $("fSource").value = F.source; $("fType").value = F.dtype;
+  }
+  function renderKStrip(vs){
+    $("kstrip").innerHTML = C.kpis(M, vs).map(function(c){ return '<div class="kcard '+c.cls+'" data-k="'+c.key+'"><div class="v">'+c.v+'</div><div class="l">'+c.l+'</div><div class="d">'+esc(c.d)+'</div></div>'; }).join("");
+  }
+  function active(){ return document.querySelector(".page.on").id.replace("p-",""); }
+  function refresh(){
+    var vs = view(), p = active(), t = C.titles(M, vs);
+    if (p==="overview") overview(vs);
+    if (p==="paycomp") paycomp(vs);
+    if (p==="countries") countries(vs);
+    if (p==="fields") fields(vs);
+    if (p==="empty") emptyPage(vs);
+    if (p==="companies") companies(vs);
+    if (p==="failures") failures(vs);
+    if (p==="steps") stepsPage(vs);
+    if (p==="ranges") rangesPage(vs);
+    if (p==="trend") trend();
+    if (p==="metrics") metricsPage(vs);
+    renderKStrip(vs);
+    $("ovTitle").textContent = t.overview; $("pcTitle").textContent = t.paycomp; $("cnTitle").textContent = t.countries;
+    $("fdTitle").textContent = t.fields; $("emTitle").textContent = t.empty; $("flTitle").textContent = t.failures; $("trTitle").textContent = t.trend;
+    $("ftr").textContent = t.footer;
+    var imp = M.recs.filter(function(v){ return v.s==="I"; }).length;
+    $("meta").textContent = fmt(M.recs.length) + " values" + (imp ? " · " + fmt(imp) + " from import" : "");
+    $("fClear").style.visibility = C.anyFilter(F) ? "visible" : "hidden";
+  }
+  function show(p){
+    document.querySelectorAll(".tab").forEach(function(t){ t.setAttribute("aria-selected", String(t.getAttribute("data-p")===p)); });
+    document.querySelectorAll(".page").forEach(function(s){ s.classList.toggle("on", s.id==="p-"+p); });
+    refresh();
+  }
+  function openCompany(key){ UI.company = key; UI.coMode = "all"; show("companies"); }
+  function openField(dp){ UI.field = dp; show("fields"); }
+  function setFilter(k, v){ F[k] = v; refresh(); }
+
+  document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", function(){ show(t.getAttribute("data-p")); }); });
+  [["fCountry","country"],["fSource","source"],["fType","dtype"],["fCat","cat"],["fCompany","company"],["fStatus","status"]].forEach(function(x){
+    $(x[0]).addEventListener("change", function(){ setFilter(x[1], this.value); });
+  });
+  $("fClear").addEventListener("click", function(){ F = Object.assign({}, C.EMPTY_FILTERS); fillFilters(); refresh(); });
+  $("fdSearch").addEventListener("input", refresh);
+  $("coSearch").addEventListener("input", refresh);
+  function delegate(id){
+    var el = $(id);
+    function go(e){
+      var t = e.target; while (t && t !== el && !(t.getAttribute && (t.getAttribute("data-co") || t.getAttribute("data-field") || t.getAttribute("data-sort")))) t = t.parentNode;
+      if (!t || t === el) return;
+      if (t.getAttribute("data-co")) openCompany(t.getAttribute("data-co"));
+      else if (t.getAttribute("data-field")) openField(t.getAttribute("data-field"));
+      else if (t.getAttribute("data-sort")) {
+        var s = id === "p-fields" ? UI.fieldSort : UI.coSort, k = t.getAttribute("data-sort");
+        s.dir = s.k === k ? -s.dir : (/^(d|f|k|o|c)$/.test(k) ? 1 : -1); s.k = k; refresh();
+      }
+    }
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", function(e){ if (e.key === "Enter") go(e); });
+  }
+  ["p-fields","p-empty","p-companies"].forEach(delegate);
+  (function(){
+    var el = $("p-steps");
+    function go(e){
+      var t = e.target;
+      while (t && t !== el && !(t.getAttribute && (t.getAttribute("data-step") !== null || t.getAttribute("data-stepfield") || t.getAttribute("data-co")))) t = t.parentNode;
+      if (!t || t === el) return;
+      if (t.getAttribute("data-co")) openCompany(t.getAttribute("data-co"));
+      else if (t.getAttribute("data-stepfield")) openStep(UI.step.gate, t.getAttribute("data-stepfield"));
+      else openStep(t.getAttribute("data-step"), "");
+    }
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", function(e){ if (e.key === "Enter") go(e); });
+  })();
+  function rangeInput(id, key, fn){ $(id).addEventListener("change", function(){ UI.ranges[key] = fn(this); refresh(); }); }
+  rangeInput("rgField","field",function(e){ return e.value; }); rangeInput("rgUnit","unit",function(e){ return e.value; });
+  rangeInput("rgGrain","grain",function(e){ return e.value; }); rangeInput("rgMethod","method",function(e){ return e.value; });
+  rangeInput("rgInclude","include",function(e){ return e.value; }); rangeInput("rgLow","low",function(e){ return Number(e.value); });
+  rangeInput("rgHigh","high",function(e){ return Number(e.value); }); rangeInput("rgMinN","minN",function(e){ return Number(e.value)||1; });
+  rangeInput("rgZeros","excludeZeros",function(e){ return e.checked; }); rangeInput("rgUnknown","excludeUnknownUnits",function(e){ return e.checked; });
+  rangeInput("rgByCountry","byCountry",function(e){ return e.checked; });
+  $("rgReset").addEventListener("click", function(){ UI.ranges = Object.assign({}, C.RANGE_DEFAULTS); refresh(); });
+
+  fillFilters();
+  buildSchemaTables();
+  refresh();
+  window.__REPORT = {model: M, filters: function(){ return F; }, setFilter: setFilter, show: show, refresh: refresh,
+    openCompany: openCompany, openField: openField, openStep: openStep, setStepMode: function(m){ UI.step.mode = m; refresh(); }, previewText: previewText, applyPending: applyPending, resetAll: resetAll,
+    setRanges: function(o){ Object.assign(UI.ranges, o); refresh(); }};
+})();
+</script>
+</body></html>

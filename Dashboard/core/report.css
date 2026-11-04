@@ -1,0 +1,63 @@
+/* Shared dashboard styles (DESIGN.md). Used by the Angular app and inlined in the single-file HTML. */
+:root{--bg:#f3f2f1;--card:#fff;--ink:#252423;--soft:#605e5c;--faint:#8a8886;--line:#e1dfdd;--brand:#0077BB;--dark:#201f1e;
+  --found:#009988;--partial:#EE7733;--nf:#CC3311;--na:#888888;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 "Segoe UI",system-ui,Arial,sans-serif}
+.top{background:var(--dark);color:#fff;display:flex;align-items:center;gap:18px;padding:0 16px;height:48px;position:sticky;top:0;z-index:6}
+.top .brand{font-weight:600;font-size:15px;white-space:nowrap}
+.tabs{display:flex;gap:2px;height:100%;overflow-x:auto;scrollbar-width:thin}
+.tab{background:transparent;border:0;color:#c8c6c4;padding:0 12px;height:100%;font:inherit;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+a.tab{display:flex;align-items:center;text-decoration:none}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--brand)}
+.top .meta{margin-left:auto;color:#c8c6c4;font-size:12px;white-space:nowrap}
+.slicers{background:#fff;border-bottom:1px solid var(--line);padding:8px 18px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;position:sticky;top:48px;z-index:5}
+.slicers h4,.opt h4{margin:0 0 4px;font-size:11px;color:var(--soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.slicer{min-width:150px;flex:0 1 190px}
+select,input[type=search],input[type=number]{width:100%;padding:5px 6px;border:1px solid #c8c6c4;background:#fff;font:inherit;border-radius:2px}
+.hint{color:var(--faint);font-size:11px;margin-top:4px}
+a{color:var(--brand)}
+.linkbtn{background:none;border:0;color:var(--brand);cursor:pointer;font:inherit;padding:0;text-decoration:underline}
+main{padding:14px 18px 40px;min-width:0}
+.page{display:none} .page.on{display:block}
+.title{font-size:20px;font-weight:600;margin:0 0 2px} .sub{color:var(--soft);margin:0 0 12px}
+.kstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:0 0 12px}
+.kcard{background:#fff;border:1px solid var(--line);border-top:3px solid var(--brand);padding:7px 10px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.kcard .v{font-size:19px;font-weight:600;line-height:1.2} .kcard .l{font-size:11px;color:var(--soft)} .kcard .d{font-size:10.5px;color:var(--soft);margin-top:2px}
+.kcard.g{border-top-color:var(--found)} .kcard.a{border-top-color:var(--partial)} .kcard.r{border-top-color:var(--nf)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px}
+.vis{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:10px 12px;box-shadow:0 1px 2px rgba(0,0,0,.06);min-width:0;margin-bottom:12px}
+.grid .vis{margin-bottom:0}
+.vis h3{margin:0 0 8px;font-size:14px;font-weight:600}
+.vis .note{color:var(--faint);font-size:11px;margin-top:6px}
+svg{width:100%;height:230px;display:block}
+.echart{width:100%} .echart svg{height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--soft)}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:12px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--soft);font-weight:600;background:#faf9f8;position:sticky;top:0;z-index:1}
+th[data-sort]{cursor:pointer;user-select:none} th[data-sort]:hover{color:var(--ink)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer} tr.click:hover td{background:#f3f9fd} tr.sel td{background:#e6f1f8}
+.tbl{overflow:auto;max-height:340px;border:1px solid var(--line);background:#fff}
+.tbl.tall{max-height:560px}
+.attn{border-left:4px solid var(--nf);background:#fdf3f4;padding:10px 12px;margin-bottom:12px}
+.attn.info{border-left-color:var(--partial);background:#fdf8ec}
+.btn:not([class*="btn-"]){font:inherit;padding:6px 12px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer;border-radius:2px;margin-right:6px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+/* Bootstrap buttons (Angular app) carry a btn-* class and keep Bootstrap's own rules. */
+.err{color:var(--nf);font-size:12px} .ok{color:var(--found);font-size:12px}
+.mono{font-family:Consolas,monospace;font-size:12px}
+.chip{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.chip.P{background:#e0f3f1;color:#00695e} .chip.R{background:#e0eef7;color:#005a8e} .chip.I{background:#ededed;color:#555}
+.chip.F{background:#fdeee4;color:#a44b12} .chip.H{background:#f9e2dd;color:#a3290d} .chip.E{background:#f9e2dd;color:#a3290d} .chip.X{background:#f3f2f1;color:#605e5c}
+.iss{font-size:11px;color:var(--soft)} .iss b{color:var(--ink);font-weight:600}
+.bar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px}
+.bar .opt{min-width:120px;flex:0 1 160px}
+.opt label{font-size:12px;color:var(--soft)}
+.back{margin-bottom:8px}
+.crumbs{font-size:12px;color:var(--soft);margin-bottom:6px} .crumbs a{color:var(--brand)}
+tr.group td{background:#faf9f8;color:var(--ink);border-top:2px solid var(--line)}
+.ftr{color:#8a8886;font-size:11px;margin-top:18px;border-top:1px solid var(--line);padding-top:8px}
+@media (max-width:700px){ main{padding:12px 16px 32px} .slicers{padding:8px 16px} .kstrip{grid-template-columns:repeat(2,1fr)} .top .meta{display:none} }

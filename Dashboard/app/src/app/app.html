@@ -1,0 +1,64 @@
+<nav class="navbar navbar-dark bg-dark sticky-top top">
+  <span class="navbar-brand">Allshares Part 1 accuracy</span>
+  <ul class="nav nav-underline tabs" role="tablist">
+    @for (p of pages; track p.path) {
+      <li class="nav-item"><a class="nav-link tab" role="tab" [routerLink]="'/' + p.path" routerLinkActive="active" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive">{{ p.label }}</a></li>
+    }
+  </ul>
+  @if (r.loaded()) {
+    <div class="meta">{{ r.C.fmt(r.model.recs.length) }} values@if (imported()) { · {{ r.C.fmt(imported()) }} from import}</div>
+  }
+</nav>
+
+@if (r.error()) {
+  <main><div class="attn alert alert-danger" role="alert">{{ r.error() }}</div></main>
+} @else if (!r.loaded()) {
+  <main><div class="sub">Loading report data…</div></main>
+} @else {
+  @let f = r.filters();
+  @let o = r.options()!;
+  <aside class="slicers">
+    <div class="slicer"><label class="form-label">Country</label>
+      <select class="form-select form-select-sm" [value]="f.country" (change)="on('country', $event)">
+        <option value="">All countries</option>
+        @for (c of o.countries; track c) {<option [value]="c" [selected]="f.country === c">{{ c }}</option>}
+      </select></div>
+    <div class="slicer"><label class="form-label">Source</label>
+      <select class="form-select form-select-sm" (change)="on('source', $event)">
+        <option value="all" [selected]="f.source === 'all'">All sources</option>
+        <option value="T" [selected]="f.source === 'T'">Tracker ({{ r.model.data.meta.companyIds }} IDs, {{ r.model.data.meta.companies }} companies)</option>
+        <option value="I" [selected]="f.source === 'I'">Imported</option>
+      </select></div>
+    <div class="slicer"><label class="form-label">Data type</label>
+      <select class="form-select form-select-sm" (change)="on('dtype', $event)">
+        <option value="all" [selected]="f.dtype === 'all'">Company and pay</option>
+        <option value="company" [selected]="f.dtype === 'company'">Company data</option>
+        <option value="pay" [selected]="f.dtype === 'pay'">Pay data</option>
+      </select></div>
+    <div class="slicer"><label class="form-label">Field group</label>
+      <select class="form-select form-select-sm" (change)="on('cat', $event)">
+        <option value="">All field groups</option>
+        @for (c of o.categories; track c) {<option [value]="c" [selected]="f.cat === c">{{ c }}</option>}
+      </select></div>
+    <div class="slicer"><label class="form-label">Company</label>
+      <select class="form-select form-select-sm" (change)="on('company', $event)">
+        <option value="">All companies</option>
+        @for (c of o.companies; track c.key) {<option [value]="c.key" [selected]="f.company === c.key">{{ c.label }}</option>}
+      </select></div>
+    <div class="slicer"><label class="form-label">Score status</label>
+      <select class="form-select form-select-sm" (change)="on('status', $event)">
+        <option value="">All statuses</option>
+        @for (s of o.statuses; track s.key) {<option [value]="s.key" [selected]="f.status === s.key">{{ s.label }}</option>}
+      </select></div>
+    @if (r.C.anyFilter(f)) {<div><button class="btn btn-link btn-sm" (click)="r.clearFilters()">Clear filters</button></div>}
+  </aside>
+  <main>
+    <div class="kstrip">
+      @for (k of r.kpis(); track k.key) {
+        <div class="kcard card" [class]="'kcard card ' + k.cls" [attr.data-k]="k.key"><div class="v">{{ k.v }}</div><div class="l">{{ k.l }}</div><div class="d">{{ k.d }}</div></div>
+      }
+    </div>
+    <router-outlet />
+    <div class="ftr">{{ r.titles()['footer'] }}</div>
+  </main>
+}
