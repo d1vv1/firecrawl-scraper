@@ -21,7 +21,9 @@ import io
 import json
 import logging
 import os
+import re
 import time
+import unicodedata
 
 import httpx
 
@@ -97,6 +99,59 @@ def mics() -> dict[str, dict]:
 def venue_name(mic: str) -> str:
     m = mics().get(mic) or {}
     return FRIENDLY.get(mic) or (m.get("name") or mic).title()
+
+
+# Names reports use for an exchange that neither FRIENDLY nor the ISO list spells so.
+EXCHANGE_ALIASES = {
+    "oslo stock exchange": "XOSL", "oslo bors": "XOSL", "stockholm stock exchange": "XSTO",
+    "nasdaq omx stockholm": "XSTO", "copenhagen stock exchange": "XCSE",
+    "nasdaq omx copenhagen": "XCSE", "helsinki stock exchange": "XHEL",
+    "nasdaq omx helsinki": "XHEL", "lse": "XLON", "london stock exchange main market": "XLON",
+    "new york stock exchange": "XNYS", "nyse": "XNYS", "nasdaq": "XNAS",
+    "nasdaq stock market": "XNAS", "swiss exchange": "XSWX", "six swiss exchange": "XSWX",
+    "frankfurt stock exchange": "XFRA", "deutsche borse": "XETR", "euronext oslo bors": "XOSL",
+}
+
+
+def _exchange_key(name: str) -> str:
+    t = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower()
+    t = re.sub(r"\b(the|ab|asa|as|plc|ltd|limited|inc|s\.?a\.?|ag)\b", " ", t)
+    return " ".join(re.findall(r"[a-z0-9]+", t))
+
+
+# Growth markets with one name in several countries: the market MIC per country.
+FIRST_NORTH = {"SE": "FNSE", "DK": "FNDK", "FI": "FNFI", "IS": "FNIS", "EE": "FNEE",
+               "LV": "FNLV", "LT": "FNLT"}
+OTHER_GROWTH = {"spotlight stock market": "XSAT", "spotlight": "XSAT",
+                "euronext growth oslo": "MERK", "euronext growth": None,
+                "nordic growth market": "XNGM", "ngm": "XNGM"}
+
+
+def mic_for_name(name: str | None, country: str | None = None) -> str | None:
+    """The MIC of an exchange named in a document: "Nasdaq Stockholm" -> XSTO, "Oslo
+    Børs" -> XOSL, "Nasdaq First North Growth Market" in Sweden -> FNSE. Only the first
+    exchange of a list ("Oslo Børs, New York Stock Exchange") counts. None when the name
+    matches no exchange or several."""
+    first = re.split(r",|;| and |/", name or "")[0].strip()
+    key = _exchange_key(first)
+    if not key:
+        return None
+    if key in EXCHANGE_ALIASES:
+        return EXCHANGE_ALIASES[key]
+    if "first north" in key:
+        return FIRST_NORTH.get((country or "").upper())
+    for growth, mic in OTHER_GROWTH.items():
+        if key == growth or key.startswith(growth + " "):
+            return mic
+    found = {mic for mic, n in FRIENDLY.items() if _exchange_key(n) == key}
+    if not found:
+        try:
+            table = mics()
+        except httpx.HTTPError:
+            return None
+        found = {m["operating"] or mic for mic, m in table.items()
+                 if _exchange_key(m["name"]) == key}
+    return found.pop() if len(found) == 1 else None
 
 
 # --- FIRDS ------------------------------------------------------------------------

@@ -97,3 +97,12 @@ def test_ticker_keeps_the_exchange_spelling_from_a_document():
     assert dp.best([figi, doc])["ticker"].value == "VOLV B"
     novo = dp.best([Found("ticker", "NOVOB", source="OpenFIGI", method="API", confidence="B"), adr])
     assert novo["ticker"].value == "NOVOB" and "other source says NVO" in novo["ticker"].note
+
+
+def test_exchange_names_map_to_their_mic():
+    from extractor.listing import mic_for_name
+    assert mic_for_name("Nasdaq Stockholm") == "XSTO"
+    assert mic_for_name("Oslo Stock Exchange") == "XOSL"
+    assert mic_for_name("Oslo Børs, New York Stock Exchange") == "XOSL"   # the first one
+    assert mic_for_name("Nasdaq First North Growth Market", "SE") == "FNSE"
+    assert mic_for_name("Nasdaq First North Growth Market") is None        # which country?

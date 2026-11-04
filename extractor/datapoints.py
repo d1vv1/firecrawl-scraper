@@ -59,9 +59,10 @@ from pathlib import Path
 from urllib.parse import quote as urlquote, urlparse
 
 import httpx
+import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, listing, llm, pay, pay_tables
+from . import apis, edgar, listing, llm, pay, pay_tables, sector
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
@@ -73,7 +74,7 @@ from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
 from .scraper import Page, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
-from .validate import quote_in_text
+from .validate import figure_in_quote, quote_in_text
 from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
@@ -114,7 +115,7 @@ DATA_POINTS = [
 ]
 NAMES = DATA_POINTS
 # Only an official API gives these (GLEIF, the registers, SEC EDGAR).
-API_ONLY = {"lei", "sector_code"}
+API_ONLY = {"lei"}
 LISTED_ONLY = {"ticker", "isin", "exchange", "exchange_segment", "listing_date", "share_price",
                "market_cap_band", "cik"}
 # Pay facts are only published by listed companies (remuneration reports).
@@ -348,7 +349,9 @@ def report_origin(result: dict) -> Origin | None:
     filing = result.get("filing") or {}
     if result.get("report_url") == filing.get("report_url"):
         source = (REGISTRY_NAMES.get(filing.get("registry"), FILING_SOURCE.get(filing.get("type"), "Filing"))
-                  + (f" {filing.get('form')}" if filing.get("type") == "edgar" else ""))
+                  + (f" {filing.get('form')}" if filing.get("type") == "edgar" else "")
+                  # issue 6: a holding company's group figures, from its parent's accounts
+                  + (f": {PARENT_ACCOUNTS}" if "parent company" in (filing.get("form") or "") else ""))
     else:
         source = "Annual report (PDF)" if kind == "pdf" else "Annual report (web page)"
     pdf = (CACHE_DIR / md_name).with_suffix(".pdf")
@@ -493,18 +496,23 @@ def _breakdown(b) -> str:
                      for i in b.items)
 
 
-def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
+def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | None = None) -> list[Found]:
     """The AI's facts as Found values, each placed by its quote (in its document, when
-    several documents were read together)."""
+    several documents were read together). `country` picks the MIC of a growth market
+    named in several countries ("First North")."""
     out: list[Found] = []
 
-    def add(name: str, value, fact, unit: str = "", period: str = "", extra: str = ""):
+    def add(name: str, value, fact, unit: str = "", period: str = "", extra: str = "",
+            figure=None, method: str = ""):
         if value in (None, "", []) or not getattr(fact, "quote", None):
             return                      # no quote, no value: the prompt demands one
         doc, endpoint, conf, where = origin.place(fact.quote, fact.chunk_id)
+        if figure is not None and not figure_in_quote(figure, fact.quote):
+            # worked out by the AI or taken from the wrong place
+            conf, where = "C", f"{where}; the figure {fmt_number(figure)} is not in the quote"
         dated = f"document dated {doc.date}" if doc.date else ""
         out.append(Found(name, value, unit=unit, period_end=period or "", source=doc.source,
-                         endpoint=endpoint, method=doc.method, confidence=conf,
+                         endpoint=endpoint, method=method or doc.method, confidence=conf,
                          note="; ".join(x for x in (extra, where, dated) if x),
                          retrieved_at=doc.retrieved_at))
 
@@ -512,38 +520,47 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
         n: NumberFact = getattr(facts, name)
         if n.value is not None and n.unit:
             add(name, full_value_quoted(n.value, n.unit, n.quote), n, unit=n.currency or "",
-                period=n.period_end,
+                period=n.period_end, figure=n.value,
                 extra=f"printed {fmt_number(n.value)} {n.unit}")
     e = facts.ebitda
     if e.value is not None and e.unit and e.measure:
         what = e.measure.replace("_", " ") + (" (company-defined)" if e.company_defined else "")
         add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
-            extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
+            figure=e.value, extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
         scaled = n.unit not in (None, "units")
         add(name, full_value_quoted(n.value, n.unit or "units", n.quote), n, unit="employees",
-            period=n.period_end, extra=f"printed {fmt_number(n.value)} {n.unit}" if scaled else "")
-    n = facts.shares_outstanding
+            period=n.period_end, figure=n.value, extra=f"printed {fmt_number(n.value)} {n.unit}" if scaled else "")
+    n, t = facts.shares_outstanding, facts.treasury_shares
     if n.value is not None:
-        add("shares_outstanding", full_value_quoted(n.value, n.unit or "units", n.quote), n,
-            unit="shares",
-            period=n.period_end)
+        shares = full_value_quoted(n.value, n.unit or "units", n.quote)
+        held = (full_value_quoted(t.value, t.unit or "units", t.quote)
+                if t.value and t.quote and figure_in_quote(t.value, t.quote) else None)
+        if held and not OUTSTANDING_WORDS.search(n.quote or "") and 0 < held < shares:
+            # Bang & Olufsen: 147,326,503 issued, 4,719,497 in treasury
+            add("shares_outstanding", shares - held, n, unit="shares", period=n.period_end,
+                figure=n.value, method="DERIVED",
+                extra=f"derived: {fmt_number(shares)} issued - {fmt_number(held)} treasury shares "
+                      f"(treasury: \"{clip(t.quote, 80)}\")")
+        else:
+            add("shares_outstanding", shares, n, unit="shares", period=n.period_end, figure=n.value)
     p = facts.share_price
     if p.value is not None and p.currency:
-        add("share_price", p.value, p, unit=p.currency, period=p.date or "",
+        add("share_price", p.value, p, unit=p.currency, period=p.date or "", figure=p.value,
             extra=f"closing price {p.date}" if p.date else "closing price at year end")
     for name in ("legal_name", "business_id", "other_names", "head_office_city", "ticker",
                  "isin", "exchange", "exchange_segment", "listing_date", "sub_sector",
                  "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
                  "benefits", "shareholding_requirement"):
         t: TextFact = getattr(facts, name)
-        add(name, t.value, t)
+        mic = listing.mic_for_name(t.value, country) if name == "exchange" and t.value else None
+        add(name, t.value, t, extra=f"MIC {mic}" if mic else "")
     site = website_domain(facts.website.value)
-    if site:
-        add("website", site, facts.website)
+    if site and site in (facts.website.quote or "").lower():
+        add("website", site, facts.website)       # not from "available at Marimekko's website"
     cc = (facts.country_code.value or "").strip().upper()
     if re.fullmatch(r"[A-Z]{2}", cc):
         add("country_code", cc, facts.country_code)
@@ -585,11 +602,23 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle) -> list[Found]:
 
     for name in ("revenue_by_country", "staff_by_country", "revenue_by_segment", "staff_by_segment"):
         b = getattr(facts, name)
-        if b.items:
+        if b.items and not percent_items(b):
             unit = " ".join(x for x in (b.currency, b.unit if b.unit != "units" else "") if x) \
                 or ("employees" if name.startswith("staff") else "")
             add(name, _breakdown(b), b, unit=unit, extra=b.basis or "")
     return out
+
+
+# A share count that already excludes treasury shares.
+OUTSTANDING_WORDS = re.compile(r"outstanding|excluding|excl\.|net of|in circulation|utestående|"
+                               r"utestaende|udestående|ulkona olev|exkl", re.I)
+
+
+def percent_items(b) -> bool:
+    """A breakdown whose figures the quote prints as percentages ("69 percent work in R&D")."""
+    q = b.quote or ""
+    return any(re.search(rf"(?<![\d.,]){re.escape(fmt_number(i.value))}\s*(%|percent|per cent|"
+                         rf"procent|prosent|prosenttia)", q, re.I) for i in b.items)
 
 
 def website_domain(text: str | None) -> str:
@@ -634,7 +663,10 @@ def gap_list(chosen: dict[str, Found]) -> list[str]:
 
 
 def wanted_fields(gaps: list[str]) -> list[str]:
-    return sorted({FACT_FIELD.get(g, g) for g in gaps} & set(DataPointFacts.model_fields))
+    fields = {FACT_FIELD.get(g, g) for g in gaps}
+    if "shares_outstanding" in gaps:
+        fields.add("treasury_shares")         # code subtracts them from shares issued
+    return sorted(fields & set(DataPointFacts.model_fields))
 
 
 # Always read from the report, even when an API gave them: identity_check compares the
@@ -678,7 +710,7 @@ def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
 
 
 def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Library,
-                   fc: FirecrawlClient) -> tuple[list[Found], list[str]]:
+                   fc: FirecrawlClient, country: str | None = None) -> tuple[list[Found], list[str]]:
     """Rounds of: pick the most promising documents for the gaps, read them, ask the AI
     only for the gaps; stop when the gaps are filled, nothing is left to read, or after
     DOC_ROUNDS. Returns the values and the documents read (for "not found in")."""
@@ -709,7 +741,7 @@ def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Librar
         facts = ask(name, origins[0].url if len(origins) == 1 else site, chunks,
                     "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
                     f"{slug}_docs_{key}", wanted)
-        got = [f for f in from_facts(facts, Bundle(origins)) if f.data_point in gaps]
+        got = [f for f in from_facts(facts, Bundle(origins), country) if f.data_point in gaps]
         for f in got:
             year_check(f, lib.report_year)
         values += got
@@ -830,7 +862,14 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         if not chunks:
             continue
         log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
-        f = pay.ask_pay(name, o.url, chunks, what, key, o.pdf, o.page_text())
+        try:
+            f = pay.ask_pay(name, o.url, chunks, what, key, o.pdf, o.page_text())
+        except openai.LengthFinishReasonError:
+            # the model's reasoning ran to the output limit (TWMA's parent accounts, which
+            # have no executive pay table): this source gives no answer, the run goes on
+            log.warning("Pay: the AI's answer about %s ran out of length; skipped", o.url)
+            read.append(f"{o.source} (no usable AI answer)")
+            continue
         read.append(o.source)
         year = fiscal_end_year(f.fiscal_year)
         if year and report_year and year < report_year and not given:
@@ -904,6 +943,20 @@ YEARLY = {"revenue", "total_assets", "ebitda", "revenue_by_segment", "staff_by_s
           "share_price"}
 
 
+# Values that hold for a date or period: the yearly figures, plus who owns the company.
+PERIODIC = YEARLY | {"largest_holders", "controlling_owner", "controlling_owner_name",
+                     "ownership_type", "pe_stake_5pct"}
+
+
+def with_report_period(values: list[Found], period_end: str | None) -> None:
+    """A periodic value read from the annual report without its own date holds for the
+    report's period end (EBITDA, the segment note, the shareholder table)."""
+    for f in values:
+        if period_end and not f.period_end and f.data_point in PERIODIC:
+            f.period_end = period_end
+            f.note += "; period end: the report's (no other date stated)"
+
+
 def year_check(f: Found, report_year: int | None) -> None:
     """Grade C a yearly figure whose document isn't dated the report's year or later."""
     if f.data_point not in YEARLY or not report_year:
@@ -955,6 +1008,24 @@ def identity_check(values: list[Found], country: str | None, names: list[str], s
         if f.source == source and f.method != "XBRL":
             f.confidence = "C"
             f.note = "; ".join(x for x in (f.note, why) if x)
+
+
+PARENT_ACCOUNTS = "the parent company's consolidated accounts"
+OWN_IDENTITY = {"legal_name", "business_id", "other_names", "country_code", "listing_status"}
+
+
+def parent_group(values: list[Found]) -> list[Found]:
+    """Values read from the parent's consolidated accounts that a holding company files
+    (issue 6): its name and number are the parent's, so they are dropped; the figures
+    are the parent's group, which holds this company, and the note says so."""
+    parent = next((str(f.value) for f in values if f.data_point == "legal_name" and f.value), "")
+    why = "group figures from the parent company's consolidated accounts" + (
+        f" ({clip(parent, 60)})" if parent else "")
+    kept = [f for f in values if f.data_point not in OWN_IDENTITY]
+    for f in kept:
+        if f.value not in (None, ""):
+            f.note = "; ".join(x for x in (f.note, why) if x)
+    return kept
 
 
 def same_company(a: str, b: str) -> bool:
@@ -1049,6 +1120,10 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
             why = band_why
         elif name in API_ONLY and not any(s in ", ".join(tried) for s in apis.API_SOURCES):
             why, method = "not found: only an official API gives it (API step off or no LEI)", ""
+        elif name == "sector_code":
+            # classified from the business description (sector.py), else a register's code
+            why = ("not found: no business description to classify, and no register code"
+                   + (f" (tried: {', '.join(tried)})" if tried else ""))
         elif name == "cik" and not us:
             why, method = "not applicable: no SEC filing found and not US-listed", ""
         elif listed is False and (name in LISTED_ONLY or name in LISTED_REPORTS_ONLY):
@@ -1181,7 +1256,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         tried += answered
     origin = report_origin(result) if result else None
     if result:
-        values += from_result(result, origin)
+        tagged = from_result(result, origin)
+        values += parent_group(tagged) if origin and PARENT_ACCOUNTS in origin.source else tagged
         tried.append(origin.source if origin else "annual report")
 
     # 2. the AI pass over the report, only for what the APIs and tags left open (and
@@ -1196,12 +1272,16 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
             facts = ask(c.name, origin.url, chunks, "the company's annual report",
                         Path(result["debug"]["markdown_file"]).stem,
                         wanted_fields(gaps + list(IDENTITY_FIELDS)))
-            report_values = from_facts(facts, origin)
-            # The LEI record's legal country first: the input's country can be the
-            # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
-            identity_check(report_values + values,
-                           (lei_record or {}).get("country") or c.country,
-                           [c.name, (lei_record or {}).get("legal_name") or ""], origin.source)
+            report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
+            with_report_period(report_values, result.get("period_end_date"))
+            if PARENT_ACCOUNTS in origin.source:
+                report_values = parent_group(report_values)
+            else:
+                # The LEI record's legal country first: the input's country can be the
+                # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
+                identity_check(report_values + values,
+                               (lei_record or {}).get("country") or c.country,
+                               [c.name, (lei_record or {}).get("legal_name") or ""], origin.source)
             values += report_values
 
     chosen = best(values)
@@ -1241,7 +1321,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         gaps = gap_list(chosen)
         if lib and gaps:
             log.info("Document fallback on %s for: %s", site, ", ".join(gaps))
-            found, read = from_documents(c.name, c.slug, site, gaps, lib, fc)
+            found, read = from_documents(c.name, c.slug, site, gaps, lib, fc,
+                                         (lei_record or {}).get("country") or c.country)
             values += found
             tried += list(dict.fromkeys(read)) or ["company documents (none usable found)"]
     except PaymentRequiredError:
@@ -1257,6 +1338,11 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     if parent and any(same_company(parent.value, n) for n in
                       (c.name, getattr(chosen.get("legal_name"), "value", ""))):
         del chosen["ultimate_parent"]          # the company itself: it is the top of its group
+    # The sector from the business description, the client's route (issue 7); the
+    # register's code, often the holding company's, stays in the note.
+    classified = sector.from_description(chosen, c.name)
+    if classified:
+        chosen["sector_code"] = classified
     return finish(t, chosen, tried, error, gleif_isins) + (roles or no_roles(roles_why))
 
 

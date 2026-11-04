@@ -204,8 +204,10 @@ Per company, cheapest and most exact first:
    report are skipped. Default cap: 10 credits per company (`--doc-credits`,
    `--no-docs`).
 
-`lei` and `sector_code` come only from the APIs. Not yet in the API step: ESMA FIRDS,
-exchange segment files, ECB exchange rates, Bolagsverket (SE) and CVR (DK).
+`lei` comes only from the APIs. `sector_code` is a NACE Rev. 2 class picked by the AI from
+the business description (`sub_sector`, `extractor/sector.py`), the client's route; the
+register's own code, often the holding company's, stays in `note`. Not yet in the API
+step: exchange segment files, ECB exchange rates, Bolagsverket (SE) and CVR (DK).
 
 When several sources give a value, the most exact one wins (A before B before C, then
 XBRL, then report, then web). A different value from another source is mentioned in
@@ -231,6 +233,19 @@ XBRL, then report, then web). A different value from another source is mentioned
 Re-runs skip companies already done (`output/datapoints/<id>.json`; `--redo` to redo).
 When the input is the golden sample, `output/golden_test_filled.csv` is the same file with
 `build_value` filled in, in the golden unit (millions), for the reviewers.
+
+### Pay data from one PDF
+
+```
+python -m extractor.pay_from_pdf report.pdf --company "Equinor ASA" --period-end 2025-12-31
+```
+
+Only executive pay, from a PDF you already have (an annual report or a remuneration
+report): no search, no APIs, no Firecrawl. It uses the collector's pay route: the pay AI
+call, the Camelot pay-table reading and the total check. It writes
+`output/<pdf name>_pay.csv` (or `--out`): one row per role and field, plus the company's
+pension type, benefits and shareholding requirement, each with its page, quote and grade.
+Exit code 2 when the PDF has no executive pay. A second run of the same file is free (cached).
 
 ## ESEF route (tried first)
 
@@ -419,7 +434,9 @@ Decisions made where the spec was open:
   because reports often sit on `investors.<domain>` or a CDN subdomain.
 - **PDF converter:** `pymupdf4llm` uses its layout engine (via `pymupdf-layout`), which
   produces clean markdown tables. Converting the 285-page Unilever report takes about
-  6 minutes, but only once because the result is cached. OCR is turned off.
+  6 minutes, but only once because the result is cached. Its own OCR is turned off. A
+  scanned register filing (a parent's consolidated accounts filed on paper) is read by the
+  AI from page images instead (`extractor/ocr.py`, `OCR=0` turns it off).
 - **Steps 2–3 are cached too** (`cache/<slug>_discovery.json`). Without that, "a second run
   makes no Firecrawl calls" isn't possible. `--no-cache` ignores all caches.
 - **`--report-url` without `--website`:** the website is set to the report URL's origin.

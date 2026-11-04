@@ -89,6 +89,29 @@ def quote_in_text(quote: str, source: str) -> str | None:
     return None
 
 
+def numbers_in(text: str) -> list[float]:
+    """Figures in a quote, thousands separators removed: '1,242 | 96<br>23' -> [1242, 96, 23].
+    Space-grouped figures count both whole and in parts ("1 057 875" -> 1057875, 1, 57, 875),
+    and a lone dash is a zero."""
+    t = normalize(text)
+    found = re.findall(r"\d+(?:\.\d+)?", t)
+    found += [g.replace(" ", "") for g in re.findall(r"\d{1,3}(?: \d{3})+(?:\.\d+)?", t)]
+    out = [float(x) for x in found]
+    if re.search(r"(^|[\s|])[-–—](?=$|[\s|])", t):
+        out.append(0.0)
+    return out
+
+
+def figure_in_quote(figure: float, quote: str, scaled: bool = False) -> bool:
+    """The figure appears in the quote as one number, or as the sum of the quote's few
+    cells (a table row "Anders Opedal | 96 | 23" for 119). `scaled`: the figure may also be
+    printed in thousands, millions or billions ("(000s) 5 582 534" for 5,582,534,000)."""
+    nums = numbers_in(quote or "")
+    wanted = [abs(figure) / k for k in ((1, 1e3, 1e6, 1e9) if scaled else (1,))]
+    sums = ([sum(nums)] if 1 < len(nums) <= 4 else []) + ([sum(nums[1:])] if 1 < len(nums) <= 5 else [])
+    return any(abs(abs(n) - w) <= max(0.005 * w, 1e-9) for n in nums + sums for w in wanted)
+
+
 def _in_one_row(qt: list[str], source: str) -> bool:
     """The quote's tokens in order, with any gaps, within one table row of the source,
     or two neighbouring rows (converted tables can put a person's name on one line and
@@ -101,7 +124,11 @@ def _in_one_row(qt: list[str], source: str) -> bool:
         row = lines[i].strip()
         cells = [c.strip() for c in row[row.startswith("|"):len(row) - row.endswith("|")].split("|")]
         label_row = sum(not c for c in cells) >= len(cells) / 2
-        lt, pos = _tokens(normalize(" ".join(lines[i:i + 2] if label_row else lines[i:i + 1]))), 0
+        if label_row:
+            # a long name overflows into the next cells, cut mid-word: "Executive Vic|e
+            # President, Chief Financial Offic|er" (Bang & Olufsen): join the pieces
+            row = re.sub(r"(?<=[^\s|*])\**\|\**(?=[^\s|*])", "", row)
+        lt, pos = _tokens(normalize(" ".join([row] + lines[i + 1:i + 2] if label_row else [row]))), 0
         for tok in qt:
             try:
                 pos = lt.index(tok, pos) + 1

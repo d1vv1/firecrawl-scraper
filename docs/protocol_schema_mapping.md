@@ -39,8 +39,8 @@ The protocol's status values map onto our columns as follows:
 | C07 | Listing status, admission date | `listing_status`, `listing_date` | Status: FIRDS (active, issuer-requested listing). Date: annual report, listing notice, share page, history; FIRDS first trading date only for listings since 2000, graded C | API step (26 Oct 2026) |
 | C08 | Country, HQ city | `country_code`, `head_office_city` | Annual report; legal notice | — |
 | C09 | Website domain | `website` | Annual report; legal notice, about page | **new** |
-| C10 | National industry code | `sector_code` | Registers: Brønnøysund (NO), PRH (FI), Companies House (UK, working since 25 Oct 2026); SEC SIC for US registrants. Elsewhere not found. Register codes often describe the listed holding company (Shell, AO World: SIC 70100 "activities of head offices") | API step |
-| C11 | Business description | `sub_sector` | Annual report: now one sentence of the business description | prompt |
+| C10 | National industry code | `sector_code` | A NACE Rev. 2 class picked by the AI from the business description (C11), the client's route (`extractor/sector.py`; the Allshares taxonomy replaces the list when it arrives). The register's code (Brønnøysund, PRH, Companies House, SEC SIC) stays in `note`: for listed groups it often describes the holding company (Shell, AO World: SIC 70100 "activities of head offices"). The register's code is the value only when there is no description | **new**: classification |
+| C11 | Business description | `sub_sector` | Annual report: one sentence of the business description saying what the company makes, sells or provides | prompt |
 | C12 | Revenue | `revenue` | XBRL tag or report | — |
 | C13 | Total assets | `total_assets` | XBRL tag or report | — |
 | C14 | EBITDA, else operating profit | `ebitda` | Annual report key figures; year-end report. `note` says which measure and whether it is company-defined | **new** |

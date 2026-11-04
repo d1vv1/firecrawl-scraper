@@ -4,17 +4,42 @@ Open problems found during test runs, to pick up later. Newest first.
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed | quotes graded C; Bang & Olufsen bonus definition (issue 10) |
 | 11 | Golden file values that look like a different fiscal year | open | client answer |
 | 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
 | 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | partly fixed | exchange segment files (Large/Mid/Small Cap, Prime Standard) |
 | 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
-| 7 | Register industry codes describe the holding company | open | client's chosen approach not built |
-| 6 | Holding companies' own filed accounts give no group figures | open | consolidated accounts |
+| 7 | Register industry codes describe the holding company | fixed: sector classified from the business description (NACE Rev. 2) | the Allshares taxonomy, to replace NACE |
+| 6 | Holding companies' own filed accounts give no group figures | fixed for the UK: the parent's consolidated accounts, scans read from page images | — |
 | 5 | Run-to-run variation in AI answers | mostly fixed | pay tables Camelot can't use (no total column, people as columns) |
 | 4 | Report finder can still pick a subsidiary's or a placeholder report | partly fixed | more guards |
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 12. Values the output checks flag — mostly fixed
+
+*Found 3 November 2026 by `python -m extractor.output_checks` (`docs/output_checks.md`) on the Nordic/UK set; **fixed the same day**. Hard fails went from 46 of 710 values to 26 of 716; the golden pay match stayed at 120 of 148.*
+
+| Found | Fix | Now |
+|---|---|---|
+| Shell's STI maximum "200% of maximum"; the quote says 200% of target | New target form "% of target" (`pct_of_target`); code turns it into % of base salary: 200% × 125% target = 250% (DERIVED, `pay.derived_max`) | 250% of base salary |
+| AO World's maximums 100% and 200% not in their quote ("300% of salary") | The pay prompt: every value is one number printed in its quote; never add, multiply or work out. Code grades a figure missing from its quote C ("the figure … is not in the quote") | 300% of base salary, as quoted |
+| Nokia's CEO LTI target 8.4m = 2.8m + 5.6m, maximum 16.8m = 200% of it | Same rule and guard | Not given (the report states no single figure) |
+| Bang & Olufsen's shares outstanding worked out by the AI (the prompt asked it to subtract treasury shares) | The prompt asks for shares and treasury shares as printed; code subtracts when the share count isn't already "outstanding" | 142,607,006, DERIVED with "147,326,503 issued − 4,719,497 treasury shares" |
+| BioArctic "R&D: 69" (69 percent) as a headcount | The prompt: breakdown items are amounts or people, never percentages; code drops a breakdown whose figures the quote prints as percentages | Not given |
+| Marimekko's website from "available at Marimekko's website" | The domain must be in its quote | marimekko.com, from a quote that prints it |
+| A long name cut mid-word across table cells ("Executive Vic\|e President") kept quotes from matching | The quote lookup joins a label row's cut words (`validate._in_one_row`) | Bang & Olufsen's pay rows found on page 12 |
+
+**Not errors after all:**
+- **Shell's pension "in lieu of pension".** The report says "Wael Sawan and Sinead Gorman received cash in lieu of pension contributions equal to 20% of base salary". The note now says it is derived, which DER-06 asked for. A guard still moves a plain "Pension" column with no in-lieu wording to pension.
+- **LTI as an IFRS 2 expense** (BioArctic, Bang & Olufsen, Marimekko). The client's golden file uses the expensed figure for these companies (BioArctic CEO 1,650,000; Bang & Olufsen 7,079,000), so the check now accepts it as a stated basis.
+- **A total above its parts** (BioArctic's CEO: a 3,004 column outside our fields). This is now a soft check (XF-02). Parts above the total stay a hard fail (XF-01).
+
+**Still flagged (26 hard fails):**
+- **Quotes the source doesn't contain (21).** All of them are values the run itself grades C. Volvo's CEO table can't be read by Camelot either: its text is stored in fragments ("70 8 8 0").
+- **Bang & Olufsen's parts above the total.** The table's "Total Remuneration Granted" includes the annual bonus *expensed*; this run's AI took STI as "Cash Bonus Paid", which is what the golden file uses. This is a definitions question for the client (issue 10), and it varies from run to run because the table has no single total to check against.
+- **Nokia's former CEO.** The parts are 4% above the total, and his benefits figure (19,697) is not in its quote.
 
 ## 11. Golden file values that look like a different fiscal year
 
@@ -54,13 +79,31 @@ Nordic/UK test: ISIN 10 of 10 (was 5), exchange fields 51 of 60 (was 47); Novo N
 
 *Parked 25 October 2026.* Bolagsverket (SE) and CVR (DK) would give industry codes, and for private companies filed accounts (SE) and owners (DK). For listed companies they add little: identity comes from GLEIF, owners from the annual report, and Danish filed accounts already come from virk.dk without a login. Access: Bolagsverket by a free request form that sends keys by SMS (a Swedish phone number may be needed); CVR by email to cvrselvbetjening@erst.dk. **Revisit if the company list has many Swedish private companies.** Code to port: the colleague's `extras/collect_company_data.py`. Variables: `BOLAG_CLIENT_ID`, `BOLAG_CLIENT_SECRET`, `CVR_USER`, `CVR_PASSWORD`.
 
-## 7. Register industry codes describe the holding company
+## 7. Register industry codes describe the holding company — fixed
 
-*Found 25 October 2026.* Companies House gives Shell plc and AO World plc the code SIC 70100 ("activities of head offices"): the register codes the listed parent, not the business. The client's validation noted the same and decided to **derive the sector from the business description (found for 97%) with the Allshares taxonomy**. That classification is not built: it needs the taxonomy from the client, then an AI classification of `sub_sector`.
+*Found 25 October 2026; **fixed 4 November 2026** (`extractor/sector.py`).* Companies House gives Shell plc and AO World plc the code SIC 70100 ("activities of head offices"), and PRH gives Nokia TOL 70100: the register codes the listed parent, not the business. Registers also exist only in the Nordics and the UK. The client's validation decided to **derive the sector from the business description (found for 97%)**, and this is now that route:
 
-## 6. Holding companies' own filed accounts give no group figures
+- The business description (`sub_sector`) is classified by one small AI call into a **NACE Rev. 2 class** (the EU's list of 615 classes, `data/nace_rev2.tsv` from Eurostat). The segment names help the AI read it; their revenues are not given, because an energy group's trading revenue dwarfs its production (Shell and Equinor became "fuel wholesale" when they were). Code checks that the class is in the list; a vague description gets no class.
+- The value is `NACE 06.10`, method DERIVED, graded like the description it rests on. The note gives the class name, the words it rests on, and the register's own code: "register code SIC (UK) 70100 (Companies House) describes the parent company, not the business", or "…, the same class" when they agree (Equinor: NACE 06.100).
+- The register's code is the value only when there is no description to classify.
+- **The Allshares taxonomy** replaces the NACE list without code changes when it arrives: `SECTOR_TAXONOMY=<file>` (code, optional level, name) and `SECTOR_SCHEME=<name>`.
+- The data-point prompt now asks for a description sentence that says what the company makes, sells or provides, not a sentence about a market (AO World's was "Given the size of the overall mobile market…"; Bang & Olufsen's was about segment reporting).
 
-*Found 25 October 2026.* For a UK holding company, Companies House holds the parent's own accounts: TWMA Group Limited's tagged accounts have only investments, no revenue, and 0 employees (the staff are in its subsidiaries). The group figures are in consolidated accounts filed by the group's top company, or on its website. Fix option: when the latest accounts are parent-only (no revenue tag), look for the consolidated accounts of the same company or its parent.
+Nordic/UK set (run 21, 4 November): 9 of 10 companies have a class, against 4 register codes before, 3 of which named the holding company. Shell and Equinor are 06.10 (crude petroleum; Equinor's register agrees), Volvo 29.10, BioArctic and Novo Nordisk 21.20, Aker Carbon Capture 28.99, Nokia 26.30, AO World 47.19, Marimekko 14.19. Bang & Olufsen has none: its report again gave a sentence about segment reporting as the description. A classification is a judgement: Marimekko is "manufacture of wearing apparel" here and "retail sale of clothing" in its register. Both are defensible for a design company that sells through its own shops.
+
+## 6. Holding companies' own filed accounts give no group figures — fixed for the UK
+
+*Found 25 October 2026; **fixed 4 November 2026** (`registries._gb_filing`, `extractor/ocr.py`).* For a UK holding company, Companies House holds the parent's own accounts: TWMA Group Limited's tagged accounts have only investments, no revenue, and 0 employees (the staff are in its subsidiaries).
+
+- **Where the group figures are.** A UK subsidiary that uses the audit exemption files its parent's consolidated accounts under its own number, as a separate filing (type PARENT_ACC, "Consolidated accounts of parent company for subsidiary company period ending 31/12/25"). When the company's own tagged accounts have no revenue and such a filing exists for the same year, that filing is read instead. A company whose own accounts have revenue keeps them. So do PDF-only accounts, which can't be told apart from a trading company's.
+- **They are often a paper scan** (TWMA's: 80 pages, no text). A scanned register filing is now read by the AI from page images: 4 pages per call, 4 calls at a time, cached per page (`ocr.py`, prompt `ocr_system.md`). A call that times out is split into one call per page. A page that still fails stays empty, and is tried again on the next run. `OCR=0` turns this off. Scanned reports on websites are still skipped.
+- **The parent's name is not the company's.** The accounts are BP INV3 TOPCO LTD's. Name, number, country and listing status read from them are dropped, and every value from them says "group figures from the parent company's consolidated accounts (BP INV3 TOPCO LTD)". The identity check is skipped for them.
+- **The register is also tried when a website was given but has no report** (TWMA's twma.com had none, so the register was never reached before).
+- A pay AI call whose reasoning runs to the output limit now skips that source instead of failing the company (TWMA's parent accounts have directors' pay, not an executive pay table).
+
+TWMA Group now: revenue USD 67,419k (its website says "$67.4m"), total assets 98,806k, EBITDA 18,679k (company-defined), 592 staff on average, revenue by country, PE owner (Buckthorn Partners), sector NACE 39.00 (waste management). Before: only the revenue, from a web page.
+
+**Still open:** the PSC chain upwards (Bidco, Midco, Topco) is not followed: the register's own PSC data is unreliable there (Midco's record names "Os" as its owner). Norway already prefers the group (KONSERN) accounts; Denmark reads the group figures when the XBRL file has them.
 
 ## 5. Run-to-run variation in AI answers
 

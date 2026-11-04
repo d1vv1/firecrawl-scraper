@@ -12,7 +12,8 @@ supporting quote is not allowed.
 Numbers: copy them exactly as printed, and take the unit and currency from
 the table header or the sentence (e.g. "in thousands of euros" -> unit
 "thousands", currency "EUR"; "SEK m" -> "millions", "SEK"). Use the most
-recent full fiscal year.
+recent full fiscal year. Every number is ONE number printed in its quote:
+never add, subtract, multiply or work out a figure yourself.
 
 Facts:
 - revenue, total_assets: the group's figure for the most recent full year,
@@ -38,8 +39,9 @@ Facts:
 - ultimate_parent: the top company of the group the company belongs to,
   if it is a subsidiary. Null if the company is itself the top.
 - head_office_city: the city of the registered office or headquarters.
-- website: the company's own website address as printed (e.g.
-  "www.yubico.com"); not a page of another site.
+- website: the company's own website address as printed in the quote
+  (e.g. "www.yubico.com"); not a page of another site. Null if the text
+  only says "our website" without the address.
 - ticker, isin, exchange, exchange_segment (e.g. "Large Cap", "Main
   Market", "Prime Standard", "First North Growth Market"; say "MTF" in the
   value if the text says the market is a multilateral trading facility;
@@ -51,15 +53,21 @@ Facts:
   stock exchange, "unlisted" if it says they do not or that the company is
   privately held / wholly owned by another company. Otherwise null.
 - sub_sector: one sentence from the business description saying what the
-  company does (e.g. "develops and sells hardware security keys").
+  company does (e.g. "develops and sells hardware security keys"): what it
+  makes, sells or provides, preferably from "about us", "our business" or
+  "at a glance". Not a sentence about a market, a strategy, one product
+  category or one event. The industry code is classified from it.
 - fiscal_year_end: the last day of the fiscal year, YYYY-MM-DD.
 - reporting_currency: ISO code of the presentation currency.
 - accounting_basis: the accounting framework the group statements follow,
   as stated (e.g. "IFRS as adopted by the EU", "HGB", "Swiss GAAP FER",
   "US GAAP").
-- shares_outstanding: number of shares outstanding at year end (all
-  classes): shares issued minus treasury shares, in units. If only the
-  number issued is given, give that.
+- shares_outstanding: the number of shares at year end (all classes) as
+  printed: the number outstanding (excluding treasury shares) if the text
+  states it, else the number issued. Never subtract treasury shares
+  yourself.
+- treasury_shares: the number of shares the company holds itself
+  (treasury shares) at year end, as printed. Null if not stated.
 - share_price: the closing share price on the last trading day of the
   fiscal year, with its currency and date. Not a high, low or average.
 - controlling_owner: the shareholder with 20% or more of the votes, or
@@ -75,6 +83,9 @@ Facts:
   given, else of capital). Empty list if none are given.
 - revenue_by_country, staff_by_country: the breakdown by country or
   region, as printed (one item per country/region; leave out totals).
+  Items are amounts or numbers of people, never percentages: if the text
+  gives only shares in percent ("69 percent work in R&D"), leave the
+  items empty. The same holds for the segment breakdowns.
   basis says how it is split (e.g. "by customer location", "average
   FTE"). Empty items if not given.
 - revenue_by_segment, staff_by_segment: the breakdown by reportable

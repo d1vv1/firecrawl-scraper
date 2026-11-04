@@ -72,7 +72,7 @@ def test_every_data_point_gets_a_row_with_a_reason():
     assert by["cik"].note.startswith("not applicable")
     assert by["revenue"].note == "not found in: Annual report (PDF)"
     assert by["lei"].note.startswith("not found: only an official API")    # no API ran
-    assert by["sector_code"].note.startswith("not found: only an official API")
+    assert by["sector_code"].note.startswith("not found: no business description")
 
 
 def test_an_isin_makes_the_company_listed():
@@ -90,7 +90,8 @@ def _facts(**over) -> DataPointFacts:
     none_h = {"name": None, "holder_type": None, "stake_pct": None, "quote": None, "chunk_id": None}
     none_b = {"items": [], "unit": None, "currency": None, "basis": None, "quote": None,
               "chunk_id": None}
-    d = {k: none_n for k in ("revenue", "total_assets", "fte", "headcount", "shares_outstanding")}
+    d = {k: none_n for k in ("revenue", "total_assets", "fte", "headcount", "shares_outstanding",
+                             "treasury_shares")}
     d |= {k: none_t for k in ("legal_name", "business_id", "country_code", "other_names",
                               "ultimate_parent", "head_office_city", "website", "ticker", "isin",
                               "exchange", "exchange_segment", "listing_date", "is_listed",
@@ -197,7 +198,8 @@ def test_protocol_company_fields_from_the_report():
         ebitda={"value": 412.5, "unit": "millions", "currency": "SEK", "measure": "adjusted_ebitda",
                 "company_defined": True, "label_in_report": "Adjusted EBITDA", **q},
         share_price={"value": 54.2, "currency": "SEK", "date": "2025-12-30", **q},
-        website={"value": "https://www.Acme.se/investors", **q},
+        website={"value": "https://www.Acme.se/investors", "quote": "see www.acme.se/investors",
+                 "chunk_id": 0},
         major_shareholders=[{"name": "EQT X", "holder_type": "private_equity", "stake_pct": 30.0, **q},
                             {"name": "Fund Y", "holder_type": "institutional_investor",
                              "stake_pct": 4.0, **q}],
@@ -565,3 +567,96 @@ def test_employee_counts_printed_in_thousands_are_scaled():
     found = {f.data_point: f for f in dp.from_facts(_facts(fte=fte, headcount=head), _origin())}
     assert found["fte"].value == 88000 and "printed 88 thousands" in found["fte"].note
     assert found["headcount"].value == 470 and "printed" not in found["headcount"].note
+
+
+def test_report_values_take_the_reports_period_end():
+    owner = dp.Found("largest_holders", "State 67%", note="report text: \"...\"")
+    dated = dp.Found("shares_outstanding", 10, period_end="2026-01-31")
+    name = dp.Found("legal_name", "Acme")
+    dp.with_report_period([owner, dated, name], "2025-12-31")
+    assert owner.period_end == "2025-12-31" and "period end: the report's" in owner.note
+    assert dated.period_end == "2026-01-31"                     # its own date stays
+    assert name.period_end == ""                                # holds without a date
+
+
+def test_pay_notes_keep_every_digit():
+    from extractor.pay import _num
+    assert _num(1057875.0) == "1057875" and _num(12.5) == "12.5"
+
+
+def _n(value, quote, unit="units"):
+    return {"value": value, "unit": unit, "currency": None, "period_end": None, "quote": quote,
+            "chunk_id": 0}
+
+
+def test_shares_issued_minus_treasury_is_derived_in_code():
+    found = {f.data_point: f for f in dp.from_facts(_facts(
+        shares_outstanding=_n(147326503, "the share capital consisted of 147,326,503 shares"),
+        treasury_shares=_n(4719497, "Treasury shares 31 May 4,719,497")), _origin())}
+    s = found["shares_outstanding"]
+    assert (s.value, s.method) == (142607006, "DERIVED") and "4719497 treasury" in s.note
+    # a count already net of treasury shares stays as printed
+    found = {f.data_point: f for f in dp.from_facts(_facts(
+        shares_outstanding=_n(5582534, "shares outstanding (000s) 5 582 534", "thousands"),
+        treasury_shares=_n(10, "treasury 10")), _origin())}
+    assert found["shares_outstanding"].value == 5_582_534_000
+
+
+def test_a_figure_missing_from_its_quote_is_graded_c():
+    found = {f.data_point: f for f in dp.from_facts(_facts(
+        headcount=_n(8400, "Target EUR 2.8 m Target EUR 5.6 m")), _origin())}
+    assert found["headcount"].confidence == "C" and "is not in the quote" in found["headcount"].note
+
+
+def test_website_must_be_in_its_quote_and_percent_breakdowns_are_dropped():
+    found = {f.data_point: f for f in dp.from_facts(_facts(
+        website={"value": "company.marimekko.com", "quote": "available at Marimekko's website",
+                 "chunk_id": 0},
+        staff_by_segment={"items": [{"segment": "R&D", "value": 69.0}], "unit": None,
+                          "currency": None, "basis": None, "chunk_id": 0,
+                          "quote": "Of the 131 employees, 69 percent work in R&D"}), _origin())}
+    assert "website" not in found and "staff_by_segment" not in found
+
+
+def _t(value, form, quote):
+    return {"value": value, "form": form, "currency": None, "unit": None, "quote": quote, "chunk_id": 0}
+
+
+def test_a_maximum_stated_as_percent_of_target_becomes_percent_of_base():
+    from extractor import pay
+    facts = _pay([_role("CEO", sti_target=_t(125.0, "pct_of_base", "Target bonus: 125% of base salary."),
+                        sti_max=_t(200.0, "pct_of_target", "Maximum bonus: 200% of target."))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    assert (rows["sti_max"].value, rows["sti_max"].unit, rows["sti_max"].method) == \
+        (250.0, "% of base salary", "DERIVED")
+
+
+def test_a_pension_column_is_not_an_allowance_in_lieu():
+    from extractor import pay
+    facts = _pay([_role("CEO", pension_allowance=_amount(307, quote="Pension [C] | 307 | 291"))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    p = rows["pension_contribution"]
+    assert p.value == 307_000 and p.method == "PARSE" and "lieu" not in p.note
+    # a real salary addition in lieu of pension, with no pension: still derived and labelled
+    facts = _pay([_role("CEO", pension_allowance=_amount(224, quote="Fixed salary addition | 224"))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    assert rows["pension_contribution"].method == "DERIVED"
+
+
+def test_a_target_missing_from_its_quote_is_graded_c():
+    from extractor import pay
+    facts = _pay([_role("CEO", sti_max=_t(100.0, "pct_of_base", "CEO – 300% of salary"))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    assert rows["sti_max"].confidence == "C" and "not in the quote" in rows["sti_max"].note
+
+
+def test_values_from_a_parents_accounts_keep_figures_not_identity():
+    src = "Companies House filing: " + dp.PARENT_ACCOUNTS
+    values = [Found("legal_name", "BP INV3 TOPCO LTD", source=src, method="PARSE", confidence="B"),
+              Found("business_id", "10705391", source=src, method="PARSE", confidence="B"),
+              Found("revenue", 67_419_000, unit="USD", source=src, method="PARSE", confidence="B",
+                    note='PDF page 25: "Revenue | 6 | 67,419"')]
+    kept = dp.parent_group(values)
+    assert [f.data_point for f in kept] == ["revenue"]
+    assert kept[0].note.endswith("group figures from the parent company's consolidated "
+                                 "accounts (BP INV3 TOPCO LTD)")

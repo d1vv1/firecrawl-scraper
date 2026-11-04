@@ -145,7 +145,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
 <div class="wrap">
 
 <header>
-  <div class="eyebrow">firecrawl-scraper · python -m extractor.datapoints · as of 26 October 2026</div>
+  <div class="eyebrow">firecrawl-scraper · python -m extractor.datapoints · as of 29 October 2026</div>
   <h1>How one company becomes 41 sourced data points, plus executive pay per role</h1>
   <p class="sub">Each company goes through seven stages: free official sources first, then the annual report, then the remuneration report, then other company documents for whatever is still missing. Every value keeps the exact place it came from: an API URL, an XBRL tag, a PDF page, or a web page. The fields follow the client's source-validation protocol: company grain C01–C23, role grain R01–R11. Open any box marked "+" for the detail.</p>
   <div class="legend">
@@ -203,7 +203,8 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
           <li>A failing API is logged and skipped: one being down never stops a company.</li>
           <li><b>Run order:</b> in the code, the annual-report search (stage 3, <code>process_company</code>) runs first, because every company needs the report anyway (no API gives revenue, employees, owners or pay) and the API step uses the filing's CIK and register number. The APIs then run before any AI reads the report, and the AI is asked only for what they left open.</li>
           <li>Not connected: Sweden (Bolagsverket) and Denmark (CVR) need credentials; parked, because for listed companies they add little.</li>
-          <li>Register industry codes often describe the listed holding company, not the business (Shell, AO World: SIC 70100 "activities of head offices").</li>
+          <li>Register industry codes often describe the listed holding company, not the business (Shell, AO World: SIC 70100 "activities of head offices"). So the industry code is classified from the business description at the end (NACE Rev. 2, <code>sector.py</code>), and the register's code goes in the note.</li>
+          <li><b>UK holding companies:</b> when a company's own accounts have no revenue and it has filed its parent's consolidated accounts for the same year (filing type PARENT_ACC), those are read instead. They are often a paper scan: the AI reads them from page images, 4 pages per call, cached (<code>ocr.py</code>). Their name and number are the parent's and are dropped; the figures are noted as the parent group's.</li>
         </ul>
       </div></details>
     </div>
@@ -268,14 +269,14 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
           <li><b>Wrong year:</b> years written as dates (<code>31122025</code>) and fiscal-year prefixes (<code>fy25</code>) are read; a newer year beats a better-looking link text (Rosenbauer, Jumbo).</li>
           <li><b>A subsidiary's report:</b> a file naming another legal form ("…plc" for an AG, "N.V." for a German company), or group-function words such as "treasury" or "finance", ranks lower (Siemens' Dutch financing arm, Volvo Treasury AB).</li>
           <li><b>Identity check after reading:</b> if the report's own text gives another country or another legal name, every value from it is graded C with the reason.</li>
-          <li><b>Rejected outright:</b> quarterly reports, presentations, press releases, teaser pages (under 20,000 characters for an HTML report), reports over 3 years old, scanned PDFs (they would need OCR).</li>
+          <li><b>Rejected outright:</b> quarterly reports, presentations, press releases, teaser pages (under 20,000 characters for an HTML report), reports over 3 years old, scanned PDFs (only a register filing is read from page images).</li>
         </ul>
       </div></details>
     </div>
     <div class="arrow"></div>
 
     <div class="node">
-      <div class="head"><h3>Document as page-tagged text</h3><span class="what">PDF converted locally (pymupdf4llm): real page numbers · filed XHTML/HTML: text blocks</span></div>
+      <div class="head"><h3>Document as page-tagged text</h3><span class="what">PDF converted locally (pymupdf4llm): real page numbers · filed XHTML/HTML: text blocks · pay-table pages are also read by Camelot in stage 5</span></div>
     </div>
     <div class="arrow"></div>
 
@@ -304,27 +305,86 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
         <li><b>The remuneration report on the company's site.</b> Second try: open the site's report-downloads page first, whose files join the pool (also files behind download buttons, read from the page's data), then a map search for "remuneration report".</li>
         <li><b>The annual report's remuneration section.</b></li>
       </ol>
-      <details><summary>Pay tables in a PDF: read by Camelot, not by the AI</summary><div class="more">
-        <p>The pay AI call reads the whole document and gives every role with titles, targets and figures. Then, for the pages that look like pay tables (many numbers, several pay words; up to 6), <code>extractor/pay_tables.py</code>:</p>
+
+      <div class="coltitle">Then two readings of the chosen document</div>
+      <div class="split">
+        <div class="col">
+          <div class="sub-node">
+            <b>a. Pay AI call over the document</b>
+            <span class="key">the best ~12,000 words on pay (8,000 from an annual report) → every role: title, executive or board, individual or aggregate, amounts, STI/LTI targets and maxima, company pay terms; a quote for each</span>
+          </div>
+          <div class="tags"><span class="tag t-parse">PARSE</span></div>
+        </div>
+        <div class="branch"><div class="h"></div>PDF with a<br>pay table?</div>
+        <div class="col">
+          <div class="sub-node">
+            <b>b. The pay table, read without the AI</b>
+            <span class="key">Camelot reads the table → a small AI call says which rows and columns are which → code adds up → the parts must equal the table's own total (2%) → the matched roles' amounts are replaced</span>
+          </div>
+          <div class="tags"><span class="tag t-api">code</span><span class="tag t-free">no Firecrawl</span></div>
+        </div>
+      </div>
+      <p style="font-size:14px">Why two: pymupdf4llm can merge two columns of a wide table into one cell ("96 23"), and the AI alone then read the amounts differently from run to run. A table library keeps the columns apart, and code does the adding. Titles, targets and maxima still come from (a); where (b) has no usable table, (a)'s amounts stay.</p>
+      <details><summary>How the pay table is read (extractor/pay_tables.py)</summary><div class="more">
         <ol>
-          <li><b>Reads</b> each table with Camelot (stream mode): the right columns, no AI. Prose read as columns (few figures) is dropped.</li>
-          <li><b>Maps</b> it with one small AI call that sees only the grid by row and column number, each column's header words, and the page text for the caption: which rows are this year's executives, and which columns make up which field (rules in <code>prompts/pay_columns_system.md</code>: other fees count as benefits, share savings plans as LTI, a salary addition in lieu of pension as pension). It gives numbers of rows and columns, never figures. Cached per table, so the same table maps the same way every run.</li>
-          <li><b>Adds up</b> the mapped cells of each row in code, with the table's unit.</li>
-          <li><b>Checks</b> that the parts add up to the table's own total (2%). A table is not used when it is for another year, has no total column, maps one column to two fields (a table with people as columns), or has no base salary.</li>
+          <li><b>Which pages:</b> those of the pay excerpt with many numbers and several pay words (up to 6).</li>
+          <li><b>Read:</b> Camelot, stream mode (it finds columns from the gaps between text; these tables have no ruled lines). Grids with fewer than 12 figures, usually prose read as columns, are dropped.</li>
+          <li><b>Map:</b> one small AI call per table sees the grid by row and column number, each column's header words, and the page text for the caption. It answers with numbers only: which rows are this year's executives, and which columns make up which field. It never copies a figure. The rules sit in <code>prompts/pay_columns_system.md</code>: other fees count as benefits, share savings plans as LTI, a salary addition in lieu of pension goes to the pension allowance. The answer is cached per table, so the same table maps the same way every run.</li>
+          <li><b>Add up</b> the mapped cells of each row in code ("96" + "23" = 119), with the table's unit.</li>
+          <li><b>Check:</b> each row's parts must add up to the table's own total within 2% (with the LTI the total includes). A row that doesn't keeps the AI's figures.</li>
+          <li><b>Match</b> each row to a role from (a): by the person's name, else the title, else the one row with the same base salary.</li>
         </ol>
-        <p>Each checked row replaces the amounts of the role it belongs to (matched by name, title or base salary); titles, targets and maxima stay from the AI call. The quote is the person and the cells added ("Anders Opedal | 96 | 23"), graded B with the page; the note names the columns ("includes table: Other fees + Fringe benefits"). Anything not covered keeps the AI's reading. <code>PAY_TABLES=0</code> turns it off.</p>
+        <p><b>A whole table is not used</b> when it is for another year (Equinor's 2024 table on page 16), has no total column to check against (Bang &amp; Olufsen), maps one column to two fields (a table with people as columns: Nokia, Marimekko), or has no base salary.</p>
+        <p><b>In the output:</b> the quote is the person and the cells added ("Anders Opedal | 96 | 23"), found in the page text, so grade B with <code>#page=N</code>. The note names the columns ("includes table: Other fees + Fringe benefits"). <code>PAY_TABLES=0</code> turns the table reading off.</p>
+        <p><b>Effect on the 10-company golden set:</b> three fresh runs scored 118, 120 and 120 of 148 pay figures, against 98 to 121 before. Equinor scored 91 of 91 every time.</p>
+      </div></details>
+      <details><summary>How we use Camelot</summary><div class="more">
+        <p><b>What it is:</b> <a href="https://camelot-py.readthedocs.io/">Camelot</a> is an open-source Python library that pulls tables out of PDFs that have a text layer. It works from where each piece of text sits on the page, not from converted text, so neighbouring columns stay apart. It runs locally: no AI, no Firecrawl, no cost. Installed with <code>camelot-py</code> and <code>opencv-python-headless</code> (<code>requirements.txt</code>).</p>
+        <p><b>Where it sits:</b> pymupdf4llm still converts every page of every PDF; its text is what the AI reads and where quotes are checked. Camelot is used only in stage 5, only on the pay document that was chosen, and only on up to 6 pages that look like pay tables (at least 20 numbers and 3 pay words on the page). Equinor's 6 candidate pages take about 1 second.</p>
+        <p><b>The call:</b> one page at a time, <code>camelot.read_pdf(pdf, pages="15", flavor="stream")</code>.</p>
+        <ul>
+          <li><b>Stream mode</b> finds columns from the white space between text. We use it because pay tables usually have no ruled lines.</li>
+          <li><b>Lattice mode</b> needs drawn cell borders, and found nothing on Equinor's table.</li>
+          <li>A page Camelot can't read is logged and skipped. Without Camelot installed, the whole step is skipped and the AI's reading stays.</li>
+        </ul>
+        <p><b>What it returns:</b> a grid of cells. Equinor's page 15, as Camelot reads it, next to the same row from pymupdf4llm:</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Reader</th><th>Anders Opedal's row</th></tr></thead>
+          <tbody>
+            <tr><td>pymupdf4llm</td><td class="mono">| Anders Opedal | 1,242 | 224 | 96&lt;br&gt;23 | 292 | 306 | 0 | 0 | 30 | 2,213 |</td></tr>
+            <tr><td>Camelot</td><td class="mono">Anders Opedal | 1,242 | 224 | 96 | 23 | 292 | 306 | 0 | 0 | 30 | 2,213 | 73% / 27%</td></tr>
+          </tbody>
+        </table></div>
+        <p>In pymupdf4llm's row, "Other fees" (96) and "Fringe benefits" (23) share one cell, so every later column sits one place off its header. Camelot gives each figure its own column.</p>
+        <p><b>What we do with the grid</b> (<code>read_grids</code>, <code>clean</code>):</p>
+        <ul>
+          <li><b>Tidy:</b> cells broken over two lines are joined, and empty rows and columns are removed.</li>
+          <li><b>Filter:</b> stream mode also turns prose in columns into "tables". A grid is kept only with at least 12 figure cells, at least 3 columns and at most 80 rows. Bang &amp; Olufsen's board fee-structure text (page 6) is dropped here. Its contents page has enough page numbers to pass, and the mapping call then rejects it as not a pay table.</li>
+          <li><b>Headers:</b> every row above the first row with two figures is a header row. Each column's header words are joined ("Fixed salary" + "addition"), because Camelot puts a header split over several lines on several rows.</li>
+          <li><b>For the mapping call:</b> the grid is written out with numbers (<code>r6 | Anders Opedal | 1,242 | …</code>, columns <code>c0…c11</code>), followed by the joined header of each column. The page's text is added for the caption ("figures in USD thousand", the year).</li>
+          <li><b>Reading figures in code</b> (<code>parse_figure</code>):
+            <ul>
+              <li>"1,242", "1 242" and "1.242" are 1242, but "7.1" is 7.1;</li>
+              <li>"(12)" is −12;</li>
+              <li>"-" and "–" are 0;</li>
+              <li>years ("2025", "2025/26") and ratios ("73% / 27%") are not figures.</li>
+            </ul>
+          </li>
+        </ul>
+        <p><b>What Camelot does not solve:</b> it reads the cells, not their meaning. Which columns make up "benefits", which rows are this year's executives and which column is the total come from the mapping call, checked against the table's total. Tables with one column per person are read correctly, but the step doesn't handle them yet. Scanned pages have no text layer, so Camelot can't read them either.</p>
       </div></details>
       <details><summary>Checks on the pay figures</summary><div class="more">
         <ul>
           <li><b>Year check:</b> a document whose pay is for an older year than the annual report is skipped (Shell's roadshow deck; Equinor's FY2024 report). Split years such as "2025/26" count by their end year.</li>
           <li><b>Remuneration policy:</b> read when targets or maxima are missing (STI/LTI as % of salary).</li>
           <li><b>Aggregates:</b> Swedish and Finnish remuneration reports cover the CEO only; the annual report's "other executives" total is added.</li>
-          <li><b>Derived values (method DERIVED):</b> pension = pension + salary addition in lieu of pension; target as % of salary from "% of maximum" or "months of salary".</li>
-          <li><b>Total check:</b> the parts must add up to the stated total within 2% (tried with vested LTI, granted LTI, or no LTI); a mismatch is noted.</li>
+          <li><b>Derived values (method DERIVED):</b> pension = pension + salary addition in lieu of pension; target or maximum as % of salary from "% of maximum", "% of target" or "months of salary".</li>
+          <li><b>Total check on the output:</b> every role's parts must add up to its stated total within 2% (tried with vested LTI, granted LTI, or no LTI); a mismatch is noted, and a match says which LTI the total includes. Amounts from the pay table were already checked against the table's total; a column outside our fields (extraordinary items, severance) can still show here as a difference.</li>
           <li><b>Scaling guard:</b> "1,242" in a "USD thousand" table becomes 1,242,000 in code; a value the AI already multiplied is caught by comparing it with the quote.</li>
+          <li><b>Page images</b> of the pay-table pages can be sent to the AI as well (<code>PAY_PAGE_IMAGES=1</code>); off by default, because in tests the result swung with the wording of the instruction.</li>
         </ul>
       </div></details>
-      <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-api">SEC</span><span class="tag t-cost">shares the document credits</span></div>
+      <div class="tags"><span class="tag t-parse">PARSE</span><span class="tag t-api">SEC</span><span class="tag t-free">Camelot: local, free</span><span class="tag t-cost">shares the document credits</span></div>
     </div>
     <div class="arrow"><span class="lab">anything still missing?</span></div>
 
@@ -353,7 +413,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
 <section id="schema">
   <div class="eyebrow">Output schema</div>
   <h2>One row per company and data point, and per role and pay field</h2>
-  <p class="sub">Every company gets exactly 41 company rows, even when nothing was found (then <code>value</code> is empty and <code>note</code> says why), plus 14 rows for each executive role found (or one row saying why there are none). The examples are Equinor's real rows: revenue (company grain) and the CEO's base salary (role grain).</p>
+  <p class="sub">Every company gets exactly 41 company rows, even when nothing was found (then <code>value</code> is empty and <code>note</code> says why), plus 14 rows for each executive role found, one row for the non-executive board (R01 only), or one row saying why there is no pay. The examples are Equinor's real rows: revenue (company grain) and the CEO's base salary (role grain).</p>
   <div class="tablewrap"><table class="schema">
     <thead><tr><th>Column</th><th>What it holds</th><th>Example (Equinor)</th></tr></thead>
     <tbody>
@@ -373,17 +433,17 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
       <tr><td>method</td><td><code>API</code> register field · <code>XBRL</code> tagged figure · <code>PARSE</code> AI read a filed document · <code>SCRAPE</code> AI read a web page · <code>DERIVED</code> computed from other values.</td><td>XBRL · PARSE</td></tr>
       <tr><td>retrieved_at</td><td>When the source was read (UTC). For cached responses: when they were really fetched.</td><td>2026-10-23T15:16:19+00:00</td></tr>
       <tr><td>confidence</td><td><code>A</code> exact · <code>B</code> AI, quote found in the source · <code>C</code> AI, quote not found, or a check failed. See <a href="#confidence">Confidence</a>.</td><td>A · B</td></tr>
-      <tr><td>note</td><td>The page and the exact quote, the XBRL tag, the number as printed, a disagreeing source, or why there's no value.</td><td>printed 1242 thousands; PDF page 15: "Anders Opedal|1,242|224|96 23|292|306|0|0|30|2,213|73% / 27%"</td></tr>
+      <tr><td>note</td><td>The page and the exact quote, the XBRL tag, the number as printed, a disagreeing source, or why there's no value.</td><td>printed 1242 thousands; PDF page 15: "Anders Opedal | 1,242"</td></tr>
     </tbody>
   </table></div>
 
   <div class="anatomy">
     <div class="eyebrow">Reading the CEO's base-salary row</div>
     <div class="cells">
-      <div class="cell"><b>value + unit</b><span>1242000 USD</span><i>The table is headed "USD thousand" and prints 1,242; the multiplication is done in code, not by the AI.</i></div>
+      <div class="cell"><b>value + unit</b><span>1242000 USD</span><i>The table is headed "USD thousand" and prints 1,242; Camelot read the cell and the multiplication is done in code, not by the AI.</i></div>
       <div class="cell"><b>endpoint</b><span>…1512fd6a….pdf#page=15</span><i>Click it: the 2025 remuneration report opens on page 15, the pay table.</i></div>
-      <div class="cell"><b>note</b><span>"Anders Opedal|1,242|224|96 23|…"</span><i>The table row as the AI copied it; the pipes are cell borders. "96 23" is two columns merged into one cell by the PDF conversion (known issue 2).</i></div>
-      <div class="cell"><b>confidence B</b><span>quote found on page 15</span><i>The AI read it and the quote was found in that page's text, so anyone can check it.</i></div>
+      <div class="cell"><b>note</b><span>"Anders Opedal | 1,242"</span><i>The person and the cell the value came from. For a summed field the note lists every cell and column: benefits "Anders Opedal | 96 | 23", "includes table: Other fees + Fringe benefits".</i></div>
+      <div class="cell"><b>confidence B</b><span>quote found on page 15</span><i>The quote was found in that page's text, within one table row, so anyone can check it.</i></div>
     </div>
   </div>
 </section>
@@ -405,7 +465,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
       <dt>website</dt><dd>report, Wikidata</dd>
     </dl></div>
     <div class="dpgroup"><b>Sector and financials (C10–C18)</b><dl>
-      <dt>sector_code</dt><dd>register NACE/SIC (NO, FI, UK, SEC); API only</dd>
+      <dt>sector_code</dt><dd>a NACE Rev. 2 class the AI picks from the business description (DERIVED, graded like the description); the register's code stays in the note</dd>
       <dt>sub_sector</dt><dd>the report's one-sentence business description</dd>
       <dt>revenue, total_assets</dt><dd>XBRL tag, else the statements</dd>
       <dt>ebitda</dt><dd>as reported, else operating profit (noted)</dd>
@@ -431,8 +491,9 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
       <dt>base_salary</dt><dd>fixed salary only (client decision pending: or base + benefits?)</dd>
       <dt>sti_paid, sti_target, sti_max</dt><dd>bonus paid; target and maximum as stated (% of salary…)</dd>
       <dt>lti_vested, lti_granted, lti_target, lti_max</dt><dd>long-term incentive, with its form</dd>
-      <dt>benefits_value, pension_contribution</dt><dd>pension includes a salary addition in lieu of pension (DERIVED)</dd>
+      <dt>benefits_value, pension_contribution</dt><dd>benefits include other fees and allowances; pension includes a salary addition in lieu of pension (DERIVED)</dd>
       <dt>total_remuneration</dt><dd>stated total, checked against the parts (2%)</dd>
+      <dt>where the amounts come from</dt><dd>a PDF's pay table read by Camelot where one is usable, else the pay AI call</dd>
     </dl></div>
   </div>
 </section>
@@ -440,45 +501,62 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
 <section id="walkthrough">
   <div class="eyebrow">Worked example, end to end</div>
   <h2>Equinor ASA, traced through every stage</h2>
-  <p class="sub">What happened for one company in the 26 October 2026 run (Nordic/UK test set). Equinor is a Norwegian company listed in Oslo and New York, so it touches almost every source. Result: 35 of 41 company fields and 13 executives' pay, 0 Firecrawl credits on the re-run (everything cached).</p>
+  <p class="sub">What happened for one company in the 29 October 2026 run (Nordic/UK test set). Equinor is a Norwegian company listed in Oslo and New York, so it touches almost every source. Result: 36 of 41 company fields and 13 executives' pay, 0 Firecrawl credits on the re-run (documents and searches cached).</p>
   <div class="faq">
     <details open><summary>Stage 1 · Who is it? → LEI OW6OFBNCKXC4US5C7523</summary><div class="more">
       <p>The input gave the LEI. GLEIF's record: <b>EQUINOR ASA</b>, registered in Norway, register number <code>923 609 016</code>, HQ Stavanger, former name StatoilHydro ASA.</p>
     </div></details>
-    <details open><summary>Stage 2 · APIs: 23 values from GLEIF, FIRDS, OpenFIGI, Brønnøysund and SEC</summary><div class="more">
+    <details open><summary>Stage 2 · APIs: 14 data points from GLEIF, FIRDS, OpenFIGI, Brønnøysund and SEC</summary><div class="more">
       <ul>
         <li><b>GLEIF:</b> names, register number, country, city; ultimate parent "none (top of group)" (reporting exception NATURAL_PERSONS).</li>
         <li><b>FIRDS:</b> ISIN <code>NO0010096985</code>, issuer-requested and active on Oslo Børs (MIC XOSL, regulated market) → listed. Its London line ended in 2017, so it is ignored.</li>
         <li><b>OpenFIGI:</b> ticker <code>EQNR</code> on Oslo.</li>
-        <li><b>Brønnøysund:</b> industry code NACE 06.100 ("Utvinning av råolje"), 21,231 employees.</li>
+        <li><b>Brønnøysund:</b> industry code NACE 06.100 ("Utvinning av råolje"), 21,231 employees (the headcount).</li>
         <li><b>SEC EDGAR:</b> CIK 1140625 (Equinor files 20-Fs for its New York shares). As a foreign issuer, only the CIK and former names are kept: SEC's ticker would be the New York one.</li>
       </ul>
     </div></details>
     <details open><summary>Stage 3 · Annual report: the FY2025 ESEF filing, in Norwegian</summary><div class="more">
-      <p>filings.xbrl.org has Equinor's FY2025 annual filing (period end 2025-12-31), found by LEI. Its tags give <b>revenue USD 106,462 million</b> (<code>ifrs-full:Revenue</code>) and <b>total assets USD 131,727 million</b>, confidence A, with a link to the XBRL viewer. A second figure for revenue (105,828 million) is kept in <code>note</code> for review. Its text is Norwegian; that's fine, quotes stay in Norwegian.</p>
+      <p>filings.xbrl.org has Equinor's FY2025 annual filing (period end 2025-12-31), found by LEI. Its tags give <b>revenue USD 106,462 million</b> (<code>ifrs-full:Revenue</code>), <b>total assets USD 131,727 million</b>, the fiscal year, its end date and the reporting currency, confidence A, with a link to the XBRL viewer. Its text is Norwegian; that's fine, quotes stay in Norwegian.</p>
     </div></details>
-    <details open><summary>Stage 4 · AI pass on the report: 20 chunks → owner, FTEs, EBITDA, segments…</summary><div class="more">
+    <details open><summary>Stage 4 · AI pass on the report: only the gaps → owner, EBITDA, segments, website…</summary><div class="more">
       <div class="tablewrap"><table>
         <thead><tr><th>Data point</th><th>Value</th><th>Quote (shortened)</th><th>Conf.</th></tr></thead>
         <tbody>
-          <tr><td>controlling_owner</td><td>state (den norske stat, 67%)</td><td>"den norske stat som hovedaksjonær…"</td><td class="cB">B</td></tr>
-          <tr><td>fte</td><td>21400</td><td>"Gjennomsnittlig antall ansatte | 21.400"</td><td class="cB">B</td></tr>
-          <tr><td>ebitda</td><td>25352000000</td><td>operating profit as printed (noted as such)</td><td class="cB">B</td></tr>
-          <tr><td>revenue_by_segment</td><td>E&amp;P Norway: 307; E&amp;P International: 57…</td><td>"Eksterne salgsinntekter…"</td><td class="cB">B</td></tr>
-          <tr><td>listing_date</td><td>2001</td><td>"I 2001 ble vi børsnotert både på Oslo Børs og…"</td><td class="cB">B</td></tr>
+          <tr><td>controlling_owner</td><td>state (den norske stat, 67%)</td><td>"med den norske stat som hovedaksjonær med en eierandel på 67 %"</td><td class="cB">B</td></tr>
+          <tr><td>ebitda</td><td>27591000000</td><td>"Justert driftsresultat 27.591" (adjusted, company-defined: noted)</td><td class="cB">B</td></tr>
+          <tr><td>revenue_by_segment</td><td>E&amp;P Norway: 307; E&amp;P International: 579…</td><td>"Eksterne salgsinntekter | 307 | 579 | …"</td><td class="cB">B</td></tr>
+          <tr><td>listing_date</td><td>2001</td><td>"I 2001 ble vi børsnotert både på Oslo Børs og New York Stock Exchange"</td><td class="cB">B</td></tr>
+          <tr><td>sub_sector</td><td>"Vi er et internasjonalt energiselskap…"</td><td>quote not found word for word</td><td class="cC">C</td></tr>
         </tbody>
       </table></div>
+      <p>Also from the report: website, accounting basis, the largest holder and "no private equity holder over 5%". FTEs were not found.</p>
     </div></details>
     <details open><summary>Stage 5 · Executive pay: 13 executives from the 2025 remuneration report</summary><div class="more">
       <p><b>How it is found without help:</b> SEC EDGAR lists the exhibits of Equinor's latest 20-F; Exhibit 15.6 is the "2025 Remuneration Report". The same PDF is also among the 13 files on <code>equinor.com/reports</code>, where the download is a button and the file address sits in the page's data (on <code>cdn.sanity.io</code>). Before these fixes, Equinor got no pay at all. (In this run the URL was also given in the input, which is read first.)</p>
-      <p><b>What came out:</b> the CEO and 12 EVPs, each with base salary, bonus paid, LTI granted, benefits, pension and total, all linked to page 15; targets and maxima from pages 9 and 35. The CEO's pension, 254,000, is DERIVED: 30,000 pension + 224,000 "salary addition in lieu of pension". Against the golden file: <b>89 of 91 figures match</b>.</p>
-      <p><b>The pay table:</b> the PDF conversion merges two columns of the table ("96 23"), so the AI alone assigned "other fees" and "fringe benefits" differently from run to run (known issues 2 and 5). Camelot reads the table on page 15 with every column right, and all 13 executives' amounts come from it; the 2024 table on page 16 is skipped by the year check.</p>
+      <p><b>The pay table:</b> the PDF conversion merges two columns of the table on page 15 ("96 23"), and the AI alone assigned "other fees" and "fringe benefits" differently from run to run (66 to 89 of 91 golden figures). Now Camelot reads the table with every column right, the mapping call says which columns are which, and code adds them up. All 13 executives' amounts come from it; the 2024 table on page 16 is skipped by the year check.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>CEO field</th><th>Columns added</th><th>Value (USD)</th><th>Method</th></tr></thead>
+        <tbody>
+          <tr><td>base_salary</td><td>Base salary 1,242</td><td>1,242,000</td><td>PARSE · B</td></tr>
+          <tr><td>sti_paid</td><td>AVP 292</td><td>292,000</td><td>PARSE · B</td></tr>
+          <tr><td>lti_granted</td><td>LTI 306 + SSP 0</td><td>306,000</td><td>PARSE · B</td></tr>
+          <tr><td>benefits_value</td><td>Other fees 96 + Fringe benefits 23</td><td>119,000</td><td>PARSE · B</td></tr>
+          <tr><td>pension_contribution</td><td>Pension expense 30 + Fixed salary addition 224</td><td>254,000</td><td>DERIVED · B</td></tr>
+          <tr><td>total_remuneration</td><td>Total remuneration 2,213 (the parts add up, with the LTI granted)</td><td>2,213,000</td><td>PARSE · B</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>What came out:</b> the CEO and 12 EVPs with these six amounts, all linked to page 15; STI target 12.5% and maximum 25% of base salary from page 9 (no LTI target or maximum is stated); an aggregate row for the executive committee ("Konsernledelsen") from the annual report; and one row for the non-executive board. Against the golden file: <b>91 of 91 figures match</b>, in each of three fresh runs.</p>
     </div></details>
     <details open><summary>Stage 6 · Document fallback: 9 documents read → 4 more values</summary><div class="more">
-      <p>Still missing after stages 2–5: share data, holders, breakdowns by country, the shareholding requirement. Over 3 rounds the fallback read the share page, a shareholder PDF, the governance page, the remuneration policy, a year-end page and others (852 candidate URLs were already known from the report search; on this re-run everything was cached). Found: shares outstanding 2,390,749,040 (governance page), share price NOK 442.8, the largest holder ("The Norwegian state 67%"), and "no PE holder over 5%".</p>
+      <p>Still missing after stages 2–5: exchange segment, FTEs, share data, staff by segment, revenue and staff by country, the shareholding requirement. Over 3 rounds the fallback read the share and shareholder pages, the sustainability report, year-end pages, the remuneration policy, the governance page and a shareholder PDF (852 candidate URLs were already known from the report search; on this re-run everything was cached, 0 credits). Found:</p>
+      <ul>
+        <li>share price NOK 442.8 (share page, B);</li>
+        <li>shares outstanding 2,390,749,040 (governance page, C: the page is undated, so "check the year");</li>
+        <li>revenue and staff by country, e.g. "Norway: 20336; Rest of Europe: 935…" (sustainability report, C: undated, and the revenue quote was not found word for word).</li>
+      </ul>
     </div></details>
-    <details open><summary>Stage 7 · Result: 35 of 41 company fields</summary><div class="more">
-      <p>Where sources disagreed, the more exact one won: FIRDS's "Oslo Børs" (A) beat the report's "Oslo Børs; New York Stock Exchange" (B), which stays in <code>note</code>. Empty: exchange_segment (Oslo has no cap segments in FIRDS), staff by segment, revenue and staff by country, shareholding requirement, and market_cap_band: market cap NOK 1,059 billion, but the EUR band needs a year-end exchange rate that isn't built yet.</p>
+    <details open><summary>Stage 7 · Result: 36 of 41 company fields</summary><div class="more">
+      <p>Where sources disagreed, the more exact one won: FIRDS's "Oslo Børs" (A) beat the report's "Oslo Børs, New York Stock Exchange" (B), which stays in <code>note</code>; GLEIF's former name beat SEC's list, also kept in <code>note</code>. Empty: exchange_segment (Oslo has no cap segments in FIRDS), fte, staff by segment, shareholding requirement, and market_cap_band: market cap NOK 1,059 billion, but the EUR band needs a year-end exchange rate that isn't built yet.</p>
     </div></details>
   </div>
 </section>
@@ -521,7 +599,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
       <ol>
         <li><b>The AI must quote:</b> a passage under 25 words copied from one chunk, plus the chunk's number. No quote, no value.</li>
         <li><b>We search for the quote ourselves</b>, after normalising both (case, table borders, thousands separators, quote marks).</li>
-        <li><b>Cited chunk's pages first, then the whole document;</b> exact match first, then a loose one (the words in order, a few extra words allowed).</li>
+        <li><b>Cited chunk's pages first, then the whole document;</b> exact match first, then a loose one: the words in order with a few extra words allowed, or, for a table, the label and figures in order within one row (or a name row plus the figures row below it). That is how "Anders Opedal | 96 | 23" is found in a row that has other columns in between.</li>
         <li>Found → <code>#page=N</code> and confidence B. Not found → confidence C, "quote not found verbatim".</li>
       </ol>
       <p>The page is the PDF's own page number (what <code>#page=</code> opens), which can differ from the printed one. Filed XHTML has no pages, so those rows link with <code>#:~:text=</code>.</p>
@@ -530,11 +608,25 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
     <details><summary>How do we stop the AI from inventing values?</summary><div class="more">
       <ul>
         <li>It only sees document text, is told never to use outside knowledge, and must fill a fixed schema (structured output).</li>
-        <li>Every value needs an exact quote, which we verify; unverified ones are C.</li>
+        <li>Every value needs an exact quote, which we verify; unverified ones are C. A figure must also appear in its own quote: one the AI added up or worked out is graded C. Sums such as shares issued minus treasury shares are done in code and marked DERIVED.</li>
         <li>Numbers are copied as printed with their unit; conversion is done in code, with a guard against values the AI already multiplied.</li>
+        <li>In a PDF's pay table the AI copies no figures at all: Camelot reads the cells, the AI only names rows and columns, code adds up, and each row must add up to the table's own total.</li>
         <li>Exact sources (tags, registers) always beat AI-read values.</li>
         <li>Classifications (owner type, PE stake) show their basis in <code>note</code>; computed values say DERIVED.</li>
       </ul>
+    </div></details>
+
+    <details><summary>How do we check the output afterwards?</summary><div class="more">
+      <p><code>python -m extractor.output_checks &lt;run&gt;.csv</code> runs 24 checks on every filled value. They cover:</p>
+      <ul>
+        <li>whether the value can be read off its quote;</li>
+        <li>whether the quote is really in the cached source document, on the linked page;</li>
+        <li>codes against the ISO lists (country, currency, exchange) and LEI and ISIN check digits;</li>
+        <li>percentages in range;</li>
+        <li>totals against their parts;</li>
+        <li>derived values against their inputs.</li>
+      </ul>
+      <p>A check that doesn't apply counts as n/a, never as a failure. The report also gives the fill rate per field. On the Nordic/UK set: 93% of 720 values pass; the hard fails are the values already graded C, plus one bonus-definition question for the client (known issue 12). Details: <code>docs/output_checks.md</code>.</p>
     </div></details>
 
     <details><summary>What if two sources disagree?</summary><div class="more">
@@ -552,10 +644,10 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
 
     <details><summary>What does it cost, and how do re-runs work?</summary><div class="more">
       <ul>
-        <li><b>Free:</b> GLEIF, FIRDS, OpenFIGI, registers, SEC, ESEF, Wikidata, and every PDF download (converted locally).</li>
+        <li><b>Free:</b> GLEIF, FIRDS, OpenFIGI, registers, SEC, ESEF, Wikidata, every PDF download (converted locally), and Camelot's table reading (local).</li>
         <li><b>Firecrawl</b>, capped per company: up to 6 credits to find the annual report, up to 10 for pay and fallback documents (<code>--doc-credits</code>); <code>--max-run-credits</code> caps a whole run. Out of credits: the run continues on free sources and flags the company.</li>
-        <li><b>Gemini 2.5 Flash on Vertex AI</b> for the AI calls (a few per company).</li>
-        <li><b>Caching:</b> API answers for a week; documents, maps and AI answers (keyed by prompt and chunks) on disk, so a re-run with nothing changed costs nothing. Finished companies are skipped unless <code>--redo</code>.</li>
+        <li><b>Gemini 2.5 Flash on Vertex AI</b> for the AI calls (a few per company), plus one small mapping call (2,000–3,000 tokens) per pay table found.</li>
+        <li><b>Caching:</b> API answers for a week; documents, maps and AI answers (keyed by prompt and chunks; pay-table mappings by the table) on disk, so a re-run with nothing changed costs nothing. Finished companies are skipped unless <code>--redo</code>.</li>
       </ul>
     </div></details>
 
@@ -567,7 +659,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
   <h2>What each grade means</h2>
   <div class="conf">
     <div><span class="big cA">A</span><b>Exact</b><p>A register field or an XBRL tag, or an ISIN from a document confirmed in GLEIF's ISIN list. The endpoint is the API URL or the filing.</p></div>
-    <div><span class="big cB">B</span><b>Read by the AI, quote found</b><p>The quote was found in the source text, so the value can be checked on the linked page. Also: OpenFIGI tickers (Bloomberg spelling).</p></div>
+    <div><span class="big cB">B</span><b>Read from a document, quote found</b><p>The quote was found in the source text, so the value can be checked on the linked page. This includes pay amounts read from a table by Camelot. Also: OpenFIGI tickers (Bloomberg spelling).</p></div>
     <div><span class="big cC">C</span><b>Check first</b><p>The quote wasn't found word for word; or the report failed the identity check; or a yearly figure came from a document not dated for the report's year; or a FIRDS listing date.</p></div>
   </div>
 </section>
@@ -578,11 +670,10 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
   <div class="faq">
     <details open><summary>Open</summary><div class="more">
       <ul>
-        <li><b>Pay tables not read by Camelot (issue 2):</b> tables with people as columns (Nokia, Marimekko), tables without a total column (Bang &amp; Olufsen) and pay given in prose still rely on the AI's reading of the converted text, which can vary between runs (issue 5).</li>
+        <li><b>Pay not read from a table (issues 2, 5):</b> tables with people as columns (Nokia, Marimekko), tables without a total column (Bang &amp; Olufsen), pay in prose, and non-PDF sources (Shell's and AO World's ESEF filings) still rely on the AI's reading of the text, which can vary between runs. A left-out column worth under 2% of the total passes the table check.</li>
         <li><b>Segments within a regulated market (issue 9):</b> Large/Mid/Small Cap, Prime Standard need the exchanges' own files.</li>
-        <li><b>Holding companies (issues 6, 7):</b> a UK holding company's own filed accounts have no group figures; register industry codes describe the holding company.</li>
         <li><b>Report finder (issue 4):</b> a placeholder page can still outrank a downloads page; a subsidiary's report with a plain file name isn't caught before reading.</li>
-        <li><b>Scanned PDFs</b> are skipped (no OCR).</li>
+        <li><b>Scanned PDFs</b> on websites are skipped. Scanned register filings are read from page images (below).</li>
       </ul>
     </div></details>
     <details open><summary>Waiting on the client</summary><div class="more">

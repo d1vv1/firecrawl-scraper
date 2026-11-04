@@ -168,7 +168,8 @@ class DataPointFacts(BaseModel):
     fiscal_year_end: TextFact       # YYYY-MM-DD
     reporting_currency: TextFact
     accounting_basis: TextFact      # e.g. "IFRS as adopted by the EU", "HGB"
-    shares_outstanding: NumberFact
+    shares_outstanding: NumberFact  # as printed: outstanding if stated, else issued
+    treasury_shares: NumberFact     # held by the company itself, as printed
     share_price: PriceFact
     controlling_owner: Holder       # 20%+ of votes; name null if no one has that
     major_shareholders: list[Holder]   # the largest holders listed, with stakes
@@ -187,7 +188,7 @@ class DataPointFacts(BaseModel):
 LtiForm = Literal["cash", "shares", "options", "number_of_instruments", "accounting_expense",
                   "other"]
 # How a target or maximum is stated (HANDOVER decision: keep the stated form).
-TargetForm = Literal["pct_of_base", "pct_of_max", "months_of_salary", "amount",
+TargetForm = Literal["pct_of_base", "pct_of_max", "pct_of_target", "months_of_salary", "amount",
                      "number_of_shares", "other"]
 
 
@@ -279,3 +280,9 @@ class RemunerationFacts(BaseModel):
     pension_type: TextFact
     benefits: TextFact
     shareholding_requirement: TextFact
+
+
+class SectorPick(BaseModel):
+    """The industry class for a business description (sector.py)."""
+    code: Optional[str]             # a code from the list given; null if the text is too vague
+    basis: str                      # the words of the description the choice rests on

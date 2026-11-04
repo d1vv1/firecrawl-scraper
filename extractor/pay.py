@@ -34,6 +34,7 @@ from . import llm
 from .apis import Found
 from .config import CACHE_DIR
 from .extract import full_value_quoted
+from .validate import figure_in_quote
 from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
 
@@ -59,6 +60,7 @@ AMOUNTS = {"base_salary": "base_salary", "sti_paid": "sti_paid", "lti_vested": "
 LTIS = ("lti_vested", "lti_granted")
 TARGETS = ("sti_target", "sti_max", "lti_target", "lti_max")
 TARGET_UNIT = {"pct_of_base": "% of base salary", "pct_of_max": "% of maximum",
+               "pct_of_target": "% of target",
                "months_of_salary": "months of salary", "number_of_shares": "shares", "other": ""}
 PARTS = ("base_salary", "sti_paid", "benefits", "pension", "pension_allowance")  # + one LTI
 TOTAL_TOLERANCE = 0.02                       # protocol: a difference over 2% is noted
@@ -144,6 +146,11 @@ def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
     return facts
 
 
+def _num(v: float) -> str:
+    """1057875.0 -> "1057875", 12.5 -> "12.5" (never "1.05788e+06", which loses digits)."""
+    return str(int(v)) if float(v).is_integer() else f"{v:.6f}".rstrip("0").rstrip(".")
+
+
 def _norm_title(t: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", (t or "").lower()).strip()
 
@@ -225,7 +232,7 @@ def months_as_pct(f: Found) -> Found:
     """'Up to 12 months of salary' -> 100% of base salary (12 months = one year's base)."""
     return Found(**{**f.__dict__, "value": round(float(f.value) / 12 * 100, 4),
                     "unit": "% of base salary", "method": "DERIVED",
-                    "note": f"derived: stated as {f.value:g} months of salary; {f.note}"})
+                    "note": f"derived: stated as {_num(f.value)} months of salary; {f.note}"})
 
 
 def with_allowance(pension: Found | None, allowance: Found) -> Found:
@@ -233,13 +240,33 @@ def with_allowance(pension: Found | None, allowance: Found) -> Found:
     definition for Norway: Equinor's EVP pension 123 = addition 93 + pension 30)."""
     if pension is None or not isinstance(pension.value, (int, float)):
         return Found(**{**allowance.__dict__, "method": "DERIVED",
-                        "note": f"salary addition in lieu of pension only; {allowance.note}"})
+                        "note": f"derived: pension = the salary addition or cash paid in lieu of "
+                                f"pension (no pension cost given); {allowance.note}"})
     return Found(**{**pension.__dict__, "value": pension.value + allowance.value,
                     "method": "DERIVED", "confidence": max(pension.confidence or "C",
                                                            allowance.confidence or "C",
                                                            key="ABC".index),
                     "note": f"derived: pension {pension.value:,.0f} + salary addition in lieu of "
                             f"pension {allowance.value:,.0f}; {pension.note}"})
+
+
+# Words that mark a salary addition paid instead of pension, in the report languages.
+IN_LIEU = re.compile(r"addition|allowance|in lieu|instead|cash|supplement|tillegg|tillägg|"
+                     r"i stedet|i stället|lisä|kompensa|compensat", re.I)
+
+
+def derived_max(maximum: Found, target: Found) -> Found | None:
+    """'Maximum bonus: 200% of target' with a target of 125% of base -> 250% of base."""
+    if maximum.unit != "% of target" or target.unit != "% of base salary":
+        return None
+    value = round(float(target.value) * float(maximum.value) / 100, 4)
+    return Found(maximum.data_point, value, unit="% of base salary", period_end=maximum.period_end,
+                 source=maximum.source, endpoint=maximum.endpoint, method="DERIVED",
+                 confidence=max(target.confidence or "C", maximum.confidence or "C",
+                                key="ABC".index),
+                 note=f"derived: {_num(maximum.value)}% of the target of {_num(target.value)}% of "
+                      f"base salary; {maximum.note}",
+                 retrieved_at=maximum.retrieved_at, grain="role", role_row=maximum.role_row)
 
 
 def derived_target(target: Found, maximum: Found) -> Found | None:
@@ -251,7 +278,7 @@ def derived_target(target: Found, maximum: Found) -> Found | None:
                  source=target.source, endpoint=target.endpoint, method="DERIVED",
                  confidence=max(target.confidence or "C", maximum.confidence or "C",
                                 key="ABC".index),     # the weaker of the two
-                 note=f"derived: {target.value:g}% of the maximum of {maximum.value:g}% of base "
+                 note=f"derived: {_num(target.value)}% of the maximum of {_num(maximum.value)}% of base "
                       f"salary; {target.note}",
                  retrieved_at=target.retrieved_at, grain="role", role_row=target.role_row)
 
@@ -265,8 +292,12 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
     from_policy = merge_policy(roles, policy.roles) if policy and policy_origin else {}
     out: list[Found] = []
 
-    def placed(name, row, value, fact, src, unit="", extra=""):
+    def placed(name, row, value, fact, src, unit="", extra="", figure=None):
         doc, endpoint, conf, where = src.place(fact.quote, fact.chunk_id)
+        if figure is not None and not figure_in_quote(figure, fact.quote):
+            # added up, multiplied or taken from the wrong sentence (Nokia's LTI target
+            # 2.8m + 5.6m; a maximum quoted from "300% of salary")
+            conf, where = "C", f"{where}; the figure {_num(figure)} is not in the quote"
         return Found(name, value, unit=unit, period_end=period_end, source=doc.source,
                      endpoint=endpoint, method=doc.method, confidence=conf,
                      note="; ".join(x for x in (extra, where) if x), retrieved_at=doc.retrieved_at,
@@ -300,19 +331,20 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
             if a.value is None or not a.quote:
                 continue
             number = getattr(a, "form", None) == "number_of_instruments"
-            extra = [f"printed {a.value:g} {a.unit or ''}".strip()]
+            extra = [f"printed {_num(a.value)} {a.unit or ''}".strip()]
             if getattr(a, "form", None):
                 extra.append(f"form: {a.form.replace('_', ' ')}")
             if a.includes:
                 extra.append(f"includes {a.includes}")
             rows[name] = placed(name, row, _amount(a), a, origin,
                                 unit="instruments" if number else (a.currency or ""),
-                                extra="; ".join(extra))
+                                extra="; ".join(extra), figure=a.value)
         money = next((rows[k] for k in ("total_remuneration", "base_salary") if k in rows), None)
         unit_of = next((getattr(r, f) for f in ("total", "base_salary")
                         if getattr(r, f).value is not None and getattr(r, f).quote), None)
         if money and money.unit and unit_of:
-            rows["pay_currency"] = Found("pay_currency", money.unit, source=money.source,
+            rows["pay_currency"] = Found("pay_currency", money.unit, period_end=money.period_end,
+                                         source=money.source,
                                          endpoint=money.endpoint, method=money.method,
                                          confidence=money.confidence,
                                          note=f"table unit: {unit_of.unit or 'not stated'}",
@@ -321,26 +353,36 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
             t: PayTarget = getattr(r, name)
             if t.value is not None and t.quote:
                 value, unit = _target(name, t)
-                rows[name] = placed(name, row, value, t, origin, unit=unit)
+                rows[name] = placed(name, row, value, t, origin, unit=unit, figure=t.value)
         for name, t in from_policy.get(i, {}).items():
             if t.quote:
                 value, unit = _target(name, t)
                 rows[name] = placed(name, row, value, t, policy_origin, unit=unit,
-                                    extra="from the remuneration policy")
+                                    extra="from the remuneration policy", figure=t.value)
         for name in TARGETS:
             if name in rows and rows[name].unit == "months of salary":
                 rows[name] = months_as_pct(rows[name])
         for tgt, mx in (("sti_target", "sti_max"), ("lti_target", "lti_max")):
             if tgt in rows and mx in rows:
+                d = derived_max(rows[mx], rows[tgt])
+                if d:
+                    rows[mx] = d
                 d = derived_target(rows[tgt], rows[mx])
                 if d:
                     rows[tgt] = d
         allowance = r.pension_allowance
-        if allowance.value is not None and allowance.quote:
+        if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
+                and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):
+            # Shell's "Pension [C] | 307": a pension, not an addition paid instead of one
+            rows["pension_contribution"] = placed(
+                "pension_contribution", row, _amount(allowance), allowance, origin,
+                unit=allowance.currency or "", figure=allowance.value,
+                extra=f"printed {_num(allowance.value)} {allowance.unit or ''}".strip())
+        elif allowance.value is not None and allowance.quote:
             rows["pension_contribution"] = with_allowance(
                 rows.get("pension_contribution"), placed(
                     "pension_contribution", row, _amount(allowance), allowance, origin,
-                    unit=allowance.currency or "", extra=f"printed {allowance.value:g} "
+                    unit=allowance.currency or "", extra=f"printed {_num(allowance.value)} "
                                                          f"{allowance.unit or ''}".strip()))
         check_total(r, rows)
         for name in ROLE_POINTS[1:]:

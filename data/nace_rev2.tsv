@@ -1,0 +1,997 @@
+code	level	name
+A	section	Agriculture, forestry and fishing
+01	division	Crop and animal production, hunting and related service activities
+01.1	group	Growing of non-perennial crops
+01.11	class	Growing of cereals (except rice), leguminous crops and oil seeds
+01.12	class	Growing of rice
+01.13	class	Growing of vegetables and melons, roots and tubers
+01.14	class	Growing of sugar cane
+01.15	class	Growing of tobacco
+01.16	class	Growing of fibre crops
+01.19	class	Growing of other non-perennial crops
+01.2	group	Growing of perennial crops
+01.21	class	Growing of grapes
+01.22	class	Growing of tropical and subtropical fruits
+01.23	class	Growing of citrus fruits
+01.24	class	Growing of pome fruits and stone fruits
+01.25	class	Growing of other tree and bush fruits and nuts
+01.26	class	Growing of oleaginous fruits
+01.27	class	Growing of beverage crops
+01.28	class	Growing of spices, aromatic, drug and pharmaceutical crops
+01.29	class	Growing of other perennial crops
+01.3	group	Plant propagation
+01.30	class	Plant propagation
+01.4	group	Animal production
+01.41	class	Raising of dairy cattle
+01.42	class	Raising of other cattle and buffaloes
+01.43	class	Raising of horses and other equines
+01.44	class	Raising of camels and camelids
+01.45	class	Raising of sheep and goats
+01.46	class	Raising of swine/pigs
+01.47	class	Raising of poultry
+01.49	class	Raising of other animals
+01.5	group	Mixed farming
+01.50	class	Mixed farming
+01.6	group	Support activities to agriculture and post-harvest crop activities
+01.61	class	Support activities for crop production
+01.62	class	Support activities for animal production
+01.63	class	Post-harvest crop activities
+01.64	class	Seed processing for propagation
+01.7	group	Hunting, trapping and related service activities
+01.70	class	Hunting, trapping and related service activities
+02	division	Forestry and logging
+02.1	group	Silviculture and other forestry activities
+02.10	class	Silviculture and other forestry activities
+02.2	group	Logging
+02.20	class	Logging
+02.3	group	Gathering of wild growing non-wood products
+02.30	class	Gathering of wild growing non-wood products
+02.4	group	Support services to forestry
+02.40	class	Support services to forestry
+03	division	Fishing and aquaculture
+03.1	group	Fishing
+03.11	class	Marine fishing
+03.12	class	Freshwater fishing
+03.2	group	Aquaculture
+03.21	class	Marine aquaculture
+03.22	class	Freshwater aquaculture
+B	section	Mining and quarrying
+05	division	Mining of coal and lignite
+05.1	group	Mining of hard coal
+05.10	class	Mining of hard coal
+05.2	group	Mining of lignite
+05.20	class	Mining of lignite
+06	division	Extraction of crude petroleum and natural gas
+06.1	group	Extraction of crude petroleum
+06.10	class	Extraction of crude petroleum
+06.2	group	Extraction of natural gas
+06.20	class	Extraction of natural gas
+07	division	Mining of metal ores
+07.1	group	Mining of iron ores
+07.10	class	Mining of iron ores
+07.2	group	Mining of non-ferrous metal ores
+07.21	class	Mining of uranium and thorium ores
+07.29	class	Mining of other non-ferrous metal ores
+08	division	Other mining and quarrying
+08.1	group	Quarrying of stone, sand and clay
+08.11	class	Quarrying of ornamental and building stone, limestone, gypsum, chalk and slate
+08.12	class	Operation of gravel and sand pits; mining of clays and kaolin
+08.9	group	Mining and quarrying n.e.c.
+08.91	class	Mining of chemical and fertiliser minerals
+08.92	class	Extraction of peat
+08.93	class	Extraction of salt
+08.99	class	Other mining and quarrying n.e.c.
+09	division	Mining support service activities
+09.1	group	Support activities for petroleum and natural gas extraction
+09.10	class	Support activities for petroleum and natural gas extraction
+09.9	group	Support activities for other mining and quarrying
+09.90	class	Support activities for other mining and quarrying
+C	section	Manufacturing
+10	division	Manufacture of food products
+10.1	group	Processing and preserving of meat and production of meat products
+10.11	class	Processing and preserving of meat
+10.12	class	Processing and preserving of poultry meat
+10.13	class	Production of meat and poultry meat products
+10.2	group	Processing and preserving of fish, crustaceans and molluscs
+10.20	class	Processing and preserving of fish, crustaceans and molluscs
+10.3	group	Processing and preserving of fruit and vegetables
+10.31	class	Processing and preserving of potatoes
+10.32	class	Manufacture of fruit and vegetable juice
+10.39	class	Other processing and preserving of fruit and vegetables
+10.4	group	Manufacture of vegetable and animal oils and fats
+10.41	class	Manufacture of oils and fats
+10.42	class	Manufacture of margarine and similar edible fats
+10.5	group	Manufacture of dairy products
+10.51	class	Operation of dairies and cheese making
+10.52	class	Manufacture of ice cream
+10.6	group	Manufacture of grain mill products, starches and starch products
+10.61	class	Manufacture of grain mill products
+10.62	class	Manufacture of starches and starch products
+10.7	group	Manufacture of bakery and farinaceous products
+10.71	class	Manufacture of bread; manufacture of fresh pastry goods and cakes
+10.72	class	Manufacture of rusks and biscuits; manufacture of preserved pastry goods and cakes
+10.73	class	Manufacture of macaroni, noodles, couscous and similar farinaceous products
+10.8	group	Manufacture of other food products
+10.81	class	Manufacture of sugar
+10.82	class	Manufacture of cocoa, chocolate and sugar confectionery
+10.83	class	Processing of tea and coffee
+10.84	class	Manufacture of condiments and seasonings
+10.85	class	Manufacture of prepared meals and dishes
+10.86	class	Manufacture of homogenised food preparations and dietetic food
+10.89	class	Manufacture of other food products n.e.c.
+10.9	group	Manufacture of prepared animal feeds
+10.91	class	Manufacture of prepared feeds for farm animals
+10.92	class	Manufacture of prepared pet foods
+11	division	Manufacture of beverages
+11.0	group	Manufacture of beverages
+11.01	class	Distilling, rectifying and blending of spirits
+11.02	class	Manufacture of wine from grape
+11.03	class	Manufacture of cider and other fruit wines
+11.04	class	Manufacture of other non-distilled fermented beverages
+11.05	class	Manufacture of beer
+11.06	class	Manufacture of malt
+11.07	class	Manufacture of soft drinks; production of mineral waters and other bottled waters
+12	division	Manufacture of tobacco products
+12.0	group	Manufacture of tobacco products
+12.00	class	Manufacture of tobacco products
+13	division	Manufacture of textiles
+13.1	group	Preparation and spinning of textile fibres
+13.10	class	Preparation and spinning of textile fibres
+13.2	group	Weaving of textiles
+13.20	class	Weaving of textiles
+13.3	group	Finishing of textiles
+13.30	class	Finishing of textiles
+13.9	group	Manufacture of other textiles
+13.91	class	Manufacture of knitted and crocheted fabrics
+13.92	class	Manufacture of made-up textile articles, except apparel
+13.93	class	Manufacture of carpets and rugs
+13.94	class	Manufacture of cordage, rope, twine and netting
+13.95	class	Manufacture of non-wovens and articles made from non-wovens, except apparel
+13.96	class	Manufacture of other technical and industrial textiles
+13.99	class	Manufacture of other textiles n.e.c.
+14	division	Manufacture of wearing apparel
+14.1	group	Manufacture of wearing apparel, except fur apparel
+14.11	class	Manufacture of leather clothes
+14.12	class	Manufacture of workwear
+14.13	class	Manufacture of other outerwear
+14.14	class	Manufacture of underwear
+14.19	class	Manufacture of other wearing apparel and accessories
+14.2	group	Manufacture of articles of fur
+14.20	class	Manufacture of articles of fur
+14.3	group	Manufacture of knitted and crocheted apparel
+14.31	class	Manufacture of knitted and crocheted hosiery
+14.39	class	Manufacture of other knitted and crocheted apparel
+15	division	Manufacture of leather and related products
+15.1	group	Tanning and dressing of leather; manufacture of luggage, handbags, saddlery and harness; dressing and dyeing of fur
+15.11	class	Tanning and dressing of leather; dressing and dyeing of fur
+15.12	class	Manufacture of luggage, handbags and the like, saddlery and harness
+15.2	group	Manufacture of footwear
+15.20	class	Manufacture of footwear
+16	division	Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials
+16.1	group	Sawmilling and planing of wood
+16.10	class	Sawmilling and planing of wood
+16.2	group	Manufacture of products of wood, cork, straw and plaiting materials
+16.21	class	Manufacture of veneer sheets and wood-based panels
+16.22	class	Manufacture of assembled parquet floors
+16.23	class	Manufacture of other builders' carpentry and joinery
+16.24	class	Manufacture of wooden containers
+16.29	class	Manufacture of other products of wood; manufacture of articles of cork, straw and plaiting materials
+17	division	Manufacture of paper and paper products
+17.1	group	Manufacture of pulp, paper and paperboard
+17.11	class	Manufacture of pulp
+17.12	class	Manufacture of paper and paperboard
+17.2	group	Manufacture of articles of paper and paperboard
+17.21	class	Manufacture of corrugated paper and paperboard and of containers of paper and paperboard
+17.22	class	Manufacture of household and sanitary goods and of toilet requisites
+17.23	class	Manufacture of paper stationery
+17.24	class	Manufacture of wallpaper
+17.29	class	Manufacture of other articles of paper and paperboard
+18	division	Printing and reproduction of recorded media
+18.1	group	Printing and service activities related to printing
+18.11	class	Printing of newspapers
+18.12	class	Other printing
+18.13	class	Pre-press and pre-media services
+18.14	class	Binding and related services
+18.2	group	Reproduction of recorded media
+18.20	class	Reproduction of recorded media
+19	division	Manufacture of coke and refined petroleum products
+19.1	group	Manufacture of coke oven products
+19.10	class	Manufacture of coke oven products
+19.2	group	Manufacture of refined petroleum products
+19.20	class	Manufacture of refined petroleum products
+20	division	Manufacture of chemicals and chemical products
+20.1	group	Manufacture of basic chemicals, fertilisers and nitrogen compounds, plastics and synthetic rubber in primary forms
+20.11	class	Manufacture of industrial gases
+20.12	class	Manufacture of dyes and pigments
+20.13	class	Manufacture of other inorganic basic chemicals
+20.14	class	Manufacture of other organic basic chemicals
+20.15	class	Manufacture of fertilisers and nitrogen compounds
+20.16	class	Manufacture of plastics in primary forms
+20.17	class	Manufacture of synthetic rubber in primary forms
+20.2	group	Manufacture of pesticides and other agrochemical products
+20.20	class	Manufacture of pesticides and other agrochemical products
+20.3	group	Manufacture of paints, varnishes and similar coatings, printing ink and mastics
+20.30	class	Manufacture of paints, varnishes and similar coatings, printing ink and mastics
+20.4	group	Manufacture of soap and detergents, cleaning and polishing preparations, perfumes and toilet preparations
+20.41	class	Manufacture of soap and detergents, cleaning and polishing preparations
+20.42	class	Manufacture of perfumes and toilet preparations
+20.5	group	Manufacture of other chemical products
+20.51	class	Manufacture of explosives
+20.52	class	Manufacture of glues
+20.53	class	Manufacture of essential oils
+20.59	class	Manufacture of other chemical products n.e.c.
+20.6	group	Manufacture of man-made fibres
+20.60	class	Manufacture of man-made fibres
+21	division	Manufacture of basic pharmaceutical products and pharmaceutical preparations
+21.1	group	Manufacture of basic pharmaceutical products
+21.10	class	Manufacture of basic pharmaceutical products
+21.2	group	Manufacture of pharmaceutical preparations
+21.20	class	Manufacture of pharmaceutical preparations
+22	division	Manufacture of rubber and plastic products
+22.1	group	Manufacture of rubber products
+22.11	class	Manufacture of rubber tyres and tubes; retreading and rebuilding of rubber tyres
+22.19	class	Manufacture of other rubber products
+22.2	group	Manufacture of plastics products
+22.21	class	Manufacture of plastic plates, sheets, tubes and profiles
+22.22	class	Manufacture of plastic packing goods
+22.23	class	Manufacture of builders' ware of plastic
+22.29	class	Manufacture of other plastic products
+23	division	Manufacture of other non-metallic mineral products
+23.1	group	Manufacture of glass and glass products
+23.11	class	Manufacture of flat glass
+23.12	class	Shaping and processing of flat glass
+23.13	class	Manufacture of hollow glass
+23.14	class	Manufacture of glass fibres
+23.19	class	Manufacture and processing of other glass, including technical glassware
+23.2	group	Manufacture of refractory products
+23.20	class	Manufacture of refractory products
+23.3	group	Manufacture of clay building materials
+23.31	class	Manufacture of ceramic tiles and flags
+23.32	class	Manufacture of bricks, tiles and construction products, in baked clay
+23.4	group	Manufacture of other porcelain and ceramic products
+23.41	class	Manufacture of ceramic household and ornamental articles
+23.42	class	Manufacture of ceramic sanitary fixtures
+23.43	class	Manufacture of ceramic insulators and insulating fittings
+23.44	class	Manufacture of other technical ceramic products
+23.49	class	Manufacture of other ceramic products
+23.5	group	Manufacture of cement, lime and plaster
+23.51	class	Manufacture of cement
+23.52	class	Manufacture of lime and plaster
+23.6	group	Manufacture of articles of concrete, cement and plaster
+23.61	class	Manufacture of concrete products for construction purposes
+23.62	class	Manufacture of plaster products for construction purposes
+23.63	class	Manufacture of ready-mixed concrete
+23.64	class	Manufacture of mortars
+23.65	class	Manufacture of fibre cement
+23.69	class	Manufacture of other articles of concrete, plaster and cement
+23.7	group	Cutting, shaping and finishing of stone
+23.70	class	Cutting, shaping and finishing of stone
+23.9	group	Manufacture of abrasive products and non-metallic mineral products n.e.c.
+23.91	class	Production of abrasive products
+23.99	class	Manufacture of other non-metallic mineral products n.e.c.
+24	division	Manufacture of basic metals
+24.1	group	Manufacture of basic iron and steel and of ferro-alloys
+24.10	class	Manufacture of basic iron and steel and of ferro-alloys
+24.2	group	Manufacture of tubes, pipes, hollow profiles and related fittings, of steel
+24.20	class	Manufacture of tubes, pipes, hollow profiles and related fittings, of steel
+24.3	group	Manufacture of other products of first processing of steel
+24.31	class	Cold drawing of bars
+24.32	class	Cold rolling of narrow strip
+24.33	class	Cold forming or folding
+24.34	class	Cold drawing of wire
+24.4	group	Manufacture of basic precious and other non-ferrous metals
+24.41	class	Precious metals production
+24.42	class	Aluminium production
+24.43	class	Lead, zinc and tin production
+24.44	class	Copper production
+24.45	class	Other non-ferrous metal production
+24.46	class	Processing of nuclear fuel
+24.5	group	Casting of metals
+24.51	class	Casting of iron
+24.52	class	Casting of steel
+24.53	class	Casting of light metals
+24.54	class	Casting of other non-ferrous metals
+25	division	Manufacture of fabricated metal products, except machinery and equipment
+25.1	group	Manufacture of structural metal products
+25.11	class	Manufacture of metal structures and parts of structures
+25.12	class	Manufacture of doors and windows of metal
+25.2	group	Manufacture of tanks, reservoirs and containers of metal
+25.21	class	Manufacture of central heating radiators and boilers
+25.29	class	Manufacture of other tanks, reservoirs and containers of metal
+25.3	group	Manufacture of steam generators, except central heating hot water boilers
+25.30	class	Manufacture of steam generators, except central heating hot water boilers
+25.4	group	Manufacture of weapons and ammunition
+25.40	class	Manufacture of weapons and ammunition
+25.5	group	Forging, pressing, stamping and roll-forming of metal; powder metallurgy
+25.50	class	Forging, pressing, stamping and roll-forming of metal; powder metallurgy
+25.6	group	Treatment and coating of metals; machining
+25.61	class	Treatment and coating of metals
+25.62	class	Machining
+25.7	group	Manufacture of cutlery, tools and general hardware
+25.71	class	Manufacture of cutlery
+25.72	class	Manufacture of locks and hinges
+25.73	class	Manufacture of tools
+25.9	group	Manufacture of other fabricated metal products
+25.91	class	Manufacture of steel drums and similar containers
+25.92	class	Manufacture of light metal packaging
+25.93	class	Manufacture of wire products, chain and springs
+25.94	class	Manufacture of fasteners and screw machine products
+25.99	class	Manufacture of other fabricated metal products n.e.c.
+26	division	Manufacture of computer, electronic and optical products
+26.1	group	Manufacture of electronic components and boards
+26.11	class	Manufacture of electronic components
+26.12	class	Manufacture of loaded electronic boards
+26.2	group	Manufacture of computers and peripheral equipment
+26.20	class	Manufacture of computers and peripheral equipment
+26.3	group	Manufacture of communication equipment
+26.30	class	Manufacture of communication equipment
+26.4	group	Manufacture of consumer electronics
+26.40	class	Manufacture of consumer electronics
+26.5	group	Manufacture of instruments and appliances for measuring, testing and navigation; watches and clocks
+26.51	class	Manufacture of instruments and appliances for measuring, testing and navigation
+26.52	class	Manufacture of watches and clocks
+26.6	group	Manufacture of irradiation, electromedical and electrotherapeutic equipment
+26.60	class	Manufacture of irradiation, electromedical and electrotherapeutic equipment
+26.7	group	Manufacture of optical instruments and photographic equipment
+26.70	class	Manufacture of optical instruments and photographic equipment
+26.8	group	Manufacture of magnetic and optical media
+26.80	class	Manufacture of magnetic and optical media
+27	division	Manufacture of electrical equipment
+27.1	group	Manufacture of electric motors, generators, transformers and electricity distribution and control apparatus
+27.11	class	Manufacture of electric motors, generators and transformers
+27.12	class	Manufacture of electricity distribution and control apparatus
+27.2	group	Manufacture of batteries and accumulators
+27.20	class	Manufacture of batteries and accumulators
+27.3	group	Manufacture of wiring and wiring devices
+27.31	class	Manufacture of fibre optic cables
+27.32	class	Manufacture of other electronic and electric wires and cables
+27.33	class	Manufacture of wiring devices
+27.4	group	Manufacture of electric lighting equipment
+27.40	class	Manufacture of electric lighting equipment
+27.5	group	Manufacture of domestic appliances
+27.51	class	Manufacture of electric domestic appliances
+27.52	class	Manufacture of non-electric domestic appliances
+27.9	group	Manufacture of other electrical equipment
+27.90	class	Manufacture of other electrical equipment
+28	division	Manufacture of machinery and equipment n.e.c.
+28.1	group	Manufacture of general-purpose machinery
+28.11	class	Manufacture of engines and turbines, except aircraft, vehicle and cycle engines
+28.12	class	Manufacture of fluid power equipment
+28.13	class	Manufacture of other pumps and compressors
+28.14	class	Manufacture of other taps and valves
+28.15	class	Manufacture of bearings, gears, gearing and driving elements
+28.2	group	Manufacture of other general-purpose machinery
+28.21	class	Manufacture of ovens, furnaces and furnace burners
+28.22	class	Manufacture of lifting and handling equipment
+28.23	class	Manufacture of office machinery and equipment (except computers and peripheral equipment)
+28.24	class	Manufacture of power-driven hand tools
+28.25	class	Manufacture of non-domestic cooling and ventilation equipment
+28.29	class	Manufacture of other general-purpose machinery n.e.c.
+28.3	group	Manufacture of agricultural and forestry machinery
+28.30	class	Manufacture of agricultural and forestry machinery
+28.4	group	Manufacture of metal forming machinery and machine tools
+28.41	class	Manufacture of metal forming machinery
+28.49	class	Manufacture of other machine tools
+28.9	group	Manufacture of other special-purpose machinery
+28.91	class	Manufacture of machinery for metallurgy
+28.92	class	Manufacture of machinery for mining, quarrying and construction
+28.93	class	Manufacture of machinery for food, beverage and tobacco processing
+28.94	class	Manufacture of machinery for textile, apparel and leather production
+28.95	class	Manufacture of machinery for paper and paperboard production
+28.96	class	Manufacture of plastics and rubber machinery
+28.99	class	Manufacture of other special-purpose machinery n.e.c.
+29	division	Manufacture of motor vehicles, trailers and semi-trailers
+29.1	group	Manufacture of motor vehicles
+29.10	class	Manufacture of motor vehicles
+29.2	group	Manufacture of bodies (coachwork) for motor vehicles; manufacture of trailers and semi-trailers
+29.20	class	Manufacture of bodies (coachwork) for motor vehicles; manufacture of trailers and semi-trailers
+29.3	group	Manufacture of parts and accessories for motor vehicles
+29.31	class	Manufacture of electrical and electronic equipment for motor vehicles
+29.32	class	Manufacture of other parts and accessories for motor vehicles
+30	division	Manufacture of other transport equipment
+30.1	group	Building of ships and boats
+30.11	class	Building of ships and floating structures
+30.12	class	Building of pleasure and sporting boats
+30.2	group	Manufacture of railway locomotives and rolling stock
+30.20	class	Manufacture of railway locomotives and rolling stock
+30.3	group	Manufacture of air and spacecraft and related machinery
+30.30	class	Manufacture of air and spacecraft and related machinery
+30.4	group	Manufacture of military fighting vehicles
+30.40	class	Manufacture of military fighting vehicles
+30.9	group	Manufacture of transport equipment n.e.c.
+30.91	class	Manufacture of motorcycles
+30.92	class	Manufacture of bicycles and invalid carriages
+30.99	class	Manufacture of other transport equipment n.e.c.
+31	division	Manufacture of furniture
+31.0	group	Manufacture of furniture
+31.01	class	Manufacture of office and shop furniture
+31.02	class	Manufacture of kitchen furniture
+31.03	class	Manufacture of mattresses
+31.09	class	Manufacture of other furniture
+32	division	Other manufacturing
+32.1	group	Manufacture of jewellery, bijouterie and related articles
+32.11	class	Striking of coins
+32.12	class	Manufacture of jewellery and related articles
+32.13	class	Manufacture of imitation jewellery and related articles
+32.2	group	Manufacture of musical instruments
+32.20	class	Manufacture of musical instruments
+32.3	group	Manufacture of sports goods
+32.30	class	Manufacture of sports goods
+32.4	group	Manufacture of games and toys
+32.40	class	Manufacture of games and toys
+32.5	group	Manufacture of medical and dental instruments and supplies
+32.50	class	Manufacture of medical and dental instruments and supplies
+32.9	group	Manufacturing n.e.c.
+32.91	class	Manufacture of brooms and brushes
+32.99	class	Other manufacturing n.e.c.
+33	division	Repair and installation of machinery and equipment
+33.1	group	Repair of fabricated metal products, machinery and equipment
+33.11	class	Repair of fabricated metal products
+33.12	class	Repair of machinery
+33.13	class	Repair of electronic and optical equipment
+33.14	class	Repair of electrical equipment
+33.15	class	Repair and maintenance of ships and boats
+33.16	class	Repair and maintenance of aircraft and spacecraft
+33.17	class	Repair and maintenance of other transport equipment
+33.19	class	Repair of other equipment
+33.2	group	Installation of industrial machinery and equipment
+33.20	class	Installation of industrial machinery and equipment
+D	section	Electricity, gas, steam and air conditioning supply
+35	division	Electricity, gas, steam and air conditioning supply
+35.1	group	Electric power generation, transmission and distribution
+35.11	class	Production of electricity
+35.12	class	Transmission of electricity
+35.13	class	Distribution of electricity
+35.14	class	Trade of electricity
+35.2	group	Manufacture of gas; distribution of gaseous fuels through mains
+35.21	class	Manufacture of gas
+35.22	class	Distribution of gaseous fuels through mains
+35.23	class	Trade of gas through mains
+35.3	group	Steam and air conditioning supply
+35.30	class	Steam and air conditioning supply
+E	section	Water supply; sewerage, waste management and remediation activities
+36	division	Water collection, treatment and supply
+36.0	group	Water collection, treatment and supply
+36.00	class	Water collection, treatment and supply
+37	division	Sewerage
+37.0	group	Sewerage
+37.00	class	Sewerage
+38	division	Waste collection, treatment and disposal activities; materials recovery
+38.1	group	Waste collection
+38.11	class	Collection of non-hazardous waste
+38.12	class	Collection of hazardous waste
+38.2	group	Waste treatment and disposal
+38.21	class	Treatment and disposal of non-hazardous waste
+38.22	class	Treatment and disposal of hazardous waste
+38.3	group	Materials recovery
+38.31	class	Dismantling of wrecks
+38.32	class	Recovery of sorted materials
+39	division	Remediation activities and other waste management services
+39.0	group	Remediation activities and other waste management services
+39.00	class	Remediation activities and other waste management services
+F	section	Construction
+41	division	Construction of buildings
+41.1	group	Development of building projects
+41.10	class	Development of building projects
+41.2	group	Construction of residential and non-residential buildings
+41.20	class	Construction of residential and non-residential buildings
+42	division	Civil engineering
+42.1	group	Construction of roads and railways
+42.11	class	Construction of roads and motorways
+42.12	class	Construction of railways and underground railways
+42.13	class	Construction of bridges and tunnels
+42.2	group	Construction of utility projects
+42.21	class	Construction of utility projects for fluids
+42.22	class	Construction of utility projects for electricity and telecommunications
+42.9	group	Construction of other civil engineering projects
+42.91	class	Construction of water projects
+42.99	class	Construction of other civil engineering projects n.e.c.
+43	division	Specialised construction activities
+43.1	group	Demolition and site preparation
+43.11	class	Demolition
+43.12	class	Site preparation
+43.13	class	Test drilling and boring
+43.2	group	Electrical, plumbing and other construction installation activities
+43.21	class	Electrical installation
+43.22	class	Plumbing, heat and air-conditioning installation
+43.29	class	Other construction installation
+43.3	group	Building completion and finishing
+43.31	class	Plastering
+43.32	class	Joinery installation
+43.33	class	Floor and wall covering
+43.34	class	Painting and glazing
+43.39	class	Other building completion and finishing
+43.9	group	Other specialised construction activities
+43.91	class	Roofing activities
+43.99	class	Other specialised construction activities n.e.c.
+G	section	Wholesale and retail trade; repair of motor vehicles and motorcycles
+45	division	Wholesale and retail trade and repair of motor vehicles and motorcycles
+45.1	group	Sale of motor vehicles
+45.11	class	Sale of cars and light motor vehicles
+45.19	class	Sale of other motor vehicles
+45.2	group	Maintenance and repair of motor vehicles
+45.20	class	Maintenance and repair of motor vehicles
+45.3	group	Sale of motor vehicle parts and accessories
+45.31	class	Wholesale trade of motor vehicle parts and accessories
+45.32	class	Retail trade of motor vehicle parts and accessories
+45.4	group	Sale, maintenance and repair of motorcycles and related parts and accessories
+45.40	class	Sale, maintenance and repair of motorcycles and related parts and accessories
+46	division	Wholesale trade, except of motor vehicles and motorcycles
+46.1	group	Wholesale on a fee or contract basis
+46.11	class	Agents involved in the sale of agricultural raw materials, live animals, textile raw materials and semi-finished goods
+46.12	class	Agents involved in the sale of fuels, ores, metals and industrial chemicals
+46.13	class	Agents involved in the sale of timber and building materials
+46.14	class	Agents involved in the sale of machinery, industrial equipment, ships and aircraft
+46.15	class	Agents involved in the sale of furniture, household goods, hardware and ironmongery
+46.16	class	Agents involved in the sale of textiles, clothing, fur, footwear and leather goods
+46.17	class	Agents involved in the sale of food, beverages and tobacco
+46.18	class	Agents specialised in the sale of other particular products
+46.19	class	Agents involved in the sale of a variety of goods
+46.2	group	Wholesale of agricultural raw materials and live animals
+46.21	class	Wholesale of grain, unmanufactured tobacco, seeds and animal feeds
+46.22	class	Wholesale of flowers and plants
+46.23	class	Wholesale of live animals
+46.24	class	Wholesale of hides, skins and leather
+46.3	group	Wholesale of food, beverages and tobacco
+46.31	class	Wholesale of fruit and vegetables
+46.32	class	Wholesale of meat and meat products
+46.33	class	Wholesale of dairy products, eggs and edible oils and fats
+46.34	class	Wholesale of beverages
+46.35	class	Wholesale of tobacco products
+46.36	class	Wholesale of sugar and chocolate and sugar confectionery
+46.37	class	Wholesale of coffee, tea, cocoa and spices
+46.38	class	Wholesale of other food, including fish, crustaceans and molluscs
+46.39	class	Non-specialised wholesale of food, beverages and tobacco
+46.4	group	Wholesale of household goods
+46.41	class	Wholesale of textiles
+46.42	class	Wholesale of clothing and footwear
+46.43	class	Wholesale of electrical household appliances
+46.44	class	Wholesale of china and glassware and cleaning materials
+46.45	class	Wholesale of perfume and cosmetics
+46.46	class	Wholesale of pharmaceutical goods
+46.47	class	Wholesale of furniture, carpets and lighting equipment
+46.48	class	Wholesale of watches and jewellery
+46.49	class	Wholesale of other household goods
+46.5	group	Wholesale of information and communication equipment
+46.51	class	Wholesale of computers, computer peripheral equipment and software
+46.52	class	Wholesale of electronic and telecommunications equipment and parts
+46.6	group	Wholesale of other machinery, equipment and supplies
+46.61	class	Wholesale of agricultural machinery, equipment and supplies
+46.62	class	Wholesale of machine tools
+46.63	class	Wholesale of mining, construction and civil engineering machinery
+46.64	class	Wholesale of machinery for the textile industry and of sewing and knitting machines
+46.65	class	Wholesale of office furniture
+46.66	class	Wholesale of other office machinery and equipment
+46.69	class	Wholesale of other machinery and equipment
+46.7	group	Other specialised wholesale
+46.71	class	Wholesale of solid, liquid and gaseous fuels and related products
+46.72	class	Wholesale of metals and metal ores
+46.73	class	Wholesale of wood, construction materials and sanitary equipment
+46.74	class	Wholesale of hardware, plumbing and heating equipment and supplies
+46.75	class	Wholesale of chemical products
+46.76	class	Wholesale of other intermediate products
+46.77	class	Wholesale of waste and scrap
+46.9	group	Non-specialised wholesale trade
+46.90	class	Non-specialised wholesale trade
+47	division	Retail trade, except of motor vehicles and motorcycles
+47.1	group	Retail sale in non-specialised stores
+47.11	class	Retail sale in non-specialised stores with food, beverages or tobacco predominating
+47.19	class	Other retail sale in non-specialised stores
+47.2	group	Retail sale of food, beverages and tobacco in specialised stores
+47.21	class	Retail sale of fruit and vegetables in specialised stores
+47.22	class	Retail sale of meat and meat products in specialised stores
+47.23	class	Retail sale of fish, crustaceans and molluscs in specialised stores
+47.24	class	Retail sale of bread, cakes, flour confectionery and sugar confectionery in specialised stores
+47.25	class	Retail sale of beverages in specialised stores
+47.26	class	Retail sale of tobacco products in specialised stores
+47.29	class	Other retail sale of food in specialised stores
+47.3	group	Retail sale of automotive fuel in specialised stores
+47.30	class	Retail sale of automotive fuel in specialised stores
+47.4	group	Retail sale of information and communication equipment in specialised stores
+47.41	class	Retail sale of computers, peripheral units and software in specialised stores
+47.42	class	Retail sale of telecommunications equipment in specialised stores
+47.43	class	Retail sale of audio and video equipment in specialised stores
+47.5	group	Retail sale of other household equipment in specialised stores
+47.51	class	Retail sale of textiles in specialised stores
+47.52	class	Retail sale of hardware, paints and glass in specialised stores
+47.53	class	Retail sale of carpets, rugs, wall and floor coverings in specialised stores
+47.54	class	Retail sale of electrical household appliances in specialised stores
+47.59	class	Retail sale of furniture, lighting equipment and other household articles in specialised stores
+47.6	group	Retail sale of cultural and recreation goods in specialised stores
+47.61	class	Retail sale of books in specialised stores
+47.62	class	Retail sale of newspapers and stationery in specialised stores
+47.63	class	Retail sale of music and video recordings in specialised stores
+47.64	class	Retail sale of sporting equipment in specialised stores
+47.65	class	Retail sale of games and toys in specialised stores
+47.7	group	Retail sale of other goods in specialised stores
+47.71	class	Retail sale of clothing in specialised stores
+47.72	class	Retail sale of footwear and leather goods in specialised stores
+47.73	class	Dispensing chemist in specialised stores
+47.74	class	Retail sale of medical and orthopaedic goods in specialised stores
+47.75	class	Retail sale of cosmetic and toilet articles in specialised stores
+47.76	class	Retail sale of flowers, plants, seeds, fertilisers, pet animals and pet food in specialised stores
+47.77	class	Retail sale of watches and jewellery in specialised stores
+47.78	class	Other retail sale of new goods in specialised stores
+47.79	class	Retail sale of second-hand goods in stores
+47.8	group	Retail sale via stalls and markets
+47.81	class	Retail sale via stalls and markets of food, beverages and tobacco products
+47.82	class	Retail sale via stalls and markets of textiles, clothing and footwear
+47.89	class	Retail sale via stalls and markets of other goods
+47.9	group	Retail trade not in stores, stalls or markets
+47.91	class	Retail sale via mail order houses or via Internet
+47.99	class	Other retail sale not in stores, stalls or markets
+H	section	Transportation and storage
+49	division	Land transport and transport via pipelines
+49.1	group	Passenger rail transport, interurban
+49.10	class	Passenger rail transport, interurban
+49.2	group	Freight rail transport
+49.20	class	Freight rail transport
+49.3	group	Other passenger land transport
+49.31	class	Urban and suburban passenger land transport
+49.32	class	Taxi operation
+49.39	class	Other passenger land transport n.e.c.
+49.4	group	Freight transport by road and removal services
+49.41	class	Freight transport by road
+49.42	class	Removal services
+49.5	group	Transport via pipeline
+49.50	class	Transport via pipeline
+50	division	Water transport
+50.1	group	Sea and coastal passenger water transport
+50.10	class	Sea and coastal passenger water transport
+50.2	group	Sea and coastal freight water transport
+50.20	class	Sea and coastal freight water transport
+50.3	group	Inland passenger water transport
+50.30	class	Inland passenger water transport
+50.4	group	Inland freight water transport
+50.40	class	Inland freight water transport
+51	division	Air transport
+51.1	group	Passenger air transport
+51.10	class	Passenger air transport
+51.2	group	Freight air transport and space transport
+51.21	class	Freight air transport
+51.22	class	Space transport
+52	division	Warehousing and support activities for transportation
+52.1	group	Warehousing and storage
+52.10	class	Warehousing and storage
+52.2	group	Support activities for transportation
+52.21	class	Service activities incidental to land transportation
+52.22	class	Service activities incidental to water transportation
+52.23	class	Service activities incidental to air transportation
+52.24	class	Cargo handling
+52.29	class	Other transportation support activities
+53	division	Postal and courier activities
+53.1	group	Postal activities under universal service obligation
+53.10	class	Postal activities under universal service obligation
+53.2	group	Other postal and courier activities
+53.20	class	Other postal and courier activities
+I	section	Accommodation and food service activities
+55	division	Accommodation
+55.1	group	Hotels and similar accommodation
+55.10	class	Hotels and similar accommodation
+55.2	group	Holiday and other short-stay accommodation
+55.20	class	Holiday and other short-stay accommodation
+55.3	group	Camping grounds, recreational vehicle parks and trailer parks
+55.30	class	Camping grounds, recreational vehicle parks and trailer parks
+55.9	group	Other accommodation
+55.90	class	Other accommodation
+56	division	Food and beverage service activities
+56.1	group	Restaurants and mobile food service activities
+56.10	class	Restaurants and mobile food service activities
+56.2	group	Event catering and other food service activities
+56.21	class	Event catering activities
+56.29	class	Other food service activities
+56.3	group	Beverage serving activities
+56.30	class	Beverage serving activities
+J	section	Information and communication
+58	division	Publishing activities
+58.1	group	Publishing of books, periodicals and other publishing activities
+58.11	class	Book publishing
+58.12	class	Publishing of directories and mailing lists
+58.13	class	Publishing of newspapers
+58.14	class	Publishing of journals and periodicals
+58.19	class	Other publishing activities
+58.2	group	Software publishing
+58.21	class	Publishing of computer games
+58.29	class	Other software publishing
+59	division	Motion picture, video and television programme production, sound recording and music publishing activities
+59.1	group	Motion picture, video and television programme activities
+59.11	class	Motion picture, video and television programme production activities
+59.12	class	Motion picture, video and television programme post-production activities
+59.13	class	Motion picture, video and television programme distribution activities
+59.14	class	Motion picture projection activities
+59.2	group	Sound recording and music publishing activities
+59.20	class	Sound recording and music publishing activities
+60	division	Programming and broadcasting activities
+60.1	group	Radio broadcasting
+60.10	class	Radio broadcasting
+60.2	group	Television programming and broadcasting activities
+60.20	class	Television programming and broadcasting activities
+61	division	Telecommunications
+61.1	group	Wired telecommunications activities
+61.10	class	Wired telecommunications activities
+61.2	group	Wireless telecommunications activities
+61.20	class	Wireless telecommunications activities
+61.3	group	Satellite telecommunications activities
+61.30	class	Satellite telecommunications activities
+61.9	group	Other telecommunications activities
+61.90	class	Other telecommunications activities
+62	division	Computer programming, consultancy and related activities
+62.0	group	Computer programming, consultancy and related activities
+62.01	class	Computer programming activities
+62.02	class	Computer consultancy activities
+62.03	class	Computer facilities management activities
+62.09	class	Other information technology and computer service activities
+63	division	Information service activities
+63.1	group	Data processing, hosting and related activities; web portals
+63.11	class	Data processing, hosting and related activities
+63.12	class	Web portals
+63.9	group	Other information service activities
+63.91	class	News agency activities
+63.99	class	Other information service activities n.e.c.
+K	section	Financial and insurance activities
+64	division	Financial service activities, except insurance and pension funding
+64.1	group	Monetary intermediation
+64.11	class	Central banking
+64.19	class	Other monetary intermediation
+64.2	group	Activities of holding companies
+64.20	class	Activities of holding companies
+64.3	group	Trusts, funds and similar financial entities
+64.30	class	Trusts, funds and similar financial entities
+64.9	group	Other financial service activities, except insurance and pension funding
+64.91	class	Financial leasing
+64.92	class	Other credit granting
+64.99	class	Other financial service activities, except insurance and pension funding n.e.c.
+65	division	Insurance, reinsurance and pension funding, except compulsory social security
+65.1	group	Insurance
+65.11	class	Life insurance
+65.12	class	Non-life insurance
+65.2	group	Reinsurance
+65.20	class	Reinsurance
+65.3	group	Pension funding
+65.30	class	Pension funding
+66	division	Activities auxiliary to financial services and insurance activities
+66.1	group	Activities auxiliary to financial services, except insurance and pension funding
+66.11	class	Administration of financial markets
+66.12	class	Security and commodity contracts brokerage
+66.19	class	Other activities auxiliary to financial services, except insurance and pension funding
+66.2	group	Activities auxiliary to insurance and pension funding
+66.21	class	Risk and damage evaluation
+66.22	class	Activities of insurance agents and brokers
+66.29	class	Other activities auxiliary to insurance and pension funding
+66.3	group	Fund management activities
+66.30	class	Fund management activities
+L	section	Real estate activities
+68	division	Real estate activities
+68.1	group	Buying and selling of own real estate
+68.10	class	Buying and selling of own real estate
+68.2	group	Renting and operating of own or leased real estate
+68.20	class	Renting and operating of own or leased real estate
+68.3	group	Real estate activities on a fee or contract basis
+68.31	class	Real estate agencies
+68.32	class	Management of real estate on a fee or contract basis
+M	section	Professional, scientific and technical activities
+69	division	Legal and accounting activities
+69.1	group	Legal activities
+69.10	class	Legal activities
+69.2	group	Accounting, bookkeeping and auditing activities; tax consultancy
+69.20	class	Accounting, bookkeeping and auditing activities; tax consultancy
+70	division	Activities of head offices; management consultancy activities
+70.1	group	Activities of head offices
+70.10	class	Activities of head offices
+70.2	group	Management consultancy activities
+70.21	class	Public relations and communication activities
+70.22	class	Business and other management consultancy activities
+71	division	Architectural and engineering activities; technical testing and analysis
+71.1	group	Architectural and engineering activities and related technical consultancy
+71.11	class	Architectural activities
+71.12	class	Engineering activities and related technical consultancy
+71.2	group	Technical testing and analysis
+71.20	class	Technical testing and analysis
+72	division	Scientific research and development
+72.1	group	Research and experimental development on natural sciences and engineering
+72.11	class	Research and experimental development on biotechnology
+72.19	class	Other research and experimental development on natural sciences and engineering
+72.2	group	Research and experimental development on social sciences and humanities
+72.20	class	Research and experimental development on social sciences and humanities
+73	division	Advertising and market research
+73.1	group	Advertising
+73.11	class	Advertising agencies
+73.12	class	Media representation
+73.2	group	Market research and public opinion polling
+73.20	class	Market research and public opinion polling
+74	division	Other professional, scientific and technical activities
+74.1	group	Specialised design activities
+74.10	class	Specialised design activities
+74.2	group	Photographic activities
+74.20	class	Photographic activities
+74.3	group	Translation and interpretation activities
+74.30	class	Translation and interpretation activities
+74.9	group	Other professional, scientific and technical activities n.e.c.
+74.90	class	Other professional, scientific and technical activities n.e.c.
+75	division	Veterinary activities
+75.0	group	Veterinary activities
+75.00	class	Veterinary activities
+N	section	Administrative and support service activities
+77	division	Rental and leasing activities
+77.1	group	Renting and leasing of motor vehicles
+77.11	class	Renting and leasing of cars and light motor vehicles
+77.12	class	Renting and leasing of trucks
+77.2	group	Renting and leasing of personal and household goods
+77.21	class	Renting and leasing of recreational and sports goods
+77.22	class	Renting of video tapes and disks
+77.29	class	Renting and leasing of other personal and household goods
+77.3	group	Renting and leasing of other machinery, equipment and tangible goods
+77.31	class	Renting and leasing of agricultural machinery and equipment
+77.32	class	Renting and leasing of construction and civil engineering machinery and equipment
+77.33	class	Renting and leasing of office machinery and equipment (including computers)
+77.34	class	Renting and leasing of water transport equipment
+77.35	class	Renting and leasing of air transport equipment
+77.39	class	Renting and leasing of other machinery, equipment and tangible goods n.e.c.
+77.4	group	Leasing of intellectual property and similar products, except copyrighted works
+77.40	class	Leasing of intellectual property and similar products, except copyrighted works
+78	division	Employment activities
+78.1	group	Activities of employment placement agencies
+78.10	class	Activities of employment placement agencies
+78.2	group	Temporary employment agency activities
+78.20	class	Temporary employment agency activities
+78.3	group	Other human resources provision
+78.30	class	Other human resources provision
+79	division	Travel agency, tour operator and other reservation service and related activities
+79.1	group	Travel agency and tour operator activities
+79.11	class	Travel agency activities
+79.12	class	Tour operator activities
+79.9	group	Other reservation service and related activities
+79.90	class	Other reservation service and related activities
+80	division	Security and investigation activities
+80.1	group	Private security activities
+80.10	class	Private security activities
+80.2	group	Security systems service activities
+80.20	class	Security systems service activities
+80.3	group	Investigation activities
+80.30	class	Investigation activities
+81	division	Services to buildings and landscape activities
+81.1	group	Combined facilities support activities
+81.10	class	Combined facilities support activities
+81.2	group	Cleaning activities
+81.21	class	General cleaning of buildings
+81.22	class	Other building and industrial cleaning activities
+81.29	class	Other cleaning activities
+81.3	group	Landscape service activities
+81.30	class	Landscape service activities
+82	division	Office administrative, office support and other business support activities
+82.1	group	Office administrative and support activities
+82.11	class	Combined office administrative service activities
+82.19	class	Photocopying, document preparation and other specialised office support activities
+82.2	group	Activities of call centres
+82.20	class	Activities of call centres
+82.3	group	Organisation of conventions and trade shows
+82.30	class	Organisation of conventions and trade shows
+82.9	group	Business support service activities n.e.c.
+82.91	class	Activities of collection agencies and credit bureaus
+82.92	class	Packaging activities
+82.99	class	Other business support service activities n.e.c.
+O	section	Public administration and defence; compulsory social security
+84	division	Public administration and defence; compulsory social security
+84.1	group	Administration of the State and the economic and social policy of the community
+84.11	class	General public administration activities
+84.12	class	Regulation of the activities of providing health care, education, cultural services and other social services, except social security
+84.13	class	Regulation of and contribution to more efficient operation of businesses
+84.2	group	Provision of services to the community as a whole
+84.21	class	Foreign affairs
+84.22	class	Defence activities
+84.23	class	Justice and judicial activities
+84.24	class	Public order and safety activities
+84.25	class	Fire service activities
+84.3	group	Compulsory social security activities
+84.30	class	Compulsory social security activities
+P	section	Education
+85	division	Education
+85.1	group	Pre-primary education
+85.10	class	Pre-primary education
+85.2	group	Primary education
+85.20	class	Primary education
+85.3	group	Secondary education
+85.31	class	General secondary education
+85.32	class	Technical and vocational secondary education
+85.4	group	Higher education
+85.41	class	Post-secondary non-tertiary education
+85.42	class	Tertiary education
+85.5	group	Other education
+85.51	class	Sports and recreation education
+85.52	class	Cultural education
+85.53	class	Driving school activities
+85.59	class	Other education n.e.c.
+85.6	group	Educational support activities
+85.60	class	Educational support activities
+Q	section	Human health and social work activities
+86	division	Human health activities
+86.1	group	Hospital activities
+86.10	class	Hospital activities
+86.2	group	Medical and dental practice activities
+86.21	class	General medical practice activities
+86.22	class	Specialist medical practice activities
+86.23	class	Dental practice activities
+86.9	group	Other human health activities
+86.90	class	Other human health activities
+87	division	Residential care activities
+87.1	group	Residential nursing care activities
+87.10	class	Residential nursing care activities
+87.2	group	Residential care activities for mental retardation, mental health and substance abuse
+87.20	class	Residential care activities for mental retardation, mental health and substance abuse
+87.3	group	Residential care activities for the elderly and disabled
+87.30	class	Residential care activities for the elderly and disabled
+87.9	group	Other residential care activities
+87.90	class	Other residential care activities
+88	division	Social work activities without accommodation
+88.1	group	Social work activities without accommodation for the elderly and disabled
+88.10	class	Social work activities without accommodation for the elderly and disabled
+88.9	group	Other social work activities without accommodation
+88.91	class	Child day-care activities
+88.99	class	Other social work activities without accommodation n.e.c.
+R	section	Arts, entertainment and recreation
+90	division	Creative, arts and entertainment activities
+90.0	group	Creative, arts and entertainment activities
+90.01	class	Performing arts
+90.02	class	Support activities to performing arts
+90.03	class	Artistic creation
+90.04	class	Operation of arts facilities
+91	division	Libraries, archives, museums and other cultural activities
+91.0	group	Libraries, archives, museums and other cultural activities
+91.01	class	Library and archives activities
+91.02	class	Museums activities
+91.03	class	Operation of historical sites and buildings and similar visitor attractions
+91.04	class	Botanical and zoological gardens and nature reserves activities
+92	division	Gambling and betting activities
+92.0	group	Gambling and betting activities
+92.00	class	Gambling and betting activities
+93	division	Sports activities and amusement and recreation activities
+93.1	group	Sports activities
+93.11	class	Operation of sports facilities
+93.12	class	Activities of sport clubs
+93.13	class	Fitness facilities
+93.19	class	Other sports activities
+93.2	group	Amusement and recreation activities
+93.21	class	Activities of amusement parks and theme parks
+93.29	class	Other amusement and recreation activities
+S	section	Other service activities
+94	division	Activities of membership organisations
+94.1	group	Activities of business, employers and professional membership organisations
+94.11	class	Activities of business and employers membership organisations
+94.12	class	Activities of professional membership organisations
+94.2	group	Activities of trade unions
+94.20	class	Activities of trade unions
+94.9	group	Activities of other membership organisations
+94.91	class	Activities of religious organisations
+94.92	class	Activities of political organisations
+94.99	class	Activities of other membership organisations n.e.c.
+95	division	Repair of computers and personal and household goods
+95.1	group	Repair of computers and communication equipment
+95.11	class	Repair of computers and peripheral equipment
+95.12	class	Repair of communication equipment
+95.2	group	Repair of personal and household goods
+95.21	class	Repair of consumer electronics
+95.22	class	Repair of household appliances and home and garden equipment
+95.23	class	Repair of footwear and leather goods
+95.24	class	Repair of furniture and home furnishings
+95.25	class	Repair of watches, clocks and jewellery
+95.29	class	Repair of other personal and household goods
+96	division	Other personal service activities
+96.0	group	Other personal service activities
+96.01	class	Washing and (dry-)cleaning of textile and fur products
+96.02	class	Hairdressing and other beauty treatment
+96.03	class	Funeral and related activities
+96.04	class	Physical well-being activities
+96.09	class	Other personal service activities n.e.c.
+T	section	Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use
+97	division	Activities of households as employers of domestic personnel
+97.0	group	Activities of households as employers of domestic personnel
+97.00	class	Activities of households as employers of domestic personnel
+98	division	Undifferentiated goods- and services-producing activities of private households for own use
+98.1	group	Undifferentiated goods-producing activities of private households for own use
+98.10	class	Undifferentiated goods-producing activities of private households for own use
+98.2	group	Undifferentiated service-producing activities of private households for own use
+98.20	class	Undifferentiated service-producing activities of private households for own use
+U	section	Activities of extraterritorial organisations and bodies
+99	division	Activities of extraterritorial organisations and bodies
+99.0	group	Activities of extraterritorial organisations and bodies
+99.00	class	Activities of extraterritorial organisations and bodies

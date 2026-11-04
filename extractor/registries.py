@@ -398,6 +398,9 @@ def _gb_filing(number: str, lei: str | None) -> tuple["RegistryFiling | None", s
     latest = max(items, key=lambda i: i["description_values"]["made_up_date"])
     period_end = latest["description_values"]["made_up_date"]
     kind = (latest.get("description") or "accounts").replace("accounts-with-accounts-type-", "")
+    parent_acc = next((i for i in r.json().get("items") or [] if i.get("type") == "PARENT_ACC"
+                       and parent_acc_period(i) == period_end
+                       and (i.get("links") or {}).get("document_metadata")), None)
     meta_r = _ch(latest["links"]["document_metadata"])
     meta_r.raise_for_status()
     meta = meta_r.json()
@@ -417,6 +420,14 @@ def _gb_filing(number: str, lei: str | None) -> tuple["RegistryFiling | None", s
         return None, f"company {number}: the {period_end} accounts are in an unsupported format"
     profile = _ch(f"/company/{number}")
     name = profile.json().get("company_name", "") if profile.status_code == 200 else ""
+    if parent_acc and text_kind == "ixbrl" and "revenue" not in figures:
+        # A holding company's own accounts: investments, no revenue, no staff (issue 6).
+        # (PDF-only accounts can't be told apart from a trading company's: kept.)
+        # The group's figures are in the parent's consolidated accounts, which an exempt
+        # subsidiary files under its own number for the same year.
+        got = _gb_parent_accounts(parent_acc, number, name, period_end, lei)
+        if got:
+            return got
     filing = RegistryFiling(
         registry="companies_house", country="GB", org_number=number, company=name,
         form=f"Annual accounts ({kind}), Companies House", filing_id=latest.get("transaction_id", ""),
@@ -426,6 +437,40 @@ def _gb_filing(number: str, lei: str | None) -> tuple["RegistryFiling | None", s
         lei=lei)
     return filing, (f"Companies House {kind} accounts made up to {period_end} "
                     f"({'tagged iXBRL' if text_kind == 'ixbrl' else 'PDF only: the AI reads the figures'})")
+
+
+def parent_acc_period(item: dict) -> str | None:
+    """"Consolidated accounts of parent company for subsidiary company period ending
+    31/12/25" -> "2025-12-31"."""
+    text = (item.get("description_values") or {}).get("description") or ""
+    m = re.search(r"(\d{1,2})/(\d{1,2})/(\d{2,4})\s*$", text)
+    if not m:
+        return None
+    d, mo, y = (int(x) for x in m.groups())
+    return f"{y + 2000 if y < 100 else y:04d}-{mo:02d}-{d:02d}"
+
+
+def _gb_parent_accounts(item: dict, number: str, name: str, period_end: str,
+                        lei: str | None) -> tuple["RegistryFiling | None", str] | None:
+    """The parent's consolidated accounts filed with a subsidiary (PDF, often a scan)."""
+    meta_r = _ch(item["links"]["document_metadata"])
+    if meta_r.status_code != 200:
+        return None
+    meta = meta_r.json()
+    url = (meta.get("links") or {}).get("document")
+    if not url or "application/pdf" not in (meta.get("resources") or {}):
+        return None
+    scan = " (a paper filing: read from page images)" if item.get("paper_filed") else ""
+    filing = RegistryFiling(
+        registry="companies_house", country="GB", org_number=number, company=name,
+        form="Consolidated accounts of the parent company, filed with this company's accounts",
+        filing_id=item.get("transaction_id", ""), period_end=period_end, report_url=url,
+        text_url=url + "#pdf",
+        viewer_url=f"https://find-and-update.company-information.service.gov.uk/company/{number}/filing-history",
+        lei=lei)
+    return filing, (f"Companies House: the company's own accounts to {period_end} have no "
+                    f"revenue (a holding company); using its parent's consolidated accounts "
+                    f"for the same year{scan}")
 
 
 def find_filing(legal_name: str, country: str | None,

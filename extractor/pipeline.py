@@ -13,7 +13,7 @@ from .config import CACHE_DIR, OUTPUT_DIR, clean_name, load_settings, slugify
 from .extract import extract, iso_period_end, money_with_full_value
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .report_finder import ReportNotFoundError, find_report, reports_linked_from
-from . import edgar, registries
+from . import edgar, ocr, registries
 from .edgar import EdgarFiling
 from .registries import RegistryFiling
 from .esef import EsefFiling, download_report, is_recent, latest_annual_filing
@@ -222,7 +222,12 @@ def esef_document(filing: EsefFiling, slug: str, use_cache: bool) -> ReportDocum
             pdf_path = CACHE_DIR / f"{cache_stem(slug, filing.report_url)}.pdf"
             pdf_path.write_bytes(content)
             pages = pdf_to_pages(pdf_path)
-            check_not_scanned(pages)
+            try:
+                check_not_scanned(pages)
+            except NeedsOCRError:
+                # a paper filing (a parent's consolidated accounts): the AI reads the scan
+                pages = ocr.pdf_pages(pdf_path)
+                check_not_scanned(pages)
         elif kind == "html":
             pages = text_to_pages(html_to_text(content))
             check_not_scanned(pages)
@@ -387,6 +392,10 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
             website_error = e
         if doc is None:
             fallback = filing or older
+            if fallback is None and (website or report_url):
+                # No report on the given website (private companies rarely publish one):
+                # the accounts filed in the home register, as without a website.
+                fallback = get_registry(legal_name, slug, lei_info["record"], country, use_cache)
             if fallback is None:
                 raise website_error
             log.info("No usable website report (%s); using the ESEF filing (FY%s)",

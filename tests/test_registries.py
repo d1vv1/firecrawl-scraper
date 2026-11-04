@@ -193,3 +193,58 @@ def test_psc_bands_and_the_protocol_controlling_owner(monkeypatch):
     assert got["controlling_owner_name"].value == "Bp Inv3 Bidco Limited"   # 25%+ counts (20% rule)
     assert got["controlling_owner"].value == "corporate"
     assert "ultimate_parent" not in got                                      # under 50%: not the parent
+
+
+HOLDING_IXBRL = UK_IXBRL.replace("core:TurnoverRevenue", "core:InvestmentsFixedAssets")
+
+
+def _uk_holding(monkeypatch, own_doc: str, with_parent_acc: bool = True):
+    """TWMA Group's shape: its own accounts (iXBRL) and, for the same year, its parent's
+    consolidated accounts (a scanned PDF, filing type PARENT_ACC)."""
+    items = [{"type": "AA", "transaction_id": "own", "description": "accounts-with-accounts-type-full",
+              "description_values": {"made_up_date": "2025-12-31"},
+              "links": {"document_metadata": "https://doc/own"}}]
+    if with_parent_acc:
+        items.append({"type": "PARENT_ACC", "transaction_id": "par", "description": "legacy",
+                      "paper_filed": True, "links": {"document_metadata": "https://doc/par"},
+                      "description_values": {"description": "Consolidated accounts of parent "
+                                             "company for subsidiary company period ending 31/12/25"}})
+
+    def fake(path_or_url, **kw):
+        req = httpx.Request("GET", "https://x")
+        if "filing-history" in path_or_url:
+            return httpx.Response(200, json={"items": items}, request=req)
+        if path_or_url == "https://doc/own":
+            return httpx.Response(200, request=req, json={
+                "links": {"document": "https://doc/own/content"},
+                "resources": {"application/xhtml+xml": {}, "application/pdf": {}}})
+        if path_or_url == "https://doc/par":
+            return httpx.Response(200, request=req, json={
+                "links": {"document": "https://doc/par/content"}, "resources": {"application/pdf": {}}})
+        if path_or_url == "https://doc/own/content":
+            return httpx.Response(200, text=own_doc, request=req)
+        return httpx.Response(200, json={"company_name": "TWMA GROUP LIMITED"}, request=req)
+    monkeypatch.setattr(registries, "_ch", fake)
+
+
+def test_uk_holding_company_uses_its_parents_consolidated_accounts(monkeypatch):
+    _uk_holding(monkeypatch, HOLDING_IXBRL)
+    filing, why = registries._gb_filing("SC205718", None)
+    assert filing.report_url == "https://doc/par/content" and filing.text_url.endswith("#pdf")
+    assert "parent company" in filing.form and filing.figures == {}
+    assert filing.period_end == "2025-12-31" and "paper filing" in why
+
+
+def test_uk_trading_company_keeps_its_own_accounts(monkeypatch):
+    _uk_holding(monkeypatch, UK_IXBRL)          # has a revenue tag: its own business
+    filing, _ = registries._gb_filing("SC205718", None)
+    assert filing.report_url == "https://doc/own/content"
+    _uk_holding(monkeypatch, HOLDING_IXBRL, with_parent_acc=False)   # nothing better filed
+    assert registries._gb_filing("SC205718", None)[0].report_url == "https://doc/own/content"
+
+
+def test_parent_accounts_period():
+    item = {"description_values": {"description": "Consolidated accounts of parent company "
+                                   "for subsidiary company period ending 31/12/25"}}
+    assert registries.parent_acc_period(item) == "2025-12-31"
+    assert registries.parent_acc_period({"description_values": {}}) is None

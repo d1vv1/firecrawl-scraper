@@ -437,3 +437,13 @@ def test_quote_can_join_a_name_row_to_the_figures_row_below_it():
     # a full figures row is not a label row: "Salary" doesn't join the row below
     full = "|Salary|100|38 %|200|\n|Bonus|300|62 %|400|\n"
     assert quote_in_text("Salary|400", full) is None
+
+
+def test_a_name_cut_across_cells_still_matches_its_row():
+    from extractor.validate import quote_in_text
+    page = ("|**Nikolaj Wendelboe, Executive Vic**|**e President, Chief Financial Offic**|"
+            "**er, Interim Chief Executi**|**ve Officer**|||||||\n"
+            "||**2025/26**|4,137|1,520|496|474|3,786|-|10,413|")
+    q = "Nikolaj Wendelboe, Executive Vice President, Chief Financial Officer|2025/26|4,137"
+    assert quote_in_text(q, page)
+    assert not quote_in_text("Nikolaj Wendelboe, Executive Vice President|2025/26|9,999", page)

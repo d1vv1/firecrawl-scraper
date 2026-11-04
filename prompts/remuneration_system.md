@@ -32,7 +32,11 @@ during the year (e.g. "Former CEO (until April 2025)").
   and in `excludes` who is left out (e.g. "the CEO"). Null for one person.
 - Amounts are what was paid or awarded for the year, as printed, with the
   table's unit ("in T€", "CHF thousands", "SEK m") and ISO currency. Do
-  not convert. If one figure bundles other components (pension with
+  not convert. Every value is ONE number printed in its quote: never add,
+  subtract, multiply or work out a figure yourself. If the text gives a
+  value only in parts (two awards with no total) or only as a calculation
+  ("200% of the target"), give the value null, or the part the text
+  states in the form it states it. If one figure bundles other components (pension with
   social security, base salary with allowances, pension with benefits),
   say so in `includes`.
   - base_salary: the fixed base salary only. Leave out board fees,
@@ -56,13 +60,15 @@ during the year (e.g. "Former CEO (until April 2025)").
   - pension_allowance: a fixed salary addition or allowance paid instead
     of (or in compensation for) pension, when the table shows it as its
     own column (Norway: "fixed salary addition"). Never add it to pension
-    or base salary yourself.
+    or base salary yourself. A column called only "Pension" is pension,
+    not pension_allowance, even when it is paid in cash.
   - total: the total remuneration as the company states it. Never add
     it up yourself.
 - sti_target, sti_max, lti_target, lti_max: the target and maximum
   opportunity for this role, in the form the report or policy states
   it. form: "pct_of_base" (e.g. "target bonus 60% of base salary" ->
   60), "pct_of_max" (e.g. "target is half of the maximum" -> 50),
+  "pct_of_target" (e.g. "maximum bonus 200% of target" -> 200),
   "months_of_salary" (e.g. "up to 6 months' salary" -> 6), "amount"
   (money: with unit and currency), "number_of_shares", or "other".
   Give the number as stated; never convert one form into another.
