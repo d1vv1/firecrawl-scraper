@@ -1,0 +1,262 @@
+{
+  "schema_version": "1.1",
+  "name": "Allshares Part 1 results import",
+  "description": "Format for results_<CC>.csv (values) and companies_<CC>.csv (company summary). UTF-8, comma separated, header row required.",
+  "columns": [
+    {
+      "name": "country",
+      "required": true,
+      "type": "text",
+      "allowed": [
+        "NL",
+        "BE",
+        "LU",
+        "IT",
+        "ES",
+        "PT",
+        "GR",
+        "DE",
+        "CH",
+        "AT",
+        "SE",
+        "NO",
+        "DK",
+        "FI",
+        "UK"
+      ],
+      "description": "ISO 3166 country code"
+    },
+    {
+      "name": "company",
+      "required": true,
+      "type": "text",
+      "description": "Company name as used in the run"
+    },
+    {
+      "name": "lei",
+      "required": false,
+      "type": "text",
+      "description": "ISO 17442 LEI. When given and known in the tracker, the company is matched by LEI; otherwise by company name and country."
+    },
+    {
+      "name": "size",
+      "required": true,
+      "type": "enum",
+      "allowed": [
+        "large",
+        "small_mid"
+      ],
+      "description": "Size group"
+    },
+    {
+      "name": "grain",
+      "required": true,
+      "type": "enum",
+      "allowed": [
+        "company",
+        "role"
+      ],
+      "description": "Company-level or role-level field"
+    },
+    {
+      "name": "field_id",
+      "required": true,
+      "type": "enum",
+      "allowed_from": "field_ids",
+      "description": "Protocol field ID (C01 to C23, R01 to R11)"
+    },
+    {
+      "name": "role_row",
+      "required": false,
+      "type": "text",
+      "description": "Required when grain is role: role title as stated"
+    },
+    {
+      "name": "data_point",
+      "required": false,
+      "type": "text",
+      "description": "Our internal field name (for example revenue, base_salary). Required when the field ID covers more than one field."
+    },
+    {
+      "name": "status",
+      "required": true,
+      "type": "enum",
+      "allowed": [
+        "found",
+        "partial",
+        "not_found",
+        "not_applicable"
+      ],
+      "description": "Result of the search for this field"
+    },
+    {
+      "name": "value",
+      "required": false,
+      "type": "text",
+      "description": "Required when status is found or partial"
+    },
+    {
+      "name": "unit",
+      "required": false,
+      "type": "text",
+      "description": "Required for numeric fields when a value is present"
+    },
+    {
+      "name": "currency",
+      "required": false,
+      "type": "text",
+      "description": "ISO 4217 code for money values"
+    },
+    {
+      "name": "fiscal_year",
+      "required": false,
+      "type": "text",
+      "description": "Year the value refers to"
+    },
+    {
+      "name": "source_type",
+      "required": false,
+      "type": "enum",
+      "allowed": [
+        "api",
+        "filed_document",
+        "web",
+        "derived"
+      ],
+      "description": "Kind of source"
+    },
+    {
+      "name": "source_name",
+      "required": false,
+      "type": "text",
+      "description": "For example GLEIF API, Remuneration report 2025"
+    },
+    {
+      "name": "url",
+      "required": false,
+      "type": "text",
+      "description": "Link to the document or API call"
+    },
+    {
+      "name": "location",
+      "required": false,
+      "type": "text",
+      "description": "Page, section or table"
+    },
+    {
+      "name": "language",
+      "required": false,
+      "type": "text",
+      "description": "Document language"
+    },
+    {
+      "name": "minutes",
+      "required": false,
+      "type": "number",
+      "description": "Minutes to find the field"
+    },
+    {
+      "name": "notes",
+      "required": false,
+      "type": "text",
+      "description": "Problems: units missing, chart-only value, scanned PDF, conflicts"
+    }
+  ],
+  "field_ids": {
+    "C01": "Legal name, former names",
+    "C02": "LEI",
+    "C03": "National registration number",
+    "C04": "ISIN",
+    "C05": "Ticker and primary exchange",
+    "C06": "Main list or segment",
+    "C07": "Listing status and admission date",
+    "C08": "Country of incorporation, head office city",
+    "C09": "Website domain",
+    "C10": "National industry code",
+    "C11": "Business description for sub-sector",
+    "C12": "Revenue",
+    "C13": "Total assets",
+    "C14": "EBITDA or operating profit",
+    "C15": "Fiscal year end, reporting currency, accounting basis",
+    "C16": "Headcount and FTE",
+    "C17": "Shares outstanding",
+    "C18": "Year-end share price",
+    "C19": "Largest holders with percentage",
+    "C20": "Controlling owner and PE stake",
+    "C21": "Parent company",
+    "C22": "Revenue and staff by segment or country",
+    "C23": "Pension type, benefits, shareholding requirement",
+    "R01": "Who is disclosed (role titles, individual or aggregate)",
+    "R02": "Group headcount for an aggregate row",
+    "R03": "Currency and unit of the pay table",
+    "R04": "Base salary paid",
+    "R05": "STI paid for the year",
+    "R06": "STI target and maximum, % of base",
+    "R07": "LTI received (vested or awarded value and basis)",
+    "R08": "LTI target and maximum, % of base",
+    "R09": "Benefits value",
+    "R10": "Pension contribution",
+    "R11": "Total remuneration as stated"
+  },
+  "ambiguous_field_ids": [
+    "C01",
+    "C05",
+    "C07",
+    "C08",
+    "C15",
+    "C17",
+    "C20",
+    "C23",
+    "R06",
+    "R07",
+    "R08"
+  ],
+  "numeric_field_ids": [
+    "C12",
+    "C13",
+    "C14",
+    "C16",
+    "C17",
+    "C18",
+    "R02",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11"
+  ],
+  "pay_field_ids": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "C23"
+  ],
+  "status_rules": [
+    "found: value present, unit present where numeric, and a period or as-of date where the field is time-bound",
+    "partial: value present but unit or period missing, or only a partial component found",
+    "not_found: no value in any source tried",
+    "not_applicable: field does not apply to this company (record why in notes)"
+  ],
+  "row_rules": [
+    "value is required when status is found or partial",
+    "data_point is required when field_id is in ambiguous_field_ids, so the right field is updated",
+    "a company is matched by LEI when the LEI is given and known in the tracker, otherwise by company name and country; within the company, a row matches on field_id, role_row and data_point. If value, unit or status differs the record is updated, if identical it is left unchanged, if nothing matches it is added",
+    "role_row is required when grain is role",
+    "unit is required for numeric fields (numeric_field_ids) when a value is present",
+    "currency must be an ISO 4217 code when present",
+    "url should be present when value is present and source_type is not derived",
+    "when data_point is empty and several records share the field_id and role_row for the company, the row is rejected as ambiguous",
+    "lei, when present, must be 20 characters (18 alphanumeric + 2 check digits) and pass the ISO 17442 mod-97 check"
+  ]
+}

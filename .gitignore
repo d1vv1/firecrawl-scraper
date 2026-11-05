@@ -19,3 +19,14 @@ Source_validation_listed_*/
 # Client and colleague material: only the colleague's API script is committed
 extras/*
 !extras/collect_company_data.py
+# Accuracy dashboard: code is committed, data and builds are not (see Dashboard/README.md)
+Dashboard/report.json
+Dashboard/allshares_report.html
+Dashboard/app/public/report.json
+Dashboard/app/node_modules/
+Dashboard/app/dist/
+Dashboard/app/.angular/
+accuracy/out/
+accuracy/tests/baseline/
+accuracy/inputs/*
+!accuracy/inputs/field_register.json

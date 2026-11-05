@@ -1,0 +1,497 @@
+[
+ {
+  "data_point": "legal_name",
+  "grain": "company",
+  "field_id": "C01",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "other_names",
+  "grain": "company",
+  "field_id": "C01",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "lei",
+  "grain": "company",
+  "field_id": "C02",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "business_id",
+  "grain": "company",
+  "field_id": "C03",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "cik",
+  "grain": "company",
+  "field_id": "n/a",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": "no protocol field ID (cik is outside C01-C23)"
+ },
+ {
+  "data_point": "isin",
+  "grain": "company",
+  "field_id": "C04",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "ticker",
+  "grain": "company",
+  "field_id": "C05",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "exchange",
+  "grain": "company",
+  "field_id": "C05",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "exchange_segment",
+  "grain": "company",
+  "field_id": "C06",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "listing_status",
+  "grain": "company",
+  "field_id": "C07",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "listing_date",
+  "grain": "company",
+  "field_id": "C07",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "country_code",
+  "grain": "company",
+  "field_id": "C08",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "head_office_city",
+  "grain": "company",
+  "field_id": "C08",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "website",
+  "grain": "company",
+  "field_id": "C09",
+  "category": "Identity",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "sector_code",
+  "grain": "company",
+  "field_id": "C10",
+  "category": "Sector",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "sub_sector",
+  "grain": "company",
+  "field_id": "C11",
+  "category": "Sector",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "revenue",
+  "grain": "company",
+  "field_id": "C12",
+  "category": "Financials",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "total_assets",
+  "grain": "company",
+  "field_id": "C13",
+  "category": "Financials",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "ebitda",
+  "grain": "company",
+  "field_id": "C14",
+  "category": "Financials",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "fiscal_year",
+  "grain": "company",
+  "field_id": "C15",
+  "category": "Reporting basis",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "fiscal_year_end",
+  "grain": "company",
+  "field_id": "C15",
+  "category": "Reporting basis",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "reporting_currency",
+  "grain": "company",
+  "field_id": "C15",
+  "category": "Reporting basis",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "accounting_basis",
+  "grain": "company",
+  "field_id": "C15",
+  "category": "Reporting basis",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "headcount",
+  "grain": "company",
+  "field_id": "C16",
+  "category": "Workforce",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "fte",
+  "grain": "company",
+  "field_id": "C16",
+  "category": "Workforce",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "shares_outstanding",
+  "grain": "company",
+  "field_id": "C17",
+  "category": "Financials",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "share_price",
+  "grain": "company",
+  "field_id": "C18",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "market_cap_band",
+  "grain": "company",
+  "field_id": "C17",
+  "category": "Listing and market",
+  "module": "Reference data",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "largest_holders",
+  "grain": "company",
+  "field_id": "C19",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "controlling_owner",
+  "grain": "company",
+  "field_id": "C20",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "controlling_owner_name",
+  "grain": "company",
+  "field_id": "C20",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "ownership_type",
+  "grain": "company",
+  "field_id": "C20",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "pe_stake_5pct",
+  "grain": "company",
+  "field_id": "C20",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "ultimate_parent",
+  "grain": "company",
+  "field_id": "C21",
+  "category": "Ownership and control",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "revenue_by_segment",
+  "grain": "company",
+  "field_id": "C22",
+  "category": "Segment and geography",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "staff_by_segment",
+  "grain": "company",
+  "field_id": "C22",
+  "category": "Segment and geography",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "revenue_by_country",
+  "grain": "company",
+  "field_id": "C22",
+  "category": "Segment and geography",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "staff_by_country",
+  "grain": "company",
+  "field_id": "C22",
+  "category": "Segment and geography",
+  "module": "Company and ownership",
+  "pay": false,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "pension_type",
+  "grain": "company",
+  "field_id": "C23",
+  "category": "Pay policy",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "benefits",
+  "grain": "company",
+  "field_id": "C23",
+  "category": "Pay policy",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "shareholding_requirement",
+  "grain": "company",
+  "field_id": "C23",
+  "category": "Pay policy",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "role_disclosure",
+  "grain": "role",
+  "field_id": "R01",
+  "category": "Role and disclosure",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "aggregate_headcount",
+  "grain": "role",
+  "field_id": "R02",
+  "category": "Role and disclosure",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "pay_currency",
+  "grain": "role",
+  "field_id": "R03",
+  "category": "Pay: fixed",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "base_salary",
+  "grain": "role",
+  "field_id": "R04",
+  "category": "Pay: fixed",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "sti_paid",
+  "grain": "role",
+  "field_id": "R05",
+  "category": "Pay: STI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "sti_target",
+  "grain": "role",
+  "field_id": "R06",
+  "category": "Pay: STI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "sti_max",
+  "grain": "role",
+  "field_id": "R06",
+  "category": "Pay: STI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "lti_vested",
+  "grain": "role",
+  "field_id": "R07",
+  "category": "Pay: LTI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "lti_granted",
+  "grain": "role",
+  "field_id": "R07",
+  "category": "Pay: LTI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "lti_target",
+  "grain": "role",
+  "field_id": "R08",
+  "category": "Pay: LTI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "lti_max",
+  "grain": "role",
+  "field_id": "R08",
+  "category": "Pay: LTI",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "benefits_value",
+  "grain": "role",
+  "field_id": "R09",
+  "category": "Pay: fixed",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "pension_contribution",
+  "grain": "role",
+  "field_id": "R10",
+  "category": "Pay: fixed",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ },
+ {
+  "data_point": "total_remuneration",
+  "grain": "role",
+  "field_id": "R11",
+  "category": "Pay: total",
+  "module": "Pay and role",
+  "pay": true,
+  "protocol_note": ""
+ }
+]

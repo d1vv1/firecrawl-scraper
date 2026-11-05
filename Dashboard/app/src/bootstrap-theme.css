@@ -1,0 +1,58 @@
+/* Bootstrap 5.3 mapped to the DESIGN.md tokens and palette. Loaded after bootstrap.min.css and core/report.css. */
+:root{
+  --bs-body-font-family:"Segoe UI",system-ui,Arial,sans-serif;
+  --bs-body-font-size:13px; --bs-body-line-height:1.45;
+  --bs-body-color:#252423; --bs-body-bg:#f3f2f1; --bs-border-color:#e1dfdd; --bs-secondary-color:#605e5c;
+  --bs-primary:#0077BB; --bs-primary-rgb:0,119,187;
+  --bs-success:#009988; --bs-success-rgb:0,153,136;
+  --bs-warning:#EE7733; --bs-warning-rgb:238,119,51;
+  --bs-danger:#CC3311; --bs-danger-rgb:204,51,17;
+  --bs-secondary:#888888; --bs-secondary-rgb:136,136,136;
+  --bs-dark:#201f1e; --bs-dark-rgb:32,31,30;
+  --bs-link-color:#0077BB; --bs-link-color-rgb:0,119,187; --bs-link-hover-color:#005a8e; --bs-link-hover-color-rgb:0,90,142;
+  --bs-border-radius:2px; --bs-border-radius-sm:2px; --bs-border-radius-lg:3px;
+  --bs-focus-ring-color:rgba(0,119,187,.25);
+}
+body{font-size:13px}
+
+/* Top bar: navbar with underline tabs */
+.navbar.top{padding:0 16px;height:48px;flex-wrap:nowrap}
+.navbar.top .navbar-brand{font-size:15px;font-weight:600;color:#fff;margin-right:8px}
+.navbar.top .nav-underline{flex-wrap:nowrap;overflow-x:auto;height:100%;gap:0;scrollbar-width:thin;--bs-nav-underline-border-width:3px;--bs-nav-underline-gap:0}
+.navbar.top .nav-link{color:#c8c6c4;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;font-size:13px}
+.navbar.top .nav-link:hover{color:#fff}
+.navbar.top .nav-link.active{color:#fff;border-bottom-color:var(--brand);font-weight:400}
+
+/* Filters */
+.slicers .form-label,.opt .form-label{margin:0 0 4px;font-size:11px;color:var(--soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.form-select-sm,.form-control-sm{font-size:12.5px}
+
+/* Buttons in the palette */
+.btn-primary{--bs-btn-bg:#0077BB;--bs-btn-border-color:#0077BB;--bs-btn-hover-bg:#00669f;--bs-btn-hover-border-color:#00669f;--bs-btn-active-bg:#005a8e;--bs-btn-active-border-color:#005a8e;--bs-btn-disabled-bg:#0077BB;--bs-btn-disabled-border-color:#0077BB}
+.btn-outline-primary{--bs-btn-color:#0077BB;--bs-btn-border-color:#0077BB;--bs-btn-hover-bg:#0077BB;--bs-btn-hover-border-color:#0077BB;--bs-btn-active-bg:#005a8e;--bs-btn-active-border-color:#005a8e;--bs-btn-disabled-color:#0077BB;--bs-btn-disabled-border-color:#0077BB}
+.btn-outline-secondary{--bs-btn-color:#605e5c;--bs-btn-border-color:#c8c6c4;--bs-btn-hover-bg:#f3f2f1;--bs-btn-hover-color:#252423;--bs-btn-hover-border-color:#a19f9d}
+.btn-link{--bs-btn-color:#0077BB;--bs-btn-hover-color:#005a8e}
+.btn{--bs-btn-disabled-opacity:.45;margin-right:6px}
+.btn-link.btn-sm{padding:0;font-size:12px;margin:0}
+
+/* Cards: KPI cards and panels */
+.kcard.card{border-radius:2px;border-top:3px solid var(--brand);padding:7px 10px}
+.kcard.card.g{border-top-color:var(--found)} .kcard.card.a{border-top-color:var(--partial)} .kcard.card.r{border-top-color:var(--nf)}
+.vis.card{display:block;border-radius:2px;padding:10px 12px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+/* Tables: keep the dense 12px layout */
+.table{--bs-table-bg:#fff;--bs-table-hover-bg:#f3f9fd;--bs-table-border-color:var(--line);font-size:12px;margin-bottom:0}
+.table>:not(caption)>*>*{padding:6px 8px}
+.table thead th{color:var(--soft);font-weight:600;background:#faf9f8;position:sticky;top:0;z-index:1}
+.table tr.sel>*{--bs-table-bg-state:#e6f1f8}
+.table tr.group>*{background:#faf9f8;border-top:2px solid var(--line)}
+
+/* Callouts */
+.attn.alert{border:0;border-left:4px solid var(--nf);background:#fdf3f4;color:var(--ink);padding:10px 12px;margin-bottom:12px;border-radius:2px}
+.attn.info.alert{border-left-color:var(--partial);background:#fdf8ec}
+
+/* Status chips as Bootstrap badges, keeping the palette tints */
+.chip.badge{font-size:11px;font-weight:600;padding:2px 7px}
+
+/* Breadcrumb on Validation steps */
+.breadcrumb{--bs-breadcrumb-divider:"›";--bs-breadcrumb-margin-bottom:6px;font-size:12px;--bs-breadcrumb-item-active-color:var(--soft)}
