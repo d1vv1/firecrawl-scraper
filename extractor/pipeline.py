@@ -19,7 +19,8 @@ from .registries import RegistryFiling
 from .esef import EsefFiling, download_report, is_recent, latest_annual_filing
 from .scraper import (DownloadError, NeedsOCRError, ReportDocument, TeaserPageError, cache_stem,
                       pdf_to_pages,
-                      check_not_scanned, fetch_report, markdown_to_pages, pages_to_markdown)
+                      check_not_scanned, fetch_report, local_file, markdown_to_pages,
+                      pages_to_markdown)
 from .xhtml_text import VERSION as XHTML_VERSION, html_to_text, text_to_pages
 from .sections import select_chunks, split_chunks
 from .validate import (ENTITY_FRONT_PAGES, Check, check_entity, checks_as_dicts, overall_status,
@@ -105,7 +106,9 @@ def discover(legal_name: str, slug: str, fc: FirecrawlClient, website: str | Non
              country: str | None = None) -> dict:
     """Steps 2-3, with overrides and a small JSON cache so re-runs cost nothing."""
     if report_url:
-        site = website or f"{urlparse(report_url).scheme}://{urlparse(report_url).netloc}"
+        # a report on disk says nothing about the website: found later if needed
+        site = website or (None if local_file(report_url) else
+                           f"{urlparse(report_url).scheme}://{urlparse(report_url).netloc}")
         return {"website": site, "website_score": None, "website_source": "override"
                 if website else "derived from --report-url",
                 "report_url": report_url, "report_source": "override"}

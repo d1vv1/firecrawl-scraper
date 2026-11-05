@@ -72,7 +72,7 @@ from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei
 from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
-from .scraper import Page, markdown_to_pages, pages_to_markdown
+from .scraper import Page, local_file, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
 from .validate import figure_in_quote, quote_in_text
 from .website import WebsiteNotFoundError
@@ -201,8 +201,11 @@ def read_targets(path: Path) -> list[Target]:
             t.isin = isin
         for attr, column in (("remuneration_report_url", c_rem), ("annual_report_url", c_ar)):
             url = (r.get(column) or "").strip() if column else ""
-            if url.startswith("http") and not getattr(t, attr):
+            if url.startswith(("http", "file:")) and not getattr(t, attr):
                 setattr(t, attr, url)
+        # a report supplied on disk is the one the report step reads (from_reports.py)
+        if t.annual_report_url and t.annual_report_url.startswith("file:"):
+            t.company.report_url = t.annual_report_url
         if len(lei) == 20 and not t.company.lei:
             t.company.lei = lei
     return list(out.values())
@@ -1279,6 +1282,12 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                         Path(result["debug"]["markdown_file"]).stem,
                         wanted_fields(gaps + list(IDENTITY_FIELDS)))
             report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
+            if not result.get("period_end_date"):
+                # the report step gave no period end: the fiscal year end the report
+                # states dates its values (and the pay rows) instead
+                result["period_end_date"] = next(
+                    (f.value for f in report_values if f.data_point == "fiscal_year_end"
+                     and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
             with_report_period(report_values, result.get("period_end_date"))
             if PARENT_ACCOUNTS in origin.source:
                 report_values = parent_group(report_values)
@@ -1445,14 +1454,22 @@ def spent(meter: dict) -> int:
 
 
 def needs_pipeline(c: Company, opts: dict) -> bool:
+    if c.report_url and c.result_path.exists():
+        # a supplied report replaces the one found before (from_reports.py): the new
+        # run overwrites the result
+        done = json.loads(c.result_path.read_text(encoding="utf-8")).get("report_url")
+        if done != c.report_url:
+            return True
     return not c.result_path.exists() and (not c.error_path.exists() or opts["retry_failed"]
                                            or no_credits_path(c).exists())
 
 
 def worst_case(t: Target, opts: dict) -> int:
     """The most Firecrawl credits one company can spend (both caps hold per company)."""
-    return ((opts["pipeline_credits"] if needs_pipeline(t.company, opts) else 0)
-            + (opts["doc_credits"] if opts["docs"] else 0))
+    # a report supplied on disk needs no search: the report step spends nothing
+    search = needs_pipeline(t.company, opts) and not (t.company.report_url
+                                                      and local_file(t.company.report_url))
+    return (opts["pipeline_credits"] if search else 0) + (opts["doc_credits"] if opts["docs"] else 0)
 
 
 # --- outputs --------------------------------------------------------------------------------

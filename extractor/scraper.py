@@ -9,6 +9,8 @@ import logging
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 import httpx
 from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
@@ -110,9 +112,25 @@ def _impersonated_get(url: str) -> tuple[int, str | None, bytes]:
     return r.status_code, r.headers.get("content-type"), r.content
 
 
+def local_file(url: str) -> Path | None:
+    """The file a `file://` URL or a plain path points to, if it exists: a report
+    supplied on disk (python -m extractor.from_reports) is read like a downloaded one."""
+    if url.lower().startswith("file:"):
+        path = Path(url2pathname(urlparse(url).path))
+    elif re.match(r"^[A-Za-z]:[\\/]|^[\\/]|^\.{1,2}[\\/]", url):
+        path = Path(url)
+    else:
+        return None
+    return path if path.is_file() else None
+
+
 def download(url: str) -> tuple[bytes, str | None]:
     """Return (body, content_type). Tries plain httpx, then a Chrome-impersonating
-    client if the response is blocked or isn't a PDF."""
+    client if the response is blocked or isn't a PDF. A local file is read from disk."""
+    path = local_file(url)
+    if path:
+        body = path.read_bytes()
+        return body, "application/pdf" if looks_like_pdf(body, None) else "text/html"
     try:
         status, ct, body = _httpx_get(url)
     except (httpx.ConnectError, httpx.RemoteProtocolError, httpx.ReadError) as e:
@@ -197,6 +215,12 @@ def fetch_report(report_url: str, slug: str, fc: FirecrawlClient,
         raise DownloadError(
             f"Expected a PDF from {report_url} but got {ct!r} "
             f"(probably a cookie/login/blocked page): {snippet!r}")
+    elif local_file(report_url):
+        # an HTML / iXBRL report on disk (an ESEF .xhtml): converted here, no Firecrawl
+        from .xhtml_text import html_to_text, text_to_pages
+        pages = text_to_pages(html_to_text(body.decode("utf-8", errors="replace")))
+        check_not_scanned(pages)
+        kind, pdf_path = "html", None
     else:
         log.info("Report is an HTML page; scraping it with Firecrawl (1 credit)")
         md = fc.scrape(report_url, formats=["markdown"])["markdown"]

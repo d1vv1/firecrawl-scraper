@@ -286,3 +286,12 @@ class SectorPick(BaseModel):
     """The industry class for a business description (sector.py)."""
     code: Optional[str]             # a code from the list given; null if the text is too vague
     basis: str                      # the words of the description the choice rests on
+
+
+class ReportIdentity(BaseModel):
+    """Whose report a file is, read from its first pages (from_reports.py)."""
+    legal_name: Optional[str]       # the reporting company, as printed: "Volvo AB (publ)"
+    country: Optional[str]          # ISO 3166 alpha-2 of its registered office
+    document_type: Literal["annual_report", "remuneration_report", "other"]
+    fiscal_year: Optional[str]      # "2025" or "2025/26"
+    quote: Optional[str]            # where the name is printed

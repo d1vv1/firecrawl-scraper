@@ -33,8 +33,10 @@ from .config import CACHE_DIR, MAP_LIMIT, fold
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .report_finder import EN_MARKERS, NATIVE_MARKERS, _link_titles, _norm, extract_year, is_pdf_url
 from .scraper import (DownloadError, NeedsOCRError, Page, check_not_scanned, download,
-                      looks_like_pdf, markdown_to_pages, pages_to_markdown, pdf_to_pages)
+                      local_file, looks_like_pdf, markdown_to_pages, pages_to_markdown,
+                      pdf_to_pages)
 from .website import is_blocked, registered_domain
+from .xhtml_text import html_to_text, text_to_pages
 
 log = logging.getLogger(__name__)
 
@@ -489,6 +491,11 @@ class Library:
             return pages, "pdf", {}
         if c.is_pdf:
             raise DownloadError(f"Expected a PDF from {c.url} but got {ct!r}")
+        if body is not None and local_file(c.url):
+            # an HTML / iXBRL report on disk: converted here, no Firecrawl
+            pages = text_to_pages(html_to_text(body.decode("utf-8", "replace")))
+            check_not_scanned(pages)
+            return pages, "web", {}
         # The raw HTML from the plain download holds file addresses kept in the page's
         # data (download buttons); the readable text comes from Firecrawl.
         files = embedded_files(body.decode("utf-8", "replace")) if body else {}

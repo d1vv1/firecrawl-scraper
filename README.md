@@ -250,6 +250,35 @@ call, the Camelot pay-table reading and the total check. It writes
 pension type, benefits and shareholding requirement, each with its page, quote and grade.
 Exit code 2 when the PDF has no executive pay. A second run of the same file is free (cached).
 
+### Companies from report files
+
+```
+python -m extractor.from_reports reports/                 # every PDF / XHTML / HTML in it
+python -m extractor.from_reports a.pdf b.pdf --collect    # and collect them at once
+```
+
+For annual or remuneration reports you already have, with no company list. Each file
+is read (a scanned PDF from page images), then identified:
+
+1. **Unique identifiers first:** LEIs and ISINs in the text (check digits verified) and
+   register numbers by their labels ("Company number", "Org. nr", "Corp. ID no.",
+   "CVR", "Business ID"), each confirmed in GLEIF. A report names other companies too
+   (subsidiaries, bond issuers, banks), so the company mentioned most and earliest wins,
+   with a bonus when its name is on the first pages.
+2. **Then the name:** with no identifier, one AI call reads the first pages for the
+   legal name and country, matched in GLEIF by name (cached per file).
+3. **Then the kind:** an annual or a remuneration report, from the title on the cover;
+   when the cover names neither or both, the AI's read decides. Anything else (AGM
+   proposals, a sustainability statement on its own) is listed and left out.
+
+It writes `output/<name>_companies.csv` (`--name`, default `from_reports`): one row per
+company, its files as `annual_report_url` / `remuneration_report_url` (`file:` links),
+and how each was identified. The collector reads a supplied annual report as *the*
+report (no search) and a remuneration report for pay. `--collect` runs
+`python -m extractor.datapoints` on the list straight away (other options, such as
+`--max-run-credits`, are passed on); a company collected before is redone with the
+given files.
+
 ### Checks and dashboard
 
 At the end of every `python -m extractor.datapoints` run, each value is checked
