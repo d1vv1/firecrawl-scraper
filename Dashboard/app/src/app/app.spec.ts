@@ -107,8 +107,7 @@ describe('Allshares dashboard (Angular)', () => {
 
   it('import preview, apply and reset; trend follows', () => {
     const r = setup();
-    // the import schema spells the UK "UK", the data "GB": use a company elsewhere
-    const co = r.model.recs.find((v) => v.d === 'legal_name' && v.ck !== v.id && v.c !== 'GB')!;
+    const co = r.model.recs.find((v) => v.d === 'legal_name' && v.ck !== v.id)!;
     const base = r.model.hist.length;
     const csv = 'country,company,lei,size,grain,field_id,role_row,data_point,status,value,unit\n' +
       `${co.c},Any Name,${co.ck},large,company,C01,,legal_name,found,Illustrative example name,\n` +

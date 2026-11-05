@@ -537,7 +537,9 @@
       var row = rows[r], rowErr = [];
       var get = function (n) { var i = idx[n]; return i === undefined ? "" : (row[i] || "").trim(); };
       cols.forEach(function (c) { if (c.required && !get(c.name)) rowErr.push({row: r + 1, col: c.name, msg: "Required value empty"}); });
-      var country = get("country"); if (country && countries.indexOf(country) < 0) rowErr.push({row: r + 1, col: "country", msg: "Not an allowed country code: " + country});
+      // The schema spells the UK "UK", the collector ISO "GB": both are accepted, and stored as GB.
+      var country = get("country"); if (country === "UK") country = "GB";
+      if (country && countries.indexOf(country) < 0 && !(country === "GB" && countries.indexOf("UK") >= 0)) rowErr.push({row: r + 1, col: "country", msg: "Not an allowed country code: " + country});
       var size = get("size"); if (size && ["large", "small_mid"].indexOf(size) < 0) rowErr.push({row: r + 1, col: "size", msg: "Must be large or small_mid"});
       var grain = get("grain"); if (grain && ["company", "role"].indexOf(grain) < 0) rowErr.push({row: r + 1, col: "grain", msg: "Must be company or role"});
       if (grain === "role" && !get("role_row")) rowErr.push({row: r + 1, col: "role_row", msg: "Required when grain is role"});

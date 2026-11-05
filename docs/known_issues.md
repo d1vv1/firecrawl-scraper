@@ -4,7 +4,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
-| 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | open | accept both, or the client's choice |
+| 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
 | 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 30 hard fails of 720 values in run 21 | long quotes the run can't find; Bang & Olufsen bonus definition (issue 10) |
 | 11 | Golden file values that look like a different fiscal year | open | client answer |
 | 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
@@ -18,9 +18,11 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
 
-## 13. The dashboard's import format spells the UK "UK"
+## 13. The dashboard's import format spells the UK "UK" — fixed
 
-*Found 5 November 2026, when the accuracy dashboard was connected to the collector (`Dashboard/README.md`).* The import schema (`accuracy/schema/allshares_import_schema.json`) allows `UK` as a country code, not ISO `GB`, which the collector writes. A CSV imported on the dashboard's Import page that gives `GB` is rejected, and one that gives `UK` doesn't match the UK companies already in the run when it has no LEI (companies are matched by LEI, otherwise by name and country). Imports with an LEI are not affected. **Fix options:** treat UK and GB as the same country when matching and validating (a few lines in `Dashboard/core/report-core.js`), or change the schema to ISO codes if the client agrees.
+*Found 5 November 2026, when the accuracy dashboard was connected to the collector (`Dashboard/README.md`).* The import schema (`accuracy/schema/allshares_import_schema.json`) allows `UK` as a country code, not ISO `GB`, which the collector writes. A CSV imported on the dashboard's Import page that gives `GB` is rejected, and one that gives `UK` doesn't match the UK companies already in the run when it has no LEI (companies are matched by LEI, otherwise by name and country). Imports with an LEI are not affected.
+
+**Fixed 5 November 2026** (`Dashboard/core/report-core.js`, `previewImport`): an import may give `UK` or `GB`; both pass validation and are stored as `GB`, so the row matches the run's UK company by name. The schema file is unchanged, so the client's own `UK` files keep working.
 
 ## 12. Values the output checks flag — mostly fixed
 

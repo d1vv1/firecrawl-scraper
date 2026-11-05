@@ -155,7 +155,7 @@ test("metric register", () => {
 });
 
 // Import: one update, one unchanged, one added, one duplicate, two invalid.
-const co = R.model.recs.find((v) => v.d === "legal_name" && v.ck !== v.id && v.c !== "GB");   // the import schema says UK
+const co = R.model.recs.find((v) => v.d === "legal_name" && v.ck !== v.id);
 const lei = co.ck, coOriginal = co.v, histBase = R.model.histBase;
 const head = "country,company,lei,size,grain,field_id,role_row,data_point,status,value,unit,currency,fiscal_year,source_type,source_name,url,location,language,minutes,notes";
 const csv = [head,

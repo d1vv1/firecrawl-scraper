@@ -60,7 +60,7 @@ npm --prefix Dashboard/app test
 
 - `accuracy/inputs/field_register.json`: protocol field ID, category and module per data point.
 - `accuracy/schema/allshares_import_schema.json`: the import format (Import page). It spells the UK
-  `UK`; the collector writes ISO `GB`.
+  `UK`; the collector writes ISO `GB`. The Import page accepts both and stores `GB`.
 - `accuracy/report/template.html`: the single-file report's page.
 
 Rahul's first version scored the client's `tracker_first50.csv` with its own engine

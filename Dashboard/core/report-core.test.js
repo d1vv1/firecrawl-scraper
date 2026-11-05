@@ -59,6 +59,18 @@ test("upsert: LEI first, then name + country; ambiguous without data_point", () 
   ]);
   assert.deepStrictEqual(res.counts, { added: 1, updated: 1, same: 1, ambiguous: 1, dupes: 0 });
 });
+test("the UK as UK or GB: both valid, both match the run's GB company", () => {
+  const M = C.createModel(data);
+  const gb = M.recs.find((v) => v.d === "legal_name" && v.c === "GB");
+  if (!gb) return;
+  const csv = "country,company,size,grain,field_id,role_row,data_point,status,value,unit\n" +
+    ["UK", "GB"].map((c) => `${c},${gb.o},large,company,C09,,website,found,example.org,`).join("\n") + "\n";
+  const p = C.previewImport(M, schema, csv, "uk.csv");
+  assert.deepStrictEqual(p.errs, []);
+  assert.ok(p.good.every((r) => r.c === "GB"));
+  const res = C.applyImport(M, M.recs.map((v) => Object.assign({}, v)), p.good);
+  assert.strictEqual(res.counts.added, 0, "matched the existing company, not added as a new one");
+});
 test("validation: schema rules", () => {
   const M = C.createModel(data);
   const csv = "country,company,size,grain,field_id,role_row,data_point,status,value,unit,lei\n" +
