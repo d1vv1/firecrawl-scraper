@@ -61,8 +61,9 @@ def field_meta(dp: str, grain: str, reg: dict) -> dict:
 
 def value_status(r: oc.Row, f: dict) -> str:
     if not r.value:
-        return "not_found"
-    if (f["field_id"] in NUMERIC_FIELD_IDS and not r.unit) or \
+        # "not applicable: one person" (a group headcount on an individual's row), no SEC filing
+        return "not_applicable" if r.note.startswith("not applicable") else "not_found"
+    if (f["field_id"] in NUMERIC_FIELD_IDS and r.number is not None and not r.unit) or \
             (f["category"] not in STATIC_CATEGORIES and not r.period_end):
         return "partial"
     return "found"
@@ -120,7 +121,8 @@ def report_data(scored: list[oc.Scored], rows: list[oc.Row], name: str,
     outcomes = Counter(x.outcome for s in scored for x in s.results)
     run = outcomes["pass"] + outcomes["fail"]
     checks_pct = round(100 * outcomes["pass"] / run, 1) if run else 0
-    found_pct = round(100 * sum(v["st"] == "found" for v in values) / len(values), 1) if values else 0
+    applicable = [v for v in values if v["st"] != "not_applicable"]
+    found_pct = round(100 * sum(v["st"] == "found" for v in applicable) / len(applicable), 1) if applicable else 0
     today = dt.date.today()
     return {
         "meta": {"tracker": name, "asOf": f"{today.day} {today:%b %Y}", "built": today.isoformat(),

@@ -62,6 +62,16 @@ def test_report_json_follows_the_spec(tmp_path, monkeypatch):
     assert (tmp_path / "run_datapoints_checks.md").exists()
 
 
+def test_not_applicable_is_neither_found_nor_missing(tmp_path, monkeypatch):
+    rows = ROWS + [{"grain": "role", "role_row": "CEO", "data_point": "aggregate_headcount",
+                    "note": "not applicable: one person"}]
+    data, _ = _build(tmp_path, monkeypatch, rows)
+    by = {v["d"]: v for v in data["values"]}
+    assert by["aggregate_headcount"]["st"] == "not_applicable"
+    found = sum(v["st"] == "found" for v in data["values"])
+    assert data["meta"]["foundPct"] == round(100 * found / (len(rows) - 1), 1)
+
+
 def test_the_previous_run_becomes_the_baseline(tmp_path, monkeypatch):
     first, _ = _build(tmp_path, monkeypatch, ROWS[:2])
     second, _ = _build(tmp_path, monkeypatch)

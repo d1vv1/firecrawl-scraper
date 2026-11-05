@@ -207,7 +207,8 @@ Per company, cheapest and most exact first:
 `lei` comes only from the APIs. `sector_code` is a NACE Rev. 2 class picked by the AI from
 the business description (`sub_sector`, `extractor/sector.py`), the client's route; the
 register's own code, often the holding company's, stays in `note`. Not yet in the API
-step: exchange segment files, ECB exchange rates, Bolagsverket (SE) and CVR (DK).
+step: exchange segment files, Bolagsverket (SE) and CVR (DK). `market_cap_band` converts a
+non-EUR market cap at the ECB's euro reference rate on the share price's date (`extractor/fx.py`).
 
 When several sources give a value, the most exact one wins (A before B before C, then
 XBRL, then report, then web). A different value from another source is mentioned in

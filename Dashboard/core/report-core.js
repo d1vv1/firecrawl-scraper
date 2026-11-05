@@ -114,6 +114,10 @@
     o.avg = o.scored ? Math.round(o.scoreSum / o.scored) : null;
     return o;
   }
+  // Found % is over the values that apply: a not-applicable value (a group headcount on one
+  // person's row, an SEC number for a company not filed there) is neither found nor missing.
+  function applicable(s, n) { return n - (s.not_applicable || 0); }
+  function foundPct(vs, one) { var s = statusCounts(vs), a = applicable(s, vs.length); return one ? pct1(s.found, a) : pct(s.found, a); }
   function companiesOf(vs) { var m = {}; vs.forEach(function (v) { m[companyKey(v)] = 1; }); return Object.keys(m).length; }
   function countriesOf(vs) { var m = {}; vs.forEach(function (v) { m[v.c] = 1; }); return COUNTRIES.filter(function (c) { return m[c]; }).concat(Object.keys(m).filter(function (c) { return COUNTRIES.indexOf(c) < 0; }).sort()); }
   function companyCountBy(vs, key) {
@@ -138,7 +142,7 @@
       byCountryCompanies: countriesOf(vs).map(function (c) { return {c: c, n: byC[c] || 0}; }),
       rows: countriesOf(vs).map(function (c) {
         var cv = vs.filter(function (v) { return v.c === c; }), s = statusCounts(cv);
-        return {c: c, companies: companiesOf(cv), n: cv.length, found: s.found, partial: s.partial, nf: s.not_found, foundPct: pct(s.found, cv.length)};
+        return {c: c, companies: companiesOf(cv), n: cv.length, found: s.found, partial: s.partial, nf: s.not_found, foundPct: pct(s.found, applicable(s, cv.length))};
       })
     };
   }
@@ -148,7 +152,7 @@
       co: co.length, pa: pa.length, sc: statusCounts(co), sp: statusCounts(pa),
       rows: countriesOf(vs).map(function (c) {
         var cc = co.filter(function (v) { return v.c === c; }), pp = pa.filter(function (v) { return v.c === c; });
-        return {c: c, co: cc.length, coFound: pct(statusCounts(cc).found, cc.length), pa: pp.length, paFound: pct(statusCounts(pp).found, pp.length)};
+        return {c: c, co: cc.length, coFound: foundPct(cc), pa: pp.length, paFound: foundPct(pp)};
       })
     };
   }
@@ -216,7 +220,7 @@
     var rows = vs.filter(function (v) { return v.d === dp; });
     return {
       dp: dp, meta: model.dpMeta[dp] || {},
-      values: rows.filter(function (v) { return v.st !== "not_found"; }).map(function (v) { return valueRow(model, v); }),
+      values: rows.filter(function (v) { return v.st !== "not_found" && v.st !== "not_applicable"; }).map(function (v) { return valueRow(model, v); }),
       empty: rows.filter(function (v) { return v.st === "not_found"; }).map(function (v) { return {key: companyKey(v), o: v.o, c: v.c, r: v.r, note: v.nt || ""}; })
     };
   }
@@ -253,15 +257,15 @@
     var m = {};
     vs.forEach(function (v) {
       var k = companyKey(v);
-      var x = m[k] || (m[k] = {key: k, o: v.o, c: v.c, ids: {}, rows: 0, found: 0, partial: 0, nf: 0, P: 0, R: 0, I: 0, F: 0, H: 0, scored: 0, scoreSum: 0});
+      var x = m[k] || (m[k] = {key: k, o: v.o, c: v.c, ids: {}, rows: 0, found: 0, partial: 0, nf: 0, na: 0, P: 0, R: 0, I: 0, F: 0, H: 0, scored: 0, scoreSum: 0});
       x.ids[v.id] = 1; x.rows++;
-      if (v.st === "found") x.found++; else if (v.st === "partial") x.partial++; else if (v.st === "not_found") x.nf++;
+      if (v.st === "found") x.found++; else if (v.st === "partial") x.partial++; else if (v.st === "not_found") x.nf++; else if (v.st === "not_applicable") x.na++;
       if (v.sc) { x[v.sc]++; x.scored++; x.scoreSum += v.sp || 0; }
     });
     return Object.keys(m).map(function (k) {
       var x = m[k]; x.idList = Object.keys(x.ids).sort(); delete x.ids;
       x.avg = x.scored ? Math.round(x.scoreSum / x.scored) : null; delete x.scoreSum;
-      x.foundPct = pct(x.found, x.rows);
+      x.foundPct = pct(x.found, x.rows - x.na);
       return x;
     }).sort(function (a, b) { return a.c.localeCompare(b.c) || a.o.localeCompare(b.o); });
   }
@@ -414,7 +418,7 @@
   function kpis(model, vs) {
     var st = statusCounts(vs), sc = scoreCounts(vs), gs = gateStats(model, vs), n = vs.length, base = model.data.baseline;
     var last = model.hist[model.hist.length - 1];
-    var foundPct = pct1(st.found, n), dFound = Math.round((foundPct - base.foundPct) * 10) / 10;
+    var foundPct = pct1(st.found, applicable(st, n)), dFound = Math.round((foundPct - base.foundPct) * 10) / 10;
     var dChecks = Math.round((gs.checksPct - base.checksPct) * 10) / 10;
     var t = model.data.meta.target;
     function sign(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
@@ -439,7 +443,7 @@
     var last = model.hist[model.hist.length - 1];
     return [
       ["M01", "Checks passing", "Accuracy", "Scoring engine (gates)", "PASS / (PASS + FAIL) over gates run on values in view", pct1(gs.pass, gs.runs - gs.nr), model.data.meta.target, trend(pct1(gs.pass, gs.runs - gs.nr), base.checksPct)],
-      ["M02", "Found %", "Coverage", "Run / imports", "Values with status found / all values in view", pct1(st.found, n), NS, trend(pct1(st.found, n), base.foundPct)],
+      ["M02", "Found %", "Coverage", "Run / imports", "Values with status found / values in view that apply", pct1(st.found, applicable(st, n)), NS, trend(pct1(st.found, applicable(st, n)), base.foundPct)],
       ["M03", "Values passing", "Accuracy", "Scoring engine (status)", "Values with status Pass / scored values", pct1(sc.P, sc.scored), NS, "–"],
       ["M04", "Values blocked by a hard fail", "Accuracy", "Scoring engine (status)", "Values with status Fail (hard)", sc.H, NS, "–"],
       ["M05", "Hard gate fails", "Accuracy", "Scoring engine (gates)", "Count of FAIL on hard gates", gs.hard, NS, "–"],
@@ -456,14 +460,14 @@
 
   function titles(model, vs, extra) {
     var st = statusCounts(vs), n = vs.length, pc = payComp(vs), gs = gateStats(model, vs);
-    var cs = countriesOf(vs).map(function (c) { var cv = vs.filter(function (v) { return v.c === c; }); return {c: c, p: pct(statusCounts(cv).found, cv.length)}; }).sort(function (a, b) { return b.p - a.p; });
+    var cs = countriesOf(vs).map(function (c) { var cv = vs.filter(function (v) { return v.c === c; }); return {c: c, p: foundPct(cv)}; }).sort(function (a, b) { return b.p - a.p; });
     var ft = fieldTable(model, vs), et = emptyTables(model, vs), last = model.hist[model.hist.length - 1];
     var allPass = ft.filter(function (x) { return x.scored && x.P === x.scored; }).length;
     var worst = ft[0];
     var hist = model.hist;
     return {
-      overview: "Only " + pct(st.found, n) + "% of values are found; " + fmt(st.not_found) + " are empty",
-      paycomp: "Company data is found " + pct(pc.sc.found, pc.co) + "% of the time; pay data " + pct(pc.sp.found, pc.pa) + "%",
+      overview: "Only " + pct(st.found, applicable(st, n)) + "% of values are found; " + fmt(st.not_found) + " are empty",
+      paycomp: "Company data is found " + pct(pc.sc.found, applicable(pc.sc, pc.co)) + "% of the time; pay data " + pct(pc.sp.found, applicable(pc.sp, pc.pa)) + "%",
       countries: cs.length ? "Best found rate: " + cs[0].c + " (" + cs[0].p + "%); lowest: " + cs[cs.length - 1].c + " (" + cs[cs.length - 1].p + "%)" : "No data for this selection",
       fields: ft.length ? allPass + " of " + ft.length + " fields pass on every scored value" + (worst && worst.problems ? "; most failures: " + worst.d + " (" + fmt(worst.problems) + ")" : "") : "No data for this selection",
       empty: et.fields.length ? fmt(et.n) + " values are empty; " + et.fields[0].d + " is empty for " + et.fields[0].companies + " " + (et.fields[0].companies === 1 ? "company" : "companies") : "No empty values in this selection",
@@ -616,7 +620,7 @@
     var groups = {};
     GROUPS.forEach(function (g) { var bad = pending.gFail[g] ? Object.keys(pending.gFail[g]).length : 0; groups[g] = n ? Math.round((n - bad) / n * 100) : 100; });
     model.hist.push({label: "Import " + model.impCount + " (" + pending.file + ")", checks: pass,
-                     found: pct1(statusCounts(model.recs).found, model.recs.length), fileFound: fileFound, n: n, groups: groups});
+                     found: foundPct(model.recs, true), fileFound: fileFound, n: n, groups: groups});
     return res;
   }
 

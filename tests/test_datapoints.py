@@ -215,15 +215,48 @@ def test_protocol_company_fields_from_the_report():
     assert found["revenue_by_segment"].value == "Cloud: 100; Devices: 50"
 
 
-def test_market_cap_band_is_derived_in_eur_only():
+def test_market_cap_band_in_eur_at_the_ecb_rate(monkeypatch):
     shares = Found("shares_outstanding", 100_000_000, unit="shares", source="AR", confidence="B")
     eur = Found("share_price", 12.0, unit="EUR", source="AR", confidence="B")
     band, why = dp.market_cap_band({"shares_outstanding": shares, "share_price": eur})
     assert band.value == "large" and band.method == "DERIVED" and why == ""
+    rates = {("SEK", "2025-12-31"): (11.0, "2025-12-30")}
+    monkeypatch.setattr(dp.fx, "eur_rate", lambda cur, date: rates.get((cur, date)))
+    sek = Found("share_price", 12.0, unit="SEK", period_end="2025-12-31", source="AR", confidence="B")
+    band, why = dp.market_cap_band({"shares_outstanding": shares, "share_price": sek})
+    assert band.value == "small"                     # SEK 1.2bn / 11 = EUR 109m, under 150m
+    assert "11 SEK per EUR (ECB euro reference rates, 2025-12-30)" in band.note
     band, why = dp.market_cap_band({"shares_outstanding": shares,
-                                    "share_price": Found("share_price", 12.0, unit="SEK")})
-    assert band is None and "exchange rate" in why
+                                    "share_price": Found("share_price", 12.0, unit="XXX")})
+    assert band is None and "no ECB euro rate for XXX" in why
     assert dp.market_cap_band({})[1] == "not derived: no shares outstanding and share price"
+
+
+def test_refresh_dates_standing_facts_and_derives_a_missing_band(monkeypatch):
+    monkeypatch.setattr(dp.fx, "eur_rate", lambda cur, date: (10.0, date))
+    row = lambda dp_, value="", **kw: {"grain": "company", "role_row": "", "data_point": dp_,  # noqa: E731
+                                        "value": value, "unit": "", "period_end": "", "source": "",
+                                        "endpoint": "", "method": "PARSE", "retrieved_at": "",
+                                        "confidence": "B", "note": "", **kw}
+    rows = [row("fiscal_year_end", "2025-12-31", period_end="2025-12-31"),
+            row("shares_outstanding", "100000000", unit="shares", period_end="2025-12-31"),
+            row("share_price", "120", unit="SEK", period_end="2025-12-31"),
+            row("market_cap_band", note="not derived: market cap 12,000,000,000 SEK; the EUR band needs "
+                                        "the year-end exchange rate (API step)"),
+            row("pension_type", "defined contribution"),
+            row("ultimate_parent", "Parent AB", source="Annual report (PDF)"),
+            row("largest_holders", "Fund: 10", source="Share information (web page)",
+                retrieved_at="2026-10-23T08:00:00+00:00"),
+            row("lei", note="not applicable: x"),
+            {**row("base_salary", "1000", period_end="2025-12-31"), "grain": "role", "role_row": "CEO"}]
+    by = {r["data_point"]: r for r in dp.refresh(rows)}
+    assert by["market_cap_band"]["value"] == "large" and by["market_cap_band"]["method"] == "DERIVED"
+    assert by["pension_type"]["period_end"] == "2025-12-31" and "the pay year's" in by["pension_type"]["note"]
+    assert by["ultimate_parent"]["period_end"] == "2025-12-31"
+    assert by["largest_holders"]["period_end"] == "2026-10-23"
+    assert by["lei"]["period_end"] == ""                                   # empty: untouched
+    again = dp.refresh([dict(r) for r in rows])
+    assert [r["note"] for r in again] == [r["note"] for r in rows]           # idempotent
 
 
 def _amount(v=None, unit="thousands", cur="EUR", quote=None, includes=None):

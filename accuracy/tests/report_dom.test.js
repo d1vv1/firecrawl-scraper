@@ -63,7 +63,8 @@ const kcard = (k) => { const mm = $("kstrip").innerHTML.match(new RegExp('data-k
 // expected numbers come from its own data.
 const D = R.model.data, N = D.values.length, fmtN = (x) => x.toLocaleString("en-GB");
 const empty = D.values.filter((v) => v.st === "not_found").length;
-const foundPct = Math.round(D.values.filter((v) => v.st === "found").length / N * 100);
+const applicable = D.values.filter((v) => v.st !== "not_applicable").length;   // found % is over these
+const foundPct = Math.round(D.values.filter((v) => v.st === "found").length / applicable * 100);
 const hardGates = D.values.filter((v) => v.gr).reduce((a, v) => a + v.gr.filter((g) => g[1] === "F" && D.gates[D.gateIds[g[0]]][1] === "Hard").length, 0);
 const countries = [...new Set(D.values.map((v) => v.c))];
 const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -54,7 +54,7 @@ import re
 import sys
 import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from urllib.parse import quote as urlquote, urlparse
 
@@ -62,7 +62,7 @@ import httpx
 import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, listing, llm, pay, pay_tables, sector
+from . import apis, edgar, fx, listing, llm, pay, pay_tables, sector
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
@@ -1145,15 +1145,21 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
                                if not f)
         return None, f"not derived: no {missing}"
     cap = float(shares.value) * float(price.value)
+    in_eur, at = cap, ""
     if price.unit != "EUR":
-        return None, (f"not derived: market cap {cap:,.0f} {price.unit}; the EUR band needs the "
-                      f"year-end exchange rate (API step)")
-    band = next(name for floor, name in MARKET_CAP_BANDS_EUR if cap >= floor)
+        # The ECB's euro rate on the price's date (the last working day before it)
+        rate = fx.eur_rate(price.unit, price.period_end)
+        if not rate:
+            return None, (f"not derived: market cap {cap:,.0f} {price.unit}; no ECB euro rate "
+                          f"for {price.unit} on {price.period_end or 'an unknown date'}")
+        in_eur = cap / rate[0]
+        at = f", {cap:,.0f} {price.unit} at {rate[0]:g} {price.unit} per EUR ({fx.SOURCE}, {rate[1]})"
+    band = next(name for floor, name in MARKET_CAP_BANDS_EUR if in_eur >= floor)
     worst = min((shares, price), key=lambda f: CONFIDENCE_RANK[f.confidence])
     return Found("market_cap_band", band, unit="", period_end=price.period_end,
                  source="derived", endpoint=price.endpoint, method="DERIVED",
                  confidence=worst.confidence,
-                 note=f"market cap {cap:,.0f} EUR = shares outstanding x share price "
+                 note=f"market cap {in_eur:,.0f} EUR = shares outstanding x share price{at} "
                       f"({shares.source}; {price.source})"), ""
 
 
@@ -1358,7 +1364,7 @@ def rows_for(t: Target, found: list[Found]) -> list[dict]:
                      "period_end": f.period_end, "source": f.source, "endpoint": f.endpoint,
                      "method": f.method, "retrieved_at": f.retrieved_at if f.value not in (None, "")
                      else "", "confidence": f.confidence, "note": f.note})
-    return rows
+    return refresh(rows)
 
 
 def dp_path(c: Company) -> Path:
@@ -1451,6 +1457,44 @@ def worst_case(t: Target, opts: dict) -> int:
 
 # --- outputs --------------------------------------------------------------------------------
 
+# Facts that hold until they change: their date is the one they were read for.
+OWNERSHIP = {"largest_holders", "controlling_owner", "controlling_owner_name", "ownership_type",
+             "pe_stake_5pct", "ultimate_parent"}
+REPORT_SOURCES = ("Annual report", "ESEF filing")
+
+
+def refresh(rows: list[dict]) -> list[dict]:
+    """A company's saved rows under the current rules, without asking any source again:
+    the market-cap band where only the euro rate was missing, and a date for a pay term
+    or an ownership fact read without one. Rows that already have them are unchanged."""
+    by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
+    band = by.get("market_cap_band")
+    if band and not band["value"] and band["note"].startswith("not derived: market cap"):
+        names = [f.name for f in fields(Found)]
+        chosen = {k: Found(**{n: by[k][n] for n in names if n in by[k]})
+                  for k in ("shares_outstanding", "share_price") if by.get(k, {}).get("value")}
+        new, why = market_cap_band(chosen)
+        if new:
+            band.update({k: v for k, v in asdict(new).items() if k in band}, retrieved_at=_now())
+        else:
+            band["note"] = why
+    pay_end = next((r["period_end"] for r in rows if r["grain"] == "role" and r["period_end"]), "")
+    report_end = (by.get("fiscal_year_end") or {}).get("value") or ""
+    for r in rows:
+        if r["grain"] != "company" or not r["value"] or r["period_end"]:
+            continue
+        if r["data_point"] in LISTED_REPORTS_ONLY and pay_end:
+            r["period_end"], why = pay_end, "the pay year's"
+        elif r["data_point"] in OWNERSHIP and report_end and r["source"].startswith(REPORT_SOURCES):
+            r["period_end"], why = report_end, "the report's"
+        elif r["data_point"] in OWNERSHIP and r["retrieved_at"]:
+            r["period_end"], why = r["retrieved_at"][:10], "the day it was read"
+        else:
+            continue
+        r["note"] += f"; period end: {why} (no other date stated)"
+    return rows
+
+
 def write_csv(targets: list[Target], out: Path) -> int:
     n = 0
     tmp = out.with_suffix(".tmp")
@@ -1460,7 +1504,7 @@ def write_csv(targets: list[Target], out: Path) -> int:
         for t in targets:
             p = dp_path(t.company)
             if p.exists():
-                for row in json.loads(p.read_text(encoding="utf-8")):
+                for row in refresh(json.loads(p.read_text(encoding="utf-8"))):
                     w.writerow(row)
                     n += 1
     for attempt in range(5):

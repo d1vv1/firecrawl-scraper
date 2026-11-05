@@ -60,6 +60,10 @@ Limits:
 - The quotes in the output notes are cut at 160 characters. A figure past the cut can't be checked against the quote (CORE-02 is n/a then), and only the start of the quote is looked up (CORE-03).
 - CORE-03 needs the run's cache (`--cache`, `--results`). Without it the check is n/a, unless the run itself flagged the quote as not found.
 
+## Results: Nordic/UK test set, 5 November 2026 (run 21, saved results refreshed)
+
+726 filled values: **683 Pass (94%), 12 Review, 1 Fail, 30 Fail (hard)**. No source was asked again. Six more values: the market-cap band for the six non-EUR companies with a share price, now converted at the ECB rate (BioArctic, Equinor, Novo Nordisk, Shell, Volvo large; Bang & Olufsen mid). Pay terms and ownership facts read without a date now carry one (the pay year, the report's year end, or the day a web page was read), which also passes CORE-04. Company-field fill rate: 82%. On the dashboard, found rose from 67% to 75% (35 values are not applicable, such as a group headcount on one person's row, and no longer count as missing) and partial values fell from 44 to 3.
+
 ## Results: Nordic/UK test set, 4 November 2026 (run 21)
 
 720 filled values: **672 Pass (93%), 17 Review, 1 Fail, 30 Fail (hard)**. Golden pay unchanged at 120 of 148. The new sector codes (issue 7) pass COD-01/02. The extra hard fails come from AI answers that changed between runs, not from the new code: the changed description prompt made the report pass ask every field again. Shell's EBITDA and owner quotes, AO World's listing date, and a third Bang & Olufsen executive whose parts exceed the total (its bonus definition, issue 10) are new. Nokia's shares-outstanding quote and the Volvo pay quotes were already flagged.

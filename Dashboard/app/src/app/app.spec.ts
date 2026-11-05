@@ -15,7 +15,8 @@ const D = data as any;
 const N: number = D.values.length;
 const fmtN = (x: number) => x.toLocaleString('en-GB');
 const empty = D.values.filter((v: any) => v.st === 'not_found').length;
-const foundPct = Math.round((D.values.filter((v: any) => v.st === 'found').length / N) * 100);
+const applicable = D.values.filter((v: any) => v.st !== 'not_applicable').length;   // found % is over these
+const foundPct = Math.round((D.values.filter((v: any) => v.st === 'found').length / applicable) * 100);
 
 function setup() {
   TestBed.configureTestingModule({ providers: [provideRouter(routes)] });

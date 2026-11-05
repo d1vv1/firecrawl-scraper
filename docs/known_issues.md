@@ -5,7 +5,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | # | Issue | Status | Needs |
 |---|---|---|---|
 | 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
-| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 30 hard fails of 720 values in run 21 | long quotes the run can't find; Bang & Olufsen bonus definition (issue 10) |
+| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 30 hard fails of 726 values | quotes the AI joins from two passages; Bang & Olufsen bonus definition (issue 10) |
 | 11 | Golden file values that look like a different fiscal year | open | client answer |
 | 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
 | 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | partly fixed | exchange segment files (Large/Mid/Small Cap, Prime Standard) |
@@ -45,13 +45,13 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 **Still flagged: 30 hard fails of 720 values in run 21 (4 November), 26 of 716 on 3 November.** The four extra came from AI answers that changed when the description prompt changed (issue 7) made the report pass ask every field again, not from new code. By cause:
 - **Quotes the run itself couldn't find (21, all graded C by the run).**
-  - 12 are long quotes: business descriptions (AO World, Equinor, Volvo), breakdowns (Equinor's revenue by country, Volvo's segments and staff by country) and 6 of Bang & Olufsen's pay values. The note keeps only the first 160 characters, so the checks can't look them up again either.
+  - 12 are long quotes: business descriptions (AO World, Equinor, Volvo), breakdowns (Equinor's revenue by country, Volvo's segments and staff by country) and 6 of Bang & Olufsen's pay values. The note keeps only the first 160 characters, but that is not the cause: checked on 5 November, Volvo's description joins a sentence from the report with one that isn't in it, so the run is right not to find it. Keeping the full quote would not clear these.
   - 9 are short quotes not in the source: Volvo's pay table (3; its text is stored in fragments, "70 8 8 0", which Camelot can't read either), the "role disclosure" quotes of Nokia, Novo Nordisk and Volvo, Nokia's share count, Shell's PE-stake answer and Equinor's share price.
 - **Parts above the stated total (4: Bang & Olufsen 3, Nokia 1).** Bang & Olufsen's "Total Remuneration Granted" includes the annual bonus *expensed*, while the AI took STI as "Cash Bonus Paid", which is what the golden file uses. This is a definitions question for the client (issue 10). It varies between runs because the table has no total column for code to check (issue 2). Nokia's former CEO is 4% over.
 - **A figure not in its quote (4).** Shell's EBITDA (56,135 is not in the quoted line), Shell's controlling owner (Shell RDS Holding B.V. is not in the quote), Volvo's CEO base salary (22,868, Volvo's fragmented table again) and Nokia's former CEO's benefits (19,697).
 - **An incomplete date (1).** AO World's listing date is "2014-03": the source gives a month, not a day.
 
-**Next:** keep the full quote in the result file, so long quotes can be checked; ask the AI to quote a short part of a long description or breakdown; treat a month-only listing date as the first of the month with the precision noted.
+**Next:** ask the AI to quote one continuous passage (a prompt change, which asks every field again, so it should come with a fresh comparison run); treat a month-only listing date as the first of the month with the precision noted.
 
 ## 11. Golden file values that look like a different fiscal year
 
@@ -70,7 +70,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 |---|---|---|
 | Base salary: fixed salary only, or total fixed pay (base + benefits)? | fixed salary only (the client's own decision) | BioArctic: golden CEO base 4,967k = our base 4,846k + benefits 122k |
 | Revenue when a filing tags both "revenue" and "revenue and operating income" | IFRS revenue, the other in `note` (`datapoints.REVENUE_RULE`) | CTT: 1,129m vs 1,292m |
-| Market-cap band thresholds | €1bn / €150m, a placeholder (`datapoints.MARKET_CAP_BANDS_EUR`); non-EUR companies need a year-end EUR rate | all |
+| Market-cap band thresholds | €1bn / €150m, a placeholder (`datapoints.MARKET_CAP_BANDS_EUR`). Non-EUR market caps are converted at the ECB rate on the share price's date (since 5 Nov 2026); whether the client wants the fiscal year-end date instead is part of the question | all |
 
 The client's field definitions are said to be in a HANDOVER.md that we have not received.
 

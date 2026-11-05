@@ -48,7 +48,7 @@ The protocol's status values map onto our columns as follows:
 | C16 | Headcount and FTE | `headcount`, `fte` | Annual report; sustainability report | — |
 | C17 | Shares outstanding | `shares_outstanding` | Annual report; share page | — |
 | C18 | Year-end share price | `share_price` | Annual report share section; share page | **now collected** (was "bought") |
-| — | Market cap band | `market_cap_band` | Derived: C17 × C18, banded in EUR (≥ €1bn large, ≥ €150m mid, else small) | **derived**; other currencies wait for the year-end EUR rate (API step) |
+| — | Market cap band | `market_cap_band` | Derived: C17 × C18, banded in EUR (≥ €1bn large, ≥ €150m mid, else small) | **derived**; other currencies at the ECB euro reference rate on the share price's date (5 Nov 2026) |
 | C19 | Largest holders, with % | `largest_holders` | Annual report shareholder table; shareholder page, governance report | **new** |
 | C20 | Controlling owner (20%+), PE stake (5%+) | `controlling_owner`, `controlling_owner_name`, `ownership_type`, `pe_stake_5pct` | Derived from C19 | threshold now **20% of votes** (was "more than 50% or stated") |
 | C21 | Parent company | `ultimate_parent` | Annual report; shareholder page | — |
@@ -121,7 +121,7 @@ Once the document side is solid, the API step goes in front of it, for the field
 3. **filings.xbrl.org:** already in the pipeline for revenue and total assets; extend to EBITDA where tagged, fiscal year end, currency.
 4. **Exchange files** (Deutsche Börse, SIX, Euronext): segment.
 5. **AFM export** (NL): major holdings.
-6. **ECB reference rates:** the year-end EUR rate, so `market_cap_band` can be derived for non-EUR companies.
+6. **ECB reference rates:** the EUR rate on the share price's date, so `market_cap_band` can be derived for non-EUR companies. *Built 5 Nov 2026 (`extractor/fx.py`).*
 
 Documents then only fill what the APIs leave empty, and act as a cross-check.
 
