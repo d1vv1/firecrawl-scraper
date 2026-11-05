@@ -7,12 +7,13 @@ export interface Value {
 export interface ReportData {
   meta: { tracker: string; asOf: string; built: string; rows: number; filled: number; dataPoints: number;
           companyIds: number; companies: number; duplicates: { lei: string; ids: string[] }[];
-          thresholds: { pass: number; review: number }; target: number };
+          thresholds: { pass: number; review: number }; target: number;
+          countries?: string[]; checksPct?: number; foundPct?: number };
   gates: Record<string, [string, string]>; gateIds: string[]; reasons: string[]; values: Value[];
   baseline: { checksPct: number; foundPct: number; label: string };
 }
 export interface HistPoint { label: string; checks: number; found: number; fileFound?: number; n: number | null; groups: Record<string, number> | null }
-export interface Model { data: ReportData; recs: Value[]; hist: HistPoint[]; impCount: number; fidToDp: Record<string, string[]>; dpMeta: Record<string, any> }
+export interface Model { data: ReportData; recs: Value[]; hist: HistPoint[]; histBase: number; impCount: number; fidToDp: Record<string, string[]>; dpMeta: Record<string, any> }
 export interface Filters { country: string; source: string; dtype: string; cat: string; company: string; status: string }
 export interface Kpi { key: string; v: string | number; l: string; cls: string; d: string }
 

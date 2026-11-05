@@ -20,26 +20,41 @@ test("LEI check digits (ISO 17442)", () => {
   assert.ok(!C.leiValid("549300HX9MRFY47AH565"));
   assert.ok(!C.leiValid("short"));
 });
-test("model counts companies by LEI", () => {
+// The data is whatever run was built last (python -m extractor.dashboard), so the tests check
+// that the core's numbers agree with the data, not fixed counts.
+const scored = data.values.filter((v) => v.gr);
+test("model counts companies by key (LEI, else ID)", () => {
   const M = C.createModel(data);
-  assert.strictEqual(C.companiesOf(M.recs), 49);
-  assert.strictEqual(new Set(M.recs.map((v) => v.id)).size, 50);
-  assert.strictEqual(C.gateStats(M, M.recs).checksPct, 92.2);
+  assert.strictEqual(C.companiesOf(M.recs), data.meta.companies);
+  assert.strictEqual(new Set(M.recs.map((v) => v.id)).size, data.meta.companyIds);
+  assert.strictEqual(C.gateStats(M, M.recs).checksPct, data.meta.checksPct);
 });
-test("baseline gate totals", () => {
+test("gate and status totals match the data", () => {
   const M = C.createModel(data), g = C.gateStats(M, M.recs);
-  assert.deepStrictEqual([g.pass, g.fail, g.nr, g.hard], [15311, 1287, 2433, 438]);
+  const res = scored.flatMap((v) => v.gr.map((x) => x[1]));
+  assert.deepStrictEqual([g.pass, g.fail, g.nr], ["P", "F", "N"].map((r) => res.filter((x) => x === r).length));
   const sc = C.scoreCounts(M.recs);
-  assert.deepStrictEqual([sc.P, sc.R, sc.F, sc.H, sc.I], [683, 493, 8, 404, 996]);
+  ["P", "R", "F", "H"].forEach((k) => assert.strictEqual(sc[k], scored.filter((v) => v.sc === k).length, k));
+  assert.strictEqual(sc.scored, data.meta.filled);
+});
+test("baseline: this run, then the previous run when there is one", () => {
+  const M = C.createModel(data);
+  assert.strictEqual(M.hist.length, M.histBase);
+  assert.strictEqual(M.hist[0].checks, data.baseline.checksPct);
+  const first = C.createModel(Object.assign({}, data, { baseline: { checksPct: 1, foundPct: 2, label: "This run" } }));
+  assert.strictEqual(first.hist.length, 1);
+  const second = C.createModel(Object.assign({}, data, { baseline: { checksPct: 1, foundPct: 2, label: "Previous run (x)" } }));
+  assert.deepStrictEqual(second.hist.map((h) => h.checks), [1, data.meta.checksPct]);
+  assert.match(C.kpis(second, second.recs).find((k) => k.key === "checks").d, /pts vs previous run/);
 });
 test("upsert: LEI first, then name + country; ambiguous without data_point", () => {
   const M = C.createModel(data);
-  const syd = M.recs.find((v) => v.id === "T0002" && v.d === "legal_name");
+  const co = M.recs.find((v) => v.d === "legal_name" && v.ck !== v.id);
   const base = { g: "company", p: 0, k: "x", m: "x", r: "", u: "", st: "found" };
   const res = C.applyImport(M, M.recs.map((v) => Object.assign({}, v)), [
-    Object.assign({ line: 2, c: "DK", o: "Other Name", lei: syd.ck, f: "C01", d: "legal_name", v: "Illustrative" }, base),
-    Object.assign({ line: 3, c: "DK", o: syd.o.toUpperCase(), lei: "", f: "C02", d: "", v: syd.ck }, base),
-    Object.assign({ line: 4, c: "DK", o: syd.o, lei: "", f: "C01", d: "", v: "x" }, base),
+    Object.assign({ line: 2, c: co.c, o: "Other Name", lei: co.ck, f: "C01", d: "legal_name", v: "Illustrative" }, base),
+    Object.assign({ line: 3, c: co.c, o: co.o.toUpperCase(), lei: "", f: "C02", d: "lei", v: co.ck }, base),
+    Object.assign({ line: 4, c: co.c, o: co.o, lei: "", f: "C01", d: "", v: "x" }, base),
     Object.assign({ line: 5, c: "SE", o: "Illustrative AB", lei: "", f: "C09", d: "", v: "example.org" }, base)
   ]);
   assert.deepStrictEqual(res.counts, { added: 1, updated: 1, same: 1, ambiguous: 1, dupes: 0 });
@@ -55,24 +70,30 @@ test("validation: schema rules", () => {
 test("ranges options", () => {
   const M = C.createModel(data);
   const all = C.ranges(M.recs, {});
-  assert.strictEqual(all.rows.length, 67);
+  assert.ok(all.rows.length > 0);
   const nz = C.ranges(M.recs, { excludeZeros: true, minN: 10 });
   assert.ok(nz.rows.every((r) => r.n >= 10 && r.min !== 0));
-  const fi = C.ranges(M.recs, { byCountry: true, field: "revenue" });
-  assert.ok(fi.rows.every((r) => r.d === "revenue" && r.c));
+  const by = C.ranges(M.recs, { byCountry: true, field: "revenue" });
+  assert.ok(by.rows.every((r) => r.d === "revenue" && r.c));
 });
 test("validation steps reconcile with gate totals and drill down", () => {
-  const M = C.createModel(data), s = C.validationSteps(M, M.recs);
-  assert.strictEqual(s.steps.length, 33);
-  assert.deepStrictEqual(s.families.map((f) => f.key), ["CORE", "COD", "NUM", "DES", "DER", "XF"]);
+  const M = C.createModel(data), s = C.validationSteps(M, M.recs), g = C.gateStats(M, M.recs);
+  const ran = new Set(scored.flatMap((v) => v.gr.map((x) => data.gateIds[x[0]])));
+  assert.strictEqual(s.steps.length, ran.size);
+  const order = ["CORE", "COD", "NUM", "DES", "DER", "XF"], keys = s.families.map((f) => f.key);
+  assert.deepStrictEqual(keys, order.filter((k) => keys.includes(k)));
   const t = s.steps.reduce((a, x) => [a[0] + x.pass, a[1] + x.fail, a[2] + x.nr], [0, 0, 0]);
-  assert.deepStrictEqual(t, [15311, 1287, 2433]);
-  const d = C.stepDetail(M, M.recs, "NUM-09");
-  assert.deepStrictEqual([d.counts.runs, d.counts.fail, d.sev], [92, 92, "Hard"]);
-  assert.strictEqual(d.fields.reduce((a, f) => a + f.runs, 0), 92);
-  const v = C.stepFieldValues(M, M.recs, "NUM-09", "lti_granted", "F");
-  assert.strictEqual(v.length, 49);
-  assert.ok(v.every((x) => x.res === "F" && x.reason));
+  assert.deepStrictEqual(t, [g.pass, g.fail, g.nr]);
+  const top = s.steps.slice().sort((a, b) => b.fail - a.fail)[0];
+  if (top.fail) {
+    const d = C.stepDetail(M, M.recs, top.id);
+    assert.deepStrictEqual([d.counts.runs, d.counts.fail], [top.runs, top.fail]);
+    assert.strictEqual(d.fields.reduce((a, f) => a + f.runs, 0), top.runs);
+    const field = d.fields.find((f) => f.fail);
+    const v = C.stepFieldValues(M, M.recs, top.id, field.d, "F");
+    assert.strictEqual(v.length, field.fail);
+    assert.ok(v.every((x) => x.res === "F"));
+  }
   assert.strictEqual(C.stepDetail(M, M.recs, "NOPE-01"), null);
 });
 test("metrics CSV has a BOM and 11 columns", () => {

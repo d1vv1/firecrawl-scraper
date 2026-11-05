@@ -26,7 +26,7 @@
     <div class="slicer"><label class="form-label">Source</label>
       <select class="form-select form-select-sm" (change)="on('source', $event)">
         <option value="all" [selected]="f.source === 'all'">All sources</option>
-        <option value="T" [selected]="f.source === 'T'">Tracker ({{ r.model.data.meta.companyIds }} IDs, {{ r.model.data.meta.companies }} companies)</option>
+        <option value="T" [selected]="f.source === 'T'">This run ({{ r.model.data.meta.companyIds }} IDs, {{ r.model.data.meta.companies }} companies)</option>
         <option value="I" [selected]="f.source === 'I'">Imported</option>
       </select></div>
     <div class="slicer"><label class="form-label">Data type</label>

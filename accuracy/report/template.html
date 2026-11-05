@@ -36,7 +36,7 @@
 </div>
 <aside class="slicers">
   <div class="slicer"><h4>Country</h4><select id="fCountry"></select></div>
-  <div class="slicer"><h4>Source</h4><select id="fSource"><option value="all">All sources</option><option value="T">Tracker (50 IDs, 49 companies)</option><option value="I">Imported</option></select></div>
+  <div class="slicer"><h4>Source</h4><select id="fSource"><option value="all">All sources</option><option value="T">This run</option><option value="I">Imported</option></select></div>
   <div class="slicer"><h4>Data type</h4><select id="fType"><option value="all">Company and pay</option><option value="company">Company data</option><option value="pay">Pay data</option></select></div>
   <div class="slicer"><h4>Field group</h4><select id="fCat"></select></div>
   <div class="slicer"><h4>Company</h4><select id="fCompany"></select></div>
@@ -143,7 +143,7 @@
 
   <section class="page" id="p-trend">
     <div class="title" id="trTitle"></div>
-    <div class="sub">Checks passing and found %, from the tracker baseline and after each import. Tracker: share of run checks that passed. Imports: share of rows passing every schema check; found % is across all values after the import.</div>
+    <div class="sub">Checks passing and found %, from the previous run (the baseline), this run, and after each import. Runs: share of run checks that passed. Imports: share of rows passing every schema check; found % is across all values after the import.</div>
     <div class="vis"><h3>Trend</h3><div id="chTrend"></div><div class="legend" id="lgTrend"></div></div>
     <div class="vis"><h3>Schema checks by import (% of rows passing)</h3><div class="tbl"><table><thead id="trHead"></thead><tbody id="trBody"></tbody></table></div>
       <div class="note">Import checks are the schema rules run on each file. Gate checks are not run on imports yet.</div></div>
@@ -158,7 +158,7 @@
 
   <section class="page" id="p-import">
     <div class="title">Import data</div>
-    <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the tracker values.</div>
+    <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the run's values.</div>
     <div class="vis">
       <h3>1. Choose a file</h3>
       <input type="file" id="impFile" accept=".csv,text/csv">
@@ -166,7 +166,7 @@
       <div id="impReport" style="margin-top:10px"></div>
       <div style="margin-top:10px">
         <button class="btn" id="impGo" disabled>Import valid rows</button>
-        <button class="btn" id="impClear">Reset to tracker values</button>
+        <button class="btn" id="impClear">Reset to run values</button>
         <span id="impCount" class="hint"></span>
       </div>
     </div>
@@ -206,9 +206,9 @@
     var pie = C.VSTAT.map(function(x){ return {label:x[1], value:o.st[x[0]], color:x[2]}; });
     $("chStatus").innerHTML = G.pie(pie); $("lgStatus").innerHTML = G.legend(pie);
     $("ovTable").innerHTML = rows(o.rows.map(function(r){ return '<tr><td>'+r.c+'</td><td class="n">'+r.companies+'</td><td class="n">'+fmt(r.n)+'</td><td class="n">'+fmt(r.found)+'</td><td class="n">'+fmt(r.partial)+'</td><td class="n">'+fmt(r.nf)+'</td><td class="n">'+r.foundPct+'%</td></tr>'; }), 7);
-    $("ovSub").textContent = "Source: " + (F.source==="all"?"tracker and imported":F.source==="T"?"tracker":"imported") + ". Country: " + (F.country||"all") + ". " + fmt(o.n) + " values from " + o.companies + " companies.";
+    $("ovSub").textContent = "Source: " + (F.source==="all"?"run and imported":F.source==="T"?"run":"imported") + ". Country: " + (F.country||"all") + ". " + fmt(o.n) + " values from " + o.companies + " companies.";
     var d = DATA.meta.duplicates[0];
-    $("dupNote").textContent = d ? "Data note: the tracker has "+DATA.meta.companyIds+" company IDs, but "+d.ids.join(" and ")+" share one LEI ("+d.lei+"), so they count as one company: "+DATA.meta.companies+" companies. Rows for both IDs remain in the values." : "";
+    $("dupNote").textContent = d ? "Data note: the run has "+DATA.meta.companyIds+" company IDs, but "+d.ids.join(" and ")+" share one LEI ("+d.lei+"), so they count as one company: "+DATA.meta.companies+" companies. Rows for both IDs remain in the values." : "";
   }
   function paycomp(vs){
     var p = C.payComp(vs);
@@ -366,12 +366,12 @@
   }
 
   function trend(){
-    var pts = M.hist.map(function(p,i){ return {label:p.label, short: i===0 ? "Tracker" : "#"+i, checks:p.checks, found:p.found}; });
+    var pts = M.hist.map(function(p,i){ return {label:p.label, short: i===0 ? "Baseline" : i < M.histBase ? "Run" : "#"+(i-M.histBase+1), checks:p.checks, found:p.found}; });
     $("chTrend").innerHTML = G.line(pts, DATA.meta.target);
     $("lgTrend").innerHTML = G.legend([{label:"Checks passing %", color:"#0077BB"},{label:"Found %", color:"#009988"},{label:"Target "+DATA.meta.target+"%", color:"#888888"}]);
     $("trHead").innerHTML = '<tr><th>Import</th><th class="n">Rows</th><th class="n">Checks passing</th><th class="n">Found % (all values)</th><th class="n">Found % (file)</th>' + C.GROUPS.map(function(g){ return '<th class="n">'+esc(g)+'</th>'; }).join("") + '</tr>';
     $("trBody").innerHTML = M.hist.map(function(p,i){ var g = p.groups || {};
-      return '<tr><td>'+esc(i===0?"Tracker (baseline)":p.label)+'</td><td class="n">'+(p.n==null?"–":fmt(p.n))+'</td><td class="n"><b>'+p.checks+'%</b></td><td class="n">'+p.found+'%</td><td class="n">'+(p.fileFound==null?"–":p.fileFound+"%")+'</td>' + C.GROUPS.map(function(x){ return '<td class="n">'+(g[x]==null?"–":g[x]+'%')+'</td>'; }).join("") + '</tr>'; }).join("");
+      return '<tr><td>'+esc(p.label)+'</td><td class="n">'+(p.n==null?"–":fmt(p.n))+'</td><td class="n"><b>'+p.checks+'%</b></td><td class="n">'+p.found+'%</td><td class="n">'+(p.fileFound==null?"–":p.fileFound+"%")+'</td>' + C.GROUPS.map(function(x){ return '<td class="n">'+(g[x]==null?"–":g[x]+'%')+'</td>'; }).join("") + '</tr>'; }).join("");
   }
   function metricsPage(vs){
     var ms = C.metrics(M, vs);
@@ -399,7 +399,7 @@
   }
   function resetAll(){
     C.resetModel(M); pending = null;
-    $("impCount").textContent = "Reset to tracker values. All imports removed.";
+    $("impCount").textContent = "Reset to run values. All imports removed.";
     $("impReport").innerHTML = ""; $("errTable").innerHTML = ""; $("impGo").disabled = true; $("impFile").value = "";
     refresh();
   }

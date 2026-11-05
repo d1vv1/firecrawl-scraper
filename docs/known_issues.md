@@ -1,21 +1,26 @@
 # Known issues
 
-Open problems found during test runs, to pick up later. Newest first.
+Open problems found during test runs, to pick up later. Newest first. Every issue was checked against the code and the latest run (run 21, Nordic/UK set) on 5 November 2026.
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
-| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed | quotes graded C; Bang & Olufsen bonus definition (issue 10) |
+| 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | open | accept both, or the client's choice |
+| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 30 hard fails of 720 values in run 21 | long quotes the run can't find; Bang & Olufsen bonus definition (issue 10) |
 | 11 | Golden file values that look like a different fiscal year | open | client answer |
 | 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
 | 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | partly fixed | exchange segment files (Large/Mid/Small Cap, Prime Standard) |
 | 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
 | 7 | Register industry codes describe the holding company | fixed: sector classified from the business description (NACE Rev. 2) | the Allshares taxonomy, to replace NACE |
-| 6 | Holding companies' own filed accounts give no group figures | fixed for the UK: the parent's consolidated accounts, scans read from page images | — |
+| 6 | Holding companies' own filed accounts give no group figures | fixed for the UK: the parent's consolidated accounts, scans read from page images | the ownership chain upwards (Bidco, Midco, Topco); countries other than UK, NO, DK |
 | 5 | Run-to-run variation in AI answers | mostly fixed | pay tables Camelot can't use (no total column, people as columns) |
 | 4 | Report finder can still pick a subsidiary's or a placeholder report | partly fixed | more guards |
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 13. The dashboard's import format spells the UK "UK"
+
+*Found 5 November 2026, when the accuracy dashboard was connected to the collector (`Dashboard/README.md`).* The import schema (`accuracy/schema/allshares_import_schema.json`) allows `UK` as a country code, not ISO `GB`, which the collector writes. A CSV imported on the dashboard's Import page that gives `GB` is rejected, and one that gives `UK` doesn't match the UK companies already in the run when it has no LEI (companies are matched by LEI, otherwise by name and country). Imports with an LEI are not affected. **Fix options:** treat UK and GB as the same country when matching and validating (a few lines in `Dashboard/core/report-core.js`), or change the schema to ISO codes if the client agrees.
 
 ## 12. Values the output checks flag — mostly fixed
 
@@ -36,10 +41,15 @@ Open problems found during test runs, to pick up later. Newest first.
 - **LTI as an IFRS 2 expense** (BioArctic, Bang & Olufsen, Marimekko). The client's golden file uses the expensed figure for these companies (BioArctic CEO 1,650,000; Bang & Olufsen 7,079,000), so the check now accepts it as a stated basis.
 - **A total above its parts** (BioArctic's CEO: a 3,004 column outside our fields). This is now a soft check (XF-02). Parts above the total stay a hard fail (XF-01).
 
-**Still flagged (26 hard fails):**
-- **Quotes the source doesn't contain (21).** All of them are values the run itself grades C. Volvo's CEO table can't be read by Camelot either: its text is stored in fragments ("70 8 8 0").
-- **Bang & Olufsen's parts above the total.** The table's "Total Remuneration Granted" includes the annual bonus *expensed*; this run's AI took STI as "Cash Bonus Paid", which is what the golden file uses. This is a definitions question for the client (issue 10), and it varies from run to run because the table has no single total to check against.
-- **Nokia's former CEO.** The parts are 4% above the total, and his benefits figure (19,697) is not in its quote.
+**Still flagged: 30 hard fails of 720 values in run 21 (4 November), 26 of 716 on 3 November.** The four extra came from AI answers that changed when the description prompt changed (issue 7) made the report pass ask every field again, not from new code. By cause:
+- **Quotes the run itself couldn't find (21, all graded C by the run).**
+  - 12 are long quotes: business descriptions (AO World, Equinor, Volvo), breakdowns (Equinor's revenue by country, Volvo's segments and staff by country) and 6 of Bang & Olufsen's pay values. The note keeps only the first 160 characters, so the checks can't look them up again either.
+  - 9 are short quotes not in the source: Volvo's pay table (3; its text is stored in fragments, "70 8 8 0", which Camelot can't read either), the "role disclosure" quotes of Nokia, Novo Nordisk and Volvo, Nokia's share count, Shell's PE-stake answer and Equinor's share price.
+- **Parts above the stated total (4: Bang & Olufsen 3, Nokia 1).** Bang & Olufsen's "Total Remuneration Granted" includes the annual bonus *expensed*, while the AI took STI as "Cash Bonus Paid", which is what the golden file uses. This is a definitions question for the client (issue 10). It varies between runs because the table has no total column for code to check (issue 2). Nokia's former CEO is 4% over.
+- **A figure not in its quote (4).** Shell's EBITDA (56,135 is not in the quoted line), Shell's controlling owner (Shell RDS Holding B.V. is not in the quote), Volvo's CEO base salary (22,868, Volvo's fragmented table again) and Nokia's former CEO's benefits (19,697).
+- **An incomplete date (1).** AO World's listing date is "2014-03": the source gives a month, not a day.
+
+**Next:** keep the full quote in the result file, so long quotes can be checked; ask the AI to quote a short part of a long description or breakdown; treat a month-only listing date as the first of the month with the precision noted.
 
 ## 11. Golden file values that look like a different fiscal year
 

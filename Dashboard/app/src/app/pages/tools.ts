@@ -61,7 +61,7 @@ export class Ranges {
   selector: 'app-import',
   template: `
     <div class="title">Import data</div>
-    <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the tracker values. Imports stay in this browser session.</div>
+    <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the run's values. Imports stay in this browser session.</div>
     <div class="vis card">
       <h3>1. Choose a file</h3>
       <input class="form-control form-control-sm" type="file" accept=".csv,text/csv" (change)="pick($event)" #file>
@@ -76,7 +76,7 @@ export class Ranges {
       @if (applied()) {<div class="ok" style="margin-top:8px">{{ applied() }}</div>}
       <div style="margin-top:10px">
         <button class="btn btn-primary btn-sm" [disabled]="!pending()?.good.length" (click)="apply()">Import valid rows</button>
-        <button class="btn btn-outline-secondary btn-sm" (click)="reset(file)">Reset to tracker values</button>
+        <button class="btn btn-outline-secondary btn-sm" (click)="reset(file)">Reset to run values</button>
       </div>
     </div>
     <div class="vis card"><h3>2. Errors (first 50)</h3><div class="tbl"><table class="table table-sm table-hover">
@@ -122,7 +122,7 @@ export class Import {
   reset(file?: HTMLInputElement) {
     this.C.resetModel(this.r.model);
     this.pending.set(null);
-    this.applied.set('Reset to tracker values. All imports removed.');
+    this.applied.set('Reset to run values. All imports removed.');
     if (file) file.value = '';
     this.r.touch();
   }

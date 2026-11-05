@@ -1,23 +1,15 @@
 # Allshares Part 1 accuracy dashboard: specification
 
-Version 1.0, 4 Nov 2026. Scope: extraction accuracy only (Part 1). Cross-source verification is out of scope.
+Version 1.1, 5 Nov 2026 (1.0, 4 Nov 2026, scored the client's tracker with its own engine). Scope: extraction accuracy only (Part 1). Cross-source verification is out of scope.
 
-This spec is the contract for the scoring pipeline, the Angular dashboard and the single-file HTML export.
-When something here changes, change the spec first, then the code, then the tests listed in section 10.
+This spec is the contract for the dashboard's data, the Angular dashboard and the single-file HTML export.
+When something here changes, change the spec first, then the code, then the tests listed in section 9.
 
-## 1. Data facts
+## 1. Data
 
-| Fact | Value | Note |
-|---|---|---|
-| Tracker | `tracker_first50.csv`, 3,993 rows | Read-only. Scraped values are never changed. |
-| Filled values | 2,584 | Blank value = not found (1,409). |
-| Company IDs | 50 | |
-| Companies | **49** | T0668 and T0671 share LEI 549300HX9MRFY47AH564. Count companies by LEI; keep both IDs' rows. |
-| Data points | 55 | Not 56. |
-| Countries | SE, NO, DK, FI | |
-| Methods | PARSE, API, XBRL, DERIVED, **SCRAPE** | SCRAPE (49 values) is not in the original brief's list. |
-
-Every output that states a company count says 49 companies (50 IDs) and names the duplicate.
+The data is a collector run: the data-point CSV written by `python -m extractor.datapoints` (one row per
+company, role and data point; a blank value means not found). Companies are counted by LEI, falling back to
+the company ID, and IDs that share an LEI are named. Countries, companies and fields come from the run.
 
 Protocol field IDs that cover several data points (imports must give `data_point`):
 C01, C05, C07, C08, C15, C17, C20, C23, R06, R07, R08. `cik` has no protocol ID (decision D13).
@@ -25,20 +17,22 @@ C01, C05, C07, C08, C15, C17, C20, C23, R06, R07, R08. `cik` has no protocol ID 
 ## 2. Architecture
 
 ```
-tracker_first50.csv ──► accuracy/engine/scoring.py  (all gate rules, one place)
-                              │
-                     accuracy/build.py  (one command)
-        ┌──────────────┬──────┴───────┬───────────────────┬──────────────────┐
-  out/report.json  schema .js/.json  allshares_report.html  Excel workbooks
-        │                                (single file)
-  Dashboard/app (Angular) ◄── Dashboard/core/report-core.js ──► single-file HTML
+python -m extractor.datapoints   (a run)      ──► <run>_datapoints.csv
+        │ at the end, or python -m extractor.dashboard <csv>
+extractor/output_checks.py  (all check rules, one place) ──► <run>_datapoints_checks.md / .csv
+        │
+extractor/dashboard.py
+        ├──► Dashboard/report.json, app/public/report.json ──► Dashboard/app (Angular)
+        └──► Dashboard/allshares_report.html (single file)
+                     both use Dashboard/core/report-core.js
 ```
 
-- `accuracy/engine/scoring.py`: the only place gate rules live.
+- `extractor/output_checks.py`: the only place check rules live (`docs/output_checks.md`).
+- `extractor/dashboard.py`: maps scored values to `report.json` (section 5). No rules.
 - `Dashboard/core/report-core.js`: the only place for front-end logic (filters, aggregations, import
-  validation and upsert, ranges, metrics). No gate rules. Used by the Angular app and inlined in the HTML.
+  validation and upsert, ranges, metrics). No check rules. Used by the Angular app and inlined in the HTML.
 - Front ends render; they do not compute rules.
-- Dependencies: Python 3 stdlib + openpyxl; vanilla JS for the core and the HTML; Angular (npm) for the
+- Dependencies: Python (the collector's own); vanilla JS for the core and the HTML; Angular (npm) for the
   app only (agreed 4 Nov 2026).
 - Charts: the Angular app uses Apache ECharts 6 with the SVG renderer (`app/src/app/chart.ts`, agreed
   4 Nov 2026: use an existing chart library). The single-file HTML keeps the small built-in SVG builders in
@@ -49,29 +43,19 @@ tracker_first50.csv ──► accuracy/engine/scoring.py  (all gate rules, one p
   Bootstrap's colours are mapped to the DESIGN.md palette in `app/src/bootstrap-theme.css`. The single-file
   HTML stays on `core/report.css` only, so it has no external dependency.
 
-## 3. Scoring engine
+## 3. Checks
 
 ### 3.1 Gates
 
-Every filled value gets CORE-01..05 plus its field-specific gates. Result per gate: PASS, FAIL, NOT RUN.
-A gate that does not apply is not listed (N/A, excluded from counts).
-
-Hard (a FAIL blocks the value): CORE-01, CORE-02, COD-01, COD-03, COD-06, NUM-01, NUM-05, NUM-06, NUM-07,
-NUM-09, NUM-11, DES-01, DES-02, DER-02, DER-03, DER-05, DER-07, XF-01, XF-03.
-
-Soft (a FAIL lowers the score): CORE-03, CORE-04, CORE-05, COD-02, COD-04, COD-05, NUM-02, NUM-03, NUM-04,
-NUM-08, NUM-10, NUM-12, DER-01, DER-06, DER-08, DER-09.
-
-Always NOT RUN today: COD-04 (cross-source), NUM-03 (no annualisation fields), NUM-04 (no Allshares ranges),
-NUM-10 (no performance-period fields), DER-08, DER-09.
+The checks of `extractor/output_checks.py` (CORE, COD, NUM, DER, XF; the list and which are hard is in
+`docs/output_checks.md`). Result per check on a value: PASS or FAIL. A check that doesn't apply, or needs
+something the run doesn't have, is n/a: it is not listed for the value and excluded from all counts. The
+dashboard can still show NOT RUN (for imported data), but the collector's checks never produce it.
 
 ### 3.2 Status per value
 
 1. Any hard FAIL → **Fail (hard)**
-2. Else any NOT RUN → **Incomplete**
-3. Else score = passed / applicable × 100 → **Pass** ≥ 95, **Review** ≥ 80, else **Fail**.
-
-Thresholds are configurable (`accuracy/config.json`), default 95 / 80.
+2. Else score = passed / applied × 100 → **Pass** ≥ 95, **Review** ≥ 80, else **Fail**.
 
 ### 3.3 Value status (protocol style)
 
@@ -81,60 +65,48 @@ Thresholds are configurable (`accuracy/config.json`), default 95 / 80.
 
 Static (not time-bound) categories: Identity, Listing and market, Sector, Reporting basis.
 
-### 3.4 Baseline that must reproduce
+### 3.4 Baseline
 
-| Measure | Count |
-|---|---|
-| Values scored | 2,584 |
-| Pass / Review / Fail / Fail (hard) / Incomplete | 683 / 493 / 8 / 404 / 996 |
-| Gates PASS / FAIL / NOT RUN | 15,311 / 1,287 / 2,433 |
-| Hard FAIL | 438 |
-| Checks passing (PASS / (PASS + FAIL)) | 92.2% |
-| Found % (found / all rows) | 49.0% |
-
-`accuracy/tests/diff_baseline.py` checks these totals and every cell of the earlier report
-(country × gate, country × field, per company, per-row value status). It must report 0 differences
-while the defaults are unchanged.
+The run the dashboard showed before a rebuild is the baseline: the KPIs compare with it ("vs previous
+run") and the Trend page starts with it, then this run, then each import. On the first build the run is its
+own baseline.
 
 ### 3.5 Open decisions
 
-Configurable or flagged, never hard-coded as answers. Listed in the Decisions sheet with the default used
-and owner (Allshares): D01 LTI basis mapping, D02 STI cap above 100%, D03 pension keywords, D04 segment
-tolerance, D05 FTE basis, D06 reference ranges, D07 ISO/taxonomy lists, D08 internal source ID,
-D09 thresholds, D10 total components and tolerance, D11 NUM-11 tolerance, D12 annualisation and
-performance period, D13 cik without protocol ID, D14 duplicate company IDs.
+Configurable or flagged, never hard-coded as answers (owner Allshares): D01 LTI basis mapping, D02 STI cap
+above 100%, D03 pension keywords, D04 segment tolerance, D05 FTE basis, D06 reference ranges, D07
+ISO/taxonomy lists, D08 internal source ID, D09 thresholds, D10 total components and tolerance, D11 NUM-11
+tolerance, D12 annualisation and performance period, D13 cik without protocol ID, D14 duplicate company IDs.
 
 ## 4. Build
 
-`python accuracy/build.py` regenerates, in one run:
+`python -m extractor.dashboard <run>_datapoints.csv`, and automatically at the end of every
+`python -m extractor.datapoints` run (unless `--no-dashboard`), regenerates:
 
 | Output | Where |
 |---|---|
-| `report.json` (scored values, gates, reasons, meta, baseline) | `accuracy/out/`, copied to `Dashboard/app/public/` and `Dashboard/` |
-| `allshares_import_schema.json` and `.js` | `accuracy/out/` and `Dashboard/` |
-| `allshares_results_template.csv` | `accuracy/out/` |
-| `allshares_report.html` (single file, data and schema inline) | `accuracy/out/` and `Dashboard/` |
-| `scored_values.csv`, `gate_results.csv` | `accuracy/out/` |
-| `allshares_first50_scoring.xlsx` | Summary (live formulas), Value scoring, Gate results, Company summary, Gate frequency, Gate rules, Decisions |
-| `allshares_reference_ranges.xlsx` | Provisional ranges, labelled NOT Allshares-approved |
-| `allshares_field_checks.xlsx` (corrected copy) | fixed weight formulas, C17 for market_cap_band, 49 companies |
-| `allshares_part1_validation.html` (corrected copy) | 49 companies |
+| `report.json` (scored values, gates, reasons, meta, baseline) | `Dashboard/` and `Dashboard/app/public/` |
+| `allshares_import_schema.json` and `.js` | `Dashboard/` (the .json also in `app/public/`) |
+| `allshares_results_template.csv` | `Dashboard/app/public/` |
+| `allshares_report.html` (single file, data and schema inline) | `Dashboard/` |
+| `<run>_datapoints_checks.md` and `.csv` (the checks report) | next to the run's CSV |
 
 The schema source is `accuracy/schema/allshares_import_schema.json`. Edit only that file.
 
 ## 5. Report data contract (`report.json`)
 
 ```
-meta:     tracker, asOf, built, rows, filled, dataPoints, companyIds, companies, duplicates[], thresholds, target
+meta:     tracker (the run's CSV name), asOf, built, rows, filled, dataPoints, companyIds, companies, countries[],
+          duplicates[], thresholds, target, checksPct, foundPct
 gates:    { "CORE-01": [name, "Hard"|"Soft"], ... }
 gateIds:  [ ...gate ids, index used in values[].gr ]
 reasons:  [ ...distinct reason texts, index used in values[].gr ]
-values[]: s source (T tracker, I import), c country, o company name, ck company key (LEI, else ID), id company ID,
+values[]: s source (T the run, I import), c country, o company name, ck company key (LEI, else ID), id company ID,
           g grain, r role row, p 1 if pay data, k category, m module, f field ID, d data point,
           v value, u unit, st value status,
           filled only: pe period end, me method, so source, ep locator URL, nt note (first 300 chars),
           sc score status (P R F H I), sp score, gr [[gateIndex, "P"|"F"|"N", reasonIndex|-1], ...]
-baseline: checksPct, foundPct, label
+baseline: checksPct, foundPct, label (the previous run, or "This run")
 ```
 
 Pay data = categories Pay policy, Role and disclosure, Pay: fixed, Pay: STI, Pay: LTI, Pay: total.
@@ -145,12 +117,12 @@ Company data = everything else.
 ### 6.1 Layout
 
 - Top bar: title, page tabs, values count.
-- Filters (sticky, top, apply to every page): Country, Source (all / tracker / imported), Data type
+- Filters (sticky, top, apply to every page): Country, Source (all / this run / imported), Data type
   (all / company / pay), Field group (category), Company, Score status.
 - KPI strip (sticky): Companies (distinct LEI), Countries, Values in view, Found %, Partial, Not found,
-  Checks passing (vs tracker baseline and the 95% target), Values passing (Pass status), Hard fails,
+  Checks passing (vs the previous run and the 95% target), Values passing (Pass status), Hard fails,
   Imports applied. Each card has a comparison line.
-- Footer: data source, data date, imports applied, values in view, 49 companies from 50 IDs.
+- Footer: data source, data date, imports applied, values in view, companies and company IDs.
 
 ### 6.2 Charts
 
@@ -196,9 +168,8 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
    Median, high percentile, Max, Caveat. Configurable: field, unit, grain, method, score status included
    (all / no hard fails / Pass and Review only), exclude zeros, exclude unknown or non-ISO units, low and
    high percentile (default 5 and 95), minimum n, split by country. Export CSV. Labelled provisional,
-   sample only, not Allshares-approved. Percentiles use linear interpolation (Excel PERCENTILE.INC), the
-   same as the Excel ranges workbook.
-9. **Trend**: line chart of checks passing % and found % from the tracker baseline (92.2% / 49%) and after
+   sample only, not Allshares-approved. Percentiles use linear interpolation (Excel PERCENTILE.INC).
+9. **Trend**: line chart of checks passing % and found % from the baseline (the previous run), this run, and after
    each import; per-import table of schema check pass rates (Required fields, Allowed values, Role row,
    Value when found, Unit when numeric, Data point when ambiguous).
 10. **Metric register** (new): Metric, Category, Source module, Formula or method, Period, Value, Target,
@@ -211,7 +182,7 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
 - File: CSV in the schema format (`results_<CC>.csv` columns plus optional `lei` and `data_point`).
 - Validate every row against the schema; show errors (first 50) and a preview:
   added / updated / unchanged / duplicates / ambiguous.
-- Apply valid rows; Reset restores the tracker values and clears the trend.
+- Apply valid rows; Reset restores the run's values and clears the imports from the trend.
 - Upsert:
   1. Company: by LEI when the row gives an LEI known in the data, otherwise by company name + country.
   2. Record: field ID + role row + data_point.
@@ -220,28 +191,21 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
   4. No data_point and several records match → error (ambiguous), row skipped.
 - In-memory only (browser session). No persistence (agreed 4 Nov 2026).
 
-## 8. Excel checks
-
-- Module Check weights sum to 1 per module, evaluating each row's formula as written
-  (`accuracy/tests/check_field_checks.py`). The original workbook fails this (drifting SUMIF ranges).
-- Every Field Checks row has a valid protocol ID (C01–C23, R01–R11); cik is a listed exception (D13).
-- Excel formulas recalculate with zero errors (`accuracy/tests/excel_recalc.ps1`, uses Excel).
-
-## 9. Labelling rules
+## 8. Labelling rules
 
 - Never invent company values. Examples are illustrative and labelled "Illustrative example".
 - Provisional ranges are labelled "Provisional: sample only, Allshares to approve".
 
-## 10. Tests
+## 9. Tests
+
+The tests read the last built run and check the pages against its own data.
 
 | Test | Command |
 |---|---|
-| Engine reproduces baseline | `python accuracy/tests/diff_baseline.py` |
-| Field Checks weights and IDs | `python accuracy/tests/check_field_checks.py` |
-| Core logic (filters, import, ranges, metrics) | `node Dashboard/core/report-core.test.js` |
-| Single-file HTML in a DOM stub (KPIs, filters, failures attention, import preview/apply/reset, trend, new pages) | `node accuracy/tests/report_dom.test.js` |
+| report.json from the output checks | `python -m pytest tests/test_dashboard.py` |
+| Core logic (filters, import, ranges, metrics, steps) | `node Dashboard/core/report-core.test.js` |
+| Single-file HTML in a DOM stub (KPIs, filters, failures attention, import preview/apply/reset, trend, pages) | `node accuracy/tests/report_dom.test.js` |
 | Angular app builds and unit tests pass | `npm --prefix Dashboard/app test` |
-| Excel recalculation, zero errors | `powershell -ExecutionPolicy Bypass -File accuracy/tests/excel_recalc.ps1` |
 
 Angular 21 is used because this machine runs Node 22.20; Angular 22 needs Node 22.22.3 or later.
 

@@ -1539,6 +1539,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-run-credits", type=int,
                    help="Firecrawl credits for the whole run. A company only starts if the credits "
                         "spent plus the worst case of every company still running stay within it")
+    p.add_argument("--no-dashboard", action="store_true",
+                   help="Don't run the output checks and update the dashboard at the end")
     args = p.parse_args(argv)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
@@ -1609,6 +1611,12 @@ def main(argv: list[str] | None = None) -> int:
     filled = write_golden_filled(args.csv, everyone, OUTPUT_DIR / "golden_test_filled.csv")
     if filled:
         print(f"Golden sample with build_value: {filled}")
+    if not args.no_dashboard and code != 2:
+        from . import dashboard          # imports output_checks, which imports this module
+        try:
+            print(f"Checks and dashboard updated: {dashboard.build(args.out)}")
+        except Exception as e:  # noqa: BLE001 - a report problem must not hide the run's result
+            log.warning("Could not update the checks report and dashboard: %s", e)
     return code
 
 

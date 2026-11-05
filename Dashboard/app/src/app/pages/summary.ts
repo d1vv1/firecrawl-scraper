@@ -31,7 +31,7 @@ export class Overview {
   readonly chStatus = computed(() => G.pie(this.statusLegend()));
   readonly dup = computed(() => {
     const m = this.r.model.data.meta, d = m.duplicates[0];
-    return d ? `Data note: the tracker has ${m.companyIds} company IDs, but ${d.ids.join(' and ')} share one LEI (${d.lei}), so they count as one company: ${m.companies} companies. Rows for both IDs remain in the values.` : '';
+    return d ? `Data note: the run has ${m.companyIds} company IDs, but ${d.ids.join(' and ')} share one LEI (${d.lei}), so they count as one company: ${m.companies} companies. Rows for both IDs remain in the values.` : '';
   });
 }
 @Component({
@@ -116,11 +116,11 @@ export class Failures {
   imports: [Chart, Legend],
   template: `
     <div class="title">{{ r.titles()['trend'] }}</div>
-    <div class="sub">Checks passing and found %, from the tracker baseline and after each import. Tracker: share of run checks that passed. Imports: share of rows passing every schema check; found % is across all values after the import.</div>
+    <div class="sub">Checks passing and found %, from the previous run (the baseline), this run, and after each import. Runs: share of run checks that passed. Imports: share of rows passing every schema check; found % is across all values after the import.</div>
     <div class="vis card"><h3>Trend</h3><app-chart [options]="chart()" /><app-legend [items]="leg()" /></div>
     <div class="vis card"><h3>Schema checks by import (% of rows passing)</h3><div class="tbl"><table class="table table-sm table-hover">
       <thead><tr><th>Import</th><th class="n">Rows</th><th class="n">Checks passing</th><th class="n">Found % (all values)</th><th class="n">Found % (file)</th>@for (g of C.GROUPS; track g) {<th class="n">{{ g }}</th>}</tr></thead>
-      <tbody>@for (p of hist(); track $index) {<tr><td>{{ $index === 0 ? 'Tracker (baseline)' : p.label }}</td><td class="n">{{ p.n == null ? '–' : C.fmt(p.n) }}</td><td class="n"><b>{{ p.checks }}%</b></td><td class="n">{{ p.found }}%</td><td class="n">{{ p.fileFound == null ? '–' : p.fileFound + '%' }}</td>
+      <tbody>@for (p of hist(); track $index) {<tr><td>{{ p.label }}</td><td class="n">{{ p.n == null ? '–' : C.fmt(p.n) }}</td><td class="n"><b>{{ p.checks }}%</b></td><td class="n">{{ p.found }}%</td><td class="n">{{ p.fileFound == null ? '–' : p.fileFound + '%' }}</td>
         @for (g of C.GROUPS; track g) {<td class="n">{{ p.groups?.[g] == null ? '–' : p.groups![g] + '%' }}</td>}</tr>}</tbody></table></div>
       <div class="note">Import checks are the schema rules run on each file. Gate checks are not run on imports yet.</div></div>`
 })
@@ -128,7 +128,7 @@ export class Trend {
   readonly r = inject(ReportService);
   readonly C = this.r.C;
   readonly hist = computed(() => { this.r.version(); return this.r.model.hist.slice(); });
-  readonly chart = computed(() => G.line(this.hist().map((p, i) => ({ label: p.label, short: i === 0 ? 'Tracker' : '#' + i, checks: p.checks, found: p.found })), this.r.model.data.meta.target));
+  readonly chart = computed(() => G.line(this.hist().map((p, i) => ({ label: p.label, short: i === 0 ? 'Baseline' : i < this.r.model.histBase ? 'Run' : '#' + (i - this.r.model.histBase + 1), checks: p.checks, found: p.found })), this.r.model.data.meta.target));
   readonly leg = computed(() => [{ label: 'Checks passing %', color: '#0077BB' }, { label: 'Found %', color: '#009988' }, { label: 'Target ' + this.r.model.data.meta.target + '%', color: '#888888' }]);
 }
 

@@ -247,6 +247,20 @@ call, the Camelot pay-table reading and the total check. It writes
 pension type, benefits and shareholding requirement, each with its page, quote and grade.
 Exit code 2 when the PDF has no executive pay. A second run of the same file is free (cached).
 
+### Checks and dashboard
+
+At the end of every `python -m extractor.datapoints` run, each value is checked
+(`extractor/output_checks.py`, see `docs/output_checks.md`) and the accuracy dashboard is
+rebuilt from the run (`--no-dashboard` turns this off). You get:
+
+- `<out>_checks.md` and `<out>_checks.csv` next to the run's CSV: the checks report.
+- `Dashboard/allshares_report.html`: the dashboard as one file. Open it, or email it.
+- The web app: `npm --prefix Dashboard/app ci` once, then `npm --prefix Dashboard/app start`
+  and open http://localhost:4200. Reload the page after a run to see it.
+
+The dashboard compares each run with the one before it. To rebuild it for any CSV:
+`python -m extractor.dashboard output/nordic_uk_10_datapoints.csv`. More in `Dashboard/README.md`.
+
 ## ESEF route (tried first)
 
 EU, EEA and UK companies listed on a regulated market file their annual report in ESEF

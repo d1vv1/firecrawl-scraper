@@ -33,7 +33,7 @@ export class ReportService {
       ]);
       this.init(data, schema);
     } catch (e: any) {
-      this.error.set('Could not load report.json. Run python accuracy/build.py first. ' + (e?.message || ''));
+      this.error.set('Could not load report.json. Run python -m extractor.dashboard <run>_datapoints.csv first. ' + (e?.message || ''));
     }
   }
 

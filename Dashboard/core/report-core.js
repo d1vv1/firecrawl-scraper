@@ -29,6 +29,8 @@
   }
   function clone(v) { var o = {}; for (var k in v) o[k] = v[k]; return o; }
   function companyKey(v) { return v.ck || (v.c + "|" + v.o); }
+  // What the KPI deltas compare with: the previous run, or this run itself on a first build.
+  function vsLabel(model) { return model.data.baseline.label === "This run" ? "this run" : "previous run"; }
 
   // ---------------------------------------------------------------- model
   function createModel(data) {
@@ -42,16 +44,23 @@
     return {
       data: data,
       recs: data.values.map(clone),
-      hist: [{label: data.baseline.label, checks: data.baseline.checksPct, found: data.baseline.foundPct, n: null, groups: null}],
+      hist: firstHist(data),
+      histBase: firstHist(data).length,
       impCount: 0,
       fidToDp: fidToDp,
       dpMeta: dpMeta,
       companyNames: names
     };
   }
+  // The baseline (the previous run), then this run when the two differ; imports add points after them.
+  function firstHist(data) {
+    var b = data.baseline, m = data.meta, h = [{label: b.label, checks: b.checksPct, found: b.foundPct, n: null, groups: null}];
+    if (m.checksPct != null && b.label !== "This run") h.push({label: "This run (" + m.tracker + ")", checks: m.checksPct, found: m.foundPct, n: null, groups: null});
+    return h;
+  }
   function resetModel(model) {
     model.recs = model.data.values.map(clone);
-    model.hist = model.hist.slice(0, 1);
+    model.hist = firstHist(model.data);
     model.impCount = 0;
   }
 
@@ -78,7 +87,7 @@
     var cats = {}, cos = {};
     model.recs.forEach(function (v) { cats[v.k] = 1; cos[companyKey(v)] = v.o + " (" + v.c + ")"; });
     return {
-      countries: COUNTRIES.slice(),
+      countries: (model.data.meta.countries || COUNTRIES).slice(),
       categories: Object.keys(cats).sort(),
       companies: Object.keys(cos).map(function (k) { return {key: k, label: cos[k]}; })
         .sort(function (a, b) { return a.label.localeCompare(b.label); }),
@@ -410,13 +419,13 @@
     var t = model.data.meta.target;
     function sign(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
     return [
-      {key: "companies", v: companiesOf(vs), l: "Companies (distinct LEI)", cls: "", d: "of " + model.data.meta.companies + " (" + model.data.meta.companyIds + " IDs) in the tracker"},
-      {key: "countries", v: countriesOf(vs).length, l: "Countries", cls: "", d: "SE, NO, DK, FI in the tracker"},
-      {key: "values", v: fmt(n), l: "Values in view", cls: "", d: "tracker: " + fmt(model.data.values.length)},
-      {key: "found", v: Math.round(foundPct) + "%", l: "Found", cls: foundPct >= 90 ? "g" : foundPct >= 75 ? "a" : "r", d: sign(dFound) + " pts vs tracker"},
+      {key: "companies", v: companiesOf(vs), l: "Companies (distinct LEI)", cls: "", d: "of " + model.data.meta.companies + " (" + model.data.meta.companyIds + " IDs) in this run"},
+      {key: "countries", v: countriesOf(vs).length, l: "Countries", cls: "", d: (model.data.meta.countries || COUNTRIES).join(", ") + " in this run"},
+      {key: "values", v: fmt(n), l: "Values in view", cls: "", d: "this run: " + fmt(model.data.values.length)},
+      {key: "found", v: Math.round(foundPct) + "%", l: "Found", cls: foundPct >= 90 ? "g" : foundPct >= 75 ? "a" : "r", d: sign(dFound) + " pts vs " + vsLabel(model)},
       {key: "partial", v: fmt(st.partial), l: "Partial", cls: "a", d: pct(st.partial, n) + "% of values"},
       {key: "notfound", v: fmt(st.not_found), l: "Not found", cls: "r", d: pct(st.not_found, n) + "% of values"},
-      {key: "checks", v: gs.runs ? gs.checksPct + "%" : "–", l: "Checks passing", cls: gs.checksPct >= t ? "g" : gs.checksPct >= 80 ? "a" : "r", d: "target " + t + "% · " + (gs.runs ? sign(dChecks) + " pts vs tracker" : "no scored values")},
+      {key: "checks", v: gs.runs ? gs.checksPct + "%" : "–", l: "Checks passing", cls: gs.checksPct >= t ? "g" : gs.checksPct >= 80 ? "a" : "r", d: "target " + t + "% · " + (gs.runs ? sign(dChecks) + " pts vs " + vsLabel(model) : "no scored values")},
       {key: "pass", v: sc.scored ? pct(sc.P, sc.scored) + "%" : "–", l: "Values passing", cls: "", d: fmt(sc.P) + " of " + fmt(sc.scored) + " scored values"},
       {key: "hard", v: fmt(gs.hard), l: "Hard fails", cls: gs.hard ? "r" : "g", d: fmt(sc.H) + " values blocked"},
       {key: "imports", v: model.impCount, l: "Imports applied", cls: "", d: model.impCount ? "latest schema pass " + last.checks + "%" : "none yet"}
@@ -426,21 +435,21 @@
   function metrics(model, vs) {
     var st = statusCounts(vs), sc = scoreCounts(vs), gs = gateStats(model, vs), n = vs.length, base = model.data.baseline;
     var asOf = model.data.meta.asOf, built = model.data.meta.built, NA = "not assigned", NS = "not set";
-    function trend(cur, b) { if (cur == null) return "–"; var d = Math.round((cur - b) * 10) / 10; return d === 0 ? "level with tracker" : (d > 0 ? "up " : "down ") + Math.abs(d) + " pts vs tracker"; }
+    function trend(cur, b) { if (cur == null) return "–"; var d = Math.round((cur - b) * 10) / 10; return d === 0 ? "level with " + vsLabel(model) : (d > 0 ? "up " : "down ") + Math.abs(d) + " pts vs " + vsLabel(model); }
     var last = model.hist[model.hist.length - 1];
     return [
       ["M01", "Checks passing", "Accuracy", "Scoring engine (gates)", "PASS / (PASS + FAIL) over gates run on values in view", pct1(gs.pass, gs.runs - gs.nr), model.data.meta.target, trend(pct1(gs.pass, gs.runs - gs.nr), base.checksPct)],
-      ["M02", "Found %", "Coverage", "Tracker / imports", "Values with status found / all values in view", pct1(st.found, n), NS, trend(pct1(st.found, n), base.foundPct)],
+      ["M02", "Found %", "Coverage", "Run / imports", "Values with status found / all values in view", pct1(st.found, n), NS, trend(pct1(st.found, n), base.foundPct)],
       ["M03", "Values passing", "Accuracy", "Scoring engine (status)", "Values with status Pass / scored values", pct1(sc.P, sc.scored), NS, "–"],
       ["M04", "Values blocked by a hard fail", "Accuracy", "Scoring engine (status)", "Values with status Fail (hard)", sc.H, NS, "–"],
       ["M05", "Hard gate fails", "Accuracy", "Scoring engine (gates)", "Count of FAIL on hard gates", gs.hard, NS, "–"],
       ["M06", "Gates not run", "Completeness", "Scoring engine (gates)", "NOT RUN / gates applicable", pct1(gs.nr, gs.runs), NS, "–"],
-      ["M07", "Empty values", "Coverage", "Tracker / imports", "Values with status not_found", st.not_found, NS, "–"],
-      ["M08", "Companies covered", "Coverage", "Tracker / imports", "Distinct companies (by LEI) in view", companiesOf(vs), NS, "–"],
+      ["M07", "Empty values", "Coverage", "Run / imports", "Values with status not_found", st.not_found, NS, "–"],
+      ["M08", "Companies covered", "Coverage", "Run / imports", "Distinct companies (by LEI) in view", companiesOf(vs), NS, "–"],
       ["M09", "Imports applied", "Operations", "Import page", "Imports applied this session", model.impCount, NS, "–"],
       ["M10", "Latest import schema pass", "Operations", "Import page", "Rows passing every schema check / rows in the latest file", model.impCount ? last.checks : null, NS, "–"]
     ].map(function (r) {
-      return {id: r[0], metric: r[1], category: r[2], module: r[3], formula: r[4], period: "Tracker as of " + asOf,
+      return {id: r[0], metric: r[1], category: r[2], module: r[3], formula: r[4], period: "Run of " + asOf,
               value: r[5], target: r[6], trend: r[7], owner: NA, updated: built};
     });
   }
@@ -460,7 +469,7 @@
       empty: et.fields.length ? fmt(et.n) + " values are empty; " + et.fields[0].d + " is empty for " + et.fields[0].companies + " " + (et.fields[0].companies === 1 ? "company" : "companies") : "No empty values in this selection",
       companies: "",
       failures: gs.runs ? fmt(gs.fail) + " gate fails, " + fmt(gs.hard) + " of them hard" + (gs.topHard ? "; " + gs.topHard.id + " fails most" : "") : "No scored values in this selection",
-      trend: "Checks passing: " + hist[0].checks + "% at the tracker, " + last.checks + "% after " + (hist.length - 1) + " import" + (hist.length - 1 === 1 ? "" : "s"),
+      trend: "Checks passing: " + hist[0].checks + "% at the baseline, " + last.checks + "% " + (hist.length > model.histBase ? "after " + (hist.length - model.histBase) + " import" + (hist.length - model.histBase === 1 ? "" : "s") : "in this run"),
       footer: "Source: " + model.data.meta.tracker + " (" + fmt(model.data.meta.rows) + " rows, " + fmt(model.data.meta.filled) + " filled values, " +
         model.data.meta.companies + " companies from " + model.data.meta.companyIds + " IDs" + dupText(model) + "). Data as of " + model.data.meta.asOf +
         ". Imports applied: " + model.impCount + ". Values in view: " + fmt(n) + "."
