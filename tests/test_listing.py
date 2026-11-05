@@ -25,6 +25,7 @@ def offline(monkeypatch):
     monkeypatch.setattr(listing, "_mics", MICS)
     figi = {}
     monkeypatch.setattr(listing, "openfigi", lambda isin, exch: figi.get((isin, exch), []))
+    monkeypatch.setattr(listing, "_cached", lambda url, fetch: [])     # Nasdaq's segment lists
     return figi
 
 
@@ -106,3 +107,17 @@ def test_exchange_names_map_to_their_mic():
     assert mic_for_name("Oslo Børs, New York Stock Exchange") == "XOSL"   # the first one
     assert mic_for_name("Nasdaq First North Growth Market", "SE") == "FNSE"
     assert mic_for_name("Nasdaq First North Growth Market") is None        # which country?
+
+
+def test_nasdaq_nordic_cap_segment(offline, monkeypatch):
+    lists = {listing.nasdaq_segment_url("STO", "MID_CAP"): ["SE0000115446"]}
+    monkeypatch.setattr(listing, "_cached", lambda url, fetch: lists.get(url, []))
+    monkeypatch.setattr(listing, "firds_shares", lambda lei: [rec("SE0000115446", "XSTO", "1998-03-12")])
+    got = {f.data_point: f for f in listing.listing_values("LEI", "SE")}
+    seg = got["exchange_segment"]
+    assert (seg.value, seg.source, seg.confidence) == ("Mid Cap", "Nasdaq Nordic", "A")
+    assert "segment=MID_CAP" in seg.endpoint and "Nasdaq Stockholm Mid Cap" in seg.note
+    # a First North share keeps its growth market as the segment (no cap list asked)
+    monkeypatch.setattr(listing, "firds_shares", lambda lei: [rec("SE0000115446", "FNSE", "2015-03-12")])
+    got = {f.data_point: f for f in listing.listing_values("LEI", "SE")}
+    assert "First North" in got["exchange_segment"].value and got["exchange_segment"].source == "ESMA FIRDS"

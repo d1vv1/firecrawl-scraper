@@ -97,7 +97,8 @@ ALLOWED = {
     "role_disclosure": {"individual", "aggregate"},
     "market_cap_band": {name for _, name in MARKET_CAP_BANDS_EUR},
 }
-TARGET_UNITS = {"% of base salary", "% of maximum", "shares", "instruments", "months of salary"}
+TARGET_UNITS = {"% of base salary", "% of maximum", "% of target", "shares", "instruments",
+                "months of salary"}   # "% of target": as stated when no target is given
 DEFAULT_RANGES = {   # plausible magnitudes in full units of the local currency
     "revenue": (0, 1e14), "total_assets": (0, 1e15), "ebitda": (-1e13, 1e13),
     "share_price": (0, 1e6), "headcount": (1, 5e6), "fte": (0.5, 5e6),

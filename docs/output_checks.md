@@ -60,7 +60,17 @@ Limits:
 - The quotes in the output notes are cut at 160 characters. A figure past the cut can't be checked against the quote (CORE-02 is n/a then), and only the start of the quote is looked up (CORE-03).
 - CORE-03 needs the run's cache (`--cache`, `--results`). Without it the check is n/a, unless the run itself flagged the quote as not found.
 
+## Results: Nordic/UK test set, 5 November 2026 (run 22, quote matching)
+
+Same values, quotes matched in more of the shapes they take (`docs/known_issues.md`, issue 12): **735 filled values, 702 Pass (96%), 13 Review, 1 Fail, 19 Fail (hard)**; graded C by the run 38 → 23.
+
+## Results: Nordic/UK test set, 5 November 2026 (run 22)
+
+A full re-run after the converter fix (`docs/known_issues.md`, issue 14) and the Nasdaq Nordic segments (issue 9): **735 filled values, 690 Pass (94%), 12 Review, 1 Fail, 32 Fail (hard)**. Found on the dashboard 75.5% of the values that apply (74.5% before), golden pay 120 of 148 (unchanged), 3 Firecrawl credits. The dashboard rounded found % twice (75.48 -> 75.5 -> 76); it now rounds once. Bang & Olufsen holds 12 of the hard fails: its key-management note is readable now, and the quotes the AI gives for its group rows piece cells together. The re-run also re-asked the AI where only the list of open fields changed, which moved some answers (issue 5).
+
 ## Results: Nordic/UK test set, 5 November 2026 (run 21, saved results refreshed)
+
+**Targets and maximums (later the same day).** Filling a missing target as half the maximum (the golden file's convention) raised golden pay to 128 of 148, but it was removed: it copies the client's fill-in rather than reading the reports (`docs/known_issues.md`, issue 10). Kept: a maximum below its target is the % of base salary it is printed as (Bang & Olufsen's "maximum opportunity of 87.5%" was turned into 43.75%). Totals are back to 726 values, 683 Pass, 30 Fail (hard); golden pay 120 of 148.
 
 726 filled values: **683 Pass (94%), 12 Review, 1 Fail, 30 Fail (hard)**. No source was asked again. Six more values: the market-cap band for the six non-EUR companies with a share price, now converted at the ECB rate (BioArctic, Equinor, Novo Nordisk, Shell, Volvo large; Bang & Olufsen mid). Pay terms and ownership facts read without a date now carry one (the pay year, the report's year end, or the day a web page was read), which also passes CORE-04. Company-field fill rate: 82%. On the dashboard, found rose from 67% to 75% (35 values are not applicable, such as a group headcount on one person's row, and no longer count as missing) and partial values fell from 44 to 3.
 

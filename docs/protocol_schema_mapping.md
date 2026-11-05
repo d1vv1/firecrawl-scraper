@@ -35,7 +35,7 @@ The protocol's status values map onto our columns as follows:
 | C03 | Registration number | `business_id` | Annual report; legal notice (*Impressum*) | — |
 | C04 | ISIN | `isin` | ESMA FIRDS by LEI (UK/CH: OpenFIGI on the home exchange); annual report, "The share" page | API step (26 Oct 2026) |
 | C05 | Ticker, primary exchange | `ticker`, `exchange` | Exchange: FIRDS venue + ISO MIC list. Ticker: OpenFIGI (Bloomberg spelling, "VOLVB"; a document's "VOLV B" spelling is kept when it agrees). Annual report; share page | API step (26 Oct 2026) |
-| C06 | Segment | `exchange_segment` | Annual report; share page. The prompt now says when the market is an MTF | prompt |
+| C06 | Segment | `exchange_segment` | MTF growth market from FIRDS + MIC list; Nasdaq Nordic Large/Mid/Small Cap from Nasdaq's segment lists; else the annual report or share page | API step (5 Nov 2026) |
 | C07 | Listing status, admission date | `listing_status`, `listing_date` | Status: FIRDS (active, issuer-requested listing). Date: annual report, listing notice, share page, history; FIRDS first trading date only for listings since 2000, graded C | API step (26 Oct 2026) |
 | C08 | Country, HQ city | `country_code`, `head_office_city` | Annual report; legal notice | — |
 | C09 | Website domain | `website` | Annual report; legal notice, about page | **new** |
@@ -66,7 +66,7 @@ The protocol's status values map onto our columns as follows:
 | R03 | Currency and unit of the pay table | `pay_currency` (table unit in `note`) |
 | R04 | Base salary | `base_salary`: fixed base salary only (no board fees, benefits, holiday-pay adjustments or salary additions; a figure that can't be separated says what it includes) |
 | R05 | STI paid | `sti_paid` |
-| R06 | STI target and maximum | `sti_target`, `sti_max`: in the form stated (`unit` = % of base salary, % of maximum, months of salary, a currency, shares); a target given as a share of a maximum that is a % of base is also derived as % of base (method DERIVED) |
+| R06 | STI target and maximum | `sti_target`, `sti_max`: in the form stated (`unit` = % of base salary, % of maximum, months of salary, a currency, shares); a target given as a share of a maximum that is a % of base is also derived as % of base (method DERIVED). A target or maximum not stated stays empty |
 | R07 | LTI received, and its basis | `lti_vested` (vested, paid out or exercised for the year) and `lti_granted` (granted in the year), each with its form in `note` (cash, shares, options, number of instruments, accounting expense) |
 | R08 | LTI target and maximum | `lti_target`, `lti_max`, as for R06 |
 | R09 | Benefits value | `benefits_value` |
@@ -119,7 +119,7 @@ Once the document side is solid, the API step goes in front of it, for the field
 1. **GLEIF:** LEI, legal name and former names, registration number, country and HQ city, parent (direct and ultimate, with the reporting exception), ISINs.
 2. **ESMA FIRDS:** ISIN and trading venue (MIC → exchange). Not the admission date. *Built 26 Oct 2026.*
 3. **filings.xbrl.org:** already in the pipeline for revenue and total assets; extend to EBITDA where tagged, fiscal year end, currency.
-4. **Exchange files** (Deutsche Börse, SIX, Euronext): segment.
+4. **Exchange files** (Deutsche Börse, SIX, Euronext): segment. *Nasdaq Nordic built 5 Nov 2026 (its segment lists).*
 5. **AFM export** (NL): major holdings.
 6. **ECB reference rates:** the EUR rate on the share price's date, so `market_cap_band` can be derived for non-EUR companies. *Built 5 Nov 2026 (`extractor/fx.py`).*
 

@@ -1478,6 +1478,25 @@ def refresh(rows: list[dict]) -> list[dict]:
             band.update({k: v for k, v in asdict(new).items() if k in band}, retrieved_at=_now())
         else:
             band["note"] = why
+    names = [f.name for f in fields(Found)]
+    for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
+        mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
+                and r["data_point"] in pay.TARGETS}
+        have = {k: Found(**{n: r[n] for n in names if n in r}) for k, r in mine.items() if r["value"]}
+        if not have:
+            continue
+        for k, r in mine.items():
+            if isinstance(have.get(k), Found):
+                have[k].value = float(r["value"]) if re.fullmatch(r"-?[\d.]+", r["value"]) else r["value"]
+        before = {k: id(v) for k, v in have.items()}
+        pay.misread_targets(have)
+        for k, r in mine.items():
+            if k in have and before.get(k) != id(have[k]):
+                r.update({**{n: v for n, v in asdict(have[k]).items() if n in r},
+                          "value": pay._num(have[k].value)})
+            elif k not in have and r["value"]:
+                r.update(value="", unit="", method="", confidence="", retrieved_at="",
+                         note="dropped: a target read from its maximum's quote, or above the maximum")
     pay_end = next((r["period_end"] for r in rows if r["grain"] == "role" and r["period_end"]), "")
     report_end = (by.get("fiscal_year_end") or {}).get("value") or ""
     for r in rows:

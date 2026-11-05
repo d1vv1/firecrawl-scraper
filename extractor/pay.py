@@ -283,6 +283,32 @@ def derived_target(target: Found, maximum: Found) -> Found | None:
                  retrieved_at=target.retrieved_at, grain="role", role_row=target.role_row)
 
 
+def misread_targets(rows: dict[str, Found]) -> None:
+    """Undo three AI misreadings of a role's target and maximum. Nothing is filled in:
+    a target or maximum the documents don't state stays empty (a target isn't always
+    half the maximum: Bang & Olufsen's are 100% and 175%; many Nordic policies state
+    only a maximum).
+    - A maximum read as a share of the target but below 100% of it is the % of base
+      salary it is printed as ("a maximum opportunity of 87.5%").
+    - A target and maximum with one figure from one quote are that figure as the
+      maximum ("the target bonus may amount to a maximum of 50 percent").
+    - A target above its maximum is not kept."""
+    pct = "% of base salary"
+    for tgt, mx in (("sti_target", "sti_max"), ("lti_target", "lti_max")):
+        t, m = rows.get(tgt), rows.get(mx)
+        below = re.match(r"derived: ([\d.]+)% of the target of [\d.]+% of base salary; (.*)", m.note) if m else None
+        if below and float(below.group(1)) < 100:
+            # "a maximum opportunity of 87.5%" read as % of target: a maximum below the
+            # target is impossible, so it is the % of base salary it is printed as
+            rows[mx] = m = Found(**{**m.__dict__, "value": float(below.group(1)), "method": "PARSE",
+                                    "note": f"{below.group(2)}; read as % of base salary (below "
+                                            f"100% of the target, it can't be a share of it)"})
+        if t and m and t.unit == pct and m.unit == pct and t.method != "DERIVED" and (
+                (float(t.value) == float(m.value) and t.note == m.note)
+                or float(t.value) > float(m.value)):
+            del rows[tgt]
+
+
 def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | None = None,
                policy_origin=None, period_end: str = "") -> list[Found]:
     """The role rows: every ROLE_POINTS field for each executive role (missing ones with
@@ -370,6 +396,7 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 d = derived_target(rows[tgt], rows[mx])
                 if d:
                     rows[tgt] = d
+        misread_targets(rows)
         allowance = r.pension_allowance
         if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
                 and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):

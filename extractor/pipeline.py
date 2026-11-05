@@ -20,7 +20,7 @@ from .esef import EsefFiling, download_report, is_recent, latest_annual_filing
 from .scraper import (DownloadError, NeedsOCRError, ReportDocument, TeaserPageError, cache_stem,
                       pdf_to_pages,
                       check_not_scanned, fetch_report, markdown_to_pages, pages_to_markdown)
-from .xhtml_text import html_to_text, text_to_pages
+from .xhtml_text import VERSION as XHTML_VERSION, html_to_text, text_to_pages
 from .sections import select_chunks, split_chunks
 from .validate import (ENTITY_FRONT_PAGES, Check, check_entity, checks_as_dicts, overall_status,
                        run_checks, warnings_for)
@@ -206,8 +206,9 @@ def get_esef(lei: str, slug: str, use_cache: bool) -> EsefFiling | None:
 
 
 def esef_document(filing: EsefFiling, slug: str, use_cache: bool) -> ReportDocument:
-    """The filing's full report (.xhtml) as page-like text, cached like a PDF's."""
-    md_path = CACHE_DIR / f"{cache_stem(slug, filing.report_url)}.md"
+    """The filing's full report (.xhtml) as page-like text, cached like a PDF's. The
+    cache name carries the converter's version, so a better conversion is made again."""
+    md_path = CACHE_DIR / f"{cache_stem(slug, filing.report_url)}_x{XHTML_VERSION}.md"
     if use_cache and md_path.exists():
         pages = markdown_to_pages(md_path.read_text(encoding="utf-8"))
         return ReportDocument(filing.report_url,

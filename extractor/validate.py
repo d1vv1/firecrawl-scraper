@@ -86,7 +86,41 @@ def quote_in_text(quote: str, source: str) -> str | None:
             return "loose"
     if len(qt) >= 2 and any(t[0].isdigit() for t in qt) and _in_one_row(qt, source):
         return "loose"
+    if _ELLIPSIS.search(quote) and _parts_nearby(quote, s):
+        return "loose"
+    # A label wrapped over table cells is cut at the cell edges, sometimes mid-word
+    # ("Executive V|ice President", Bang & Olufsen) and sometimes between words
+    # ("(until|14-05-26)"): without spaces the two read alike. Long quotes only.
+    qc, sc = re.sub(r"\s+", "", q), re.sub(r"\s+", "", s)
+    if len(qc) >= _COMPACT_MIN and qc in sc:
+        return "loose"
     return None
+
+
+_COMPACT_MIN = 40       # characters of a quote compared without spaces, at least
+_ELLIPSIS = re.compile(r"\s*(?:\.\.\.|…)\s*")
+_PARTS_SPAN = 400          # characters of normalized text between two quoted parts, at most
+
+
+def _parts_nearby(quote: str, s: str) -> bool:
+    """A quote that leaves words out with "..." ("Short-term incentives may, for ...
+    other Executives, a maximum of 80%"): each part in the normalized source, in order,
+    each starting at most _PARTS_SPAN characters after the one before."""
+    parts = [normalize(p).strip(" .,;:\"'") for p in _ELLIPSIS.split(quote)]
+    parts = [p for p in parts if p]
+    if len(parts) < 2:
+        return False
+    for start in (m.start() for m in re.finditer(re.escape(parts[0]), s)):
+        pos, ok = start + len(parts[0]), True
+        for p in parts[1:]:
+            i = s.find(p, pos)
+            if i < 0 or i - pos > _PARTS_SPAN:
+                ok = False
+                break
+            pos = i + len(p)
+        if ok:
+            return True
+    return False
 
 
 def numbers_in(text: str) -> list[float]:
@@ -107,9 +141,16 @@ def figure_in_quote(figure: float, quote: str, scaled: bool = False) -> bool:
     cells (a table row "Anders Opedal | 96 | 23" for 119). `scaled`: the figure may also be
     printed in thousands, millions or billions ("(000s) 5 582 534" for 5,582,534,000)."""
     nums = numbers_in(quote or "")
+    # a table cell that is one number grouped with plain spaces ("|22 868|", Volvo):
+    # elsewhere a space between digits separates cells, so only a whole cell counts
+    nums += [float(c.replace(" ", "")) for c in (x.strip() for x in (quote or "").split("|"))
+             if re.fullmatch(r"\d{1,3}(?: \d{3})+", c)]
     wanted = [abs(figure) / k for k in ((1, 1e3, 1e6, 1e9) if scaled else (1,))]
     sums = ([sum(nums)] if 1 < len(nums) <= 4 else []) + ([sum(nums[1:])] if 1 < len(nums) <= 5 else [])
     return any(abs(abs(n) - w) <= max(0.005 * w, 1e-9) for n in nums + sums for w in wanted)
+
+
+_FIGURE = re.compile(r"\d[\d,.]*\d|\d")
 
 
 def _in_one_row(qt: list[str], source: str) -> bool:
@@ -117,8 +158,10 @@ def _in_one_row(qt: list[str], source: str) -> bool:
     or two neighbouring rows (converted tables can put a person's name on one line and
     their figures on the next). A quote read off a page image keeps the label and the
     figure but drops the other columns: "Salary|352 625|38 %" from the row
-    "Salary|1 410 500|38 %|...|352 625|38 %"."""
-    lines = [l for l in source.splitlines() if "|" in l]
+    "Salary|1 410 500|38 %|...|352 625|38 %". A drawn table converted from HTML has no
+    "|": a line with three figures or more is a row too ("John Roberts FY26 461,262"
+    from "John Roberts FY26 557,080 49,232 22,000 628,312 461,262 ...", AO World)."""
+    lines = [l for l in source.splitlines() if "|" in l or len(_FIGURE.findall(l)) >= 3]
     for i in range(len(lines)):
         # the next row joins only a label row: one whose cells are mostly empty
         row = lines[i].strip()

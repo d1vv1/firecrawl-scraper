@@ -664,6 +664,30 @@ def test_a_maximum_stated_as_percent_of_target_becomes_percent_of_base():
         (250.0, "% of base salary", "DERIVED")
 
 
+def test_a_target_or_maximum_not_stated_stays_empty():
+    from extractor import pay
+    facts = _pay([_role("CEO", sti_max=_t(80.0, "pct_of_base", "maximum 80% of base salary"),
+                        lti_target=_t(100.0, "pct_of_base", "LTI grant: 100% of base salary."))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "CEO"}
+    assert rows["sti_target"].value is None and rows["lti_max"].value is None
+
+
+def test_one_figure_read_as_both_target_and_maximum_is_the_maximum():
+    from extractor import pay
+    q = "The target bonus may for the CEO amount to a maximum of 50 percent of the annual fixed salary"
+    facts = _pay([_role("CEO", sti_target=_t(50.0, "pct_of_base", q), sti_max=_t(50.0, "pct_of_base", q)),
+                  _role("CFO", sti_target=_t(50.0, "pct_of_base", "target 50% of base salary"),
+                        sti_max=_t(43.75, "pct_of_base", "maximum 43.75% of base salary"))])
+    rows = {(f.role_row, f.data_point): f for f in pay.role_found(facts, _origin())}
+    assert (rows["CEO", "sti_max"].value, rows["CEO", "sti_target"].value) == (50.0, None)
+    assert rows["CFO", "sti_target"].value is None                # above the maximum: a misreading
+    # "a maximum opportunity of 87.5%" taken as % of the target: it is % of base salary
+    facts = _pay([_role("EVP", sti_target=_t(50.0, "pct_of_base", "target opportunity 50% of base salary"),
+                        sti_max=_t(87.5, "pct_of_target", "with a maximum opportunity of 87.5%."))])
+    rows = {f.data_point: f for f in pay.role_found(facts, _origin()) if f.role_row == "EVP"}
+    assert (rows["sti_max"].value, rows["sti_max"].method, rows["sti_target"].value) == (87.5, "PARSE", 50.0)
+
+
 def test_a_pension_column_is_not_an_allowance_in_lieu():
     from extractor import pay
     facts = _pay([_role("CEO", pension_allowance=_amount(307, quote="Pension [C] | 307 | 291"))])

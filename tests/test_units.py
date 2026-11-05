@@ -274,7 +274,7 @@ def test_quote_fragments_joined_with_ellipsis():
     src = [Chunk(1, "Unilever is the parent company of the Group. Other text here. "
                     "The segments are Beauty & Wellbeing, Personal Care, Home Care and Foods.")]
     ok = check_quote("x", "Unilever is the parent company...segments are Beauty & Wellbeing, Personal Care", 1, src)
-    assert ok.result == "pass" and "fragments" in ok.detail
+    assert ok.result == "pass"           # pieces close together, in order: quote_in_text
     bad = check_quote("x", "Unilever is the parent company...segments are Ice Cream and Tea", 1, src)
     assert bad.result == "fail"
 

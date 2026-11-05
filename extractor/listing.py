@@ -244,11 +244,50 @@ def _ticker(isin: str, op: str) -> str | None:
     return rows[0]["ticker"].rstrip("/") if rows else None
 
 
+# --- Nasdaq Nordic segments --------------------------------------------------------
+
+# Nasdaq's own share lists, one per market and cap segment (the same lists as on
+# nasdaq.com/european-market-activity/shares). No key; cached like the other APIs.
+NASDAQ_SCREENER = "https://api.nasdaq.com/api/nordic/screener/shares"
+NASDAQ_MARKETS = {"XSTO": "STO", "XCSE": "CPH", "XHEL": "HEL", "XICE": "ICE"}
+NASDAQ_SEGMENTS = {"LARGE_CAP": "Large Cap", "MID_CAP": "Mid Cap", "SMALL_CAP": "Small Cap"}
+
+
+def nasdaq_segment_url(market: str, segment: str) -> str:
+    return f"{NASDAQ_SCREENER}?category=MAIN_MARKET&tableonly=true&market={market}&segment={segment}"
+
+
+def nasdaq_segment(isins: list[str], op: str) -> tuple[str, str] | None:
+    """(segment, list URL) of a share on a Nasdaq Nordic main market: Large, Mid or
+    Small Cap, from Nasdaq's list of that segment."""
+    market = NASDAQ_MARKETS.get(op)
+    if not market:
+        return None
+    for seg, label in NASDAQ_SEGMENTS.items():
+        url = nasdaq_segment_url(market, seg)
+
+        def fetch(url=url):
+            r = httpx.get(url, timeout=TIMEOUT_S, headers={"User-Agent": "Mozilla/5.0",
+                                                           "Accept": "application/json"})
+            r.raise_for_status()
+            rows = ((r.json().get("data") or {}).get("instrumentListing") or {}).get("rows") or []
+            return [x.get("isin") for x in rows if x.get("isin")]
+        try:
+            listed = _cached(url, fetch) or []
+        except (httpx.HTTPError, ValueError) as e:
+            log.warning("Nasdaq Nordic %s %s list: %s", market, label, str(e)[:120])
+            return None
+        if set(isins) & set(listed):
+            return label, url
+    return None
+
+
 # --- data points -------------------------------------------------------------------
 
 def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list[Found]:
-    """isin, exchange, ticker, listing_status, exchange_segment (MTF growth markets
-    only) and listing_date (recent listings only) from FIRDS, the MIC list and OpenFIGI."""
+    """isin, exchange, ticker, listing_status, exchange_segment (an MTF growth market,
+    or the Large/Mid/Small Cap segment on a Nasdaq Nordic main market) and listing_date
+    (recent listings only) from FIRDS, the MIC list, Nasdaq's segment lists and OpenFIGI."""
     if not lei:
         return []
     country = (country or "").upper()
@@ -299,6 +338,11 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
         seg = sorted(segs)[0] if segs else op
         out.append(Found("exchange_segment", venue_name(seg), **src, confidence="A",
                          note=f"MIC {seg}; multilateral trading facility (not a regulated market)"))
+    elif (cap := nasdaq_segment(isins, op)):
+        label, url = cap
+        out.append(Found("exchange_segment", label, source="Nasdaq Nordic", endpoint=url,
+                         method="API", confidence="A", retrieved_at=retrieved_at(url),
+                         note=f"{venue_name(op)} {label} segment (Nasdaq's segment list)"))
     date = _listing_date(docs, op)
     if date:
         out.append(Found("listing_date", date, **src, confidence="C",

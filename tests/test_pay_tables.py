@@ -180,3 +180,14 @@ def test_from_tables_can_be_switched_off(tmp_path, monkeypatch):
     monkeypatch.setattr(pt, "ENABLED", False)
     facts = _facts(_role("CEO"))
     assert pt.from_tables("X", facts, pdf, [], {}) is facts
+
+
+def test_a_wrapped_label_is_quoted_as_far_as_the_page_holds_it():
+    page = ("|**Line Køhler Ljungdahl, Executive V**|**ice President, Chief Corporate C**|**ommercial Officer (until**"
+            "|**14-05-26). Garden**|**leave from 15-05**|**-26 to 30-06-27.******||||||||\n"
+            "||**2025/26**|3,078|315|369|336|1,924|-|6,023|\n")
+    label = ("Line Køhler Ljungdahl, Executive Vice President, Chief Corporate Commercial Officer "
+             "(until 14-05-26). Garden leave from 15-05-26 to 30-06-27.")
+    q = pt.row_quote(label, ["3,078"], page)
+    assert q.endswith("| 3,078") and q.startswith("Line Køhler Ljungdahl") and "Garden" not in q
+    assert pt.row_quote("Nobody Here", ["9,999"], page) == "Nobody Here | 9,999"

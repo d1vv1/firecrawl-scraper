@@ -33,6 +33,7 @@ from . import llm
 from .config import CACHE_DIR
 from .schemas import ColumnMap, LtiAmount, PayAmount, RemunerationFacts, RolePay
 from .sections import Chunk
+from .validate import quote_in_text
 
 log = logging.getLogger(__name__)
 
@@ -261,6 +262,19 @@ def match(role: RolePay, rows: list[TableRow]) -> TableRow | None:
     return None
 
 
+def row_quote(label: str, cells: list[str], page_text: str) -> str:
+    """The row's label and the cells added, as a quote the page text holds. A label
+    cell can wrap over several lines with footnotes ("Line Køhler Ljungdahl, Executive
+    Vice President, ... Garden leave from 15-05-26 ..."), which the text doesn't hold in
+    one piece: then the longest start of it that, with the cells, is found (the name)."""
+    words = label.split()
+    for n in range(len(words), 0, -1):
+        quote = " | ".join([" ".join(words[:n]).rstrip(",.;:")] + cells)
+        if quote_in_text(quote, page_text):
+            return quote
+    return " | ".join([label] + cells)
+
+
 def chunk_of(page: int, chunks: list[Chunk]) -> int | None:
     return next((c.id for c in chunks if page in c.pages), None)
 
@@ -279,11 +293,12 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
         used.add(id(row))
         done.add(i)
         cid = chunk_of(row.page, chunks)
+        page_text = "\n".join(c.text for c in chunks if row.page in c.pages)
         cur = currency or next((getattr(role, f).currency for f in ("total", "base_salary")
                                 if getattr(role, f).currency), None)
         update = {}
         for field, value in row.values.items():
-            quote = " | ".join([row.label] + row.cells[field])
+            quote = row_quote(row.label, row.cells[field], page_text)
             parts = row.headers[field]
             includes = f"table: {parts}" if "+" in parts else None
             if field.startswith("lti_"):

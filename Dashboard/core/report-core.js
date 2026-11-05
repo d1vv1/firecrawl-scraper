@@ -426,7 +426,7 @@
       {key: "companies", v: companiesOf(vs), l: "Companies (distinct LEI)", cls: "", d: "of " + model.data.meta.companies + " (" + model.data.meta.companyIds + " IDs) in this run"},
       {key: "countries", v: countriesOf(vs).length, l: "Countries", cls: "", d: (model.data.meta.countries || COUNTRIES).join(", ") + " in this run"},
       {key: "values", v: fmt(n), l: "Values in view", cls: "", d: "this run: " + fmt(model.data.values.length)},
-      {key: "found", v: Math.round(foundPct) + "%", l: "Found", cls: foundPct >= 90 ? "g" : foundPct >= 75 ? "a" : "r", d: sign(dFound) + " pts vs " + vsLabel(model)},
+      {key: "found", v: pct(st.found, applicable(st, n)) + "%", l: "Found", cls: foundPct >= 90 ? "g" : foundPct >= 75 ? "a" : "r", d: sign(dFound) + " pts vs " + vsLabel(model)},
       {key: "partial", v: fmt(st.partial), l: "Partial", cls: "a", d: pct(st.partial, n) + "% of values"},
       {key: "notfound", v: fmt(st.not_found), l: "Not found", cls: "r", d: pct(st.not_found, n) + "% of values"},
       {key: "checks", v: gs.runs ? gs.checksPct + "%" : "–", l: "Checks passing", cls: gs.checksPct >= t ? "g" : gs.checksPct >= 80 ? "a" : "r", d: "target " + t + "% · " + (gs.runs ? sign(dChecks) + " pts vs " + vsLabel(model) : "no scored values")},

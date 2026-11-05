@@ -169,7 +169,9 @@ period_end, source, endpoint, method, retrieved_at, confidence, note`
   figure, bundled components and the LTI form are in `note`, and a stated total that
   differs from the sum of its parts by more than 2% is flagged there. LTI is two fields,
   `lti_vested` and `lti_granted`; targets and maximums keep the form the report states
-  (`unit`: % of base salary, % of maximum, months of salary, a currency, shares).
+  (`unit`: % of base salary, % of maximum, months of salary, a currency, shares). One not
+  stated stays empty: nothing is filled in from the other (`pay.misread_targets` only undoes
+  misreadings, such as a maximum below its target).
 
 Per company, cheapest and most exact first:
 0. **official APIs** (`--no-apis` to skip), free and cached for a week: GLEIF by LEI (LEI,

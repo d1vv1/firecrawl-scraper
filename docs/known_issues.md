@@ -4,11 +4,12 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 14 | HTML annual reports (ESEF) converted with table rows run together and letters lost to private font codes | fixed | — |
 | 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
-| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 30 hard fails of 726 values | quotes the AI joins from two passages; Bang & Olufsen bonus definition (issue 10) |
-| 11 | Golden file values that look like a different fiscal year | open | client answer |
-| 10 | Definitions the client still has to settle (base salary, revenue line, market-cap bands) | open | client answer |
-| 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | partly fixed | exchange segment files (Large/Mid/Small Cap, Prime Standard) |
+| 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 19 hard fails of 735 values | quotes the AI pieces together from several places; Bang & Olufsen's totals (bonus definition) |
+| 11 | Golden file values from an older fiscal year | closed: golden mistakes; we keep the most recent year | — |
+| 10 | Definitions (base salary, revenue line, STI, LTI, targets, market-cap bands) | closed: decided on the most widely accepted reading | — |
+| 9 | Exchange fields weak from documents (ISIN, ticker, segment, listing date) | mostly fixed: Nasdaq Nordic segments from Nasdaq's lists | Deutsche Börse and SIX segment files; London |
 | 8 | Sweden and Denmark registers not connected | parked | credentials; only matters for Swedish private companies |
 | 7 | Register industry codes describe the holding company | fixed: sector classified from the business description (NACE Rev. 2) | the Allshares taxonomy, to replace NACE |
 | 6 | Holding companies' own filed accounts give no group figures | fixed for the UK: the parent's consolidated accounts, scans read from page images | the ownership chain upwards (Bidco, Midco, Topco); countries other than UK, NO, DK |
@@ -17,6 +18,18 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 14. HTML annual reports converted badly — fixed
+
+*Found 5 November 2026, looking for why AO World's annual report gave no headcount, EBITDA, owners or segments; **fixed the same day** (`extractor/xhtml_text.py`, version 3).* An ESEF annual report is a PDF redrawn as HTML, and three of the six in the Nordic/UK set came out of the converter damaged:
+
+- **Table rows run together** (AO World, Novo Nordisk): the filing places every line as a positioned `<span>`, with no tag between rows, so "Sales, marketing and distribution 2,884 3,133Directors (Executive and Non-Executive) 8 72,892 3,140". A positioned box now starts a line, and boxes at the same height (within 4 px) stay on one line, since Bang & Olufsen draws each cell as its own box. Runs of glued figures: AO 172 → 1, Novo Nordisk 336 → 1.
+- **Letters lost to private font codes.** AO World's font draws "fi", "fl", "ff" and "ffi" as private-use glyphs, which were dropped: "nancial" (139 times), "pro t", "bene ts". Bang & Olufsen's text is in a shifted font, every letter moved by 0xE5E3 and its digits by another offset (14,842 glyphs): headings such as "At a glance" and its key-management pay note were unreadable. Both are decoded from the words the same report spells out in plain text (a digits font: the shift that turns its figures into years). Nothing is hard-coded per company.
+- A drawn table's row has no "|", so a quote that skips cells ("John Roberts FY26 461,262") is now matched within one line that holds three figures or more (`validate._in_one_row`).
+
+Shell, Equinor and Marimekko convert as before (same words), plus line breaks at table rows. The cached conversion carries the converter's version (`_x3.md`), so every ESEF report is converted again on its next run.
+
+Nordic/UK set after re-reading the three: AO World gains its staff number (2,892) and owner type; Novo Nordisk its FTE and staff by country; Bang & Olufsen its sector (its business description is readable now) and its key-management pay note.
 
 ## 13. The dashboard's import format spells the UK "UK" — fixed
 
@@ -51,28 +64,33 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 - **A figure not in its quote (4).** Shell's EBITDA (56,135 is not in the quoted line), Shell's controlling owner (Shell RDS Holding B.V. is not in the quote), Volvo's CEO base salary (22,868, Volvo's fragmented table again) and Nokia's former CEO's benefits (19,697).
 - **An incomplete date (1).** AO World's listing date is "2014-03": the source gives a month, not a day.
 
+**5 November 2026 (later): quote matching.** Most quotes that failed were real text in a shape the matcher didn't know, not invented. Now matched (`extractor/validate.py`, `pay_tables.row_quote`):
+- a label wrapped over table cells, cut mid-word in some places ("Executive V|ice President") and between words in others ("(until|14-05-26)"): compared without spaces, for quotes of 40 characters or more (Bang & Olufsen's pay rows);
+- a table cell grouped with plain spaces, "|22 868|", as one figure (Volvo's CEO salary);
+- a quote that leaves words out with "...", when its parts are in the text in order and close together (Volvo's STI maximum, Nokia's board pay);
+- a quote built from a pay table: as much of the row label as the page holds, with the cells.
+"% of target" is also a valid stated unit (Bang & Olufsen's "maximum payout of index 200"). Nordic/UK set, same values: hard fails 32 → 19, values graded C by the run 38 → 23. Left: 4 totals whose parts exceed them (Bang & Olufsen 3: the bonus definition; Nokia's former CEO), and 15 quotes the AI pieced together from several places or that are not in the text.
+
 **Next:** ask the AI to quote one continuous passage (a prompt change, which asks every field again, so it should come with a fresh comparison run); treat a month-only listing date as the first of the month with the precision noted.
 
-## 11. Golden file values that look like a different fiscal year
+## 11. Golden file values from an older fiscal year — closed: we keep the most recent year
 
-*Found 24 October 2026, Nordic/UK test.* Some golden values don't match the report year we read, though our values match the reports exactly:
+*Found 24 October 2026, Nordic/UK test; **closed 5 November 2026**.* Some golden values are for the year before the report we read: Nokia's golden revenue €19,220m and total assets €39,149m are FY2024 figures labelled FY2025 (our FY2025 tagged figures are €19,889m and €37,597m), and Bang & Olufsen's golden pay is FY2024/25 where we read FY2025/26. These are mistakes in the golden file. The collector always takes the most recent report, and that stays.
 
-- **Nokia:** golden revenue €19,220m and total assets €39,149m are labelled FY2025; our FY2025 tagged figures are €19,889m and €37,597m. €19,220m appears to be Nokia's FY2024 net sales.
-- **Bang & Olufsen:** golden pay is labelled 2025; we read the FY2025/26 report (year to May 2026), and the golden values look like FY2024/25.
+The golden file is a reference, not the truth: the client collected it much as we do, from the same reports, with its own reading errors and conventions. A difference from it is a reason to look, not proof that we are wrong.
 
-**Needs:** the client to confirm which fiscal year the golden files are meant to hold. Until then these count as differences in `output/golden_uk_nordics_check.md`.
+## 10. Definitions — closed: decided on the most widely accepted reading
 
-## 10. Definitions the client still has to settle
+*Found 23–24 October 2026; **decided 5 November 2026**.* The client is unlikely to rule on these, so each follows the most widely accepted reading. Each is one setting if a different choice is wanted later.
 
-*Found 23–24 October 2026.* The code follows a default for each; each is a one-line switch once decided.
-
-| Question | Our default | Seen in |
+| Question | Decision | Why |
 |---|---|---|
-| Base salary: fixed salary only, or total fixed pay (base + benefits)? | fixed salary only (the client's own decision) | BioArctic: golden CEO base 4,967k = our base 4,846k + benefits 122k |
-| Revenue when a filing tags both "revenue" and "revenue and operating income" | IFRS revenue, the other in `note` (`datapoints.REVENUE_RULE`) | CTT: 1,129m vs 1,292m |
-| Market-cap band thresholds | €1bn / €150m, a placeholder (`datapoints.MARKET_CAP_BANDS_EUR`). Non-EUR market caps are converted at the ECB rate on the share price's date (since 5 Nov 2026); whether the client wants the fiscal year-end date instead is part of the question | all |
-
-The client's field definitions are said to be in a HANDOVER.md that we have not received.
+| Base salary: fixed salary only, or total fixed pay (base + benefits)? | Fixed salary only | What remuneration reports and the protocol (R04) call base salary; benefits are their own field (R09). BioArctic's golden CEO base 4,967k is our base 4,846k + benefits 122k |
+| Revenue when a filing tags both "revenue" and "revenue and operating income" | IFRS revenue, the other in `note` (`datapoints.REVENUE_RULE`) | The line IFRS 15 defines as revenue (CTT: 1,129m, not 1,292m) |
+| STI paid | The bonus earned for the year, as the report states it paid or awarded | Bang & Olufsen's "Total Remuneration Granted" counts the bonus as expensed instead; the stated total is kept as printed, and its difference from the parts stays flagged (XF-01) |
+| LTI | Two fields: vested (realised) and granted; an IFRS 2 expense only when that is all the report gives, and the note says so | Reports give one or both, on different bases; one merged field would mix them (Novo Nordisk's golden LTI matches neither) |
+| Target or maximum the report doesn't state | Left empty | A target is not always half the maximum (Bang & Olufsen: 100% and 175%; many Nordic policies state only a maximum). The golden file's "target = half the maximum" (all 1,535 rows that have both) is the client's own fill-in, not something the reports say; it was tried and removed on 5 November |
+| Market-cap bands | Nasdaq Nordic's cap segments: large ≥ €1bn, mid ≥ €150m, else small (`datapoints.MARKET_CAP_BANDS_EUR`); other currencies at the ECB rate on the share price's date | The thresholds Nordic exchanges use for their own Large, Mid and Small Cap segments |
 
 ## 9. Exchange fields weak from documents — partly fixed
 
@@ -85,7 +103,9 @@ The client's field definitions are said to be in a HANDOVER.md that we have not 
 
 Nordic/UK test: ISIN 10 of 10 (was 5), exchange fields 51 of 60 (was 47); Novo Nordisk's ticker went from its New York ADR (NVO) to NOVOB. Aker Carbon Capture has no FIRDS records.
 
-**Still open:** the segment within a regulated market (Nasdaq Nordic Large/Mid/Small Cap, Deutsche Börse Prime/General Standard, SIX segments). It needs the exchanges' own files (Deutsche Börse xlsx, SIX csv, Nasdaq Nordic lists); until then it comes from documents. Old listing dates stay a document field.
+**5 November 2026: Nasdaq Nordic cap segments.** For a share on Nasdaq Stockholm, Copenhagen, Helsinki or Iceland, the segment (Large, Mid or Small Cap) comes from Nasdaq's own list of each segment (`listing.nasdaq_segment`, graded A), in place of whatever wording a document used ("Large Cap Stockholm", "Nordic Main Market"). Nordic/UK set: Nokia, Volvo, BioArctic and Novo Nordisk Large Cap; Marimekko and Bang & Olufsen Mid Cap.
+
+**Still open:** Oslo Børs has no cap segments on its main market (Equinor stays empty); Deutsche Börse Prime/General Standard and SIX segments need their own files; London ("Official List", from documents). Old listing dates stay a document field.
 
 ## 8. Sweden and Denmark registers not connected
 
@@ -123,7 +143,7 @@ TWMA Group now: revenue USD 67,419k (its website says "$67.4m"), total assets 98
 
 **29 October 2026: pay amounts now come from the table where one is usable** (issue 2, `extractor/pay_tables.py`). Three fresh runs of the 10-company set (pay answers and table mappings cleared before each) scored 118, 120 and 120 of 148 golden pay figures, against 98 to 121 before. Equinor scored 91 of 91 and Novo Nordisk the same in all three runs. The rest of the spread is Bang & Olufsen (1 to 3 of 17), whose table has no total column and so keeps the AI's reading.
 
-Meanwhile answers are cached per prompt and chunks, so a run without prompt changes is stable. A changed gap list or prompt asks again and can move such values: when the exchange lists filled Equinor's ISIN, the document step asked for a different set of facts and Equinor's `staff_by_country` was not found that time. Mitigations: keep a reviewed snapshot of the cache before prompt changes; flag a role whose parts don't add up to its total (already noted by the R11 check).
+Meanwhile answers are cached per prompt and chunks, so a run without prompt changes is stable. **Seen again 5 November:** when the exchange segment started coming from Nasdaq, the list of open fields changed for every company, so the report pass asked the AI again even where the text was unchanged. BioArctic's owner type moved from family to subsidiary, Volvo's staff by country got a different breakdown, Marimekko lost its segments. Any change to the gap list re-rolls these answers. A changed gap list or prompt asks again and can move such values: when the exchange lists filled Equinor's ISIN, the document step asked for a different set of facts and Equinor's `staff_by_country` was not found that time. Mitigations: keep a reviewed snapshot of the cache before prompt changes; flag a role whose parts don't add up to its total (already noted by the R11 check).
 
 ## 4. Report finder can still pick a subsidiary's or a placeholder report
 
