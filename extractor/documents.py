@@ -364,6 +364,12 @@ class Library:
                 log.info("Documents: %s", e)
                 self.out_of_credits = True
                 return
+            except PaymentRequiredError:
+                raise
+            except Exception as e:  # noqa: BLE001 - Firecrawl refusing a site ("Website Not
+                # Supported", autotrader.co.uk) only means no map: the run goes on without it
+                log.warning("Documents: no map of %s for %r: %s", self.site, term, str(e)[:150])
+                return
             CACHE_DIR.mkdir(exist_ok=True)
             path.write_text(json.dumps(links), encoding="utf-8")
         self._add({l["url"]: l.get("title") or "" for l in links if l.get("url")})

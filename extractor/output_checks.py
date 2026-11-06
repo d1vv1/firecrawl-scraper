@@ -312,7 +312,11 @@ def core_02(r: Row, ctx: Ctx):
         return bad("CORE-02", f"{fmt(printed)} not in the quote")
     if r.data_point == "listing_date":
         parts = r.value.split("-")
-        need = [int(parts[0])] + ([int(parts[2])] if len(parts) == 3 else [])
+        if all(p.isdigit() for p in parts):
+            need = [int(parts[0])] + ([int(parts[2])] if len(parts) == 3 else [])
+        else:
+            # not an ISO date ("June 2008", COD-06 fails it): its own figures
+            need = [int(x) for x in re.findall(r"\d+", r.value)]
         numbers = {int(x) for x in re.findall(r"\d+", normalize(q))}
         missing = [str(x) for x in need if x not in numbers]
         return bad("CORE-02", f"not in the quote: {' '.join(missing)}") if missing else ok("CORE-02")
