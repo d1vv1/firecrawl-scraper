@@ -30,3 +30,7 @@ accuracy/out/
 accuracy/tests/baseline/
 accuracy/inputs/*
 !accuracy/inputs/field_register.json
+# Results of a run are committed: the CSV and Markdown files in output/ (not the
+# per-company JSON, logs or the cache)
+!output/*.csv
+!output/*.md

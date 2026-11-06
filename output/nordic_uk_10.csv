@@ -1,0 +1,11 @@
+company_id,company_name,country,segment,lei,size,annual_report_url,remuneration_report_url
+shell-plc,Shell PLC,GB,europe_uk_listed,21380068P1DRHMJ8KU70,large,,
+ao-world-plc,AO World PLC,GB,europe_uk_listed,2138005FFOAJIUZY4375,small_mid,,
+volvo-ab,Aktiebolaget Volvo,SE,nordic_listed,549300HGV012CNC8JD22,large,,
+bioarctic-ab,BioArctic AB,SE,nordic_listed,549300Y0OI2WVUNHLC33,small_mid,,
+equinor-asa,Equinor ASA,NO,nordic_listed,OW6OFBNCKXC4US5C7523,large,https://cdn.equinor.com/files/h61q9gi9/global/9b3eac2a01f1ce70efa5c751106472c1a59a0ee3.pdf?2025-annual-report-equinor.pdf,https://cdn.sanity.io/files/h61q9gi9/global/1512fd6a4bc0558a1be62359c47ca08b6ab0ac12.pdf
+aker-carbon-capture-asa,Aker Carbon Capture ASA,NO,nordic_listed,549300JXF011KX2HXT02,small_mid,,
+novo-nordisk-as,Novo Nordisk A/S,DK,nordic_listed,549300DAQ1CVT6CXN342,large,,
+bang-olufsen-as,Bang & Olufsen A/S,DK,nordic_listed,52990018KGR3ILFDNJ20,small_mid,,
+nokia-oyj,Nokia Oyj,FI,nordic_listed,549300A0JPRWG1KI7U06,large,,
+marimekko-oyj,Marimekko Oyj,FI,nordic_listed,74370053IOY42B9YJ350,small_mid,,
