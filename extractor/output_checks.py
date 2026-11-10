@@ -134,7 +134,8 @@ class Row:
         if not m:
             return None, None
         rest = self.note[m.end():]
-        ends = [i for i in (rest.find('" (quote not found'), rest.find('"; ')) if i >= 0]
+        ends = [i for i in (rest.find('" (quote not found'), rest.find('" (the source row'),
+                            rest.find('"; ')) if i >= 0]
         q = rest[:min(ends)] if ends else rest.rstrip('"')
         return q.rstrip("…").strip(), int(m.group(1)) if m.group(1) else None
 

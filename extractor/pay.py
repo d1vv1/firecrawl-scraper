@@ -319,8 +319,8 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
     out: list[Found] = []
 
     def placed(name, row, value, fact, src, unit="", extra="", figure=None):
-        doc, endpoint, conf, where = src.place(fact.quote, fact.chunk_id)
-        if figure is not None and not figure_in_quote(figure, fact.quote):
+        doc, endpoint, conf, where, quote = src.place(fact.quote, fact.chunk_id, figure)
+        if figure is not None and not figure_in_quote(figure, quote):
             # added up, multiplied or taken from the wrong sentence (Nokia's LTI target
             # 2.8m + 5.6m; a maximum quoted from "300% of salary")
             conf, where = "C", f"{where}; the figure {_num(figure)} is not in the quote"
@@ -339,7 +339,10 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
         cite = r if r.quote else next((getattr(r, f) for f in AMOUNTS.values()
                                        if getattr(r, f).quote), None)
         if cite is not None:
-            out.append(placed("role_disclosure", row, kind, cite, origin, extra=who))
+            # a pay figure in the cited row lets a pieced-together quote become its source row
+            amounts = [getattr(r, f).value for f in AMOUNTS.values() if getattr(r, f).value is not None]
+            figure = next((v for v in amounts if figure_in_quote(v, cite.quote)), None)
+            out.append(placed("role_disclosure", row, kind, cite, origin, extra=who, figure=figure))
         else:
             out.append(Found("role_disclosure", kind, source=origin.source,
                              note=f"{who}; role named without a quote", confidence="C",
@@ -450,7 +453,7 @@ def company_terms(facts: RemunerationFacts, origin) -> list[Found]:
     for name in ("pension_type", "benefits", "shareholding_requirement"):
         t = getattr(facts, name)
         if t.value and t.quote:
-            doc, endpoint, conf, where = origin.place(t.quote, t.chunk_id)
+            doc, endpoint, conf, where, _ = origin.place(t.quote, t.chunk_id)
             out.append(Found(name, t.value, source=doc.source, endpoint=endpoint, method=doc.method,
                              confidence=conf, note=where, retrieved_at=doc.retrieved_at))
     return out

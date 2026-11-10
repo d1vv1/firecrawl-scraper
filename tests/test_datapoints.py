@@ -28,7 +28,7 @@ def test_columns_match_the_requested_format():
 
 
 def test_pdf_value_gets_the_page_of_its_quote():
-    endpoint, conf, note = _origin().where("pension is defined contribution, 25 percent", 0)
+    endpoint, conf, note, _ = _origin().where("pension is defined contribution, 25 percent", 0)
     assert endpoint == "https://x.com/ar.pdf#page=8"
     assert conf == "B"
     assert note.startswith("PDF page 8:")
@@ -40,12 +40,12 @@ def test_quote_with_wrong_chunk_id_is_still_found():
 
 
 def test_quote_not_in_the_source_is_confidence_c():
-    endpoint, conf, note = _origin().where("Revenue rose to 9,999", 0)
+    endpoint, conf, note, _ = _origin().where("Revenue rose to 9,999", 0)
     assert conf == "C" and "not found verbatim" in note
 
 
 def test_html_report_links_to_the_quote_text():
-    endpoint, conf, _ = _origin("xhtml").where("pension is defined contribution, 25 percent", 0)
+    endpoint, conf, _, _ = _origin("xhtml").where("pension is defined contribution, 25 percent", 0)
     assert endpoint.startswith("https://x.com/ar.pdf#:~:text=pension%20is%20defined")
     # table rows never match a rendered page: no fragment
     assert dp.text_fragment("https://x.com/a", "Net sales|3|2,326.2") == "https://x.com/a"
@@ -731,3 +731,37 @@ def test_currencies_become_iso_codes():
     assert rows[1]["unit"] == "USD" and rows[2]["unit"] == "USD millions" and rows[5]["unit"] == "EUR"
     assert rows[4]["value"] == "12.345" and rows[4]["unit"] == "GBP"
     assert rows[4]["note"].endswith("; printed 1234.5 pence")
+
+
+TEKNA = ("|Name|Year|Salary|Bonus|Total|\n"
+         "|Luc Dionne, CEO|9 2025|156|18|174|\n"
+         "|(2014 - April 27, 2025)|2024|333|20|366|\n"
+         "|Etienne Villeneuve, VP Operations|9 2025|44|1|46|\n")
+
+
+def test_a_pieced_together_quote_becomes_its_source_row():
+    from extractor.validate import source_row
+    q = "Luc Dionne, CEO (2014 - April 27, 2025)|9 2025|156||18|174"
+    assert source_row(q, 156, TEKNA) == "|Luc Dionne, CEO|9 2025|156|18|174|"
+    assert source_row(q, 999, TEKNA) is None                       # the figure must be printed
+    assert source_row("Bonus 44", 44, TEKNA) is None               # too few of the quote's words
+    two = TEKNA + "|Luc Dionne, CEO (restated)|9 2025|156|18|174|\n"
+    assert source_row("Luc Dionne|156|18|174", 156, two) is None     # two rows tie: no guess
+    assert source_row("Bonus|156", 156, "Luc Dionne's bonus was 156 in 2025, 40 in 2024") is None
+    assert source_row("Total £1 (one)", 1, "| Life expectancy up by 1 year | one year | 190.7 |") is None
+    # last year's row is not this year's: the figure must be exact
+    assert source_row("Luc Dionne|2024|333|20|366", 333.5, TEKNA) is None
+
+
+def test_saved_values_get_the_source_row_as_their_quote():
+    note = ('printed 156 thousands; PDF page 6: "Luc Dionne, CEO (2014 - April 27, 2025)|9 2025|156'
+            '||18|174" (quote not found verbatim); the figure 156 is not in the quote')
+    row = dict(value="156000", note=note, endpoint="https://x.com/r.pdf#page=6", confidence="C")
+    dp.repair_quotes([row], lambda url: {5: "Contents", 6: TEKNA})
+    assert row["confidence"] == "B" and row["endpoint"] == "https://x.com/r.pdf#page=6"
+    assert row["note"] == ('printed 156 thousands; PDF page 6: "|Luc Dionne, CEO|9 2025|156|18|174|"'
+                           + dp.REPLACED)
+    kept = dict(value="9", note='PDF page 6: "Total 9 people" (quote not found verbatim)',
+                endpoint="https://x.com/r.pdf#page=6", confidence="C")
+    dp.repair_quotes([kept], lambda url: {6: TEKNA})
+    assert kept["confidence"] == "C"

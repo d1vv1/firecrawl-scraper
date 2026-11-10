@@ -74,7 +74,7 @@ from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
 from .scraper import Page, local_file, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
-from .validate import figure_in_quote, iso_currency, quote_in_text
+from .validate import figure_in_quote, iso_currency, quote_in_text, source_row
 from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
@@ -242,6 +242,59 @@ def text_fragment(url: str, quote: str | None) -> str:
 
 # --- where a quote is ---------------------------------------------------------------------
 
+# note on a value whose quote is the source line the code found, not the AI's (source_row)
+REPLACED = " (the source row; the AI's quote pieced table cells together)"
+
+
+def find_source_row(quote: str, figure: float, near: list[tuple], texts: list[tuple]):
+    """(line, key) of validate.source_row in the (key, text) pairs `near` the quote's place,
+    else in all `texts`; None when no line or more than one qualifies."""
+    for group in (near, texts):
+        hits = [(row, key) for key, text in group if (row := source_row(quote, figure, text))]
+        if len(hits) == 1:
+            return hits[0]
+        if len(hits) > 1:
+            return None
+    return None
+
+
+_NOT_FOUND = re.compile(r'(PDF page (\d+)|report text|web page): "(.*?)…?" \(quote not found verbatim\)')
+
+
+def repair_quotes(rows: list[dict], pages_of) -> None:
+    """Saved values whose quote was not in the text get the source row as their quote, as
+    Origin.where now does during a run (no source asked again; `pages_of(endpoint)` gives
+    the cached text by page). Only figures: the printed figure must be on the row."""
+    for r in rows:
+        m = _NOT_FOUND.search(r["note"]) if r["value"] else None
+        if not m:
+            continue
+        printed = re.search(r"printed (-?[\d.]+(?:e[+-]?\d+)?)", r["note"])
+        try:
+            figure = float(printed.group(1) if printed else r["value"])
+        except ValueError:
+            continue
+        pages = pages_of(r["endpoint"])
+        if not pages:
+            continue
+        texts = sorted(pages.items())
+        page = int(m.group(2)) if m.group(2) else None
+        near = [t for t in texts if page and t[0] in (page, page - 1, page + 1)]
+        found = find_source_row(m.group(3), figure, near, texts)
+        if not found:
+            continue
+        row, key = found
+        base = r["endpoint"].split("#")[0]
+        if m.group(2):
+            where, r["endpoint"] = f"PDF page {key}", f"{base}#page={key}"
+        else:
+            where, r["endpoint"] = m.group(1), text_fragment(base, row)
+        note = r["note"].replace(m.group(0), f'{where}: "{clip(row)}"{REPLACED}')
+        r["note"] = re.sub(r"; the figure \S+ is not in the quote", "", note)
+        if r["confidence"] == "C":
+            r["confidence"] = "B"
+
+
 @dataclass
 class Located:
     page: int | None        # page of the document (PDF page) the quote is on
@@ -285,11 +338,29 @@ class Origin:
     def page_text(self) -> dict[int, str]:
         return {p.number: p.text for p in self.pages}
 
-    def place(self, quote: str | None, chunk_id: int | None) -> tuple["Origin", str, str, str]:
-        return (self, *self.where(quote, chunk_id))
+    def place(self, quote: str | None, chunk_id: int | None,
+              figure: float | None = None) -> tuple["Origin", str, str, str, str | None]:
+        return (self, *self.where(quote, chunk_id, figure))
 
-    def where(self, quote: str | None, chunk_id: int | None) -> tuple[str, str, str]:
-        """(endpoint, confidence, location note) for a value with this quote."""
+    def source_row(self, quote: str, chunk_id: int | None, figure: float) -> tuple[str, int | None] | None:
+        """(the source line, its page or chunk id) for a quote not in the text: the one line
+        printing the figure with the quote's words (validate.source_row), looked for in the
+        quote's chunk first, then in the whole document, where it must be the only one."""
+        if self.kind == "web":
+            texts = [(cid, ch.text) for cid, ch in self.chunks.items()]
+            near = [t for t in texts if t[0] == chunk_id]
+        else:
+            texts = [(p.number, p.text) for p in self.pages]
+            chunk = self.chunks.get(chunk_id) if chunk_id is not None else None
+            near = [t for t in texts if chunk and t[0] in chunk.pages]
+        return find_source_row(quote, figure, near, texts)
+        return None
+
+    def where(self, quote: str | None, chunk_id: int | None,
+              figure: float | None = None) -> tuple[str, str, str, str | None]:
+        """(endpoint, confidence, location note, the quote used) for a value with this quote.
+        A quote not in the text, for a value with a figure, is replaced by the source line
+        that prints the figure, when one line clearly is the one meant (source_row)."""
         if self.kind == "web":
             url = (self.page_urls or {}).get(chunk_id, self.url)
             chunk = self.chunks.get(chunk_id)
@@ -299,18 +370,31 @@ class Origin:
                     if quote_in_text(quote, ch.text):
                         url, ok = (self.page_urls or {}).get(cid, url), True
                         break
+            fixed = None
+            if not ok and quote and figure is not None:
+                fixed = self.source_row(quote, chunk_id, figure)
+                if fixed:
+                    quote, ok = fixed[0], True
+                    url = (self.page_urls or {}).get(fixed[1], url)
             return (text_fragment(url, quote) if ok else url, "B" if ok else "C",
-                    f'web page: "{clip(quote)}"' + ("" if ok else " (quote not found verbatim)"))
+                    f'web page: "{clip(quote)}"' + (REPLACED if fixed else "" if ok
+                                                    else " (quote not found verbatim)"), quote)
         loc = locate(quote, chunk_id, self.chunks, self.pages)
+        fixed = None
+        if not loc.verified and quote and figure is not None:
+            fixed = self.source_row(quote, chunk_id, figure)
+            if fixed:
+                quote, loc = fixed[0], Located(fixed[1], True)
         conf = "B" if loc.verified else "C"
-        tail = "" if loc.verified else " (quote not found verbatim)"
+        tail = REPLACED if fixed else "" if loc.verified else " (quote not found verbatim)"
         if self.kind == "pdf":
             page = loc.page
             return (f"{self.url}#page={page}" if page else self.url, conf,
-                    f'PDF page {page}: "{clip(quote)}"{tail}' if page else f'"{clip(quote)}"{tail}')
+                    f'PDF page {page}: "{clip(quote)}"{tail}' if page else f'"{clip(quote)}"{tail}',
+                    quote)
         # Filed XHTML / HTML report text has no fixed pages: link to the quote itself.
         return (text_fragment(self.url, quote) if loc.verified else self.url, conf,
-                f'report text: "{clip(quote)}"{tail}')
+                f'report text: "{clip(quote)}"{tail}', quote)
 
 
 @dataclass
@@ -320,7 +404,8 @@ class Bundle:
     model gave the wrong chunk id), in whichever document has it."""
     origins: list[Origin]
 
-    def place(self, quote: str | None, chunk_id: int | None) -> tuple[Origin, str, str, str]:
+    def place(self, quote: str | None, chunk_id: int | None,
+              figure: float | None = None) -> tuple[Origin, str, str, str, str | None]:
         first = next((o for o in self.origins if chunk_id in o.chunks), self.origins[0])
         placed = first.place(quote, chunk_id)
         if placed[2] == "B" or not quote:
@@ -328,6 +413,12 @@ class Bundle:
         for o in self.origins:
             if o is not first:
                 other = o.place(quote, None)
+                if other[2] == "B":
+                    return other
+        # in no document as quoted: the source row, in the chunk's document first
+        if figure is not None:
+            for o in [first] + [o for o in self.origins if o is not first]:
+                other = o.place(quote, chunk_id if o is first else None, figure)
                 if other[2] == "B":
                     return other
         return placed
@@ -387,7 +478,8 @@ def _money_found(name: str, m: dict, result: dict, origin: Origin | None) -> Fou
         return Found(name, value, unit=m.get("currency") or "", period_end=period,
                      source="Annual report", endpoint=result.get("report_url") or "", method="PARSE",
                      confidence="C", note=f'"{clip(m.get("quote"))}"', retrieved_at=at)
-    endpoint, conf, where = origin.where(m.get("quote"), m.get("chunk_id"))
+    endpoint, conf, where, _ = origin.where(m.get("quote"), m.get("chunk_id"),
+                                            m["value"] if isinstance(m["value"], (int, float)) else None)
     printed = f"printed {fmt_number(m['value'])} {m.get('unit')} ({m.get('label_in_report')})"
     return Found(name, value, unit=m.get("currency") or "", period_end=period, source=origin.source,
                  endpoint=endpoint, method="PARSE", confidence=conf,
@@ -509,8 +601,8 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
             figure=None, method: str = ""):
         if value in (None, "", []) or not getattr(fact, "quote", None):
             return                      # no quote, no value: the prompt demands one
-        doc, endpoint, conf, where = origin.place(fact.quote, fact.chunk_id)
-        if figure is not None and not figure_in_quote(figure, fact.quote):
+        doc, endpoint, conf, where, quote = origin.place(fact.quote, fact.chunk_id, figure)
+        if figure is not None and not figure_in_quote(figure, quote):
             # worked out by the AI or taken from the wrong place
             conf, where = "C", f"{where}; the figure {fmt_number(figure)} is not in the quote"
         dated = f"document dated {doc.date}" if doc.date else ""
@@ -1553,6 +1645,8 @@ def refresh(rows: list[dict]) -> list[dict]:
 
 
 def write_csv(targets: list[Target], out: Path) -> int:
+    from .output_checks import Sources          # imports this module
+    sources = Sources(CACHE_DIR, OUTPUT_DIR)
     n = 0
     tmp = out.with_suffix(".tmp")
     with tmp.open("w", newline="", encoding="utf-8-sig") as f:
@@ -1561,7 +1655,9 @@ def write_csv(targets: list[Target], out: Path) -> int:
         for t in targets:
             p = dp_path(t.company)
             if p.exists():
-                for row in refresh(json.loads(p.read_text(encoding="utf-8"))):
+                rows = refresh(json.loads(p.read_text(encoding="utf-8")))
+                repair_quotes(rows, sources.pages)
+                for row in rows:
                     w.writerow(row)
                     n += 1
     for attempt in range(5):

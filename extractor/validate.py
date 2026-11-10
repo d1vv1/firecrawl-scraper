@@ -194,6 +194,54 @@ def _parts_nearby(quote: str, s: str) -> bool:
     return False
 
 
+def _has_figure(figure: float, text: str) -> bool:
+    """The figure printed in the text as one number, exactly (no sums or rounding, unlike
+    figure_in_quote: last year's 173,759 is not this year's 173,904)."""
+    nums = numbers_in(text) + [float(c.replace(" ", "")) for c in (x.strip() for x in text.split("|"))
+                               if re.fullmatch(r"\d{1,3}(?: \d{3})+", c)]
+    w = abs(figure)
+    return any(abs(abs(n) - w) <= max(1e-6 * w, 1e-9) for n in nums)
+
+
+def source_row(quote: str, figure: float, text: str) -> str | None:
+    """The line of the source the AI meant when its quote pieces table cells together
+    ("Luc Dionne, CEO (2014 - April 27, 2025)|9 2025|156" for the rows "|Luc Dionne,
+    CEO|9 2025|156|..." and "|(2014 - April 27, 2025)|2024|333|"). A line qualifies when
+    it prints the figure exactly and holds the quote's numbers: all of them (three at
+    least), or all but a few found on the line next to it (a wrapped label) when it also
+    holds half the quote's words. The line missing the fewest numbers, then holding the
+    most words; None when two tie. Only table rows (a line with "|", or one of at most 160
+    characters with three figures and no more words than figures): in running text a
+    figure and a few words match too easily ("£21 million" for a £21,000 benefit)."""
+    qt = [t for t in _tokens(normalize(quote)) if t.isalnum() or "." in t]
+    words = {t for t in qt if not t[0].isdigit() and len(t) > 1}
+    nums = {t for t in qt if t[0].isdigit()}
+    need = max(1, -(-len(words) // 2))
+    lines = [l.strip() for l in text.splitlines()]
+    toks = [set(_tokens(normalize(l))) for l in lines]
+    best, score, tie = None, None, False
+    for i, line in enumerate(lines):
+        figures = len(_FIGURE.findall(line))
+        table_row = "|" in line or (len(line) <= 160 and figures >= 3
+                                    and figures >= len(re.findall(r"[^\W\d_]{2,}", line)))
+        if not table_row or not _has_figure(figure, line):
+            continue
+        lt = toks[i]
+        w, missing = len(words & lt), nums - lt
+        if missing:
+            beside = (toks[i - 1] if i else set()) | (toks[i + 1] if i + 1 < len(toks) else set())
+            if missing - beside or len(missing) > len(nums) / 2 or not words or w < need:
+                continue
+        elif len(nums) < 3 and (not words or w < need or abs(figure) < 100):
+            continue            # a small figure ("£1") with a word or two is on many lines
+        s = (-len(missing), w)
+        if score is None or s > score:
+            best, score, tie = line, s, False
+        elif s == score:
+            tie = tie or line != best
+    return None if tie else best
+
+
 def numbers_in(text: str) -> list[float]:
     """Figures in a quote, thousands separators removed: '1,242 | 96<br>23' -> [1242, 96, 23].
     Space-grouped figures count both whole and in parts ("1 057 875" -> 1057875, 1, 57, 875),

@@ -13871,30 +13871,30 @@ avolta-ag,total_assets,,16295000000,Pass,100,DER-03,n/a,not a derived number
 avolta-ag,total_assets,,16295000000,Pass,100,DER-06,n/a,not derived
 avolta-ag,total_assets,,16295000000,Pass,100,XF-01,n/a,not a total
 avolta-ag,total_assets,,16295000000,Pass,100,XF-02,n/a,not a total
-avolta-ag,ebitda,,1324000000,Fail (hard),88,CORE-01,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,CORE-02,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,CORE-03,fail,quote not in the source text
-avolta-ag,ebitda,,1324000000,Fail (hard),88,CORE-04,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,CORE-05,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,COD-01,n/a,not a coded field
-avolta-ag,ebitda,,1324000000,Fail (hard),88,COD-02,n/a,not a classified field
-avolta-ag,ebitda,,1324000000,Fail (hard),88,COD-03,n/a,not an identifier
-avolta-ag,ebitda,,1324000000,Fail (hard),88,COD-06,n/a,not a date field
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-01,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-02,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-04,pass,
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-05,n/a,not a count
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-06,n/a,no percentage
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-07,n/a,not a holdings list
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-08,n/a,not a breakdown
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-09,n/a,not an LTI amount
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-11,n/a,not STI paid
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-12,n/a,not a pay amount
-avolta-ag,ebitda,,1324000000,Fail (hard),88,NUM-13,n/a,not FTE
-avolta-ag,ebitda,,1324000000,Fail (hard),88,DER-03,n/a,not a derived number
-avolta-ag,ebitda,,1324000000,Fail (hard),88,DER-06,n/a,not derived
-avolta-ag,ebitda,,1324000000,Fail (hard),88,XF-01,n/a,not a total
-avolta-ag,ebitda,,1324000000,Fail (hard),88,XF-02,n/a,not a total
+avolta-ag,ebitda,,1324000000,Pass,100,CORE-01,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,CORE-02,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,CORE-03,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,CORE-04,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,CORE-05,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,COD-01,n/a,not a coded field
+avolta-ag,ebitda,,1324000000,Pass,100,COD-02,n/a,not a classified field
+avolta-ag,ebitda,,1324000000,Pass,100,COD-03,n/a,not an identifier
+avolta-ag,ebitda,,1324000000,Pass,100,COD-06,n/a,not a date field
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-01,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-02,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-04,pass,
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-05,n/a,not a count
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-06,n/a,no percentage
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-07,n/a,not a holdings list
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-08,n/a,not a breakdown
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-09,n/a,not an LTI amount
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-11,n/a,not STI paid
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-12,n/a,not a pay amount
+avolta-ag,ebitda,,1324000000,Pass,100,NUM-13,n/a,not FTE
+avolta-ag,ebitda,,1324000000,Pass,100,DER-03,n/a,not a derived number
+avolta-ag,ebitda,,1324000000,Pass,100,DER-06,n/a,not derived
+avolta-ag,ebitda,,1324000000,Pass,100,XF-01,n/a,not a total
+avolta-ag,ebitda,,1324000000,Pass,100,XF-02,n/a,not a total
 avolta-ag,fiscal_year,,2025,Pass,100,CORE-01,pass,a fact about the whole report
 avolta-ag,fiscal_year,,2025,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 avolta-ag,fiscal_year,,2025,Pass,100,CORE-03,n/a,no quote (see CORE-02)
@@ -14951,30 +14951,30 @@ avolta-ag,lti_max,Other members of Global Executive Committee,200,Pass,100,DER-0
 avolta-ag,lti_max,Other members of Global Executive Committee,200,Pass,100,DER-06,n/a,not derived
 avolta-ag,lti_max,Other members of Global Executive Committee,200,Pass,100,XF-01,n/a,not a total
 avolta-ag,lti_max,Other members of Global Executive Committee,200,Pass,100,XF-02,n/a,not a total
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,CORE-01,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,CORE-02,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,CORE-03,fail,quote not in the source text
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,CORE-04,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,CORE-05,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,COD-01,n/a,not a coded field
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,COD-02,n/a,not a classified field
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,COD-03,n/a,not an identifier
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,COD-06,n/a,not a date field
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-01,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-02,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-04,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-05,n/a,not a count
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-06,n/a,no percentage
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-07,n/a,not a holdings list
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-08,n/a,not a breakdown
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-11,n/a,not STI paid
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-12,pass,
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,NUM-13,n/a,not FTE
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,DER-03,n/a,not a derived number
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,DER-06,n/a,not derived
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,XF-01,n/a,not a total
-avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Fail (hard),89,XF-02,n/a,not a total
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,CORE-01,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,CORE-02,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,CORE-03,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,CORE-04,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,CORE-05,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,COD-01,n/a,not a coded field
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,COD-02,n/a,not a classified field
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,COD-03,n/a,not an identifier
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,COD-06,n/a,not a date field
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-01,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-02,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-04,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-05,n/a,not a count
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-06,n/a,no percentage
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-07,n/a,not a holdings list
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-08,n/a,not a breakdown
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-09,n/a,not an LTI amount
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-11,n/a,not STI paid
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-12,pass,
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,NUM-13,n/a,not FTE
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,DER-03,n/a,not a derived number
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,DER-06,n/a,not derived
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,XF-01,n/a,not a total
+avolta-ag,benefits_value,Other members of Global Executive Committee,491000,Pass,100,XF-02,n/a,not a total
 avolta-ag,pension_contribution,Other members of Global Executive Committee,1310800,Fail (hard),89,CORE-01,pass,
 avolta-ag,pension_contribution,Other members of Global Executive Committee,1310800,Fail (hard),89,CORE-02,fail,1310.8 not in the quote
 avolta-ag,pension_contribution,Other members of Global Executive Committee,1310800,Fail (hard),89,CORE-03,pass,
@@ -26711,30 +26711,30 @@ beiersdorf-ag-o-n,base_salary,Vorstandsvorsitzender,2000000,Pass,100,DER-03,n/a,
 beiersdorf-ag-o-n,base_salary,Vorstandsvorsitzender,2000000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Vorstandsvorsitzender,2000000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Vorstandsvorsitzender,2000000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Vorstandsvorsitzender,407000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Vorstandsvorsitzender,500000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Vorstandsvorsitzender,500000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Vorstandsvorsitzender,500000,Pass,100,CORE-03,pass,
@@ -26951,30 +26951,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Oswald Barckhahn),700000,P
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Oswald Barckhahn),700000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Oswald Barckhahn),700000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Oswald Barckhahn),700000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Oswald Barckhahn),142000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Oswald Barckhahn),200000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Oswald Barckhahn),200000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Oswald Barckhahn),200000,Pass,100,CORE-03,pass,
@@ -27191,30 +27191,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CFO,700000,Pass,100,DER-03,
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CFO,700000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CFO,700000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CFO,700000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CFO,153000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CFO,200000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CFO,200000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CFO,200000,Pass,100,CORE-03,pass,
@@ -27431,30 +27431,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CHRO,700000,Pass,100,DER-03
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CHRO,700000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CHRO,700000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands/CHRO,700000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands/CHRO,166000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CHRO,200000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CHRO,200000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands/CHRO,200000,Pass,100,CORE-03,pass,
@@ -27671,30 +27671,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Grita Loebsack),700000,Pas
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Grita Loebsack),700000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Grita Loebsack),700000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Grita Loebsack),700000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Grita Loebsack),138000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Grita Loebsack),200000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Grita Loebsack),200000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Grita Loebsack),200000,Pass,100,CORE-03,pass,
@@ -27935,30 +27935,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Ramon A. Mirt),700000,Pass
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Ramon A. Mirt),700000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Ramon A. Mirt),700000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (Ramon A. Mirt),700000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (Ramon A. Mirt),144000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Ramon A. Mirt),200000,Pass,100,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Ramon A. Mirt),200000,Pass,100,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (Ramon A. Mirt),200000,Pass,100,CORE-03,pass,
@@ -28175,30 +28175,30 @@ beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (bis 30.06.2025),350000,Pas
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (bis 30.06.2025),350000,Pass,100,DER-06,n/a,not derived
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (bis 30.06.2025),350000,Pass,100,XF-01,n/a,not a total
 beiersdorf-ag-o-n,base_salary,Mitglied des Vorstands (bis 30.06.2025),350000,Pass,100,XF-02,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,CORE-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,CORE-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,CORE-03,fail,quote not in the source text
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,CORE-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,CORE-05,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,COD-01,n/a,not a coded field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,COD-02,n/a,not a classified field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,COD-03,n/a,not an identifier
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,COD-06,n/a,not a date field
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-01,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-02,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-04,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-05,n/a,not a count
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-06,n/a,no percentage
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-07,n/a,not a holdings list
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-08,n/a,not a breakdown
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-12,pass,
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,NUM-13,n/a,not FTE
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,DER-03,n/a,not a derived number
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,DER-06,n/a,not derived
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,XF-01,n/a,not a total
-beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Fail (hard),89,XF-02,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,CORE-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,CORE-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,CORE-03,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,CORE-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,CORE-05,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,COD-01,n/a,not a coded field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,COD-02,n/a,not a classified field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,COD-03,n/a,not an identifier
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,COD-06,n/a,not a date field
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-01,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-02,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-04,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-05,n/a,not a count
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-06,n/a,no percentage
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-07,n/a,not a holdings list
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-08,n/a,not a breakdown
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-09,n/a,not an LTI amount
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-12,pass,
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,NUM-13,n/a,not FTE
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,DER-03,n/a,not a derived number
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,DER-06,n/a,not derived
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,XF-01,n/a,not a total
+beiersdorf-ag-o-n,sti_paid,Mitglied des Vorstands (bis 30.06.2025),56000,Pass,100,XF-02,n/a,not a total
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (bis 30.06.2025),100000,Fail (hard),83,CORE-01,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (bis 30.06.2025),100000,Fail (hard),83,CORE-02,pass,
 beiersdorf-ag-o-n,sti_target,Mitglied des Vorstands (bis 30.06.2025),100000,Fail (hard),83,CORE-03,fail,quote not in the source text
@@ -39119,6 +39119,30 @@ kesko-b,total_remuneration,Group Management Board,8232900,Pass,100,XF-02,n/a,few
 4imprint-group-plc,share_price,,44.74,Pass,100,DER-06,n/a,not derived
 4imprint-group-plc,share_price,,44.74,Pass,100,XF-01,n/a,not a total
 4imprint-group-plc,share_price,,44.74,Pass,100,XF-02,n/a,not a total
+4imprint-group-plc,market_cap_band,,large,Pass,100,CORE-01,pass,
+4imprint-group-plc,market_cap_band,,large,Pass,100,CORE-02,n/a,"DERIVED: no quote, the endpoint is the source"
+4imprint-group-plc,market_cap_band,,large,Pass,100,CORE-03,n/a,DERIVED: no quote
+4imprint-group-plc,market_cap_band,,large,Pass,100,CORE-04,n/a,holds without a date
+4imprint-group-plc,market_cap_band,,large,Pass,100,CORE-05,pass,
+4imprint-group-plc,market_cap_band,,large,Pass,100,COD-01,pass,
+4imprint-group-plc,market_cap_band,,large,Pass,100,COD-02,n/a,not a classified field
+4imprint-group-plc,market_cap_band,,large,Pass,100,COD-03,n/a,not an identifier
+4imprint-group-plc,market_cap_band,,large,Pass,100,COD-06,n/a,not a date field
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-01,n/a,not money
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-04,n/a,no range for this field
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-05,n/a,not a count
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-06,n/a,no percentage
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-07,n/a,not a holdings list
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-08,n/a,not a breakdown
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-09,n/a,not an LTI amount
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-11,n/a,not STI paid
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-12,n/a,not a pay amount
+4imprint-group-plc,market_cap_band,,large,Pass,100,NUM-13,n/a,not FTE
+4imprint-group-plc,market_cap_band,,large,Pass,100,DER-03,n/a,not a derived number
+4imprint-group-plc,market_cap_band,,large,Pass,100,DER-06,pass,
+4imprint-group-plc,market_cap_band,,large,Pass,100,XF-01,n/a,not a total
+4imprint-group-plc,market_cap_band,,large,Pass,100,XF-02,n/a,not a total
 4imprint-group-plc,largest_holders,,"BlackRock, Inc. 7.13%; FMR LLC 4.9%; Norges Bank 2.99%; Montanaro Asset Management Limited 2.94%",Pass,100,CORE-01,pass,
 4imprint-group-plc,largest_holders,,"BlackRock, Inc. 7.13%; FMR LLC 4.9%; Norges Bank 2.99%; Montanaro Asset Management Limited 2.94%",Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 4imprint-group-plc,largest_holders,,"BlackRock, Inc. 7.13%; FMR LLC 4.9%; Norges Bank 2.99%; Montanaro Asset Management Limited 2.94%",Pass,100,CORE-03,pass,
@@ -65135,30 +65159,30 @@ babcock-international-group-plc,base_salary,Deputy Chief Executive,108000,Fail (
 babcock-international-group-plc,base_salary,Deputy Chief Executive,108000,Fail (hard),89,DER-06,n/a,not derived
 babcock-international-group-plc,base_salary,Deputy Chief Executive,108000,Fail (hard),89,XF-01,n/a,not a total
 babcock-international-group-plc,base_salary,Deputy Chief Executive,108000,Fail (hard),89,XF-02,n/a,not a total
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,CORE-01,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,CORE-02,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,CORE-03,fail,quote not in the source text
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,CORE-04,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,CORE-05,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,COD-01,n/a,not a coded field
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,COD-02,n/a,not a classified field
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,COD-03,n/a,not an identifier
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,COD-06,n/a,not a date field
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-01,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-02,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-04,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-05,n/a,not a count
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-06,n/a,no percentage
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-07,n/a,not a holdings list
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-08,n/a,not a breakdown
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-09,n/a,not an LTI amount
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-11,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-12,pass,
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,NUM-13,n/a,not FTE
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,DER-03,n/a,not a derived number
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,DER-06,n/a,not derived
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,XF-01,n/a,not a total
-babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Fail (hard),90,XF-02,n/a,not a total
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,CORE-01,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,CORE-02,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,CORE-03,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,CORE-04,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,CORE-05,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,COD-01,n/a,not a coded field
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,COD-02,n/a,not a classified field
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,COD-03,n/a,not an identifier
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,COD-06,n/a,not a date field
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-01,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-02,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-04,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-05,n/a,not a count
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-06,n/a,no percentage
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-07,n/a,not a holdings list
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-08,n/a,not a breakdown
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-09,n/a,not an LTI amount
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-11,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-12,pass,
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,NUM-13,n/a,not FTE
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,DER-03,n/a,not a derived number
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,DER-06,n/a,not derived
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,XF-01,n/a,not a total
+babcock-international-group-plc,sti_paid,Deputy Chief Executive,56000,Pass,100,XF-02,n/a,not a total
 babcock-international-group-plc,sti_target,Deputy Chief Executive,82.5,Pass,100,CORE-01,pass,
 babcock-international-group-plc,sti_target,Deputy Chief Executive,82.5,Pass,100,CORE-02,n/a,"DERIVED: no quote, the endpoint is the source"
 babcock-international-group-plc,sti_target,Deputy Chief Executive,82.5,Pass,100,CORE-03,pass,
@@ -84695,30 +84719,30 @@ caledonia-investments-plc,base_salary,Executive Director (J M B Cayzer-Colvin),4
 caledonia-investments-plc,base_salary,Executive Director (J M B Cayzer-Colvin),415000,Pass,100,DER-06,n/a,not derived
 caledonia-investments-plc,base_salary,Executive Director (J M B Cayzer-Colvin),415000,Pass,100,XF-01,n/a,not a total
 caledonia-investments-plc,base_salary,Executive Director (J M B Cayzer-Colvin),415000,Pass,100,XF-02,n/a,not a total
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,CORE-01,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,CORE-02,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,CORE-03,fail,quote not in the source text
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,CORE-04,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,CORE-05,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,COD-01,n/a,not a coded field
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,COD-02,n/a,not a classified field
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,COD-03,n/a,not an identifier
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,COD-06,n/a,not a date field
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-01,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-02,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-04,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-05,n/a,not a count
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-06,n/a,no percentage
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-07,n/a,not a holdings list
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-08,n/a,not a breakdown
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-09,n/a,not an LTI amount
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-11,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-12,pass,
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,NUM-13,n/a,not FTE
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,DER-03,n/a,not a derived number
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,DER-06,n/a,not derived
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,XF-01,n/a,not a total
-caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Fail (hard),90,XF-02,n/a,not a total
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,CORE-01,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,CORE-02,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,CORE-03,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,CORE-04,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,CORE-05,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,COD-01,n/a,not a coded field
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,COD-02,n/a,not a classified field
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,COD-03,n/a,not an identifier
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,COD-06,n/a,not a date field
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-01,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-02,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-04,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-05,n/a,not a count
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-06,n/a,no percentage
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-07,n/a,not a holdings list
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-08,n/a,not a breakdown
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-09,n/a,not an LTI amount
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-11,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-12,pass,
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,NUM-13,n/a,not FTE
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,DER-03,n/a,not a derived number
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,DER-06,n/a,not derived
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,XF-01,n/a,not a total
+caledonia-investments-plc,sti_paid,Executive Director (J M B Cayzer-Colvin),259000,Pass,100,XF-02,n/a,not a total
 caledonia-investments-plc,sti_target,Executive Director (J M B Cayzer-Colvin),50,Pass,100,CORE-01,pass,
 caledonia-investments-plc,sti_target,Executive Director (J M B Cayzer-Colvin),50,Pass,100,CORE-02,pass,
 caledonia-investments-plc,sti_target,Executive Director (J M B Cayzer-Colvin),50,Pass,100,CORE-03,pass,
@@ -99191,78 +99215,78 @@ cmb-tech-nv,pay_currency,CEO,EUR,Pass,100,DER-03,n/a,not a derived number
 cmb-tech-nv,pay_currency,CEO,EUR,Pass,100,DER-06,n/a,not derived
 cmb-tech-nv,pay_currency,CEO,EUR,Pass,100,XF-01,n/a,not a total
 cmb-tech-nv,pay_currency,CEO,EUR,Pass,100,XF-02,n/a,not a total
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,CORE-01,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,CORE-02,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,CORE-03,fail,quote not in the source text
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,CORE-04,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,CORE-05,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,COD-01,n/a,not a coded field
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,COD-02,n/a,not a classified field
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,COD-03,n/a,not an identifier
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,COD-06,n/a,not a date field
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-01,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-02,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-04,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-05,n/a,not a count
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-06,n/a,no percentage
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-07,n/a,not a holdings list
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-08,n/a,not a breakdown
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-09,n/a,not an LTI amount
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-12,pass,
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,NUM-13,n/a,not FTE
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,DER-03,n/a,not a derived number
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,DER-06,n/a,not derived
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,XF-01,n/a,not a total
-cmb-tech-nv,sti_paid,CEO,62499,Fail (hard),89,XF-02,n/a,not a total
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,CORE-01,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,CORE-02,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,CORE-03,fail,quote not in the source text
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,CORE-04,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,CORE-05,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,COD-01,n/a,not a coded field
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,COD-02,n/a,not a classified field
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,COD-03,n/a,not an identifier
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,COD-06,n/a,not a date field
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-01,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-02,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-04,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-05,n/a,not a count
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-06,n/a,no percentage
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-07,n/a,not a holdings list
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-08,n/a,not a breakdown
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-09,n/a,not an LTI amount
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-11,n/a,not STI paid
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-12,pass,
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,NUM-13,n/a,not FTE
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,DER-03,n/a,not a derived number
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,DER-06,n/a,not derived
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,XF-01,n/a,not a total
-cmb-tech-nv,pension_contribution,CEO,0,Fail (hard),89,XF-02,n/a,not a total
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,CORE-01,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,CORE-02,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,CORE-03,fail,quote not in the source text
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,CORE-04,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,CORE-05,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,COD-01,n/a,not a coded field
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,COD-02,n/a,not a classified field
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,COD-03,n/a,not an identifier
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,COD-06,n/a,not a date field
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-01,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-02,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-04,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-05,n/a,not a count
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-06,n/a,no percentage
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-07,n/a,not a holdings list
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-08,n/a,not a breakdown
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-09,n/a,not an LTI amount
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-11,n/a,not STI paid
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-12,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,NUM-13,n/a,not FTE
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,DER-03,n/a,not a derived number
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,DER-06,n/a,not derived
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,XF-01,pass,
-cmb-tech-nv,total_remuneration,CEO,312495,Fail (hard),82,XF-02,fail,"parts add up to 62,499, stated 312,495"
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,CORE-01,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,CORE-02,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,CORE-03,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,CORE-04,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,CORE-05,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,COD-01,n/a,not a coded field
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,COD-02,n/a,not a classified field
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,COD-03,n/a,not an identifier
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,COD-06,n/a,not a date field
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-01,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-02,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-04,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-05,n/a,not a count
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-06,n/a,no percentage
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-07,n/a,not a holdings list
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-08,n/a,not a breakdown
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-09,n/a,not an LTI amount
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-11,n/a,"no maximum as % of base salary, or no base salary"
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-12,pass,
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,NUM-13,n/a,not FTE
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,DER-03,n/a,not a derived number
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,DER-06,n/a,not derived
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,XF-01,n/a,not a total
+cmb-tech-nv,sti_paid,CEO,62499,Pass,100,XF-02,n/a,not a total
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,CORE-01,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,CORE-02,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,CORE-03,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,CORE-04,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,CORE-05,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,COD-01,n/a,not a coded field
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,COD-02,n/a,not a classified field
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,COD-03,n/a,not an identifier
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,COD-06,n/a,not a date field
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-01,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-02,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-04,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-05,n/a,not a count
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-06,n/a,no percentage
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-07,n/a,not a holdings list
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-08,n/a,not a breakdown
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-09,n/a,not an LTI amount
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-11,n/a,not STI paid
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-12,pass,
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,NUM-13,n/a,not FTE
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,DER-03,n/a,not a derived number
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,DER-06,n/a,not derived
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,XF-01,n/a,not a total
+cmb-tech-nv,pension_contribution,CEO,0,Pass,100,XF-02,n/a,not a total
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,CORE-01,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,CORE-02,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,CORE-03,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,CORE-04,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,CORE-05,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,COD-01,n/a,not a coded field
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,COD-02,n/a,not a classified field
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,COD-03,n/a,not an identifier
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,COD-06,n/a,not a date field
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-01,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-02,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-04,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-05,n/a,not a count
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-06,n/a,no percentage
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-07,n/a,not a holdings list
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-08,n/a,not a breakdown
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-09,n/a,not an LTI amount
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-11,n/a,not STI paid
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-12,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,NUM-13,n/a,not FTE
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,DER-03,n/a,not a derived number
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,DER-06,n/a,not derived
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,XF-01,pass,
+cmb-tech-nv,total_remuneration,CEO,312495,Review,91,XF-02,fail,"parts add up to 62,499, stated 312,495"
 cmb-tech-nv,role_disclosure,CFO,individual,Pass,100,CORE-01,pass,
 cmb-tech-nv,role_disclosure,CFO,individual,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 cmb-tech-nv,role_disclosure,CFO,individual,Pass,100,CORE-03,pass,
@@ -109919,30 +109943,30 @@ sparebank-1-helgeland,pay_currency,Administrerende direktør,NOK,Pass,100,DER-03
 sparebank-1-helgeland,pay_currency,Administrerende direktør,NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Administrerende direktør,NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Administrerende direktør,NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Fail (hard),89,XF-02,n/a,not a total
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,base_salary,Administrerende direktør,2918081,Pass,100,XF-02,n/a,not a total
 sparebank-1-helgeland,sti_paid,Administrerende direktør,20000,Pass,100,CORE-01,pass,
 sparebank-1-helgeland,sti_paid,Administrerende direktør,20000,Pass,100,CORE-02,pass,
 sparebank-1-helgeland,sti_paid,Administrerende direktør,20000,Pass,100,CORE-03,pass,
@@ -110015,30 +110039,30 @@ sparebank-1-helgeland,pension_contribution,Administrerende direktør,305424,Fail
 sparebank-1-helgeland,pension_contribution,Administrerende direktør,305424,Fail (hard),89,DER-06,n/a,not derived
 sparebank-1-helgeland,pension_contribution,Administrerende direktør,305424,Fail (hard),89,XF-01,n/a,not a total
 sparebank-1-helgeland,pension_contribution,Administrerende direktør,305424,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Administrerende direktør,3518112,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Direktør personmarked,individual,Pass,100,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Direktør personmarked,individual,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Direktør personmarked,individual,Pass,100,CORE-03,pass,
@@ -110255,30 +110279,30 @@ sparebank-1-helgeland,pay_currency,Finansdirektør,NOK,Pass,100,DER-03,n/a,not a
 sparebank-1-helgeland,pay_currency,Finansdirektør,NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Finansdirektør,NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Finansdirektør,NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Fail (hard),89,XF-02,n/a,not a total
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,base_salary,Finansdirektør,1758912,Pass,100,XF-02,n/a,not a total
 sparebank-1-helgeland,sti_paid,Finansdirektør,20000,Pass,100,CORE-01,pass,
 sparebank-1-helgeland,sti_paid,Finansdirektør,20000,Pass,100,CORE-02,pass,
 sparebank-1-helgeland,sti_paid,Finansdirektør,20000,Pass,100,CORE-03,pass,
@@ -110351,30 +110375,30 @@ sparebank-1-helgeland,pension_contribution,Finansdirektør,275351,Fail (hard),89
 sparebank-1-helgeland,pension_contribution,Finansdirektør,275351,Fail (hard),89,DER-06,n/a,not derived
 sparebank-1-helgeland,pension_contribution,Finansdirektør,275351,Fail (hard),89,XF-01,n/a,not a total
 sparebank-1-helgeland,pension_contribution,Finansdirektør,275351,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Finansdirektør,2137557,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Direktør risikostyring,individual,Fail (hard),75,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Direktør risikostyring,individual,Fail (hard),75,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Direktør risikostyring,individual,Fail (hard),75,CORE-03,fail,quote not in the source text
@@ -110423,30 +110447,30 @@ sparebank-1-helgeland,pay_currency,Direktør risikostyring,NOK,Pass,100,DER-03,n
 sparebank-1-helgeland,pay_currency,Direktør risikostyring,NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Direktør risikostyring,NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Direktør risikostyring,NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Fail (hard),89,XF-02,n/a,not a total
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,base_salary,Direktør risikostyring,1587358,Pass,100,XF-02,n/a,not a total
 sparebank-1-helgeland,sti_paid,Direktør risikostyring,20000,Fail (hard),89,CORE-01,pass,
 sparebank-1-helgeland,sti_paid,Direktør risikostyring,20000,Fail (hard),89,CORE-02,pass,
 sparebank-1-helgeland,sti_paid,Direktør risikostyring,20000,Fail (hard),89,CORE-03,fail,quote not in the source text
@@ -110519,30 +110543,30 @@ sparebank-1-helgeland,pension_contribution,Direktør risikostyring,279012,Fail (
 sparebank-1-helgeland,pension_contribution,Direktør risikostyring,279012,Fail (hard),89,DER-06,n/a,not derived
 sparebank-1-helgeland,pension_contribution,Direktør risikostyring,279012,Fail (hard),89,XF-01,n/a,not a total
 sparebank-1-helgeland,pension_contribution,Direktør risikostyring,279012,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør risikostyring,1982025,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Direktør forretningsutvikling,individual,Fail (hard),75,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Direktør forretningsutvikling,individual,Fail (hard),75,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Direktør forretningsutvikling,individual,Fail (hard),75,CORE-03,fail,quote not in the source text
@@ -110591,30 +110615,30 @@ sparebank-1-helgeland,pay_currency,Direktør forretningsutvikling,NOK,Pass,100,D
 sparebank-1-helgeland,pay_currency,Direktør forretningsutvikling,NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Direktør forretningsutvikling,NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Direktør forretningsutvikling,NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Fail (hard),89,XF-02,n/a,not a total
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,base_salary,Direktør forretningsutvikling,1657756,Pass,100,XF-02,n/a,not a total
 sparebank-1-helgeland,sti_paid,Direktør forretningsutvikling,20000,Pass,100,CORE-01,pass,
 sparebank-1-helgeland,sti_paid,Direktør forretningsutvikling,20000,Pass,100,CORE-02,pass,
 sparebank-1-helgeland,sti_paid,Direktør forretningsutvikling,20000,Pass,100,CORE-03,pass,
@@ -110687,30 +110711,30 @@ sparebank-1-helgeland,pension_contribution,Direktør forretningsutvikling,273096
 sparebank-1-helgeland,pension_contribution,Direktør forretningsutvikling,273096,Fail (hard),89,DER-06,n/a,not derived
 sparebank-1-helgeland,pension_contribution,Direktør forretningsutvikling,273096,Fail (hard),89,XF-01,n/a,not a total
 sparebank-1-helgeland,pension_contribution,Direktør forretningsutvikling,273096,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Direktør forretningsutvikling,2047655,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Direktør bedriftsmarked,individual,Fail (hard),75,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Direktør bedriftsmarked,individual,Fail (hard),75,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Direktør bedriftsmarked,individual,Fail (hard),75,CORE-03,fail,quote not in the source text
@@ -110927,78 +110951,78 @@ sparebank-1-helgeland,pay_currency,Tidligere adm.dir (Lisbeth Flågeng),NOK,Pass
 sparebank-1-helgeland,pay_currency,Tidligere adm.dir (Lisbeth Flågeng),NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Tidligere adm.dir (Lisbeth Flågeng),NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Tidligere adm.dir (Lisbeth Flågeng),NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,benefits_value,Tidligere adm.dir (Lisbeth Flågeng),31338,Pass,100,XF-02,n/a,not a total
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,pension_contribution,Tidligere adm.dir (Lisbeth Flågeng),634351,Pass,100,XF-02,n/a,not a total
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm.dir (Lisbeth Flågeng),665689,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Tidligere adm dir. (Arnt Krane),individual,Fail (hard),75,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Tidligere adm dir. (Arnt Krane),individual,Fail (hard),75,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Tidligere adm dir. (Arnt Krane),individual,Fail (hard),75,CORE-03,fail,quote not in the source text
@@ -111047,78 +111071,78 @@ sparebank-1-helgeland,pay_currency,Tidligere adm dir. (Arnt Krane),NOK,Pass,100,
 sparebank-1-helgeland,pay_currency,Tidligere adm dir. (Arnt Krane),NOK,Pass,100,DER-06,n/a,not derived
 sparebank-1-helgeland,pay_currency,Tidligere adm dir. (Arnt Krane),NOK,Pass,100,XF-01,n/a,not a total
 sparebank-1-helgeland,pay_currency,Tidligere adm dir. (Arnt Krane),NOK,Pass,100,XF-02,n/a,not a total
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,CORE-01,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,CORE-02,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,CORE-04,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,CORE-05,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,COD-01,n/a,not a coded field
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,COD-02,n/a,not a classified field
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,COD-03,n/a,not an identifier
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,COD-06,n/a,not a date field
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-01,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-02,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-04,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-05,n/a,not a count
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-06,n/a,no percentage
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-12,pass,
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,NUM-13,n/a,not FTE
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,DER-03,n/a,not a derived number
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,DER-06,n/a,not derived
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,XF-01,n/a,not a total
-sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Fail (hard),89,XF-02,n/a,not a total
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,CORE-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,CORE-02,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,CORE-03,fail,quote not in the source text
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,CORE-04,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,CORE-05,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,COD-01,n/a,not a coded field
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,COD-02,n/a,not a classified field
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,COD-03,n/a,not an identifier
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,COD-06,n/a,not a date field
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-02,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-04,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-05,n/a,not a count
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-06,n/a,no percentage
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-07,n/a,not a holdings list
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-08,n/a,not a breakdown
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-09,n/a,not an LTI amount
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-11,n/a,not STI paid
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-12,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,NUM-13,n/a,not FTE
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,DER-03,n/a,not a derived number
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,DER-06,n/a,not derived
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,XF-01,pass,
-sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Fail (hard),91,XF-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,benefits_value,Tidligere adm dir. (Arnt Krane),1979,Pass,100,XF-02,n/a,not a total
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,XF-01,n/a,not a total
+sparebank-1-helgeland,pension_contribution,Tidligere adm dir. (Arnt Krane),171925,Pass,100,XF-02,n/a,not a total
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,CORE-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,CORE-02,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,CORE-03,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,CORE-04,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,CORE-05,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,COD-01,n/a,not a coded field
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,COD-02,n/a,not a classified field
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,COD-03,n/a,not an identifier
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,COD-06,n/a,not a date field
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-02,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-04,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-05,n/a,not a count
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-06,n/a,no percentage
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-07,n/a,not a holdings list
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-08,n/a,not a breakdown
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-09,n/a,not an LTI amount
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-11,n/a,not STI paid
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-12,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,NUM-13,n/a,not FTE
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,DER-03,n/a,not a derived number
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,DER-06,n/a,not derived
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,XF-01,pass,
+sparebank-1-helgeland,total_remuneration,Tidligere adm dir. (Arnt Krane),173904,Pass,100,XF-02,pass,
 sparebank-1-helgeland,role_disclosure,Board (non-executive),individual,Pass,100,CORE-01,pass,
 sparebank-1-helgeland,role_disclosure,Board (non-executive),individual,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 sparebank-1-helgeland,role_disclosure,Board (non-executive),individual,Pass,100,CORE-03,pass,
@@ -112655,30 +112679,30 @@ tekna-holding,lti_granted,CFO (2023 - ),0,Pass,100,DER-03,n/a,not a derived numb
 tekna-holding,lti_granted,CFO (2023 - ),0,Pass,100,DER-06,n/a,not derived
 tekna-holding,lti_granted,CFO (2023 - ),0,Pass,100,XF-01,n/a,not a total
 tekna-holding,lti_granted,CFO (2023 - ),0,Pass,100,XF-02,n/a,not a total
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,CORE-01,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,CORE-02,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,CORE-04,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,CORE-05,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-01,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-02,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-04,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-12,pass,
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,benefits_value,CFO (2023 - ),2000,Fail (hard),89,XF-02,n/a,not a total
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,CORE-01,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,CORE-02,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,CORE-03,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,CORE-04,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,CORE-05,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-01,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-02,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-04,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-12,pass,
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,DER-06,n/a,not derived
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,XF-01,n/a,not a total
+tekna-holding,benefits_value,CFO (2023 - ),2000,Pass,100,XF-02,n/a,not a total
 tekna-holding,pension_contribution,CFO (2023 - ),15000,Pass,100,CORE-01,pass,
 tekna-holding,pension_contribution,CFO (2023 - ),15000,Pass,100,CORE-02,pass,
 tekna-holding,pension_contribution,CFO (2023 - ),15000,Pass,100,CORE-03,pass,
@@ -112775,30 +112799,30 @@ tekna-holding,pay_currency,"CEO (2014 - April 27, 2025)",CAD,Pass,100,DER-03,n/a
 tekna-holding,pay_currency,"CEO (2014 - April 27, 2025)",CAD,Pass,100,DER-06,n/a,not derived
 tekna-holding,pay_currency,"CEO (2014 - April 27, 2025)",CAD,Pass,100,XF-01,n/a,not a total
 tekna-holding,pay_currency,"CEO (2014 - April 27, 2025)",CAD,Pass,100,XF-02,n/a,not a total
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,CORE-01,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,CORE-02,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,CORE-04,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,CORE-05,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-01,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-02,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-04,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-12,pass,
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Fail (hard),89,XF-02,n/a,not a total
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,CORE-01,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,CORE-02,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,CORE-03,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,CORE-04,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,CORE-05,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-01,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-02,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-04,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-12,pass,
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,DER-06,n/a,not derived
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,XF-01,n/a,not a total
+tekna-holding,base_salary,"CEO (2014 - April 27, 2025)",156000,Pass,100,XF-02,n/a,not a total
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,CORE-01,pass,
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,CORE-02,pass,
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,CORE-03,pass,
@@ -112823,54 +112847,54 @@ tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,DER-03,n/a,not a
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,DER-06,n/a,not derived
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,XF-01,n/a,not a total
 tekna-holding,sti_max,"CEO (2014 - April 27, 2025)",50,Pass,100,XF-02,n/a,not a total
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,CORE-01,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,CORE-02,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,CORE-04,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,CORE-05,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-01,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-02,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-04,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-12,pass,
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Fail (hard),89,XF-02,n/a,not a total
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,CORE-01,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,CORE-02,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,CORE-03,fail,quote not in the source text
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,CORE-04,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,CORE-05,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,COD-01,n/a,not a coded field
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,COD-02,n/a,not a classified field
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,COD-03,n/a,not an identifier
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,COD-06,n/a,not a date field
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-01,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-02,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-04,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-05,n/a,not a count
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-06,n/a,no percentage
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-07,n/a,not a holdings list
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-08,n/a,not a breakdown
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-09,n/a,not an LTI amount
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-11,n/a,not STI paid
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-12,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,NUM-13,n/a,not FTE
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,DER-03,n/a,not a derived number
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,DER-06,n/a,not derived
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,XF-01,pass,
-tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Fail (hard),91,XF-02,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,CORE-01,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,CORE-02,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,CORE-03,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,CORE-04,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,CORE-05,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-01,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-02,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-04,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-12,pass,
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,DER-06,n/a,not derived
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,XF-01,n/a,not a total
+tekna-holding,benefits_value,"CEO (2014 - April 27, 2025)",18000,Pass,100,XF-02,n/a,not a total
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,CORE-01,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,CORE-02,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,CORE-03,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,CORE-04,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,CORE-05,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-01,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-02,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-04,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-12,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,DER-06,n/a,not derived
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,XF-01,pass,
+tekna-holding,total_remuneration,"CEO (2014 - April 27, 2025)",174000,Pass,100,XF-02,pass,
 tekna-holding,role_disclosure,"EVP - Materials, Managing director TPE (2016 - )",individual,Pass,100,CORE-01,pass,
 tekna-holding,role_disclosure,"EVP - Materials, Managing director TPE (2016 - )",individual,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 tekna-holding,role_disclosure,"EVP - Materials, Managing director TPE (2016 - )",individual,Pass,100,CORE-03,pass,
@@ -113783,30 +113807,30 @@ tekna-holding,pay_currency,VP Operations (2020 - 2025),CAD,Pass,100,DER-03,n/a,n
 tekna-holding,pay_currency,VP Operations (2020 - 2025),CAD,Pass,100,DER-06,n/a,not derived
 tekna-holding,pay_currency,VP Operations (2020 - 2025),CAD,Pass,100,XF-01,n/a,not a total
 tekna-holding,pay_currency,VP Operations (2020 - 2025),CAD,Pass,100,XF-02,n/a,not a total
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,CORE-01,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,CORE-02,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,CORE-04,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,CORE-05,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-01,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-02,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-04,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-12,pass,
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Fail (hard),89,XF-02,n/a,not a total
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,CORE-01,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,CORE-02,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,CORE-03,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,CORE-04,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,CORE-05,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-01,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-02,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-04,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-12,pass,
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,DER-06,n/a,not derived
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,XF-01,n/a,not a total
+tekna-holding,base_salary,VP Operations (2020 - 2025),44000,Pass,100,XF-02,n/a,not a total
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,CORE-01,pass,
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,CORE-02,pass,
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,CORE-03,pass,
@@ -113831,78 +113855,78 @@ tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,DER-03,n/a,not a d
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,DER-06,n/a,not derived
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,XF-01,n/a,not a total
 tekna-holding,sti_max,VP Operations (2020 - 2025),20,Pass,100,XF-02,n/a,not a total
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-01,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-02,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-04,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-05,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-01,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-02,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-04,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-12,pass,
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Fail (hard),89,XF-02,n/a,not a total
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-01,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-02,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-03,fail,quote not in the source text
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-04,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,CORE-05,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-01,n/a,not a coded field
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-02,n/a,not a classified field
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-03,n/a,not an identifier
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,COD-06,n/a,not a date field
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-01,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-02,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-04,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-05,n/a,not a count
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-06,n/a,no percentage
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-07,n/a,not a holdings list
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-08,n/a,not a breakdown
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-09,n/a,not an LTI amount
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-11,n/a,not STI paid
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-12,pass,
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,NUM-13,n/a,not FTE
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,DER-03,n/a,not a derived number
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,DER-06,n/a,not derived
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,XF-01,n/a,not a total
-tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Fail (hard),89,XF-02,n/a,not a total
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,CORE-01,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,CORE-02,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,CORE-03,fail,quote not in the source text
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,CORE-04,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,CORE-05,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,COD-01,n/a,not a coded field
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,COD-02,n/a,not a classified field
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,COD-03,n/a,not an identifier
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,COD-06,n/a,not a date field
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-01,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-02,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-04,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-05,n/a,not a count
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-06,n/a,no percentage
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-07,n/a,not a holdings list
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-08,n/a,not a breakdown
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-09,n/a,not an LTI amount
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-11,n/a,not STI paid
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-12,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,NUM-13,n/a,not FTE
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,DER-03,n/a,not a derived number
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,DER-06,n/a,not derived
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,XF-01,pass,
-tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Fail (hard),91,XF-02,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,CORE-01,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,CORE-02,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,CORE-03,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,CORE-04,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,CORE-05,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-01,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-02,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-04,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-12,pass,
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,DER-06,n/a,not derived
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,XF-01,n/a,not a total
+tekna-holding,benefits_value,VP Operations (2020 - 2025),1000,Pass,100,XF-02,n/a,not a total
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,CORE-01,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,CORE-02,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,CORE-03,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,CORE-04,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,CORE-05,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-01,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-02,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-04,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-12,pass,
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,DER-06,n/a,not derived
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,XF-01,n/a,not a total
+tekna-holding,pension_contribution,VP Operations (2020 - 2025),1000,Pass,100,XF-02,n/a,not a total
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,CORE-01,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,CORE-02,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,CORE-03,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,CORE-04,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,CORE-05,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,COD-01,n/a,not a coded field
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,COD-02,n/a,not a classified field
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,COD-03,n/a,not an identifier
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,COD-06,n/a,not a date field
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-01,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-02,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-04,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-05,n/a,not a count
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-06,n/a,no percentage
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-07,n/a,not a holdings list
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-08,n/a,not a breakdown
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-09,n/a,not an LTI amount
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-11,n/a,not STI paid
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-12,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,NUM-13,n/a,not FTE
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,DER-03,n/a,not a derived number
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,DER-06,n/a,not derived
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,XF-01,pass,
+tekna-holding,total_remuneration,VP Operations (2020 - 2025),46000,Pass,100,XF-02,pass,
 tekna-holding,role_disclosure,VP Legal Affairs and Corporate Secretary (2022 - 2025),individual,Pass,100,CORE-01,pass,
 tekna-holding,role_disclosure,VP Legal Affairs and Corporate Secretary (2022 - 2025),individual,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 tekna-holding,role_disclosure,VP Legal Affairs and Corporate Secretary (2022 - 2025),individual,Pass,100,CORE-03,pass,
