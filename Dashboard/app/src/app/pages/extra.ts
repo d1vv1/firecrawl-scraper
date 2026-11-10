@@ -194,7 +194,7 @@ type Sel = { p?: number | null; k?: string; d?: string; c?: string };
         </tr></thead>
         <tbody>
           @if (m.tree.length) {
-            <tr class="l0"><td><span class="tog"></span>All values</td>
+            <tr class="l0"><td><span class="tog"></span>All values</td><td class="n">–</td>
               <td [class]="'cell ' + heat(m.total.pct) + (isSel({}, '') ? ' on' : '')" tabindex="0" (click)="pick({}, '')" (keydown.enter)="pick({}, '')">{{ cellText(m.total) }}@if (show() === 'n') {<small>/ {{ C.fmt(m.total.rows) }}</small>}</td>
               <td class="n">{{ m.total.pct }}%</td><td class="n">{{ C.fmt(m.total.companies) }}</td><td class="n" [title]="wdTitle(m.total)">{{ C.fmt(m.total.withData) }}@if (show() === 'n') {<small>/ {{ C.fmt(m.total.cosAll) }}</small>}</td>
               @for (c of m.countries; track c) {@let x = m.total.byC[c];
@@ -205,12 +205,13 @@ type Sel = { p?: number | null; k?: string; d?: string; c?: string };
             <tr [class]="'l' + n.level">
               <td>@if (n.level < 2) {<button class="tog" [attr.aria-expanded]="isOpen(n)" (click)="toggle(n)">{{ isOpen(n) ? '▾' : '▸' }}</button>} @else {<span class="tog"></span>}
                 @if (n.level === 2) {<a [routerLink]="['/fields', n.label]" title="Open this field">{{ n.label }}</a>} @else {<span>{{ n.label }}</span> <span class="hint">({{ n.children.length }})</span>}</td>
+              @if (n.level === 2) {<td class="n" [title]="n.rank == null ? 'Not ranked in the benchmarking field list' : 'Benchmarking rank ' + n.rank + ' (1 = most critical)'">{{ n.rank ?? '–' }}</td>} @else {<td class="n hint" [title]="n.rank == null ? '' : 'Best-ranked field in this row: ' + n.rank">@if (n.rank != null) {top {{ n.rank }}} @else {–}</td>}
               <td [class]="'cell ' + heat(n.pct) + (isSel(n.sel, '') ? ' on' : '')" tabindex="0" [title]="C.fmt(n.nf) + ' of ' + C.fmt(n.rows) + ' values not found (' + n.pct + '%)'" (click)="pick(n.sel, '')" (keydown.enter)="pick(n.sel, '')">{{ cellText(n) }}@if (show() === 'n') {<small>/ {{ C.fmt(n.rows) }}</small>}</td>
               <td class="n">{{ n.pct }}%</td><td class="n">{{ C.fmt(n.companies) }}</td><td class="n" [title]="wdTitle(n)">{{ C.fmt(n.withData) }}@if (show() === 'n') {<small>/ {{ C.fmt(n.cosAll) }}</small>}</td>
               @for (c of m.countries; track c) {@let x = n.byC[c];
                 @if (x && x.rows) {<td [class]="'cell ' + heat(x.pct) + (isSel(n.sel, c) ? ' on' : '')" tabindex="0" [title]="C.fmt(x.nf) + ' of ' + C.fmt(x.rows) + ' values not found (' + x.pct + '%)'" (click)="pick(n.sel, c)" (keydown.enter)="pick(n.sel, c)">{{ cellText(x) }}@if (show() === 'n') {<small>/ {{ C.fmt(x.rows) }}</small>}</td>} @else {<td class="n">–</td>}}
             </tr>
-          } @empty {<tr><td [attr.colspan]="5 + m.countries.length">Nothing missing in this selection.</td></tr>}
+          } @empty {<tr><td [attr.colspan]="6 + m.countries.length">Nothing missing in this selection.</td></tr>}
         </tbody></table></div>
     </div>
     @if (sel(); as s) {
@@ -234,12 +235,12 @@ export class NotFoundMatrix {
   readonly sort = signal<{ k: string; dir: number }>({ k: '', dir: -1 });
   readonly open = signal<Record<string, boolean>>({});
   readonly sel = signal<(Sel & { c: string }) | null>(null);
-  readonly data = computed(() => this.C.notFoundMatrix(this.r.view()));
-  readonly heads = computed(() => [['label', 'Data type › group › field'], ['nf', 'Not found'], ['pct', 'Not found %'], ['companies', 'Companies missing'], ['withData', 'Companies with data']]
+  readonly data = computed(() => this.C.notFoundMatrix(this.r.view(), this.r.loaded() ? this.C.fieldRanks(this.r.model) : {}));
+  readonly heads = computed(() => [['label', 'Data type › group › field'], ['rank', 'Rank'], ['nf', 'Not found'], ['pct', 'Not found %'], ['companies', 'Companies missing'], ['withData', 'Companies with data']]
     .concat(this.data().countries.map((c) => [c, c])));
   readonly flat = computed(() => {
     const out: any[] = [], s = this.sort(), show = this.show();
-    const key = (n: any) => (s.k === 'label' ? n.label.toLowerCase() : s.k === 'nf' || s.k === 'pct' || s.k === 'companies' || s.k === 'withData' ? n[s.k] : n.byC[s.k] ? (show === 'pct' ? n.byC[s.k].pct : n.byC[s.k].nf) : -1);
+    const key = (n: any) => (s.k === 'label' ? n.label.toLowerCase() : s.k === 'rank' ? (n.rank == null ? 1e9 * s.dir : n.rank) : s.k === 'nf' || s.k === 'pct' || s.k === 'companies' || s.k === 'withData' ? n[s.k] : n.byC[s.k] ? (show === 'pct' ? n.byC[s.k].pct : n.byC[s.k].nf) : -1);
     const order = (l: any[]) => (s.k ? l.slice().sort((a, b) => { const x = key(a), y = key(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * s.dir; }) : l);
     const walk = (n: any) => { out.push(n); if (this.isOpen(n)) order(n.children).forEach(walk); };
     order(this.data().tree).forEach(walk);
@@ -273,7 +274,7 @@ export class NotFoundMatrix {
     this.open.set(o);
   }
   sortBy(k: string) {
-    this.sort.update((s) => ({ k, dir: s.k === k ? -s.dir : k === 'label' ? 1 : -1 }));
+    this.sort.update((s) => ({ k, dir: s.k === k ? -s.dir : k === 'label' || k === 'rank' ? 1 : -1 }));
   }
   private same(a: Sel, b: Sel) {
     return (a.p ?? null) === (b.p ?? null) && (a.k || '') === (b.k || '') && (a.d || '') === (b.d || '');

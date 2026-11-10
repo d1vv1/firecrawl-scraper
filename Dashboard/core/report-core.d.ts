@@ -81,7 +81,8 @@ export const EXPORT_DEFAULTS: { summary: boolean; sources: boolean; coverage: bo
 export function sourceGroup(so: string | undefined): '' | 'annual' | 'rem' | 'other';
 export function srcGroupName(g: string): string;
 export function sources(model: Model, vs: Value[]): { rows: any[]; totals: any; byCountry: any[]; title: string };
-export function notFoundMatrix(vs: Value[]): { countries: string[]; tree: any[]; total: any; title: string };
+export function notFoundMatrix(vs: Value[], ranks?: Record<string, number>): { countries: string[]; tree: any[]; total: any; title: string };
+export function fieldRanks(model: Model): Record<string, number>;
 export function notFoundValues(vs: Value[], sel: { p?: number | null; k?: string; d?: string; c?: string }): any[];
 export function fieldList(model: Model): FieldListItem[];
 export function fieldCoverage(model: Model, vs: Value[]): { sheets: any[]; all: any; title: string };

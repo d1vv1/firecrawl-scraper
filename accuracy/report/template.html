@@ -502,6 +502,7 @@
   function parseSel(s){ var a = s.split("|"); return {p: a[0] === "" ? null : Number(a[0]), k: a[1], d: a[2], c: a[3]}; }
   function nfSortKey(n, k){
     if (k === "label") return n.label.toLowerCase();
+    if (k === "rank") return n.rank == null ? 1e9 * UI.nfSort.dir : n.rank;   // unranked last either way
     if (k === "nf" || k === "pct" || k === "companies" || k === "withData") return n[k];
     var x = n.byC[k]; return x ? (UI.nfShow === "pct" ? x.pct : x.nf) : -1;
   }
@@ -510,14 +511,14 @@
     return list.slice().sort(function(a,b){ var x = nfSortKey(a, s.k), y = nfSortKey(b, s.k); return (typeof x === "string" ? x.localeCompare(y) : x - y) * s.dir; });
   }
   function notFound(vs){
-    var m = C.notFoundMatrix(vs), show = UI.nfShow, cur = UI.nfSel ? selKey(UI.nfSel, UI.nfSel.c) : "";
+    var m = C.notFoundMatrix(vs, C.fieldRanks(M)), show = UI.nfShow, cur = UI.nfSel ? selKey(UI.nfSel, UI.nfSel.c) : "";
     $("nfTitle").textContent = "What was not found: " + m.title;
     var tco = m.tree.filter(function(t){ return t.sel.p === 0; })[0], tpa = m.tree.filter(function(t){ return t.sel.p === 1; })[0];
     var cosMissing = {}; vs.forEach(function(v){ if (v.st === "not_found") cosMissing[C.companyKey(v)] = 1; });
     $("nfKpis").innerHTML = kmini([[fmt(m.total.nf)+' <small>('+m.total.pct+'%)</small>', "Values not found"],
       [tco ? fmt(tco.nf)+' <small>('+tco.pct+'%)</small>' : '–', "Company data not found"], [tpa ? fmt(tpa.nf)+' <small>('+tpa.pct+'%)</small>' : '–', "Pay data not found"],
       [fmt(Object.keys(cosMissing).length)+' <small>of '+fmt(C.companiesOf(vs))+'</small>', "Companies with something missing"]]);
-    var heads = [["label","Data type › group › field"],["nf","Not found"],["pct","Not found %"],["companies","Companies missing"],["withData","Companies with data"]].concat(m.countries.map(function(c){ return [c,c]; }));
+    var heads = [["label","Data type › group › field"],["rank","Rank"],["nf","Not found"],["pct","Not found %"],["companies","Companies missing"],["withData","Companies with data"]].concat(m.countries.map(function(c){ return [c,c]; }));
     $("nfHead").innerHTML = '<tr>' + heads.map(function(h,i){ var s = UI.nfSort.k === h[0] ? ' aria-sort="'+(UI.nfSort.dir > 0 ? 'ascending' : 'descending')+'"' : ''; return '<th data-sort="'+esc(h[0])+'"'+(i ? ' class="n"' : '')+s+' tabindex="0">'+esc(h[1])+'</th>'; }).join("") + '</tr>';
     function cell(sel, c, x){
       if (!x || !x.rows) return '<td class="n">–</td>';
@@ -528,9 +529,14 @@
       if (n.withData == null) return '<td class="n">–</td>';
       return '<td class="n" title="'+fmt(n.withData)+' of '+fmt(n.cosAll)+' companies have at least one value found or partial here">'+fmt(n.withData)+(show === "pct" ? '' : '<small>/ '+fmt(n.cosAll)+'</small>')+'</td>';
     }
+    function rankCell(n){
+      if (n.level == null || n.level < 0) return '<td class="n">–</td>';
+      if (n.level === 2) return '<td class="n" title="'+(n.rank == null ? 'Not ranked in the benchmarking field list' : 'Benchmarking rank '+n.rank+' (1 = most critical)')+'">'+(n.rank == null ? '–' : n.rank)+'</td>';
+      return '<td class="n hint"'+(n.rank == null ? '' : ' title="Best-ranked field in this row: '+n.rank+'"')+'>'+(n.rank == null ? '–' : 'top '+n.rank)+'</td>';
+    }
     var html = [];
     function line(n, label, sel){
-      return cell(sel, "", n) + '<td class="n">'+n.pct+'%</td><td class="n">'+(n.companies == null ? '–' : fmt(n.companies))+'</td>' + withData(n) + m.countries.map(function(c){ return cell(sel, c, n.byC[c]); }).join("");
+      return rankCell(n) + cell(sel, "", n) + '<td class="n">'+n.pct+'%</td><td class="n">'+(n.companies == null ? '–' : fmt(n.companies))+'</td>' + withData(n) + m.countries.map(function(c){ return cell(sel, c, n.byC[c]); }).join("");
     }
     function walk(n){
       var open = UI.nfOpen[n.id] != null ? UI.nfOpen[n.id] : n.level === 0;
@@ -541,7 +547,7 @@
     }
     if (m.tree.length) html.push('<tr class="l0"><td><span class="tog"></span>All values</td>'+line(m.total, "", {})+'</tr>');
     nfOrder(m.tree).forEach(walk);
-    $("nfBody").innerHTML = rows(html, 5 + m.countries.length, "Nothing missing in this selection.");
+    $("nfBody").innerHTML = rows(html, 6 + m.countries.length, "Nothing missing in this selection.");
     $("nfShow").value = show;
     nfDetail(vs);
   }
@@ -1059,7 +1065,7 @@
       else if (t.getAttribute("data-field")) openField(t.getAttribute("data-field"));
       else if (t.getAttribute("data-nftog")){ var id = t.getAttribute("data-nftog"); UI.nfOpen[id] = t.getAttribute("aria-expanded") !== "true"; refresh(); }
       else if (t.getAttribute("data-nf") !== null){ var key = t.getAttribute("data-nf"), cur = UI.nfSel && selKey(UI.nfSel, UI.nfSel.c); UI.nfSel = key === cur ? null : parseSel(key); refresh(); }
-      else { var k = t.getAttribute("data-sort"), s = UI.nfSort; s.dir = s.k === k ? -s.dir : (k === "label" ? 1 : -1); s.k = k; refresh(); }
+      else { var k = t.getAttribute("data-sort"), s = UI.nfSort; s.dir = s.k === k ? -s.dir : (k === "label" || k === "rank" ? 1 : -1); s.k = k; refresh(); }
     }
     el.addEventListener("click", go);
     el.addEventListener("keydown", function(e){ if (e.key === "Enter") go(e); });

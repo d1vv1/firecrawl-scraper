@@ -487,8 +487,11 @@
 
   // ---------------------------------------------------------------- not-found matrix (Pay vs company, SPEC 6.3)
   // Rows: data type > field group > field. Columns: countries. Cell: values not found of the values that apply.
-  function notFoundMatrix(vs) {
+  // ranks: optional {data point: benchmarking rank} (fieldRanks(model)); a field row carries its rank, a
+  // group or data-type row the best (lowest) rank of its fields, so sorting by rank works at every level.
+  function notFoundMatrix(vs, ranks) {
     var cs = countriesOf(vs), types = {};
+    ranks = ranks || {};
     function node(id, label, level, sel) { return {id: id, label: label, level: level, sel: sel, rows: 0, nf: 0, cos: {}, dcos: {}, acos: {}, byC: {}, kids: {}}; }
     function add(n, v) {
       n.rows++;
@@ -513,6 +516,8 @@
       cs.forEach(function (c) { var x = n.byC[c]; if (x) x.pct = pct(x.nf, x.rows); });
       n.children = Object.keys(n.kids).map(function (k) { return fin(n.kids[k]); }).sort(function (a, b) { return b.nf - a.nf || a.label.localeCompare(b.label); });
       delete n.kids;
+      n.rank = n.level === 2 ? (ranks[n.label] == null ? null : ranks[n.label])
+        : n.children.reduce(function (m, x) { return x.rank != null && (m == null || x.rank < m) ? x.rank : m; }, null);
       return n;
     }
     var tree = ["company", "pay"].filter(function (k) { return types[k]; }).map(function (k) { return fin(types[k]); });
@@ -531,6 +536,12 @@
     var top = fields.slice().sort(function (a, b) { return b.nf - a.nf; })[0];
     return {countries: cs, tree: tree, total: all,
             title: all.nf ? fmt(all.nf) + " values not found (" + all.pct + "%)" + (top && top.nf ? "; " + top.label + " is missing most often (" + fmt(top.nf) + ")" : "") : "Nothing missing in this selection"};
+  }
+  // Benchmarking rank per data point (1 = most critical), from report.json fieldList.
+  function fieldRanks(model) {
+    var out = {};
+    (model.data.fieldList || []).forEach(function (f) { if (f.rank != null) out[f.d] = f.rank; });
+    return out;
   }
   // The not-found values behind one matrix cell. sel: {p, k, d, c}; any may be left out.
   function notFoundValues(vs, sel) {
@@ -716,9 +727,9 @@
   function notFoundCSV(nm) {
     var rows = [];
     nm.tree.forEach(function (t) { t.children.forEach(function (k) { k.children.forEach(function (d) {
-      rows.push([t.label, k.label, d.label, d.rows, d.nf, d.pct, d.companies, d.withData].concat(nm.countries.map(function (c) { var x = d.byC[c]; return x ? x.nf + "/" + x.rows : ""; })));
+      rows.push([t.label, k.label, d.label, d.rank == null ? "" : d.rank, d.rows, d.nf, d.pct, d.companies, d.withData].concat(nm.countries.map(function (c) { var x = d.byC[c]; return x ? x.nf + "/" + x.rows : ""; })));
     }); }); });
-    return toCSV(["data_type", "field_group", "data_point", "values", "not_found", "not_found_pct", "companies_missing", "companies_with_data"].concat(nm.countries), rows);
+    return toCSV(["data_type", "field_group", "data_point", "benchmark_rank", "values", "not_found", "not_found_pct", "companies_missing", "companies_with_data"].concat(nm.countries), rows);
   }
   // Markdown with CSV blocks, ready to paste or upload to Claude. ctx: {filters, notes, page, now}.
   function claudeExport(model, vs, opts, ctx) {
@@ -750,7 +761,7 @@
       out.push(csvBlock("Field coverage and validation by field", "Protocol field list (Company Data and Pay Data sheets). " + fc.title + ".", coverageCSV(fc)));
     }
     if (o.notFound) {
-      var nm = notFoundMatrix(vs);
+      var nm = notFoundMatrix(vs, fieldRanks(model));
       out.push(csvBlock("Not found by field and country", nm.title + ". Country cells: not found / values.", notFoundCSV(nm)));
     }
     if (o.values && o.values !== "none") {
@@ -1135,7 +1146,7 @@
   return {
     PAL: PAL, VSTAT: VSTAT, SSTAT: SSTAT, SNAME: SNAME, COUNTRIES: COUNTRIES, GROUPS: GROUPS, RANGE_FIELDS: RANGE_FIELDS,
     EMPTY_FILTERS: EMPTY_FILTERS, RANGE_DEFAULTS: RANGE_DEFAULTS, FILL_OPTIONS: FILL_OPTIONS, SRC_GROUPS: SRC_GROUPS, EXPORT_DEFAULTS: EXPORT_DEFAULTS,
-    sourceGroup: sourceGroup, sources: sources, notFoundMatrix: notFoundMatrix, notFoundValues: notFoundValues,
+    sourceGroup: sourceGroup, sources: sources, notFoundMatrix: notFoundMatrix, notFoundValues: notFoundValues, fieldRanks: fieldRanks,
     fieldList: fieldList, fieldCoverage: fieldCoverage, claudeExport: claudeExport, valuesCSV: valuesCSV, exportValues: exportValues, filterText: filterText,
     SEVERITIES: SEVERITIES, REQ_CLASSES: REQ_CLASSES, reqClass: reqClass, dataPage: dataPage, dataPageCSV: dataPageCSV,
     sourcesCSV: sourcesCSV, coverageCSV: coverageCSV, notFoundCSV: notFoundCSV, srcGroupName: srcGroupName,

@@ -188,6 +188,15 @@ test("not-found page: matrix and drill-down", () => {
   if (pay) assert.ok((pay.withData > 0) === (filled.length > 0) && pay.withData <= pay.cosAll, "pay withData");
   assert.strictEqual(m.total.rows, D.values.filter((v) => v.st !== "not_applicable").length);
   assert.ok($("nfHead").innerHTML.includes("Companies with data"));
+  // Rank: benchmarking rank from fieldList; group rows carry their best field's rank
+  const ranks = window.ReportCore.fieldRanks(R.model);
+  const rm = window.ReportCore.notFoundMatrix(R.model.recs, ranks);
+  rm.tree.forEach((t) => t.children.forEach((k) => {
+    k.children.forEach((d) => assert.strictEqual(d.rank, ranks[d.label] == null ? null : ranks[d.label]));
+    const best = Math.min(...k.children.filter((d) => d.rank != null).map((d) => d.rank));
+    assert.strictEqual(k.rank, isFinite(best) ? best : null);
+  }));
+  assert.ok($("nfHead").innerHTML.includes('data-sort="rank"'));
   assert.ok($("nfBody").innerHTML.includes("companies have at least one value found or partial here"));
   R.selectNotFound({ p: 1, k: "", d: "", c: countries[0] });
   const n = D.values.filter((v) => v.p && v.c === countries[0] && v.st === "not_found").length;

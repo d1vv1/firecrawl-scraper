@@ -39,6 +39,13 @@ sheets of `allshares_fields_list.xlsx`. When the Excel changes:
 python accuracy/fields_list_from_excel.py ../Excel_Documents/allshares_fields_list.xlsx
 ```
 
+The Rank column on the Not found page (1 = most critical for benchmarking) reads
+`accuracy/inputs/benchmark_rank.json`, made from the Benchmarking Fields sheet of the severity workbook:
+
+```bash
+python accuracy/benchmark_rank_from_excel.py path/to/Allshares_Benchmarking_Field_Severity.xlsx
+```
+
 The full build writes `Dashboard/report.json`, `Dashboard/allshares_report.html`, the import schema files, and the
 same into `app/public/`. It also refreshes `<name>_checks.md` and `<name>_checks.csv` next to the CSV.
 Built files are git-ignored (the repository holds no datasets).

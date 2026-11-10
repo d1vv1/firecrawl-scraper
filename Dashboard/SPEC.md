@@ -102,7 +102,9 @@ The schema source is `accuracy/schema/allshares_import_schema.json`. Edit only t
 
 The protocol field list is `accuracy/inputs/fields_list.json`, made from the Company Data and Pay Data sheets
 of `allshares_fields_list.xlsx` by `python accuracy/fields_list_from_excel.py <xlsx>`. Re-run it when the
-Excel changes.
+Excel changes. Each field's benchmarking rank (1 = most critical) is `accuracy/inputs/benchmark_rank.json`,
+made from the Benchmarking Fields sheet of `Allshares_Benchmarking_Field_Severity.xlsx` by
+`python accuracy/benchmark_rank_from_excel.py <xlsx>`; the build merges it into `fieldList` as `rank`.
 
 `python -m extractor.dashboard --rerender` rewrites the HTML (and the field list in `report.json`) from the
 `report.json` already built, without scoring again and without moving the baseline: for front-end or
@@ -191,7 +193,9 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
 2. **Pay vs company**: status by data type, share of values, by-country table.
 2a. **Not found** (moved from Pay vs company, 9 Nov 2026): KPIs (values not found, company and pay data
    not found, companies with something missing), then a matrix with rows data type › field group › field (each level opens and closes; open all /
-   close all) and columns Not found, Not found %, Companies missing, Companies with data (companies with at least one value
+   close all) and columns Rank (the field's benchmarking rank, 1 = most critical; a group or data-type row
+   shows "top n", its best-ranked field, so sorting by Rank works at every level and unranked rows sort
+   last; added 10 Nov 2026), Not found, Not found %, Companies missing, Companies with data (companies with at least one value
    found or partial in that row, of the companies the row applies to; added 10 Nov 2026) and one per country. Cells show not
    found of the values that apply (not-applicable values excluded), as a count or a %, shaded by the share
    missing. Click any cell (any level, any country, or the All values row) to list the not-found values

@@ -36,6 +36,7 @@ ACCURACY = PROJECT_ROOT / "accuracy"
 REGISTER = ACCURACY / "inputs" / "field_register.json"
 FIELDS_LIST = ACCURACY / "inputs" / "fields_list.json"   # from allshares_fields_list.xlsx (Company / Pay Data)
 FIELD_REQUIREMENTS = ACCURACY / "inputs" / "field_requirements.json"   # requirement, severity, why per field
+BENCHMARK_RANK = ACCURACY / "inputs" / "benchmark_rank.json"   # rank per field, from the benchmarking severity Excel
 SCHEMA = ACCURACY / "schema" / "allshares_import_schema.json"
 TEMPLATE = ACCURACY / "report" / "template.html"
 CORE = DASHBOARD / "core"
@@ -155,9 +156,15 @@ def fields_list() -> list[dict]:
         reqs = {r["d"]: r for r in json.loads(FIELD_REQUIREMENTS.read_text(encoding="utf-8"))["fields"]}
     except (OSError, ValueError, KeyError):
         reqs = {}
+    try:
+        ranks = {r["d"]: r["rank"] for r in json.loads(BENCHMARK_RANK.read_text(encoding="utf-8"))["fields"]}
+    except (OSError, ValueError, KeyError):
+        ranks = {}
     for f in fields:
         r = reqs.get(f["d"], {})
         f.update({k: r[k] for k in ("req", "sev", "fill50", "milestone", "why") if k in r})
+        if f["d"] in ranks:
+            f["rank"] = ranks[f["d"]]
     return fields
 
 
