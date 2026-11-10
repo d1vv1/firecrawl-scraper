@@ -136,3 +136,23 @@ export function line(points: { label: string; short: string; checks: number; fou
     series: [mk('checks', 'Checks passing %', '#0077BB', true), mk('found', 'Found %', '#009988', false)]
   };
 }
+
+/** Burn-down of remaining companies: actual, plan and projection, with the deadline marked (SPEC 6.4). */
+export function burn(days: { d: string; short: string; plan: number; actual: number | null; proj: number | null }[], deadline: string): EChartsCoreOption {
+  if (!days.length) return empty;
+  const di = days.findIndex((d) => d.d === deadline);
+  const ser = (name: string, key: 'plan' | 'actual' | 'proj', color: string, type: string, width: number) => ({
+    type: 'line', name, data: days.map((d) => d[key]), symbol: key === 'actual' ? 'circle' : 'none', symbolSize: 6, connectNulls: false,
+    lineStyle: { width, color, type }, itemStyle: { color },
+    markLine: key === 'plan' && di >= 0 ? { symbol: 'none', silent: true, lineStyle: { color: '#CC3311', type: 'dashed' },
+      label: { formatter: 'deadline', color: '#CC3311', fontSize: 10 }, data: [{ xAxis: di }] } : undefined
+  });
+  return {
+    ...base, tooltip: { trigger: 'axis', confine: true, valueFormatter: (v: any) => (v == null ? '–' : nf(v)) },
+    legend: { top: 0, right: 8, textStyle: { color: SOFT, fontSize: 11 } },
+    grid: { left: 48, right: 16, top: 28, bottom: 28 },
+    xAxis: { type: 'category', data: days.map((d) => d.short), boundaryGap: false, ...axisCommon, splitLine: { show: false } },
+    yAxis: { type: 'value', min: 0, ...axisCommon, axisLabel: { color: FAINT, fontSize: 10, formatter: (v: number) => nf(v) } },
+    series: [ser('Plan', 'plan', '#888888', 'dashed', 2), ser('Remaining', 'actual', '#0077BB', 'solid', 2.6), ser('Projection', 'proj', '#0077BB', 'dotted', 2)]
+  };
+}

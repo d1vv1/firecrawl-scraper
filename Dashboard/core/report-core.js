@@ -1,5 +1,6 @@
 /* Allshares Part 1 dashboard core. Front-end logic shared by the Angular app and the single-file HTML:
-   filters, aggregations, import validation and upsert, ranges, metrics and computed titles.
+   filters, aggregations, import validation and upsert, ranges, metrics, computed titles and the
+   Delivery pages (funnel, pass rate by batch, failure patterns, burn-down, discovery, exceptions, health).
    No gate rules here: gate results come from the Python engine through report.json (SPEC section 5). */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -65,7 +66,9 @@
   }
 
   // ---------------------------------------------------------------- filters
-  var EMPTY_FILTERS = {country: "", source: "all", dtype: "all", cat: "", company: "", status: ""};
+  var EMPTY_FILTERS = {country: "", source: "all", dtype: "all", cat: "", company: "", status: "", fill: ""};
+  // Value filter: filled = found or partial, empty = not found (not-applicable values are in neither).
+  var FILL_OPTIONS = [["", "All values"], ["filled", "Filled (found or partial)"], ["empty", "Empty (not found)"]];
   function filterValues(recs, f) {
     f = f || EMPTY_FILTERS;
     return recs.filter(function (v) {
@@ -75,6 +78,8 @@
       if (f.dtype === "company" && v.p) return false;
       if (f.cat && v.k !== f.cat) return false;
       if (f.company && companyKey(v) !== f.company) return false;
+      if (f.fill === "filled" && v.st !== "found" && v.st !== "partial") return false;
+      if (f.fill === "empty" && v.st !== "not_found") return false;
       if (f.status) {
         if (f.status === "not_scored") { if (v.sc || v.st === "not_found") return false; }
         else if (f.status === "empty") { if (v.st !== "not_found") return false; }
@@ -96,7 +101,7 @@
     };
   }
   function anyFilter(f) {
-    return !!(f.country || (f.source && f.source !== "all") || (f.dtype && f.dtype !== "all") || f.cat || f.company || f.status);
+    return !!(f.country || (f.source && f.source !== "all") || (f.dtype && f.dtype !== "all") || f.cat || f.company || f.status || f.fill);
   }
 
   // ---------------------------------------------------------------- counts
@@ -414,6 +419,349 @@
     return {fields: RANGE_FIELDS.slice(), units: Object.keys(units).sort(), methods: Object.keys(methods).sort()};
   }
 
+  // ---------------------------------------------------------------- reports and sources (SPEC 6.3, 12)
+  // Source group of a value, from its source name: the same three groups as the Source List sheet of
+  // allshares_fields_list.xlsx. Annual report filings (ESEF, SEC 20-F / 10-K, Companies House accounts)
+  // count as the annual report; anything naming a remuneration report or policy as the remuneration report.
+  var SRC_GROUPS = [["annual", "Annual report"], ["rem", "Remuneration report"], ["other", "Other sources"]];
+  function sourceGroup(so) {
+    var s = lc(so);
+    if (!s) return "";
+    if (/remunerat/.test(s)) return "rem";
+    if (/annual report|esef|20-f|10-k|companies house filing/.test(s)) return "annual";
+    return "other";
+  }
+  function srcGroupName(g) { var x = SRC_GROUPS.filter(function (s) { return s[0] === g; })[0]; return x ? x[1] : ""; }
+  function isUrl(u) { return /^https?:\/\//i.test(String(u || "")); }
+  function docUrl(u) { return String(u || "").split("#")[0]; }
+  function hostOf(u) { var m = /^https?:\/\/([^\/?#]+)/i.exec(String(u || "")); return m ? m[1].replace(/^www\./, "") : ""; }
+  function newCo(v) {
+    return {key: companyKey(v), o: v.o, c: v.c, ids: {}, dps: {}, dpFilled: {}, rows: 0, na: 0, found: 0, partial: 0, nf: 0,
+            scored: 0, P: 0, runs: 0, pass: 0, n: {annual: 0, rem: 0, other: 0}, links: {annual: {}, rem: {}, other: {}}};
+  }
+  // One row per company: whether an annual / remuneration report was used, its links, and coverage KPIs.
+  function sources(model, vs) {
+    var m = {};
+    vs.forEach(function (v) {
+      var x = m[companyKey(v)] || (m[companyKey(v)] = newCo(v));
+      x.ids[v.id] = 1; x.dps[v.d] = 1; x.rows++;
+      if (v.st === "found") x.found++; else if (v.st === "partial") x.partial++; else if (v.st === "not_found") x.nf++; else if (v.st === "not_applicable") x.na++;
+      if (v.st === "found" || v.st === "partial") x.dpFilled[v.d] = 1;
+      if (v.sc) { x.scored++; if (v.sc === "P") x.P++; }
+      (v.gr || []).forEach(function (g) { if (g[1] !== "N") { x.runs++; if (g[1] === "P") x.pass++; } });
+      var grp = sourceGroup(v.so);
+      if (!grp) return;
+      x.n[grp]++;
+      if (isUrl(v.ep)) {
+        var doc = docUrl(v.ep);   // one link per document: page anchors and text fragments are dropped
+        var l = x.links[grp][doc] || (x.links[grp][doc] = {url: doc, label: v.so, host: hostOf(doc), n: 0});
+        l.n++;
+      }
+    });
+    var rows = Object.keys(m).map(function (k) {
+      var x = m[k];
+      x.idList = Object.keys(x.ids).sort(); x.fields = Object.keys(x.dps).length; x.fieldsFilled = Object.keys(x.dpFilled).length;
+      x.fieldsEmpty = x.fields - x.fieldsFilled; x.values = x.rows - x.na;
+      x.foundPct = pct(x.found, x.values); x.filledPct = pct(x.found + x.partial, x.values);
+      x.passPct = x.scored ? pct(x.P, x.scored) : null; x.checksPct = x.runs ? pct1(x.pass, x.runs) : null;
+      SRC_GROUPS.forEach(function (g) {
+        var ls = x.links[g[0]];
+        x.links[g[0]] = Object.keys(ls).map(function (u) { return ls[u]; }).sort(function (a, b) { return b.n - a.n || a.url.localeCompare(b.url); });
+      });
+      x.hasAnnual = x.n.annual > 0; x.hasRem = x.n.rem > 0;
+      x.reports = x.hasAnnual && x.hasRem ? "Both" : x.hasAnnual ? "Annual only" : x.hasRem ? "Remuneration only" : "Neither";
+      delete x.ids; delete x.dps; delete x.dpFilled;
+      return x;
+    }).sort(function (a, b) { return a.c.localeCompare(b.c) || a.o.localeCompare(b.o); });
+    function tot(list) {
+      var t = {companies: list.length, annual: 0, rem: 0, both: 0, neither: 0};
+      list.forEach(function (x) { if (x.hasAnnual) t.annual++; if (x.hasRem) t.rem++; if (x.hasAnnual && x.hasRem) t.both++; if (!x.hasAnnual && !x.hasRem) t.neither++; });
+      t.annualPct = pct(t.annual, t.companies); t.remPct = pct(t.rem, t.companies); t.bothPct = pct(t.both, t.companies); t.neitherPct = pct(t.neither, t.companies);
+      return t;
+    }
+    var byCountry = countriesOf(vs).map(function (c) { var t = tot(rows.filter(function (x) { return x.c === c; })); t.c = c; return t; });
+    var t = tot(rows);
+    return {rows: rows, totals: t, byCountry: byCountry,
+            title: rows.length ? "Annual report found for " + t.annual + " of " + t.companies + " companies (" + t.annualPct + "%); remuneration report for " + t.rem + " (" + t.remPct + "%)" : "No companies in this selection"};
+  }
+
+  // ---------------------------------------------------------------- not-found matrix (Pay vs company, SPEC 6.3)
+  // Rows: data type > field group > field. Columns: countries. Cell: values not found of the values that apply.
+  function notFoundMatrix(vs) {
+    var cs = countriesOf(vs), types = {};
+    function node(id, label, level, sel) { return {id: id, label: label, level: level, sel: sel, rows: 0, nf: 0, cos: {}, dcos: {}, acos: {}, byC: {}, kids: {}}; }
+    function add(n, v) {
+      n.rows++;
+      var ck = companyKey(v);
+      n.acos[ck] = 1;
+      if (v.st === "found" || v.st === "partial") n.dcos[ck] = 1;
+      var c = n.byC[v.c] || (n.byC[v.c] = {rows: 0, nf: 0});
+      c.rows++;
+      if (v.st === "not_found") { n.nf++; c.nf++; n.cos[ck] = 1; }
+    }
+    vs.forEach(function (v) {
+      if (v.st === "not_applicable") return;
+      var tk = v.p ? "pay" : "company", p = v.p ? 1 : 0;
+      var t = types[tk] || (types[tk] = node("t:" + tk, v.p ? "Pay data" : "Company data", 0, {p: p}));
+      var k = t.kids[v.k] || (t.kids[v.k] = node("k:" + tk + "|" + v.k, v.k, 1, {p: p, k: v.k}));
+      var d = k.kids[v.d] || (k.kids[v.d] = node("d:" + v.d, v.d, 2, {p: p, k: v.k, d: v.d}));
+      add(t, v); add(k, v); add(d, v);
+    });
+    function fin(n) {
+      n.pct = pct(n.nf, n.rows); n.companies = Object.keys(n.cos).length; n.withData = Object.keys(n.dcos).length; n.cosAll = Object.keys(n.acos).length;
+      delete n.cos; delete n.dcos; delete n.acos;
+      cs.forEach(function (c) { var x = n.byC[c]; if (x) x.pct = pct(x.nf, x.rows); });
+      n.children = Object.keys(n.kids).map(function (k) { return fin(n.kids[k]); }).sort(function (a, b) { return b.nf - a.nf || a.label.localeCompare(b.label); });
+      delete n.kids;
+      return n;
+    }
+    var tree = ["company", "pay"].filter(function (k) { return types[k]; }).map(function (k) { return fin(types[k]); });
+    var all = node("all", "All values", -1, {}); delete all.kids;
+    vs.forEach(function (v) { if (v.st !== "not_applicable") add(all, v); });
+    all.rows = 0; all.nf = 0; all.byC = {};   // add() only collects the companies; the counts come from the tree
+    tree.forEach(function (t) {
+      all.rows += t.rows; all.nf += t.nf;
+      cs.forEach(function (c) { var x = t.byC[c]; if (!x) return; var a = all.byC[c] || (all.byC[c] = {rows: 0, nf: 0}); a.rows += x.rows; a.nf += x.nf; });
+    });
+    all.pct = pct(all.nf, all.rows); all.companies = Object.keys(all.cos).length; all.withData = Object.keys(all.dcos).length;
+    all.cosAll = Object.keys(all.acos).length; delete all.cos; delete all.dcos; delete all.acos; delete all.id; delete all.label; delete all.level; delete all.sel;
+    cs.forEach(function (c) { if (all.byC[c]) all.byC[c].pct = pct(all.byC[c].nf, all.byC[c].rows); });
+    var fields = [];
+    tree.forEach(function (t) { t.children.forEach(function (k) { fields = fields.concat(k.children); }); });
+    var top = fields.slice().sort(function (a, b) { return b.nf - a.nf; })[0];
+    return {countries: cs, tree: tree, total: all,
+            title: all.nf ? fmt(all.nf) + " values not found (" + all.pct + "%)" + (top && top.nf ? "; " + top.label + " is missing most often (" + fmt(top.nf) + ")" : "") : "Nothing missing in this selection"};
+  }
+  // The not-found values behind one matrix cell. sel: {p, k, d, c}; any may be left out.
+  function notFoundValues(vs, sel) {
+    sel = sel || {};
+    return vs.filter(function (v) {
+      return v.st === "not_found" && (sel.p == null || (v.p ? 1 : 0) === sel.p) && (!sel.k || v.k === sel.k) && (!sel.d || v.d === sel.d) && (!sel.c || v.c === sel.c);
+    }).map(function (v) { return {key: companyKey(v), o: v.o, c: v.c, id: v.id, r: v.r, d: v.d, f: v.f, k: v.k, type: v.p ? "Pay data" : "Company data", note: v.nt || ""}; })
+      .sort(function (a, b) { return a.o.localeCompare(b.o) || a.d.localeCompare(b.d) || (a.r || "").localeCompare(b.r || ""); });
+  }
+
+  // ---------------------------------------------------------------- field coverage (SPEC 6.3, 13)
+  // One row per field of the protocol field list (Company Data and Pay Data sheets of
+  // allshares_fields_list.xlsx, carried in report.json as fieldList): found and validation by field,
+  // with the average across the fields of each group and sheet.
+  function fieldList(model) {
+    var fl = model.data.fieldList || [];
+    if (fl.length) return fl;
+    return Object.keys(model.dpMeta).sort().map(function (d, i) {
+      var x = model.dpMeta[d];
+      return {sheet: x.p ? "Pay Data" : "Company Data", n: i + 1, d: d, f: x.f, k: x.k, g: x.g, what: "", checks: []};
+    });
+  }
+  function fieldCoverage(model, vs) {
+    var m = {};
+    vs.forEach(function (v) {
+      var x = m[v.d] || (m[v.d] = {rows: 0, na: 0, found: 0, partial: 0, nf: 0, cos: {}, filledCos: {}, scored: 0, P: 0, H: 0, scoreSum: 0, runs: 0, pass: 0, fail: 0});
+      x.rows++; x.cos[companyKey(v)] = 1;
+      if (v.st === "found") x.found++; else if (v.st === "partial") x.partial++; else if (v.st === "not_found") x.nf++; else if (v.st === "not_applicable") x.na++;
+      if (v.st === "found" || v.st === "partial") x.filledCos[companyKey(v)] = 1;
+      if (v.sc) { x.scored++; x.scoreSum += v.sp || 0; if (v.sc === "P") x.P++; if (v.sc === "H") x.H++; }
+      (v.gr || []).forEach(function (g) { if (g[1] === "P") { x.runs++; x.pass++; } else if (g[1] === "F") { x.runs++; x.fail++; } });
+    });
+    var sheets = {}, order = [];
+    fieldList(model).forEach(function (f) {
+      var x = m[f.d];
+      var r = {sheet: f.sheet, n: f.n, d: f.d, f: f.f, k: f.k, g: f.g, what: f.what || "", checks: f.checks || [], inView: !!x,
+               req: f.req || "", reqClass: reqClass(f.req), sev: f.sev || "", fill50: f.fill50 == null ? null : f.fill50, milestone: f.milestone || "", why: f.why || "",
+               rows: 0, found: 0, partial: 0, nf: 0, companies: 0, filledCos: 0, foundPct: null, filledPct: null, checkRuns: 0, checkFail: 0,
+               checkPct: null, scored: 0, P: 0, H: 0, passPct: null, avg: null};
+      if (x) {
+        var a = x.rows - x.na;
+        r.rows = a; r.found = x.found; r.partial = x.partial; r.nf = x.nf;
+        r.companies = Object.keys(x.cos).length; r.filledCos = Object.keys(x.filledCos).length;
+        r.foundPct = a ? pct1(x.found, a) : null; r.filledPct = a ? pct1(x.found + x.partial, a) : null;
+        r.checkRuns = x.runs; r.checkFail = x.fail; r.checkPct = x.runs ? pct1(x.pass, x.runs) : null;
+        r.scored = x.scored; r.P = x.P; r.H = x.H; r.passPct = x.scored ? pct1(x.P, x.scored) : null;
+        r.avg = x.scored ? Math.round(x.scoreSum / x.scored) : null;
+      }
+      var s = sheets[f.sheet];
+      if (!s) { s = sheets[f.sheet] = {name: f.sheet, fields: [], cats: {}, catOrder: []}; order.push(f.sheet); }
+      if (!s.cats[f.k]) { s.cats[f.k] = {k: f.k, fields: []}; s.catOrder.push(f.k); }
+      s.cats[f.k].fields.push(r); s.fields.push(r);
+    });
+    function avg(list, key) {
+      var xs = list.filter(function (r) { return r[key] != null; });
+      return xs.length ? Math.round(xs.reduce(function (a, r) { return a + r[key]; }, 0) / xs.length * 10) / 10 : null;
+    }
+    function summary(o, list) {
+      o.nFields = list.length; o.inView = list.filter(function (r) { return r.inView; }).length;
+      o.avgFound = avg(list, "foundPct"); o.avgFilled = avg(list, "filledPct"); o.avgCheck = avg(list, "checkPct"); o.avgPass = avg(list, "passPct");
+      o.alwaysFound = list.filter(function (r) { return r.filledPct === 100; }).length;
+      o.neverFound = list.filter(function (r) { return r.inView && r.rows && !r.found && !r.partial; }).length;
+      return o;
+    }
+    var out = order.map(function (n) {
+      var s = sheets[n];
+      s.cats = s.catOrder.map(function (k) { return summary(s.cats[k], s.cats[k].fields); });
+      delete s.catOrder;
+      return summary(s, s.fields);
+    });
+    var all = summary({name: "All fields"}, out.reduce(function (a, s) { return a.concat(s.fields); }, []));
+    return {sheets: out, all: all,
+            title: all.inView ? "On average a field is found " + all.avgFound + "% of the time and passes " + (all.avgCheck == null ? "–" : all.avgCheck + "%") + " of its checks (" + all.inView + " fields)" : "No fields in this selection"};
+  }
+
+  // ---------------------------------------------------------------- Company Data and Pay Data pages (SPEC 6.3, 15)
+  // The field review (requirement, severity, fill in the 50-company review, why) next to this run's
+  // found and validation results, for one sheet of the field list.
+  var SEVERITIES = ["High", "Medium", "Low", "Never used"];
+  var REQ_CLASSES = [["required", "Required"], ["conditional", "Required (conditional)"], ["optional", "Optional"]];
+  function reqClass(req) {
+    var s = lc(req);
+    if (!s) return "";
+    if (s === "required") return "required";
+    if (s.indexOf("required") === 0) return "conditional";
+    return "optional";
+  }
+  function dataPage(model, vs, sheet) {
+    var fc = fieldCoverage(model, vs), s = fc.sheets.filter(function (x) { return x.name === sheet; })[0];
+    var fields = s ? s.fields : [], cos = companiesOf(vs);
+    fields.forEach(function (r) { r.filledCosPct = cos ? pct(r.filledCos, cos) : null; r.fill50Pct = r.fill50 == null ? null : r.fill50 * 2; });
+    function mean(list, key) {
+      var xs = list.filter(function (r) { return r[key] != null; });
+      return xs.length ? Math.round(xs.reduce(function (a, r) { return a + r[key]; }, 0) / xs.length * 10) / 10 : null;
+    }
+    function group(list) { return {n: list.length, avgFound: mean(list, "foundPct"), avgFilled: mean(list, "filledPct"), avgCheck: mean(list, "checkPct"), avgPass: mean(list, "passPct")}; }
+    var must = fields.filter(function (r) { return r.reqClass === "required" || r.reqClass === "conditional"; });
+    var bySev = SEVERITIES.map(function (v) { var g = group(fields.filter(function (r) { return r.sev === v; })); g.sev = v; return g; }).filter(function (g) { return g.n; });
+    var byReq = REQ_CLASSES.map(function (c) { var g = group(fields.filter(function (r) { return r.reqClass === c[0]; })); g.key = c[0]; g.label = c[1]; return g; }).filter(function (g) { return g.n; });
+    var gaps = fields.filter(function (r) { return r.sev === "High" && r.filledPct != null && r.filledPct < 80; }).sort(function (a, b) { return a.filledPct - b.filledPct; });
+    var milestones = {};
+    fields.forEach(function (r) { if (r.milestone) (milestones[r.milestone] = milestones[r.milestone] || []).push(r); });
+    var label = sheet === "Pay Data" ? "pay" : "company";
+    var mg = group(must);
+    return {sheet: sheet, fields: fields, companies: cos, required: mg, all: group(fields), bySev: bySev, byReq: byReq, gaps: gaps,
+            neverUsed: fields.filter(function (r) { return r.sev === "Never used"; }).length,
+            milestones: Object.keys(milestones).map(function (k) { var g = group(milestones[k]); g.name = k; return g; }),
+            title: fields.length ? "Required " + label + " fields are filled " + (mg.avgFilled == null ? "–" : mg.avgFilled + "%") + " of the time on average; " +
+              (gaps.length ? gaps.length + " high-severity " + (gaps.length === 1 ? "field is" : "fields are") + " under 80%: " + gaps.slice(0, 4).map(function (r) { return r.d; }).join(", ") + (gaps.length > 4 ? "…" : "")
+                           : "every high-severity field is at 80% or more") : "No fields in this selection"};
+  }
+  function dataPageCSV(dp) {
+    var pay = dp.sheet === "Pay Data";
+    return toCSV(["n", "data_point", "field_id", "field_group", "requirement", "severity"].concat(pay ? ["milestone_1_dec"] : [])
+      .concat(["fill_of_50_review", "companies_with_value", "companies", "found_pct", "filled_pct", "check_pass_pct", "values_pass_pct", "why"]),
+      dp.fields.map(function (r) {
+        return [r.n, r.d, r.f, r.k, r.req, r.sev].concat(pay ? [r.milestone] : []).concat([r.fill50 == null ? "" : r.fill50, r.filledCos, dp.companies,
+          r.foundPct == null ? "" : r.foundPct, r.filledPct == null ? "" : r.filledPct, r.checkPct == null ? "" : r.checkPct, r.passPct == null ? "" : r.passPct, r.why]);
+      }), true);
+  }
+
+  // ---------------------------------------------------------------- export for Claude (SPEC 6.3, 14)
+  // compact: value columns without URL and note, values cut at 200 characters (about a third of the size).
+  var EXPORT_DEFAULTS = {summary: true, sources: true, coverage: true, notFound: true, values: "filled", compact: true, notes: true, maxValues: 0};
+  function filterText(f, model) {
+    var parts = [];
+    f = f || EMPTY_FILTERS;
+    if (f.country) parts.push("country " + f.country);
+    if (f.source && f.source !== "all") parts.push(f.source === "T" ? "this run only" : "imported only");
+    if (f.dtype && f.dtype !== "all") parts.push(f.dtype + " data");
+    if (f.cat) parts.push("field group " + f.cat);
+    if (f.company) parts.push("company " + ((model.companyNames[f.company] || {}).name || f.company));
+    if (f.status) parts.push("score status " + (SNAME[f.status] || f.status));
+    if (f.fill) parts.push(f.fill === "filled" ? "filled values only" : "empty values only");
+    return parts.length ? parts.join(", ") : "none (all values)";
+  }
+  function csvBlock(title, intro, csv) {
+    var FENCE = "```";
+    return "## " + title + "\n\n" + (intro ? intro + "\n\n" : "") + FENCE + "csv\n" + csv.replace(/\r\n$/, "").replace(/\r\n/g, "\n") + "\n" + FENCE + "\n";
+  }
+  function exportValues(vs, mode) {
+    return vs.filter(function (v) {
+      if (mode === "filled") return v.st === "found" || v.st === "partial";
+      if (mode === "empty") return v.st === "not_found";
+      return mode === "all";
+    });
+  }
+  function valuesCSV(model, list, compact) {
+    var head = ["company", "country", "company_key", "company_id", "data_type", "field_group", "field_id", "data_point", "role", "value", "unit",
+                "period_end", "value_status", "score_status", "score", "source", "source_group", "url", "failed_checks", "note"];
+    if (compact) head = head.filter(function (h) { return h !== "url" && h !== "note" && h !== "company_id"; });
+    return toCSV(head, list.map(function (v) {
+      var fails = gates(model, v).filter(function (g) { return g.res === "F"; }).map(function (g) { return compact ? g.gate : g.gate + (g.reason ? ": " + g.reason : ""); }).join(" | ");
+      var val = compact && String(v.v).length > 200 ? String(v.v).slice(0, 200) + "…" : v.v;
+      var row = {company: v.o, country: v.c, company_key: companyKey(v), company_id: v.id, data_type: v.p ? "pay" : "company", field_group: v.k, field_id: v.f,
+                 data_point: v.d, role: v.r, value: val, unit: v.u, period_end: v.pe || "", value_status: v.st, score_status: v.sc ? SNAME[v.sc] : "",
+                 score: v.sp == null ? "" : v.sp, source: v.so || "", source_group: srcGroupName(sourceGroup(v.so)), url: v.ep || "", failed_checks: fails, note: v.nt || ""};
+      return head.map(function (h) { return row[h]; });
+    }));
+  }
+  function sourcesCSV(rows) {
+    function urls(l) { return l.map(function (u) { return u.url; }).join(" | "); }
+    return toCSV(["company", "country", "company_key", "annual_report_found", "remuneration_report_found", "annual_report_links", "remuneration_report_links", "other_source_links",
+                  "protocol_fields", "fields_filled", "fields_empty", "values", "found", "partial", "not_found", "found_pct",
+                  "values_from_annual_report", "values_from_remuneration_report", "values_from_other_sources", "values_pass_pct", "checks_pass_pct"],
+      rows.map(function (x) {
+        return [x.o, x.c, x.key, x.hasAnnual ? "yes" : "no", x.hasRem ? "yes" : "no", urls(x.links.annual), urls(x.links.rem), urls(x.links.other),
+                x.fields, x.fieldsFilled, x.fieldsEmpty, x.values, x.found, x.partial, x.nf, x.foundPct, x.n.annual, x.n.rem, x.n.other,
+                x.passPct == null ? "" : x.passPct, x.checksPct == null ? "" : x.checksPct];
+      }));
+  }
+  function coverageCSV(fc) {
+    var rows = [];
+    fc.sheets.forEach(function (sh) {
+      sh.fields.forEach(function (r) {
+        rows.push([sh.name, r.k, r.n, r.d, r.f, r.g, r.req, r.sev, r.milestone, r.fill50 == null ? "" : r.fill50, r.why, r.what, r.rows, r.found, r.partial, r.nf, r.foundPct == null ? "" : r.foundPct, r.filledPct == null ? "" : r.filledPct,
+                   r.filledCos, r.companies, r.checkRuns, r.checkFail, r.checkPct == null ? "" : r.checkPct, r.passPct == null ? "" : r.passPct, r.avg == null ? "" : r.avg, r.checks.join(" ")]);
+      });
+    });
+    return toCSV(["sheet", "field_group", "n", "data_point", "field_id", "grain", "requirement", "severity", "milestone_1_dec", "fill_of_50_review", "why", "what_it_is", "values", "found", "partial", "not_found", "found_pct", "filled_pct",
+                  "companies_with_value", "companies", "checks_run", "checks_failed", "check_pass_pct", "values_pass_pct", "avg_score", "checks_applied"], rows);
+  }
+  function notFoundCSV(nm) {
+    var rows = [];
+    nm.tree.forEach(function (t) { t.children.forEach(function (k) { k.children.forEach(function (d) {
+      rows.push([t.label, k.label, d.label, d.rows, d.nf, d.pct, d.companies, d.withData].concat(nm.countries.map(function (c) { var x = d.byC[c]; return x ? x.nf + "/" + x.rows : ""; })));
+    }); }); });
+    return toCSV(["data_type", "field_group", "data_point", "values", "not_found", "not_found_pct", "companies_missing", "companies_with_data"].concat(nm.countries), rows);
+  }
+  // Markdown with CSV blocks, ready to paste or upload to Claude. ctx: {filters, notes, page, now}.
+  function claudeExport(model, vs, opts, ctx) {
+    var o = {};
+    for (var k in EXPORT_DEFAULTS) o[k] = EXPORT_DEFAULTS[k];
+    for (var j in (opts || {})) if (opts[j] !== undefined) o[j] = opts[j];
+    ctx = ctx || {};
+    var meta = model.data.meta, out = [];
+    out.push("# Allshares Part 1 accuracy data: export for analysis\n");
+    out.push("- Run: " + meta.tracker + ", data as of " + meta.asOf + " (" + fmt(meta.rows) + " rows, " + meta.companies + " companies; countries " + (meta.countries || []).join(", ") + ")");
+    out.push("- Exported: " + (ctx.now || new Date().toISOString().slice(0, 16).replace("T", " ")) + (ctx.page ? ", from the " + ctx.page + " page" : ""));
+    out.push("- Filters: " + filterText(ctx.filters, model) + ". Values in view: " + fmt(vs.length) + ".");
+    out.push("- Value status: found (value, with unit and period where needed), partial (value, but unit or period missing), not_found (blank), not_applicable.");
+    out.push("- Score status per value: Pass >= " + meta.thresholds.pass + ", Review >= " + meta.thresholds.review + ", else Fail; a failed hard check makes it Fail (hard). failed_checks lists CHECK: reason.");
+    out.push("- Source group: Annual report (incl. ESEF filings, SEC 20-F / 10-K, Companies House accounts), Remuneration report (report or policy), Other sources (registers, APIs, web pages, other documents).\n");
+    if (o.notes && ctx.notes && String(ctx.notes).trim()) out.push("## My notes\n\n" + String(ctx.notes).trim() + "\n");
+    var src = (o.summary || o.sources) ? sources(model, vs) : null;
+    if (o.summary) {
+      out.push("## Summary\n");
+      kpis(model, vs).forEach(function (x) { if (x.key !== "imports") out.push("- " + x.l + ": " + x.v + " (" + x.d + ")"); });
+      var t = src.totals;
+      out.push("- Annual report found: " + t.annual + " of " + t.companies + " companies (" + t.annualPct + "%); remuneration report: " + t.rem + " (" + t.remPct + "%); both: " + t.both + "; neither: " + t.neither);
+      out.push("");
+    }
+    if (o.sources) out.push(csvBlock("Companies: reports found, links and coverage",
+      "One row per company (by LEI). Links are the documents values were read from. protocol_fields = fields in the protocol list for this company; fields_filled = those with a value.", sourcesCSV(src.rows)));
+    if (o.coverage) {
+      var fc = fieldCoverage(model, vs);
+      out.push(csvBlock("Field coverage and validation by field", "Protocol field list (Company Data and Pay Data sheets). " + fc.title + ".", coverageCSV(fc)));
+    }
+    if (o.notFound) {
+      var nm = notFoundMatrix(vs);
+      out.push(csvBlock("Not found by field and country", nm.title + ". Country cells: not found / values.", notFoundCSV(nm)));
+    }
+    if (o.values && o.values !== "none") {
+      var list = exportValues(vs, o.values), cut = o.maxValues > 0 && list.length > o.maxValues;
+      out.push(csvBlock("Values (" + (o.values === "filled" ? "filled only" : o.values === "empty" ? "empty only" : "all") + ")",
+        fmt(list.length) + " values" + (cut ? "; the first " + fmt(o.maxValues) + " are included" : "") + (o.compact ? "; compact: no URL or note columns, failed_checks lists check IDs, values cut at 200 characters" : "") + ".",
+        valuesCSV(model, cut ? list.slice(0, o.maxValues) : list, o.compact)));
+    }
+    return out.join("\n");
+  }
+
   // ---------------------------------------------------------------- KPIs, metrics, titles
   function kpis(model, vs) {
     var st = statusCounts(vs), sc = scoreCounts(vs), gs = gateStats(model, vs), n = vs.length, base = model.data.baseline;
@@ -637,9 +985,160 @@
       ms.map(function (m) { return [m.metric, m.category, m.module, m.formula, m.period, m.value, m.target, m.trend, m.owner, m.updated, m.id]; }), true);
   }
 
+  // ---------------------------------------------------------------- delivery (SPEC 6.4)
+  // Dates are YYYY-MM-DD strings; a working day is Monday to Friday when plan.working_days_only.
+  function dP(s) { var a = s.split("-").map(Number); return new Date(Date.UTC(a[0], a[1] - 1, a[2])); }
+  function dAdd(s, n) { var d = dP(s); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function dWork(plan, s) { var w = dP(s).getUTCDay(); return !plan.working_days_only || (w !== 0 && w !== 6); }
+  function dWorkdays(plan, a, b) { var n = 0; for (var d = dAdd(a, 1); d <= b; d = dAdd(d, 1)) if (dWork(plan, d)) n++; return n; } // (a, b]
+  function dShort(s) { return s ? dP(s).toLocaleDateString("en-GB", {day: "numeric", month: "short", timeZone: "UTC"}) : "–"; }
+  var DISC_STATES = [["found", "Found", "#009988"], ["in progress", "In progress", "#0077BB"], ["open", "Open", "#888888"], ["not available", "Not available", "#CC3311"]];
+  function discState(s) { s = lc(s); return s === "not published" ? "not available" : s === "done" ? "found" : s; }
+
+  function delivery(model, country, today) {
+    var D = model.data.delivery;
+    if (!D || D.error || !D.companies) return {ok: false, error: (D && D.error) || "No delivery data in report.json. Rebuild with python -m extractor.dashboard --rerender."};
+    var plan = D.plan, last = D.stages.length - 1;
+    function inC(x) { return !country || x.c === country; }
+    var all = D.companies, cs = all.filter(inC);
+    var asOf = today || new Date().toISOString().slice(0, 10);
+    if (asOf < plan.baseline_date) asOf = plan.baseline_date;
+
+    // burn-down: always the whole backlog (the plan is for all companies)
+    var doneAfter = all.filter(function (c) { return c.done && c.done > plan.baseline_date; });
+    function remainingOn(d) { return plan.baseline_remaining - doneAfter.filter(function (c) { return c.done <= d; }).length; }
+    function planOn(d) { return Math.max(0, plan.baseline_remaining - plan.daily_target * dWorkdays(plan, plan.baseline_date, d)); }
+    var remainingNow = remainingOn(asOf), workLeft = Math.max(0, dWorkdays(plan, asOf, plan.deadline));
+    var back = asOf, wd = 0;
+    while (wd < 3 && back > plan.baseline_date) { if (dWork(plan, back)) wd++; back = dAdd(back, -1); }
+    var pace = wd ? doneAfter.filter(function (c) { return c.done > back && c.done <= asOf; }).length / wd : 0, proj = null;
+    if (pace > 0) { var left = remainingNow, d0 = asOf; while (left > 0 && d0 < dAdd(plan.deadline, 120)) { d0 = dAdd(d0, 1); if (dWork(plan, d0)) left -= pace; } proj = d0; }
+    var end = [plan.deadline, proj || plan.deadline, asOf].sort().pop(), days = [];
+    for (var d = plan.baseline_date; d <= end; d = dAdd(d, 1))
+      days.push({d: d, short: dShort(d), plan: planOn(d), actual: d <= asOf ? remainingOn(d) : null,
+                 proj: proj && d >= asOf && d <= proj ? Math.max(0, Math.round(remainingNow - pace * dWorkdays(plan, asOf, d))) : null,
+                 doneThatDay: doneAfter.filter(function (c) { return c.done === d; }).length, work: dWork(plan, d)});
+    var burnText = proj ? "At the last " + wd + " working days' pace (" + Math.round(pace) + "/day) the backlog clears on " + dShort(proj) + (proj > plan.deadline ? ", after the deadline." : ".")
+                        : "No company has reached Done since " + dShort(plan.baseline_date) + ", so there is no pace to project yet.";
+    var batchPlan = plan.batches.map(function (b) {
+      var bc = all.filter(function (c) { return c.b === b.name; });
+      var todo = bc.filter(function (c) { return !(c.done && c.done <= plan.baseline_date); }).length;
+      var done = bc.filter(function (c) { return c.done && c.done > plan.baseline_date && c.done <= asOf; }).length;
+      var len = Math.max(1, dWorkdays(plan, dAdd(b.start, -1), b.end));
+      var el = asOf < b.start ? 0 : Math.min(len, dWorkdays(plan, dAdd(b.start, -1), asOf));
+      var exp = Math.round(todo * el / len), status, cls;
+      if (!el) { status = "Not started"; cls = ""; }
+      else if (done >= todo) { status = "Complete"; cls = "good"; }
+      else if (done >= exp * 0.9) { status = "On track"; cls = "good"; }
+      else { status = "Behind by " + fmt(exp - done); cls = "bad"; }
+      return {b: b.name, start: b.start, end: b.end, window: dShort(b.start) + " – " + dShort(b.end), todo: todo, perDay: Math.round(todo / len),
+              day: el, len: len, expected: el ? exp : null, done: done, status: status, cls: cls};
+    });
+
+    // funnel: stages x (all batches, each batch); the biggest drop is the stuck stage
+    var cols = [{name: "All batches", list: cs}].concat(D.batches.map(function (b) { return {name: b, list: cs.filter(function (c) { return c.b === b; })}; }));
+    var funnel = cols.map(function (col) {
+      var counts = D.stages.map(function (_, i) { return col.list.filter(function (c) { return c.stage >= i; }).length; });
+      var stuck = -1, drop = 0;
+      for (var i = 1; i < counts.length; i++) if (counts[i - 1] - counts[i] > drop) { drop = counts[i - 1] - counts[i]; stuck = i; }
+      return {name: col.name, counts: counts, pcts: counts.map(function (n) { return pct(n, counts[0]); }), stuck: stuck, drop: drop};
+    });
+
+    // pass rate by batch: automated rules (values with status Pass) and the spot-check sample
+    var passByBatch = D.batches.map(function (b) {
+      var v = {n: 0, pass: 0, review: 0, fail: 0}, s = {n: 0, pass: 0};
+      cs.forEach(function (c) { if (c.b !== b) return; v.n += c.v.n; v.pass += c.v.pass; v.review += c.v.review; v.fail += c.v.fail; if (c.spot) { s.n += c.spot.n; s.pass += c.spot.pass; } });
+      if (!country && D.spotByBatch[b]) s = D.spotByBatch[b];
+      return {b: b, n: v.n, pass: v.pass, review: v.review, fail: v.fail, rules: v.n ? pct1(v.pass, v.n) : null, spotN: s.n, spotPass: s.pass, spot: s.n ? pct1(s.pass, s.n) : null};
+    });
+    var tv = cs.reduce(function (a, c) { a.n += c.v.n; a.pass += c.v.pass; return a; }, {n: 0, pass: 0});
+
+    // failure patterns: companies affected per reason, and the work list
+    var cats = {}, failRows = [];
+    cs.forEach(function (c) { Object.keys(c.fc).forEach(function (k) {
+      cats[k] = cats[k] || {cat: k, companies: 0, values: 0}; cats[k].companies++; cats[k].values += c.fc[k];
+      failRows.push({id: c.id, o: c.o, c: c.c, b: c.b, cat: k, n: c.fc[k], ex: (c.fx || {})[k] || ""});
+    }); });
+    var failures = Object.keys(cats).map(function (k) { return cats[k]; }).sort(function (a, b) { return b.companies - a.companies || a.cat.localeCompare(b.cat); });
+    failRows.sort(function (a, b) { return b.n - a.n || a.o.localeCompare(b.o); });
+
+    // discovery queue and exceptions
+    var drows = D.discovery.filter(inC), dcount = {}, byNeed = {};
+    drows.forEach(function (x) { var s = discState(x.status); dcount[s] = (dcount[s] || 0) + 1; byNeed[x.need] = (byNeed[x.need] || 0) + 1; });
+    var resolved = (dcount.found || 0) + (dcount["not available"] || 0);
+    var erows = D.exceptions.filter(inC), ecat = {};
+    erows.forEach(function (e) { var x = ecat[e.cat] = ecat[e.cat] || {cat: e.cat, n: 0, yes: 0}; x.n++; if (e.accepted === "yes") x.yes++; });
+    var excYes = erows.filter(function (e) { return e.accepted === "yes"; }).length;
+
+    // pipeline health
+    var countryOf = {}; all.forEach(function (c) { countryOf[c.id] = c.c; });
+    var runs = D.runs.filter(function (r) { return !country || countryOf[r.id] === country; });
+    var rdays = {}, used = 0;
+    runs.forEach(function (r) {
+      used += r.credits; if (!r.date) return;
+      var x = rdays[r.date] = rdays[r.date] || {d: r.date, short: dShort(r.date), ok: 0, failed: 0, credits: 0};
+      x[r.status === "failed" ? "failed" : "ok"]++; x.credits += r.credits;
+    });
+    var hd = Object.keys(rdays).sort(), hdays = [];
+    if (hd.length) for (var x = hd[0]; x <= hd[hd.length - 1]; x = dAdd(x, 1)) hdays.push(rdays[x] || {d: x, short: dShort(x), ok: 0, failed: 0, credits: 0});
+    var failedRuns = runs.filter(function (r) { return r.status === "failed"; });
+    var perRun = runs.length ? used / runs.length : 0, need = Math.round(perRun * remainingNow);
+    var fc = D.firecrawl || {}, balance = null;
+    if (fc.credit_balance != null) balance = fc.credit_balance - D.runs.filter(function (r) { return r.date && (!fc.balance_as_of || r.date > fc.balance_as_of); }).reduce(function (a, r) { return a + r.credits; }, 0);
+    var nowIso = new Date().toISOString();
+    var sched = (D.scheduled || []).map(function (s) {
+      var missed = !!(s.scheduled_for && s.scheduled_for < nowIso && !s.started_at && !/done|ok|success|running/i.test(s.status || ""));
+      return {run: s.run_id, b: s.batch, at: s.scheduled_for, started: s.started_at, finished: s.finished_at, status: missed ? "Missed" : (s.status || "scheduled"),
+              bad: missed || /fail|error/i.test(s.status || ""), companies: s.companies, credits: s.credits_used, note: s.note};
+    });
+
+    var stuckAll = funnel[0].stuck > 0 ? D.stages[funnel[0].stuck] : "";
+    var behind = remainingNow - planOn(asOf);
+    return {
+      ok: true, plan: plan, stages: D.stages, batches: D.batches, asOf: asOf, built: D.built, fy: D.fiscalYear, country: country || "",
+      deadline: dShort(plan.deadline), acceptance: dShort(plan.exceptions_acceptance_date), baselineDate: dShort(plan.baseline_date),
+      kpis: {companies: cs.length, remaining: remainingNow, planNow: planOn(asOf), behind: behind, done: cs.filter(function (c) { return c.stage === last; }).length,
+             extracted: cs.filter(function (c) { return c.stage >= 2; }).length, workLeft: workLeft, needed: workLeft ? Math.round(remainingNow / workLeft) : null,
+             passPct: tv.n ? pct1(tv.pass, tv.n) : null, passN: tv.pass, valuesN: tv.n, discOpen: drows.length - resolved, discN: drows.length,
+             exc: erows.length, excYes: excYes},
+      funnel: funnel, passByBatch: passByBatch, failures: failures, failRows: failRows,
+      burn: {days: days, proj: proj, projShort: dShort(proj), pace: pace, wd: wd, text: burnText, remainingNow: remainingNow}, batchPlan: batchPlan,
+      discovery: {rows: drows, counts: DISC_STATES.map(function (s) { return {key: s[0], label: s[1], color: s[2], n: dcount[s[0]] || 0}; }),
+                  byNeed: Object.keys(byNeed).map(function (k) { return {need: k, n: byNeed[k]}; }), resolved: resolved,
+                  owners: D.discovery.some(function (x) { return x.owner; })},
+      exceptions: {rows: erows, byCat: Object.keys(ecat).map(function (k) { return ecat[k]; }).sort(function (a, b) { return b.n - a.n; })},
+      health: {runs: runs.length, failed: failedRuns.length, failedPct: runs.length ? pct(failedRuns.length, runs.length) : null, failedRuns: failedRuns,
+               used: Math.round(used), perRun: Math.round(perRun * 10) / 10, need: need, balance: balance, short: balance != null && balance < need,
+               days: hdays, scheduled: sched, missed: sched.filter(function (s) { return s.status === "Missed"; }).length,
+               span: hd.length ? dShort(hd[0]) + " – " + dShort(hd[hd.length - 1]) : ""},
+      titles: {
+        standup: (stuckAll ? fmt(funnel[0].drop) + " of " + fmt(funnel[0].counts[0]) + " required companies are waiting at " + stuckAll : "Status of " + fmt(funnel[0].counts[0]) + " required companies") + (country ? " (" + country + ")" : ""),
+        throughput: fmt(remainingNow) + " of " + fmt(plan.baseline_remaining) + " companies remaining, " + (behind > 0 ? fmt(behind) + " behind plan" : "on or ahead of plan") + "; due " + dShort(plan.deadline),
+        discovery: fmt(drows.length - resolved) + " of " + fmt(drows.length) + " companies still need a document or data source",
+        exceptions: fmt(erows.length) + " exceptions for Allshares to accept on " + dShort(plan.exceptions_acceptance_date) + " (" + fmt(excYes) + " accepted)",
+        health: fmt(failedRuns.length) + " of " + fmt(runs.length) + " company runs failed; " + fmt(Math.round(used)) + " Firecrawl credits used"
+      }
+    };
+  }
+  function deliveryFailCSV(rows) {
+    return toCSV(["Company", "Company ID", "Country", "Batch", "Reason", "Count", "Example"], rows.map(function (r) { return [r.o, r.id, r.c, r.b, r.cat, r.n, r.ex]; }), true);
+  }
+  function exceptionsCSV(rows) {
+    return toCSV(["Company", "Company ID", "Country", "Batch", "Category", "Reason", "Source", "Accepted by Allshares", "Note"],
+      rows.map(function (e) { return [e.o, e.id, e.c, e.b, e.cat, e.reason, e.source, e.accepted, e.note]; }), true);
+  }
+  function discoveryCSV(rows) {
+    return toCSV(["Company", "Company ID", "Country", "Batch", "Need", "Next step", "Owner", "Status", "Updated", "Note"],
+      rows.map(function (x) { return [x.o, x.id, x.c, x.b, x.need, x.next, x.owner, discState(x.status), x.updated, x.note]; }), true);
+  }
+
   return {
     PAL: PAL, VSTAT: VSTAT, SSTAT: SSTAT, SNAME: SNAME, COUNTRIES: COUNTRIES, GROUPS: GROUPS, RANGE_FIELDS: RANGE_FIELDS,
-    EMPTY_FILTERS: EMPTY_FILTERS, RANGE_DEFAULTS: RANGE_DEFAULTS,
+    EMPTY_FILTERS: EMPTY_FILTERS, RANGE_DEFAULTS: RANGE_DEFAULTS, FILL_OPTIONS: FILL_OPTIONS, SRC_GROUPS: SRC_GROUPS, EXPORT_DEFAULTS: EXPORT_DEFAULTS,
+    sourceGroup: sourceGroup, sources: sources, notFoundMatrix: notFoundMatrix, notFoundValues: notFoundValues,
+    fieldList: fieldList, fieldCoverage: fieldCoverage, claudeExport: claudeExport, valuesCSV: valuesCSV, exportValues: exportValues, filterText: filterText,
+    SEVERITIES: SEVERITIES, REQ_CLASSES: REQ_CLASSES, reqClass: reqClass, dataPage: dataPage, dataPageCSV: dataPageCSV,
+    sourcesCSV: sourcesCSV, coverageCSV: coverageCSV, notFoundCSV: notFoundCSV, srcGroupName: srcGroupName,
     pct: pct, pct1: pct1, fmt: fmt, num: num, companyKey: companyKey,
     createModel: createModel, resetModel: resetModel, filterValues: filterValues, filterOptions: filterOptions, anyFilter: anyFilter,
     statusCounts: statusCounts, scoreCounts: scoreCounts, companiesOf: companiesOf, countriesOf: countriesOf, gates: gates,
@@ -649,6 +1148,8 @@
     percentile: percentile, ranges: ranges, rangeOptions: rangeOptions,
     kpis: kpis, metrics: metrics, titles: titles, attention: attention,
     parseCSV: parseCSV, leiValid: leiValid, validate: validate, applyImport: applyImport, previewImport: previewImport, commitImport: commitImport,
-    toCSV: toCSV, rangesCSV: rangesCSV, metricsCSV: metricsCSV
+    toCSV: toCSV, rangesCSV: rangesCSV, metricsCSV: metricsCSV,
+    DISC_STATES: DISC_STATES, discState: discState, delivery: delivery, deliveryFailCSV: deliveryFailCSV,
+    exceptionsCSV: exceptionsCSV, discoveryCSV: discoveryCSV
   };
 });

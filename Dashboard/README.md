@@ -6,7 +6,8 @@ every company, field and value.
 - `SPEC.md`: what the dashboard does (the contract). `DESIGN.md`: how it looks.
 - `allshares_report.html`: single-file report. Open it directly or email it; data and code are inline.
 - `app/`: the Angular app (same pages and numbers, reads `report.json`).
-- `core/`: logic and charts shared by both front ends. No check rules here.
+- `core/`: logic and charts shared by both front ends. No check rules here. `report-ui.js` holds the
+  table sorting and the notes bar (notes stay in your browser only).
 
 ## Where the data comes from
 
@@ -25,9 +26,41 @@ To rebuild by hand, for any data-point CSV:
 python -m extractor.dashboard output/nordic_uk_10_datapoints.csv
 ```
 
-This writes `Dashboard/report.json`, `Dashboard/allshares_report.html`, the import schema files, and the
+After a change to the dashboard code or the field list only, skip the scoring (the baseline stays put):
+
+```bash
+python -m extractor.dashboard --rerender
+```
+
+The Field coverage page reads `accuracy/inputs/fields_list.json`, made from the Company Data and Pay Data
+sheets of `allshares_fields_list.xlsx`. When the Excel changes:
+
+```bash
+python accuracy/fields_list_from_excel.py ../Excel_Documents/allshares_fields_list.xlsx
+```
+
+The full build writes `Dashboard/report.json`, `Dashboard/allshares_report.html`, the import schema files, and the
 same into `app/public/`. It also refreshes `<name>_checks.md` and `<name>_checks.csv` next to the CSV.
 Built files are git-ignored (the repository holds no datasets).
+
+## Delivery pages (stand-up view and client update)
+
+The **Delivery** menu (Stand-up, Throughput, Discovery queue, Exceptions, Pipeline health; SPEC 6.4) tracks
+the FY2025 gap-fill: every required company's stage by regional batch, rule and spot-check pass rates
+against the 95% line, failure patterns, the burn-down to 27 Nov, the discovery queue, the exceptions list
+for the 1 Dec sign-off, and runs, failures and Firecrawl credits. `extractor/delivery.py` builds it from the
+tracker (`../Excel_Documents/FY2025_Company_Pipeline_Tracker.xlsx`), every data-point run and its checks,
+and the per-company run outputs. It refreshes on every build, and on its own with:
+
+```bash
+python -m extractor.dashboard --rerender
+```
+
+Plan, batch windows, required fields, the check-to-reason map and the Firecrawl balance are in
+`accuracy/inputs/delivery.json`. Keep these up to date by hand in `accuracy/inputs/delivery/`:
+`spot_checks.csv` (sample results), `discovery.csv` (owner, status, next step), `scheduled_runs.csv` and
+`exceptions.csv` (extra exceptions and Allshares acceptance). A missing tracker never stops a run: the
+Delivery pages then show why they are empty.
 
 ## Run the Angular app
 
@@ -47,7 +80,7 @@ The app needs Node 22.12 or later (Angular 21). Angular 22 needs Node 22.22.3+.
 The tests read the last built run and check the pages against its own data, so they pass for any run.
 
 ```bash
-python -m pytest tests/test_dashboard.py
+python -m pytest tests/test_dashboard.py tests/test_delivery.py
 node Dashboard/core/report-core.test.js
 node accuracy/tests/report_dom.test.js
 npm --prefix Dashboard/app test

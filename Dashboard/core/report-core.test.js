@@ -113,4 +113,46 @@ test("metrics CSV has a BOM and 11 columns", () => {
   assert.strictEqual(csv.charCodeAt(0), 0xfeff);
   assert.strictEqual(csv.split("\r\n")[0].split(",").length, 11);
 });
+// ---- Delivery (SPEC 6.4): a small synthetic backlog, so the dates and counts are fixed
+function dModel(companies, extra) {
+  return C.createModel(Object.assign({}, data, {delivery: Object.assign({
+    built: "2026-11-09", fiscalYear: "2025", stages: ["Required", "Document found", "Extracted", "Required fields 100%", "Rules passed", "Spot-checked", "Done"],
+    batches: ["A", "B"], spotByBatch: {}, firecrawl: {credit_balance: 10, balance_as_of: "2026-11-09"}, scheduled: [],
+    plan: {baseline_remaining: 4, baseline_date: "2026-11-09", deadline: "2026-11-13", daily_target: 1, working_days_only: true,
+           exceptions_acceptance_date: "2026-12-01", pass_line: 0.95,
+           batches: [{name: "A", start: "2026-11-10", end: "2026-11-11"}, {name: "B", start: "2026-11-12", end: "2026-11-13"}]},
+    companies: companies, discovery: [{id: "d", o: "D", c: "SE", b: "B", need: "OpenAPI", next: "x", owner: "", status: "found"}],
+    exceptions: [{id: "d", o: "D", c: "SE", b: "B", cat: "Document missing", reason: "r", source: "Tracker", accepted: "yes", note: ""}],
+    runs: [{id: "a", name: "A", date: "2026-11-10", status: "ok", credits: 3}, {id: "b", name: "B", date: "2026-11-11", status: "failed", credits: 1, error: "e"}]
+  }, extra || {})}));
+}
+const co = (id, b, stage, done, c, fc) => ({id: id, o: id.toUpperCase(), c: c || "SE", b: b, stage: stage, done: done || "", v: {n: 10, pass: 9, review: 0, fail: 1}, spot: null, fc: fc || {}, fx: {}});
+test("delivery: funnel, stuck stage, burn-down and batch slippage", () => {
+  const M = dModel([co("a", "A", 6, "2026-11-10"), co("b", "A", 2, "", "NO", {"Wrong currency": 2}), co("c", "B", 1), co("e", "B", 0)]);
+  const x = C.delivery(M, "", "2026-11-11");
+  assert.ok(x.ok);
+  assert.deepStrictEqual(x.funnel[0].counts, [4, 3, 2, 1, 1, 1, 1]);
+  assert.strictEqual(x.stages[x.funnel[0].stuck], "Document found");
+  assert.deepStrictEqual([x.kpis.remaining, x.kpis.planNow, x.kpis.behind], [3, 2, 1]);
+  assert.strictEqual(x.burn.days.find((d) => d.d === "2026-11-10").actual, 3);
+  const a = x.batchPlan[0];
+  assert.deepStrictEqual([a.todo, a.day, a.expected, a.done, a.status], [2, 2, 2, 1, "Behind by 1"]);
+  assert.strictEqual(x.batchPlan[1].status, "Not started");
+  assert.deepStrictEqual(x.failures, [{cat: "Wrong currency", companies: 1, values: 2}]);
+  assert.strictEqual(x.passByBatch[0].rules, 90);
+  assert.deepStrictEqual([x.discovery.resolved, x.exceptions.byCat[0].yes], [1, 1]);
+  assert.deepStrictEqual([x.health.runs, x.health.failed, x.health.used, x.health.balance], [2, 1, 4, 6]);
+  assert.strictEqual(C.delivery(M, "NO", "2026-11-11").kpis.companies, 1);
+  assert.ok(C.exceptionsCSV(x.exceptions.rows).startsWith("﻿Company,"));
+});
+test("delivery: missing data gives an error, not a crash", () => {
+  const M = C.createModel(Object.assign({}, data, {delivery: {error: "Delivery data not built: no tracker"}}));
+  assert.deepStrictEqual(C.delivery(M), {ok: false, error: "Delivery data not built: no tracker"});
+});
+if (data.delivery && data.delivery.companies) test("delivery from report.json: funnel starts at the required companies", () => {
+  const x = C.delivery(C.createModel(data));
+  assert.strictEqual(x.funnel[0].counts[0], data.delivery.companies.length);
+  assert.strictEqual(x.discovery.rows.length, data.delivery.discovery.length);
+});
+
 console.log(`\n${n} tests passed`);

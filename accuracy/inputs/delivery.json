@@ -1,0 +1,55 @@
+{
+  "_note": "The Delivery pages (Dashboard/SPEC.md 6.4). Paths are relative to firecrawl-scraper/. Rebuild: python -m extractor.dashboard --rerender",
+  "fiscal_year": "2025",
+  "sources": {
+    "tracker": "../Excel_Documents/FY2025_Company_Pipeline_Tracker.xlsx",
+    "datapoints_globs": ["output/*_datapoints.csv", "../Excel_Documents/OUTPUT/*_datapoints.csv"],
+    "checks_globs": ["output/*_datapoints_checks.csv", "../Excel_Documents/OUTPUT/*_datapoints_checks.csv"],
+    "run_outputs_dir": "output",
+    "inputs_dir": "accuracy/inputs/delivery"
+  },
+  "plan": {
+    "baseline_remaining": 1258,
+    "baseline_date": "2026-11-09",
+    "deadline": "2026-11-27",
+    "daily_target": 125,
+    "working_days_only": true,
+    "exceptions_acceptance_date": "2026-12-01",
+    "pass_line": 0.95,
+    "_batches_note": "First guess at the batch order and windows: change to the real batch plan.",
+    "batches": [
+      {"name": "Nordics",         "start": "2026-11-10", "end": "2026-11-10"},
+      {"name": "Benelux",         "start": "2026-11-11", "end": "2026-11-12"},
+      {"name": "DACH",            "start": "2026-11-13", "end": "2026-11-18"},
+      {"name": "Southern Europe", "start": "2026-11-19", "end": "2026-11-23"},
+      {"name": "UK",              "start": "2026-11-24", "end": "2026-11-27"}
+    ]
+  },
+  "required_fields": {
+    "Company Data": ["legal_name", "lei", "country_code", "fiscal_year", "reporting_currency", "revenue", "total_assets", "headcount"],
+    "Pay Data": ["pay_currency", "base_salary", "total_remuneration"]
+  },
+  "failure_categories": {
+    "CORE-04": "Fiscal year not confirmed (no period end)",
+    "COD-06": "Wrong fiscal year",
+    "NUM-01": "Wrong currency",
+    "XF-02": "Wrong currency",
+    "CORE-02": "Quote not found in document",
+    "CORE-03": "Quote not found in document",
+    "NUM-08": "Arithmetic / totals",
+    "NUM-12": "Arithmetic / totals",
+    "XF-01": "Arithmetic / totals",
+    "NUM-11": "Arithmetic / totals",
+    "NUM-04": "Out of plausible range",
+    "NUM-13": "Out of plausible range",
+    "COD-01": "Bad code value",
+    "CORE-01": "Missing field",
+    "CORE-05": "Missing field"
+  },
+  "currency_reason_patterns": ["ISO 4217", "currency"],
+  "firecrawl": {
+    "credit_balance": null,
+    "balance_as_of": null,
+    "_note": "Set credit_balance to the Firecrawl dashboard balance on balance_as_of (YYYY-MM-DD); credits used after that date are subtracted."
+  }
+}

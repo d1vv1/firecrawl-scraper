@@ -25,6 +25,7 @@ import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from . import delivery
 from . import output_checks as oc
 from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT
 
@@ -33,6 +34,8 @@ log = logging.getLogger(__name__)
 DASHBOARD = PROJECT_ROOT / "Dashboard"
 ACCURACY = PROJECT_ROOT / "accuracy"
 REGISTER = ACCURACY / "inputs" / "field_register.json"
+FIELDS_LIST = ACCURACY / "inputs" / "fields_list.json"   # from allshares_fields_list.xlsx (Company / Pay Data)
+FIELD_REQUIREMENTS = ACCURACY / "inputs" / "field_requirements.json"   # requirement, severity, why per field
 SCHEMA = ACCURACY / "schema" / "allshares_import_schema.json"
 TEMPLATE = ACCURACY / "report" / "template.html"
 CORE = DASHBOARD / "core"
@@ -137,7 +140,25 @@ def report_data(scored: list[oc.Scored], rows: list[oc.Row], name: str,
         "values": values,
         # the dashboard's "vs ..." comparisons: the previous run, or this one on the first build
         "baseline": baseline or {"checksPct": checks_pct, "foundPct": found_pct, "label": "This run"},
+        "fieldList": fields_list(),
     }
+
+
+def fields_list() -> list[dict]:
+    """The protocol field list (Company Data and Pay Data sheets), for the Field coverage, Company Data
+    and Pay Data pages, with each field's requirement, severity, review fill and reason merged in."""
+    try:
+        fields = json.loads(FIELDS_LIST.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    try:
+        reqs = {r["d"]: r for r in json.loads(FIELD_REQUIREMENTS.read_text(encoding="utf-8"))["fields"]}
+    except (OSError, ValueError, KeyError):
+        reqs = {}
+    for f in fields:
+        r = reqs.get(f["d"], {})
+        f.update({k: r[k] for k in ("req", "sev", "fill50", "milestone", "why") if k in r})
+    return fields
 
 
 def previous_baseline(path: Path, name: str) -> dict | None:
@@ -165,7 +186,8 @@ def render_report(schema_js: str, data: dict) -> str:
     parts = {"/*__CSS__*/": (CORE / "report.css").read_text(encoding="utf-8"),
              "/*__SCHEMA__*/": schema_js,
              "/*__CORE__*/": (CORE / "report-core.js").read_text(encoding="utf-8"),
-             "/*__CHARTS__*/": (CORE / "report-charts.js").read_text(encoding="utf-8")}
+             "/*__CHARTS__*/": (CORE / "report-charts.js").read_text(encoding="utf-8"),
+             "/*__UI__*/": (CORE / "report-ui.js").read_text(encoding="utf-8")}
     for k, v in parts.items():
         assert t.count(k) == 1, k
         t = t.replace(k, v)
@@ -181,6 +203,7 @@ def build(csv_path: Path, cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
     checks.with_suffix(".md").write_text(oc.report(scored, rows, csv_path.name), encoding="utf-8")
     oc.write_csv(scored, checks.with_suffix(".csv"))
     data = report_data(scored, rows, csv_path.name, previous_baseline(out / "report.json", csv_path.name))
+    data["delivery"] = delivery.build()   # SPEC 6.4: tracker, all runs and run outputs, not just this run
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     js = schema_module(schema)
     out.mkdir(parents=True, exist_ok=True)
@@ -203,14 +226,37 @@ def build(csv_path: Path, cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
     return html
 
 
+def rerender(out: Path = DASHBOARD) -> Path:
+    """Rewrite the single-file HTML (and refresh the field list and the Delivery data) from the
+    report.json already built, without scoring again: for changes to the dashboard's code, the field
+    list, the tracker or the delivery inputs."""
+    data = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    data["fieldList"] = fields_list()
+    data["delivery"] = delivery.build()   # SPEC 6.4: refreshed from the tracker and run outputs
+    (out / "report.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    js = schema_module(json.loads(SCHEMA.read_text(encoding="utf-8")))
+    html = out / "allshares_report.html"
+    html.write_text(render_report(js, data), encoding="utf-8")
+    if (out / "app" / "public").is_dir():
+        shutil.copyfile(out / "report.json", out / "app" / "public" / "report.json")
+    return html
+
+
 def main(argv=None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("csv", type=Path, help="a data-point CSV from python -m extractor.datapoints")
+    p.add_argument("csv", type=Path, nargs="?", help="a data-point CSV from python -m extractor.datapoints")
+    p.add_argument("--rerender", action="store_true",
+                   help="rebuild the HTML from the existing report.json and refresh the Delivery data (no rescoring)")
     p.add_argument("--ranges", type=Path, help="JSON {field: [min, max]} replacing the default ranges")
     p.add_argument("--cache", type=Path, default=CACHE_DIR, help="where the run cached its documents")
     p.add_argument("--results", type=Path, default=OUTPUT_DIR, help="the run's per-company result JSON")
     a = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    if a.rerender:
+        print(f"Dashboard re-rendered: {rerender()}")
+        return
+    if not a.csv:
+        p.error("give a data-point CSV, or --rerender")
     ranges = dict(oc.DEFAULT_RANGES)
     if a.ranges:
         ranges.update({k: tuple(v) for k, v in json.loads(a.ranges.read_text(encoding="utf-8")).items()})

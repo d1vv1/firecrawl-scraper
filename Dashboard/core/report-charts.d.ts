@@ -7,4 +7,5 @@ export function stacked(cats: string[], series: { name: string; color: string; v
 export function stackedH(rows: Record<string, any>[], series: { key: string; name: string; color: string }[]): string;
 export function pie(items: Item[]): string;
 export function line(points: { label: string; short: string; checks: number; found: number }[], target?: number): string;
+export function burn(days: { d: string; short: string; plan: number; actual: number | null; proj: number | null }[], deadline: string): string;
 export function legend(items: { label: string; color: string }[]): string;

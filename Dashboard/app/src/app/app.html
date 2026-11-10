@@ -1,10 +1,19 @@
 <nav class="navbar navbar-dark bg-dark sticky-top top">
   <span class="navbar-brand">Allshares Part 1 accuracy</span>
-  <ul class="nav nav-underline tabs" role="tablist">
-    @for (p of pages; track p.path) {
-      <li class="nav-item"><a class="nav-link tab" role="tab" [routerLink]="'/' + p.path" routerLinkActive="active" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive">{{ p.label }}</a></li>
+  <nav class="nav nav-underline tabs navgroups" aria-label="Pages">
+    @for (g of nav; track g.label) {
+      @if (g.pages.length === 1) {
+        <a class="nav-link tab" [routerLink]="'/' + g.pages[0].path" routerLinkActive="active" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive">{{ g.pages[0].label }}</a>
+      } @else {
+        <div class="navgrp" [class.on]="current(g)">
+          <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">{{ g.label }}</span><span class="cur">{{ current(g)?.label }}</span><span class="caret">▾</span></button>
+          <div class="navmenu" role="menu" hidden>
+            @for (p of g.pages; track p.path) {<a class="nav-link" role="menuitem" [routerLink]="'/' + p.path" routerLinkActive="active">{{ p.label }}</a>}
+          </div>
+        </div>
+      }
     }
-  </ul>
+  </nav>
   @if (r.loaded()) {
     <div class="meta">{{ r.C.fmt(r.model.recs.length) }} values@if (imported()) { · {{ r.C.fmt(imported()) }} from import}</div>
   }
@@ -49,6 +58,10 @@
       <select class="form-select form-select-sm" (change)="on('status', $event)">
         <option value="">All statuses</option>
         @for (s of o.statuses; track s.key) {<option [value]="s.key" [selected]="f.status === s.key">{{ s.label }}</option>}
+      </select></div>
+    <div class="slicer"><label class="form-label">Values</label>
+      <select class="form-select form-select-sm" (change)="on('fill', $event)">
+        @for (x of r.C.FILL_OPTIONS; track x[0]) {<option [value]="x[0]" [selected]="f.fill === x[0]">{{ x[1] }}</option>}
       </select></div>
     @if (r.C.anyFilter(f)) {<div><button class="btn btn-link btn-sm" (click)="r.clearFilters()">Clear filters</button></div>}
   </aside>

@@ -7,6 +7,8 @@ import { Companies, Fields } from './pages/drill';
 import { Failures, Overview, Trend } from './pages/summary';
 import { Steps } from './pages/steps';
 import { Import, Ranges } from './pages/tools';
+import { Coverage, DataFields, ExportPage, NotFoundMatrix, NotFoundPage, Sources } from './pages/extra';
+import { Exceptions, Health, Standup, Throughput } from './pages/delivery';
 import { ReportService } from './report.service';
 
 // report.json is whatever run was built last (python -m extractor.dashboard), so the expected
@@ -70,7 +72,7 @@ describe('Allshares dashboard (Angular)', () => {
     const ex = D.values.filter((v: any) => v.d === 'exchange');
     const el = render(Fields, { dp: 'exchange' });
     expect(el.querySelectorAll('tbody tr.click').length).toBeGreaterThanOrEqual(new Set(D.values.map((v: any) => v.d)).size);
-    expect(el.textContent).toContain(`exchange (C05, Listing and market): ${ex.length} values`);
+    expect(el.textContent).toContain(`exchange (C05, Listing and market): ${ex.filter((v: any) => v.st !== 'not_found' && v.st !== 'not_applicable').length} values`);
   });
 
   it('company drill-down shows the company IDs', () => {
@@ -99,11 +101,71 @@ describe('Allshares dashboard (Angular)', () => {
     expect(el.querySelectorAll('tr.group').length).toBe(s.families.length);
     const top = s.steps.slice().sort((a: any, b: any) => b.fail - a.fail)[0];
     el = render(Steps, { gate: top.id });
-    expect(el.querySelector('.title')!.textContent).toContain(`${top.id} ${top.name}: ${top.fail} fails`);
+    expect(el.querySelector('.title')!.textContent).toContain(`${top.id} ${top.name}: ${fmtN(top.fail)} fails`);
     const field = r.C.stepDetail(r.model, r.model.recs, top.id).fields[0];
     el = render(Steps, { gate: top.id, dp: field.d });
-    expect(el.querySelector('.title')!.textContent).toBe(`${top.id} on ${field.d}: ${field.fail} of ${field.runs} values fail, 0 not run`);
+    expect(el.querySelector('.title')!.textContent).toBe(`${top.id} on ${field.d}: ${fmtN(field.fail)} of ${fmtN(field.runs)} values fail, 0 not run`);
     expect([...el.querySelectorAll('.breadcrumb-item')].map((x) => x.textContent!.trim())).toEqual(['Validation steps', top.id, field.d]);
+  });
+
+  it('values filter: filled and empty', () => {
+    const r = setup();
+    r.setFilter('fill', 'filled');
+    expect(r.view().every((v) => v.st === 'found' || v.st === 'partial')).toBe(true);
+    r.setFilter('fill', 'empty');
+    expect(r.view().length).toBe(empty);
+  });
+
+  it('reports and sources: one row per company, with report links', () => {
+    const r = setup();
+    const s = r.C.sources(r.model, r.model.recs);
+    const el = render(Sources);
+    expect(el.querySelector('.title')!.textContent).toBe(s.title);
+    expect(el.querySelectorAll('a[href^="/companies/"]').length).toBe(D.meta.companies);
+    const withRem = s.rows.find((x: any) => x.hasRem);
+    if (withRem) expect(el.querySelector(`a[href="${withRem.links.rem[0].url}"]`)).not.toBeNull();
+  });
+
+  it('field coverage lists every field of the protocol list', () => {
+    setup();
+    const el = render(Coverage);
+    expect(el.querySelectorAll('tbody tr.click').length).toBe((D.fieldList || []).length || new Set(D.values.map((v: any) => v.d)).size);
+    expect(el.querySelector('.title')!.textContent).toMatch(/^On average a field is found [\d.]+% of the time/);
+  });
+
+  it('company data and pay data pages show the field review next to the run', () => {
+    const r = setup();
+    for (const sheet of ['Company Data', 'Pay Data']) {
+      const d = r.C.dataPage(r.model, r.model.recs, sheet);
+      const el = render(DataFields, { sheet });
+      expect(el.querySelector('.title')!.textContent).toBe(d.title);
+      expect(el.querySelectorAll('tbody tr.click').length).toBe((D.fieldList || []).filter((f: any) => f.sheet === sheet).length);
+      expect(el.textContent!.includes('1 Dec milestone')).toBe(sheet === 'Pay Data');
+    }
+  });
+
+  it('not-found page: matrix drills to companies', () => {
+    setup();
+    const page = render(NotFoundPage);
+    const f = TestBed.createComponent(NotFoundMatrix);
+    f.detectChanges();
+    const m = f.componentInstance.data();
+    expect(page.querySelector('.title')!.textContent).toContain(fmtN(m.total.nf) + ' values not found');
+    const c = m.countries[0];
+    f.componentInstance.pick({ p: 1 }, c);
+    f.detectChanges();
+    const n = D.values.filter((v: any) => v.p && v.c === c && v.st === 'not_found').length;
+    expect(f.nativeElement.textContent).toContain(`Not found: Pay data · ${c}: ${fmtN(n)} values`);
+  });
+
+  it('export for Claude holds every section', () => {
+    setup();
+    const f = TestBed.createComponent(ExportPage);
+    f.detectChanges();
+    const t = f.componentInstance.text();
+    expect(t).toMatch(/^# Allshares Part 1 accuracy data: export for analysis/);
+    ['## Summary', '## Companies: reports found, links and coverage', '## Field coverage and validation by field', '## Not found by field and country', '## Values (filled only)']
+      .forEach((h) => expect(t).toContain(h));
   });
 
   it('import preview, apply and reset; trend follows', () => {
@@ -129,5 +191,19 @@ describe('Allshares dashboard (Angular)', () => {
     f.componentInstance.reset();
     expect(r.model.recs.length).toBe(N);
     expect(r.model.hist.length).toBe(base);
+  });
+
+  it('delivery pages show the core numbers', () => {
+    const r = setup();
+    const x = r.C.delivery(r.model, '');
+    const el = render(Standup);
+    if (!x.ok) { expect(el.textContent).toContain(x.error); return; }
+    expect(el.querySelector('.title')!.textContent).toBe(x.titles.standup);
+    expect(el.querySelectorAll('td.stuck').length).toBe(x.funnel.filter((f: any) => f.stuck > 0).length);
+    expect(render(Throughput).querySelector('.title')!.textContent).toBe(x.titles.throughput);
+    const ex = render(Exceptions);
+    expect(ex.querySelector('.title')!.textContent).toBe(x.titles.exceptions);
+    expect(ex.querySelectorAll('tbody tr').length).toBe(Math.max(1, x.exceptions.rows.length));
+    expect(render(Health).querySelector('.title')!.textContent).toBe(x.titles.health);
   });
 });
