@@ -27,7 +27,7 @@ See docs/pipeline_flow.html for the whole flow.
 
 Output:
   <--out>.csv                  one row per company and data point, and per role and pay
-                               field (17 columns, COLUMNS)
+                               field (18 columns, COLUMNS)
   output/datapoints/<id>.json  the same rows per company (re-runs skip done companies)
   output/golden_test_filled.csv  the input CSV with build_value filled in, when the
                                input is the golden sample
@@ -42,6 +42,8 @@ Where a value came from:
   confidence  A exact (register field or XBRL tag); B read by the AI, quote found in
               the source; C read by the AI, quote not found verbatim (check it)
   note        the page and quote, the tag name, or why there is no value
+  scraper_version  the scraper version that extracted it (config.SCRAPER_VERSION; 0 for
+              values saved before versioning). --outdated re-runs companies below it
 """
 
 import argparse
@@ -65,7 +67,7 @@ from firecrawl import PaymentRequiredError
 from . import apis, edgar, fx, listing, llm, pay, pay_tables, sector
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
-from .config import CACHE_DIR, OUTPUT_DIR, fold, load_settings
+from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
 from .documents import DP_DOC_TYPES, Candidate, DocType, Document, Library
 from .extract import full_value, full_value_quoted
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
@@ -81,7 +83,7 @@ log = logging.getLogger("extractor.datapoints")
 
 COLUMNS = ["company_id", "company_name", "segment", "country", "lei", "grain", "role_row",
            "data_point", "value", "unit", "period_end", "source", "endpoint", "method",
-           "retrieved_at", "confidence", "note"]
+           "retrieved_at", "confidence", "note", "scraper_version"]
 
 # Company-grain data points in output order (protocol field in the comment). Names
 # match the golden dataset's `field`. Role grain (R01-R11): pay.ROLE_POINTS.
@@ -1464,12 +1466,22 @@ def rows_for(t: Target, found: list[Found]) -> list[dict]:
                      "grain": f.grain, "role_row": f.role_row, "data_point": f.data_point, "value": value, "unit": f.unit,
                      "period_end": f.period_end, "source": f.source, "endpoint": f.endpoint,
                      "method": f.method, "retrieved_at": f.retrieved_at if f.value not in (None, "")
-                     else "", "confidence": f.confidence, "note": f.note})
+                     else "", "confidence": f.confidence, "note": f.note,
+                     "scraper_version": str(SCRAPER_VERSION)})
     return refresh(rows)
 
 
 def dp_path(c: Company) -> Path:
     return DP_DIR / f"{c.slug}.json"
+
+
+def saved_version(c: Company) -> int:
+    """The scraper version a company's saved values were extracted with (0: before versioning)."""
+    try:
+        rows = json.loads(dp_path(c).read_text(encoding="utf-8"))
+        return min(int(r.get("scraper_version") or 0) for r in rows) if rows else 0
+    except (OSError, ValueError):
+        return 0
 
 
 def no_credits_path(c: Company) -> Path:
@@ -1572,6 +1584,55 @@ OWNERSHIP = {"largest_holders", "controlling_owner", "controlling_owner_name", "
 REPORT_SOURCES = ("Annual report", "ESEF filing")
 
 
+def _fy_label_fits(label: str, end: dt.date) -> bool:
+    """Does a fiscal-year label name the year that ends on `end`? "2025" for a year ending
+    31 Dec 2025; "2025/26" or "2025/2026" for one ending in 2026; "2025" also for a year
+    ending in the first half of 2026 (Burckhardt names its year after the year it starts)."""
+    years = [int(y) for y in re.findall(r"(?<!\d)(\d{4})(?!\d)", label)]
+    m = re.search(r"(\d{4})\s*[/-]\s*(\d{2})(?!\d)", label)
+    if m:
+        years.append(int(m.group(1)[:2] + m.group(2)))
+    if not years:
+        return True                     # nothing to compare
+    last = max(years)
+    return last == end.year or (len(set(years)) == 1 and end.month <= 6 and last == end.year - 1)
+
+
+def fiscal_year_from_its_end(rows: list[dict]) -> None:
+    """The fiscal year the AI named, put right where the report's own fiscal year end says
+    another year (Basler Kantonalbank: "2023" for the 2025 report, figures dated 2025-12-31).
+    Values that took the wrong year's end as their date get the right one: those dated
+    "the report's (no other date stated)", and pay rows from that report or whose quote
+    names the new year, unless the quote names the old one."""
+    co = [r for r in rows if r["grain"] == "company"]
+    fy = next((r for r in co if r["data_point"] == "fiscal_year" and r["value"]), None)
+    fye = next((r for r in co if r["data_point"] == "fiscal_year_end"
+                and re.fullmatch(r"\d{4}-\d{2}-\d{2}", r["value"])), None)
+    if not fy or not fye:
+        return
+    end = dt.date.fromisoformat(fye["value"])
+    if _fy_label_fits(fy["value"], end):
+        return
+    old, old_end = fy["value"], fy["period_end"]
+    new = str(end.year) if end.month > 6 else f"{end.year - 1}/{str(end.year)[2:]}"
+    fy.update(value=new, period_end=fye["value"],
+              note=f"{fy['note']}; the AI said {old}, the report's fiscal year ends {fye['value']}")
+    if not old_end or old_end == fye["value"]:
+        return
+    old_year, new_year = old_end[:4], str(end.year)
+    report = fye["endpoint"].split("#")[0]
+    for r in rows:
+        if r is fy or r["period_end"] != old_end or not r["value"]:
+            continue
+        m = re.search(r'(?:PDF page \d+|report text|web page): "([^"]*)', r["note"])
+        quote = m.group(1) if m else ""
+        if "period end: the report's (no other date stated)" in r["note"] or (
+                r["grain"] == "role" and old_year not in quote
+                and (new_year in quote or (report and r["endpoint"].split("#")[0] == report))):
+            r["period_end"] = fye["value"]
+            r["note"] += f"; dated {fye['value']}, the report's fiscal year end (was {old_end})"
+
+
 def iso_codes(rows: list[dict]) -> None:
     """Currencies as ISO 4217 codes: "US$" -> "USD" in a currency field and at the start of
     a unit ("US$ millions"). A share price in pence (GBp, GBX) becomes pounds, the printed
@@ -1596,7 +1657,10 @@ def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
     or an ownership fact read without one. Rows that already have them are unchanged."""
+    for r in rows:
+        r.setdefault("scraper_version", "0")    # saved before versioning
     iso_codes(rows)
+    fiscal_year_from_its_end(rows)
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
@@ -1736,6 +1800,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-run-credits", type=int,
                    help="Firecrawl credits for the whole run. A company only starts if the credits "
                         "spent plus the worst case of every company still running stay within it")
+    p.add_argument("--outdated", action="store_true",
+                   help=f"Also redo companies whose values came from an older scraper version "
+                        f"(now {SCRAPER_VERSION}; column scraper_version)")
     p.add_argument("--no-dashboard", action="store_true",
                    help="Don't run the output checks and update the dashboard at the end")
     args = p.parse_args(argv)
@@ -1754,8 +1821,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.limit:
         targets = targets[:args.limit]
     todo = [t for t in targets if args.redo or not dp_path(t.company).exists()
-            or no_credits_path(t.company).exists()]
-    print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before")
+            or no_credits_path(t.company).exists()
+            or (args.outdated and saved_version(t.company) < SCRAPER_VERSION)]
+    print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before"
+          + (f" with scraper version {SCRAPER_VERSION}" if args.outdated else ""))
     opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits, "apis": not args.no_apis,
             "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
 

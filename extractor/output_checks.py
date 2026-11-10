@@ -684,6 +684,29 @@ def score_row(r: Row, ctx: Ctx) -> Scored:
     return Scored(r, results, hard_failed, score, status)
 
 
+def saved(csv_path: Path, checks_path: Path) -> tuple[list[Scored], list[Row]]:
+    """A run's values with the checks saved in its <name>_checks.csv, not scored again: for a run
+    whose cached source texts are on another machine (scoring there would make CORE-03 n/a)."""
+    rows = [Row(d) for d in csv.DictReader(open(csv_path, encoding="utf-8-sig"))]
+    groups = defaultdict(list)   # (company, field, role, value) -> one list of results per value
+    for d in csv.DictReader(open(checks_path, encoding="utf-8-sig")):
+        key = (d["company_id"], d["data_point"], d["role_row"], d["value"])
+        res = Result(d["check"], d["outcome"], d["reason"])
+        g = groups[key]
+        if not g or len(g[-1][0]) == len(CHECKS):
+            g.append(([], d["status"], float(d["score"]) if d["score"] else None))
+        g[-1][0].append(res)
+    hard = {CHECK_ID[fn] for fn, h, _ in CHECKS if h}
+    scored = []
+    for r in rows:
+        g = groups.get((r.company_id, r.data_point, r.role_row, r.value))
+        if r.value and g:
+            results, status, score = g.pop(0)
+            scored.append(Scored(r, results, [x.check for x in results if x.check in hard and x.outcome == "fail"],
+                                 score, status))
+    return scored, rows
+
+
 def run(csv_path: Path, sources: Sources, ranges: dict) -> tuple[list[Scored], list[Row]]:
     rows = [Row(d) for d in csv.DictReader(open(csv_path, encoding="utf-8-sig"))]
     by_company = defaultdict(list)

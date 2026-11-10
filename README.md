@@ -156,7 +156,12 @@ This collects the fields of the source-validation protocol
 for the companies in the CSV, and writes **`output/datapoints.csv`**:
 
 `company_id, company_name, segment, country, lei, grain, role_row, data_point, value, unit,
-period_end, source, endpoint, method, retrieved_at, confidence, note`
+period_end, source, endpoint, method, retrieved_at, confidence, note, scraper_version`
+
+`scraper_version` is the version of the scraper that extracted the value (`SCRAPER_VERSION` in
+`extractor/config.py`; 0 for values saved before versioning). Raise it when a change means a
+re-run would give other values; `--outdated` then re-runs only the companies extracted with an
+older version.
 
 - **Company grain** (`grain` = `company`): 41 data points per company (protocol C01-C23),
   one row each, including the ones not found.

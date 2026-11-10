@@ -13,6 +13,15 @@ CACHE_DIR = PROJECT_ROOT / "cache"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 PROMPTS_DIR = PROJECT_ROOT / "prompts"
 
+# The scraper version stamped on every value when a company is extracted (column
+# scraper_version). Raise it by one whenever a change means a re-run would give other
+# values: prompts, sources, how reports are found or read, the fields asked for. Not for
+# changes applied to saved results when the CSV is written (refresh, repair_quotes): those
+# reach old values without a re-run. Values saved before versioning read "0".
+# `python -m extractor.datapoints ... --outdated` re-runs the companies below this version.
+# 1: 10 Nov 2026, the first versioned extraction (after Wave 1).
+SCRAPER_VERSION = 1
+
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000
 CHUNK_WORDS = 1_500

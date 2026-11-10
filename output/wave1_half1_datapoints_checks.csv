@@ -29111,30 +29111,30 @@ branicks-group-ag,ebitda,,147200000,Pass,100,DER-03,n/a,not a derived number
 branicks-group-ag,ebitda,,147200000,Pass,100,DER-06,n/a,not derived
 branicks-group-ag,ebitda,,147200000,Pass,100,XF-01,n/a,not a total
 branicks-group-ag,ebitda,,147200000,Pass,100,XF-02,n/a,not a total
-branicks-group-ag,fiscal_year,,2023,Pass,100,CORE-01,pass,a fact about the whole report
-branicks-group-ag,fiscal_year,,2023,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-branicks-group-ag,fiscal_year,,2023,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-branicks-group-ag,fiscal_year,,2023,Pass,100,CORE-04,n/a,holds without a date
-branicks-group-ag,fiscal_year,,2023,Pass,100,CORE-05,pass,
-branicks-group-ag,fiscal_year,,2023,Pass,100,COD-01,n/a,not a coded field
-branicks-group-ag,fiscal_year,,2023,Pass,100,COD-02,n/a,not a classified field
-branicks-group-ag,fiscal_year,,2023,Pass,100,COD-03,n/a,not an identifier
-branicks-group-ag,fiscal_year,,2023,Pass,100,COD-06,n/a,not a date field
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-01,n/a,not money
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-04,n/a,no range for this field
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-05,n/a,not a count
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-06,n/a,no percentage
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-07,n/a,not a holdings list
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-08,n/a,not a breakdown
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-09,n/a,not an LTI amount
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-11,n/a,not STI paid
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-12,n/a,not a pay amount
-branicks-group-ag,fiscal_year,,2023,Pass,100,NUM-13,n/a,not FTE
-branicks-group-ag,fiscal_year,,2023,Pass,100,DER-03,n/a,not a derived number
-branicks-group-ag,fiscal_year,,2023,Pass,100,DER-06,n/a,not derived
-branicks-group-ag,fiscal_year,,2023,Pass,100,XF-01,n/a,not a total
-branicks-group-ag,fiscal_year,,2023,Pass,100,XF-02,n/a,not a total
+branicks-group-ag,fiscal_year,,2024,Pass,100,CORE-01,pass,a fact about the whole report
+branicks-group-ag,fiscal_year,,2024,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+branicks-group-ag,fiscal_year,,2024,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+branicks-group-ag,fiscal_year,,2024,Pass,100,CORE-04,n/a,holds without a date
+branicks-group-ag,fiscal_year,,2024,Pass,100,CORE-05,pass,
+branicks-group-ag,fiscal_year,,2024,Pass,100,COD-01,n/a,not a coded field
+branicks-group-ag,fiscal_year,,2024,Pass,100,COD-02,n/a,not a classified field
+branicks-group-ag,fiscal_year,,2024,Pass,100,COD-03,n/a,not an identifier
+branicks-group-ag,fiscal_year,,2024,Pass,100,COD-06,n/a,not a date field
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-01,n/a,not money
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-04,n/a,no range for this field
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-05,n/a,not a count
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-06,n/a,no percentage
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-07,n/a,not a holdings list
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-08,n/a,not a breakdown
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-09,n/a,not an LTI amount
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-11,n/a,not STI paid
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-12,n/a,not a pay amount
+branicks-group-ag,fiscal_year,,2024,Pass,100,NUM-13,n/a,not FTE
+branicks-group-ag,fiscal_year,,2024,Pass,100,DER-03,n/a,not a derived number
+branicks-group-ag,fiscal_year,,2024,Pass,100,DER-06,n/a,not derived
+branicks-group-ag,fiscal_year,,2024,Pass,100,XF-01,n/a,not a total
+branicks-group-ag,fiscal_year,,2024,Pass,100,XF-02,n/a,not a total
 branicks-group-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-01,pass,a fact about the whole report
 branicks-group-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 branicks-group-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-03,pass,
@@ -33791,30 +33791,30 @@ delticom-ag-na-o-n,ebitda,,20289000,Pass,100,DER-03,n/a,not a derived number
 delticom-ag-na-o-n,ebitda,,20289000,Pass,100,DER-06,n/a,not derived
 delticom-ag-na-o-n,ebitda,,20289000,Pass,100,XF-01,n/a,not a total
 delticom-ag-na-o-n,ebitda,,20289000,Pass,100,XF-02,n/a,not a total
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,CORE-01,pass,a fact about the whole report
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,CORE-04,n/a,holds without a date
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,CORE-05,pass,
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,COD-01,n/a,not a coded field
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,COD-02,n/a,not a classified field
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,COD-03,n/a,not an identifier
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,COD-06,n/a,not a date field
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-01,n/a,not money
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-04,n/a,no range for this field
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-05,n/a,not a count
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-06,n/a,no percentage
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-07,n/a,not a holdings list
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-08,n/a,not a breakdown
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-09,n/a,not an LTI amount
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-11,n/a,not STI paid
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-12,n/a,not a pay amount
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,NUM-13,n/a,not FTE
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,DER-03,n/a,not a derived number
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,DER-06,n/a,not derived
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,XF-01,n/a,not a total
-delticom-ag-na-o-n,fiscal_year,,2023,Pass,100,XF-02,n/a,not a total
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,CORE-01,pass,a fact about the whole report
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,CORE-04,n/a,holds without a date
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,CORE-05,pass,
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,COD-01,n/a,not a coded field
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,COD-02,n/a,not a classified field
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,COD-03,n/a,not an identifier
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,COD-06,n/a,not a date field
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-01,n/a,not money
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-04,n/a,no range for this field
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-05,n/a,not a count
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-06,n/a,no percentage
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-07,n/a,not a holdings list
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-08,n/a,not a breakdown
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-09,n/a,not an LTI amount
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-11,n/a,not STI paid
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-12,n/a,not a pay amount
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,NUM-13,n/a,not FTE
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,DER-03,n/a,not a derived number
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,DER-06,n/a,not derived
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,XF-01,n/a,not a total
+delticom-ag-na-o-n,fiscal_year,,2024,Pass,100,XF-02,n/a,not a total
 delticom-ag-na-o-n,fiscal_year_end,,2024-12-31,Pass,100,CORE-01,pass,a fact about the whole report
 delticom-ag-na-o-n,fiscal_year_end,,2024-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 delticom-ag-na-o-n,fiscal_year_end,,2024-12-31,Pass,100,CORE-03,pass,

@@ -172,15 +172,27 @@ def render_report(schema_js: str, data: dict) -> str:
     return t.replace("/*__DATA__*/", "var DATA = " + payload + ";")   # last: never scanned
 
 
-def build(csv_path: Path, cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
-          ranges: dict | None = None, out: Path = DASHBOARD) -> Path:
+def build(csv_path: Path | list[Path], cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
+          ranges: dict | None = None, out: Path = DASHBOARD, saved_checks: bool = False) -> Path:
     """Score the run's CSV and refresh the dashboard's files and the checks report next to
-    the CSV (<name>_checks.md and .csv). Returns the HTML report."""
-    scored, rows = oc.run(csv_path, oc.Sources(cache, results), ranges or dict(oc.DEFAULT_RANGES))
-    checks = csv_path.with_name(csv_path.stem + "_checks")
-    checks.with_suffix(".md").write_text(oc.report(scored, rows, csv_path.name), encoding="utf-8")
-    oc.write_csv(scored, checks.with_suffix(".csv"))
-    data = report_data(scored, rows, csv_path.name, previous_baseline(out / "report.json", csv_path.name))
+    the CSV (<name>_checks.md and .csv). Returns the HTML report.
+
+    Several CSVs (the halves of one wave) show as one run. saved_checks: take each CSV's
+    <name>_checks.csv as it is instead of scoring again (a run cached on another machine)."""
+    paths = [csv_path] if isinstance(csv_path, Path) else list(csv_path)
+    scored, rows = [], []
+    for p in paths:
+        checks = p.with_name(p.stem + "_checks")
+        if saved_checks:
+            s, r = oc.saved(p, checks.with_suffix(".csv"))
+        else:
+            s, r = oc.run(p, oc.Sources(cache, results), ranges or dict(oc.DEFAULT_RANGES))
+            checks.with_suffix(".md").write_text(oc.report(s, r, p.name), encoding="utf-8")
+            oc.write_csv(s, checks.with_suffix(".csv"))
+        scored += s
+        rows += r
+    name = " + ".join(p.name for p in paths)
+    data = report_data(scored, rows, name, previous_baseline(out / "report.json", name))
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     js = schema_module(schema)
     out.mkdir(parents=True, exist_ok=True)
@@ -205,7 +217,11 @@ def build(csv_path: Path, cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
 
 def main(argv=None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("csv", type=Path, help="a data-point CSV from python -m extractor.datapoints")
+    p.add_argument("csv", type=Path, nargs="+",
+                   help="data-point CSVs from python -m extractor.datapoints; several show as one run")
+    p.add_argument("--saved-checks", action="store_true",
+                   help="use each CSV's saved <name>_checks.csv instead of scoring again "
+                        "(for a run whose cache is on another machine)")
     p.add_argument("--ranges", type=Path, help="JSON {field: [min, max]} replacing the default ranges")
     p.add_argument("--cache", type=Path, default=CACHE_DIR, help="where the run cached its documents")
     p.add_argument("--results", type=Path, default=OUTPUT_DIR, help="the run's per-company result JSON")
@@ -214,7 +230,7 @@ def main(argv=None) -> None:
     ranges = dict(oc.DEFAULT_RANGES)
     if a.ranges:
         ranges.update({k: tuple(v) for k, v in json.loads(a.ranges.read_text(encoding="utf-8")).items()})
-    html = build(a.csv, a.cache, a.results, ranges)
+    html = build(a.csv, a.cache, a.results, ranges, saved_checks=a.saved_checks)
     print(f"Dashboard updated: {html}\nApp: npm --prefix Dashboard/app start, then http://localhost:4200")
 
 

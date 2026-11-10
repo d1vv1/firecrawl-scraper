@@ -77,3 +77,27 @@ def test_the_previous_run_becomes_the_baseline(tmp_path, monkeypatch):
     second, _ = _build(tmp_path, monkeypatch)
     assert second["baseline"]["checksPct"] == first["meta"]["checksPct"]
     assert second["baseline"]["label"].startswith("Previous run (run_datapoints.csv")
+
+
+def test_several_runs_show_as_one_with_their_saved_checks(tmp_path, monkeypatch):
+    first, _ = _build(tmp_path, monkeypatch)    # scores run_datapoints.csv and saves its checks
+    other = [dict(r, company_id="T2") for r in ROWS]
+    b = tmp_path / "b_datapoints.csv"
+    with b.open("w", newline="", encoding="utf-8-sig") as f:
+        w = csv.DictWriter(f, fieldnames=COLUMNS)
+        w.writeheader()
+        for r in other:
+            w.writerow({"company_name": "Beta AB", "country": "NO", "grain": "company",
+                        "endpoint": "https://example.com/b.pdf#page=3", "method": "PARSE", **r})
+    s, _ = oc.run(b, oc.Sources(None, None), dict(oc.DEFAULT_RANGES))
+    oc.write_csv(s, tmp_path / "b_datapoints_checks.csv")
+    monkeypatch.setattr(oc, "run", lambda *a: (_ for _ in ()).throw(AssertionError("scored again")))
+    out = tmp_path / "Dashboard"
+    dashboard.build([tmp_path / "run_datapoints.csv", b], out=out, saved_checks=True)
+    data = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    m = data["meta"]
+    assert (m["tracker"], m["companyIds"], m["rows"], m["filled"]) == \
+        ("run_datapoints.csv + b_datapoints.csv", 2, 10, 8)
+    assert m["checksPct"] == first["meta"]["checksPct"]   # same values, same saved outcomes
+    by = {(v["id"], v["d"]): v for v in data["values"]}
+    assert by[("T2", "headcount")]["sc"] == "H" and by[("T1", "headcount")]["sc"] == "H"

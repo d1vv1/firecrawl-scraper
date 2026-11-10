@@ -24,7 +24,7 @@ def _origin(kind="pdf"):
 def test_columns_match_the_requested_format():
     assert dp.COLUMNS == ["company_id", "company_name", "segment", "country", "lei", "grain",
                           "role_row", "data_point", "value", "unit", "period_end", "source",
-                          "endpoint", "method", "retrieved_at", "confidence", "note"]
+                          "endpoint", "method", "retrieved_at", "confidence", "note", "scraper_version"]
 
 
 def test_pdf_value_gets_the_page_of_its_quote():
@@ -765,3 +765,50 @@ def test_saved_values_get_the_source_row_as_their_quote():
                 endpoint="https://x.com/r.pdf#page=6", confidence="C")
     dp.repair_quotes([kept], lambda url: {6: TEKNA})
     assert kept["confidence"] == "C"
+
+
+def test_the_fiscal_year_follows_the_reports_own_year_end():
+    import datetime as dt
+    from extractor.datapoints import _fy_label_fits, fiscal_year_from_its_end
+    d = lambda s: dt.date.fromisoformat(s)
+    assert _fy_label_fits("2025", d("2025-12-31")) and _fy_label_fits("2023/24", d("2024-08-31"))
+    assert _fy_label_fits("2023/2024", d("2024-09-30")) and _fy_label_fits("2025", d("2026-03-31"))
+    assert not _fy_label_fits("2023", d("2025-12-31")) and not _fy_label_fits("2023", d("2024-12-31"))
+    ar = "https://bank.ch/gb-2025.pdf"
+    row = lambda grain, dp, value, pe="", note="", ep=ar, role="": dict(
+        grain=grain, data_point=dp, value=value, period_end=pe, note=note, endpoint=ep, role_row=role)
+    rows = [row("company", "fiscal_year", "2023", "2023-12-31", "the year the figures are for"),
+            row("company", "fiscal_year_end", "2025-12-31", ep=ar + "#page=6"),
+            row("company", "largest_holders", "Canton 51%", "2023-12-31",
+                'PDF page 156: "Canton 51,5"; period end: the report\'s (no other date stated)'),
+            row("company", "revenue", "460000000", "2023-12-31", 'PDF page 3: "Ertrag 460 000"', ar + "#page=3"),
+            row("role", "base_salary", "500000", "2023-12-31", 'PDF page 7: "CEO|2025|500,000"',
+                "https://bank.ch/pay.pdf", "CEO"),
+            row("role", "sti_max", "50", "2023-12-31", 'PDF page 91: "maximal 50 Prozent"', ar + "#page=91", "CEO"),
+            row("role", "base_salary", "480000", "2023-12-31", 'PDF page 7: "CFO|2023|480,000"',
+                ar + "#page=7", "CFO")]
+    fiscal_year_from_its_end(rows)
+    assert (rows[0]["value"], rows[0]["period_end"]) == ("2025", "2025-12-31")
+    assert rows[0]["note"].endswith("the AI said 2023, the report's fiscal year ends 2025-12-31")
+    assert [r["period_end"] for r in rows[2:]] == ["2025-12-31", "2023-12-31", "2025-12-31", "2025-12-31",
+                                                   "2023-12-31"]   # a figure keeps its date; so does a 2023 quote
+    good = [row("company", "fiscal_year", "2025", "2026-03-31"), row("company", "fiscal_year_end", "2026-03-31")]
+    fiscal_year_from_its_end(good)
+    assert good[0]["value"] == "2025" and "the AI said" not in good[0]["note"]
+
+
+def test_values_carry_the_scraper_version_and_outdated_companies_are_redone(tmp_path, monkeypatch):
+    import json
+    monkeypatch.setattr(dp, "DP_DIR", tmp_path)
+    monkeypatch.setattr(dp, "SCRAPER_VERSION", 3)
+    c = Company(company_id="acme", name="Acme AB", country="SE")
+    rows = dp.rows_for(dp.Target(c), [Found("legal_name", "Acme AB", source="GLEIF", method="API")])
+    assert rows[0]["scraper_version"] == "3" and "scraper_version" in dp.COLUMNS
+    legacy = [{k: v for k, v in rows[0].items() if k != "scraper_version"}]
+    assert dp.refresh(legacy)[0]["scraper_version"] == "0"       # saved before versioning
+    dp.dp_path(c).write_text(json.dumps(legacy), encoding="utf-8")
+    assert dp.saved_version(c) == 0
+    dp.dp_path(c).write_text(json.dumps(rows), encoding="utf-8")
+    assert dp.saved_version(c) == 3
+    monkeypatch.setattr(dp, "SCRAPER_VERSION", 4)
+    assert dp.saved_version(c) < dp.SCRAPER_VERSION

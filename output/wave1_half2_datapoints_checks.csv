@@ -18911,30 +18911,30 @@ bvz-holding-ag,ebitda,,65966982,Pass,100,DER-03,n/a,not a derived number
 bvz-holding-ag,ebitda,,65966982,Pass,100,DER-06,n/a,not derived
 bvz-holding-ag,ebitda,,65966982,Pass,100,XF-01,n/a,not a total
 bvz-holding-ag,ebitda,,65966982,Pass,100,XF-02,n/a,not a total
-bvz-holding-ag,fiscal_year,,2023,Pass,100,CORE-01,pass,a fact about the whole report
-bvz-holding-ag,fiscal_year,,2023,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-bvz-holding-ag,fiscal_year,,2023,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-bvz-holding-ag,fiscal_year,,2023,Pass,100,CORE-04,n/a,holds without a date
-bvz-holding-ag,fiscal_year,,2023,Pass,100,CORE-05,pass,
-bvz-holding-ag,fiscal_year,,2023,Pass,100,COD-01,n/a,not a coded field
-bvz-holding-ag,fiscal_year,,2023,Pass,100,COD-02,n/a,not a classified field
-bvz-holding-ag,fiscal_year,,2023,Pass,100,COD-03,n/a,not an identifier
-bvz-holding-ag,fiscal_year,,2023,Pass,100,COD-06,n/a,not a date field
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-01,n/a,not money
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-04,n/a,no range for this field
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-05,n/a,not a count
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-06,n/a,no percentage
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-07,n/a,not a holdings list
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-08,n/a,not a breakdown
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-09,n/a,not an LTI amount
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-11,n/a,not STI paid
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-12,n/a,not a pay amount
-bvz-holding-ag,fiscal_year,,2023,Pass,100,NUM-13,n/a,not FTE
-bvz-holding-ag,fiscal_year,,2023,Pass,100,DER-03,n/a,not a derived number
-bvz-holding-ag,fiscal_year,,2023,Pass,100,DER-06,n/a,not derived
-bvz-holding-ag,fiscal_year,,2023,Pass,100,XF-01,n/a,not a total
-bvz-holding-ag,fiscal_year,,2023,Pass,100,XF-02,n/a,not a total
+bvz-holding-ag,fiscal_year,,2024,Pass,100,CORE-01,pass,a fact about the whole report
+bvz-holding-ag,fiscal_year,,2024,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+bvz-holding-ag,fiscal_year,,2024,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+bvz-holding-ag,fiscal_year,,2024,Pass,100,CORE-04,n/a,holds without a date
+bvz-holding-ag,fiscal_year,,2024,Pass,100,CORE-05,pass,
+bvz-holding-ag,fiscal_year,,2024,Pass,100,COD-01,n/a,not a coded field
+bvz-holding-ag,fiscal_year,,2024,Pass,100,COD-02,n/a,not a classified field
+bvz-holding-ag,fiscal_year,,2024,Pass,100,COD-03,n/a,not an identifier
+bvz-holding-ag,fiscal_year,,2024,Pass,100,COD-06,n/a,not a date field
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-01,n/a,not money
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-04,n/a,no range for this field
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-05,n/a,not a count
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-06,n/a,no percentage
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-07,n/a,not a holdings list
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-08,n/a,not a breakdown
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-09,n/a,not an LTI amount
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-11,n/a,not STI paid
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-12,n/a,not a pay amount
+bvz-holding-ag,fiscal_year,,2024,Pass,100,NUM-13,n/a,not FTE
+bvz-holding-ag,fiscal_year,,2024,Pass,100,DER-03,n/a,not a derived number
+bvz-holding-ag,fiscal_year,,2024,Pass,100,DER-06,n/a,not derived
+bvz-holding-ag,fiscal_year,,2024,Pass,100,XF-01,n/a,not a total
+bvz-holding-ag,fiscal_year,,2024,Pass,100,XF-02,n/a,not a total
 bvz-holding-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-01,pass,a fact about the whole report
 bvz-holding-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 bvz-holding-ag,fiscal_year_end,,2024-12-31,Pass,100,CORE-03,pass,
@@ -21743,30 +21743,30 @@ basler-kantonalbank,ebitda,,281135000,Pass,100,DER-03,n/a,not a derived number
 basler-kantonalbank,ebitda,,281135000,Pass,100,DER-06,n/a,not derived
 basler-kantonalbank,ebitda,,281135000,Pass,100,XF-01,n/a,not a total
 basler-kantonalbank,ebitda,,281135000,Pass,100,XF-02,n/a,not a total
-basler-kantonalbank,fiscal_year,,2023,Pass,100,CORE-01,pass,a fact about the whole report
-basler-kantonalbank,fiscal_year,,2023,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-basler-kantonalbank,fiscal_year,,2023,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-basler-kantonalbank,fiscal_year,,2023,Pass,100,CORE-04,n/a,holds without a date
-basler-kantonalbank,fiscal_year,,2023,Pass,100,CORE-05,pass,
-basler-kantonalbank,fiscal_year,,2023,Pass,100,COD-01,n/a,not a coded field
-basler-kantonalbank,fiscal_year,,2023,Pass,100,COD-02,n/a,not a classified field
-basler-kantonalbank,fiscal_year,,2023,Pass,100,COD-03,n/a,not an identifier
-basler-kantonalbank,fiscal_year,,2023,Pass,100,COD-06,n/a,not a date field
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-01,n/a,not money
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-04,n/a,no range for this field
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-05,n/a,not a count
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-06,n/a,no percentage
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-07,n/a,not a holdings list
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-08,n/a,not a breakdown
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-09,n/a,not an LTI amount
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-11,n/a,not STI paid
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-12,n/a,not a pay amount
-basler-kantonalbank,fiscal_year,,2023,Pass,100,NUM-13,n/a,not FTE
-basler-kantonalbank,fiscal_year,,2023,Pass,100,DER-03,n/a,not a derived number
-basler-kantonalbank,fiscal_year,,2023,Pass,100,DER-06,n/a,not derived
-basler-kantonalbank,fiscal_year,,2023,Pass,100,XF-01,n/a,not a total
-basler-kantonalbank,fiscal_year,,2023,Pass,100,XF-02,n/a,not a total
+basler-kantonalbank,fiscal_year,,2025,Pass,100,CORE-01,pass,a fact about the whole report
+basler-kantonalbank,fiscal_year,,2025,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+basler-kantonalbank,fiscal_year,,2025,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+basler-kantonalbank,fiscal_year,,2025,Pass,100,CORE-04,n/a,holds without a date
+basler-kantonalbank,fiscal_year,,2025,Pass,100,CORE-05,pass,
+basler-kantonalbank,fiscal_year,,2025,Pass,100,COD-01,n/a,not a coded field
+basler-kantonalbank,fiscal_year,,2025,Pass,100,COD-02,n/a,not a classified field
+basler-kantonalbank,fiscal_year,,2025,Pass,100,COD-03,n/a,not an identifier
+basler-kantonalbank,fiscal_year,,2025,Pass,100,COD-06,n/a,not a date field
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-01,n/a,not money
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-04,n/a,no range for this field
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-05,n/a,not a count
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-06,n/a,no percentage
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-07,n/a,not a holdings list
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-08,n/a,not a breakdown
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-09,n/a,not an LTI amount
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-11,n/a,not STI paid
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-12,n/a,not a pay amount
+basler-kantonalbank,fiscal_year,,2025,Pass,100,NUM-13,n/a,not FTE
+basler-kantonalbank,fiscal_year,,2025,Pass,100,DER-03,n/a,not a derived number
+basler-kantonalbank,fiscal_year,,2025,Pass,100,DER-06,n/a,not derived
+basler-kantonalbank,fiscal_year,,2025,Pass,100,XF-01,n/a,not a total
+basler-kantonalbank,fiscal_year,,2025,Pass,100,XF-02,n/a,not a total
 basler-kantonalbank,fiscal_year_end,,2025-12-31,Pass,100,CORE-01,pass,a fact about the whole report
 basler-kantonalbank,fiscal_year_end,,2025-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 basler-kantonalbank,fiscal_year_end,,2025-12-31,Pass,100,CORE-03,pass,
@@ -24047,30 +24047,30 @@ berner-kantonalbank-ag,total_assets,,42977000000,Pass,100,DER-03,n/a,not a deriv
 berner-kantonalbank-ag,total_assets,,42977000000,Pass,100,DER-06,n/a,not derived
 berner-kantonalbank-ag,total_assets,,42977000000,Pass,100,XF-01,n/a,not a total
 berner-kantonalbank-ag,total_assets,,42977000000,Pass,100,XF-02,n/a,not a total
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,CORE-01,pass,a fact about the whole report
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,CORE-04,n/a,holds without a date
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,CORE-05,pass,
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,COD-01,n/a,not a coded field
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,COD-02,n/a,not a classified field
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,COD-03,n/a,not an identifier
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,COD-06,n/a,not a date field
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-01,n/a,not money
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-04,n/a,no range for this field
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-05,n/a,not a count
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-06,n/a,no percentage
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-07,n/a,not a holdings list
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-08,n/a,not a breakdown
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-09,n/a,not an LTI amount
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-11,n/a,not STI paid
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-12,n/a,not a pay amount
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,NUM-13,n/a,not FTE
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,DER-03,n/a,not a derived number
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,DER-06,n/a,not derived
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,XF-01,n/a,not a total
-berner-kantonalbank-ag,fiscal_year,,2023,Pass,100,XF-02,n/a,not a total
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,CORE-01,pass,a fact about the whole report
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,CORE-04,n/a,holds without a date
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,CORE-05,pass,
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,COD-01,n/a,not a coded field
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,COD-02,n/a,not a classified field
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,COD-03,n/a,not an identifier
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,COD-06,n/a,not a date field
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-01,n/a,not money
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-04,n/a,no range for this field
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-05,n/a,not a count
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-06,n/a,no percentage
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-07,n/a,not a holdings list
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-08,n/a,not a breakdown
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-09,n/a,not an LTI amount
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-11,n/a,not STI paid
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-12,n/a,not a pay amount
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,NUM-13,n/a,not FTE
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,DER-03,n/a,not a derived number
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,DER-06,n/a,not derived
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,XF-01,n/a,not a total
+berner-kantonalbank-ag,fiscal_year,,2025,Pass,100,XF-02,n/a,not a total
 berner-kantonalbank-ag,fiscal_year_end,,2025-12-31,Pass,100,CORE-01,pass,a fact about the whole report
 berner-kantonalbank-ag,fiscal_year_end,,2025-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 berner-kantonalbank-ag,fiscal_year_end,,2025-12-31,Pass,100,CORE-03,pass,
