@@ -74,7 +74,7 @@ from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
 from .scraper import Page, local_file, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
-from .validate import figure_in_quote, quote_in_text
+from .validate import figure_in_quote, iso_currency, quote_in_text
 from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
@@ -1480,10 +1480,31 @@ OWNERSHIP = {"largest_holders", "controlling_owner", "controlling_owner_name", "
 REPORT_SOURCES = ("Annual report", "ESEF filing")
 
 
+def iso_codes(rows: list[dict]) -> None:
+    """Currencies as ISO 4217 codes: "US$" -> "USD" in a currency field and at the start of
+    a unit ("US$ millions"). A share price in pence (GBp, GBX) becomes pounds, the printed
+    pence kept in the note for the quote check."""
+    for r in rows:
+        country = r.get("country", "")
+        if r["data_point"] in ("pay_currency", "reporting_currency") and r["value"]:
+            r["value"] = iso_currency(r["value"], country)
+        if r["data_point"] == "share_price" and r["unit"] in ("GBp", "GBX") \
+                and re.fullmatch(r"-?[\d.]+", r["value"]):
+            pence = r["value"]
+            r["value"], r["unit"] = fmt_number(float(pence) / 100), "GBP"
+            r["note"] = f"{r['note']}; printed {pence} pence" if r["note"] else f"printed {pence} pence"
+        if r["unit"]:
+            head, _, rest = r["unit"].partition(" ")
+            code = iso_currency(head, country)
+            if code != head:
+                r["unit"] = f"{code} {rest}".strip()
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
     or an ownership fact read without one. Rows that already have them are unchanged."""
+    iso_codes(rows)
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):

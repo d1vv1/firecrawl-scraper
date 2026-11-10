@@ -39,6 +39,17 @@ def test_an_unknown_private_glyph_is_dropped():
     assert private_glyphs("Icon \uf06f here and there") == "Icon   here and there"
 
 
+def test_a_quote_from_several_rows_with_columns_skipped():
+    from extractor.validate import quote_in_text
+    text = ("Digia personnel by countries:\n31 Dec 2025 31 Dec 2024 Change, no. of employees\n"
+            "Finland 1,409 1,444 -35\nSweden 120 122 -2\nPoland 53 0 53\n")
+    q = "Digia personnel by countries: 31 Dec 2025 Finland 1,409 Sweden 120 Poland 53"
+    assert quote_in_text(q, text) == "loose"
+    assert quote_in_text(q.replace("120", "121"), text) is None            # a wrong figure
+    assert quote_in_text("Finland 120 Sweden 1,409", text) is None         # figures swapped
+    assert quote_in_text("Poland 53 Finland 1,409", text) is None          # rows out of order
+
+
 def test_a_shortened_row_of_a_drawn_table_is_found():
     from extractor.validate import quote_in_text
     text = "Total £ Executive Directors\nJohn Roberts FY26 557,080 49,232 22,000 628,312 461,262 920,971\n"

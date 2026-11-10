@@ -1,72 +1,72 @@
 # Output checks: wave1_half1_datapoints.csv
 
-99 companies, 5050 filled values checked (2026-11-06, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
+99 companies, 5054 filled values checked (2026-11-10, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
 
 | Status | Values |
 |---|---|
-| Pass | 4192 (83%) |
-| Review | 314 (6%) |
+| Pass | 4257 (84%) |
+| Review | 318 (6%) |
 | Fail | 64 (1%) |
-| Fail (hard) | 480 (10%) |
+| Fail (hard) | 415 (8%) |
 
 ## By category
 
 | Category | Values | Pass | Review | Fail | Fail (hard) |
 |---|---|---|---|---|---|
 | Identity | 608 | 605 | 0 | 0 | 3 |
-| Listing and market | 462 | 446 | 0 | 0 | 16 |
+| Listing and market | 466 | 450 | 0 | 0 | 16 |
 | Sector | 167 | 164 | 0 | 0 | 3 |
 | Reporting basis | 318 | 317 | 0 | 0 | 1 |
-| Financials | 329 | 265 | 21 | 0 | 43 |
+| Financials | 329 | 275 | 23 | 0 | 31 |
 | Workforce | 102 | 73 | 11 | 0 | 18 |
-| Ownership and control | 345 | 331 | 0 | 0 | 14 |
-| Segment and geography | 140 | 84 | 21 | 9 | 26 |
+| Ownership and control | 345 | 334 | 0 | 0 | 11 |
+| Segment and geography | 140 | 86 | 23 | 9 | 22 |
 | Pay policy | 209 | 194 | 0 | 0 | 15 |
-| Role and disclosure | 678 | 561 | 5 | 55 | 57 |
-| Pay: fixed | 624 | 414 | 97 | 0 | 113 |
-| Pay: STI | 443 | 328 | 65 | 0 | 50 |
-| Pay: LTI | 361 | 261 | 34 | 0 | 66 |
-| Pay: total | 264 | 149 | 60 | 0 | 55 |
+| Role and disclosure | 678 | 571 | 5 | 55 | 47 |
+| Pay: fixed | 624 | 435 | 97 | 0 | 92 |
+| Pay: STI | 443 | 332 | 65 | 0 | 46 |
+| Pay: LTI | 361 | 262 | 34 | 0 | 65 |
+| Pay: total | 264 | 159 | 60 | 0 | 45 |
 
 ## By check
 
 | Check | What it checks | Hard | Ran | Pass | Fail | n/a | Most common failure |
 |---|---|---|---|---|---|---|---|
-| CORE-01 | Locator present (PDF links open at a page) | yes | 5050 | 5046 | 4 | 0 | no endpoint URL |
-| CORE-02 | Value can be read off its quote | yes | 2201 | 2034 | 167 | 2849 | N not in the quote |
-| CORE-03 | Quote is in the cached source, on the linked page | yes | 3465 | 3216 | 249 | 1585 | quote not in the source text |
-| CORE-04 | Period end present (dated fields only) |  | 2851 | 2478 | 373 | 2199 | no period_end |
-| CORE-05 | Type matches (number, date, breakdown) |  | 5050 | 5048 | 2 | 0 | period_end 'N December' is not a date |
-| COD-01 | Value in its code list or closed set | yes | 1656 | 1643 | 13 | 3394 | US$ is not ISO N |
-| COD-02 | Classification scheme named |  | 84 | 84 | 0 | 4966 |  |
-| COD-03 | Identifier check digits (LEI, ISIN) | yes | 177 | 177 | 0 | 4873 |  |
-| COD-06 | Dates are valid | yes | 131 | 126 | 5 | 4919 | not a year or a date |
-| NUM-01 | Money has an ISO 4217 currency | yes | 1551 | 1473 | 78 | 3499 | unit '' is not ISO N |
-| NUM-02 | Printed figure and unit recorded |  | 1436 | 1436 | 0 | 3614 |  |
-| NUM-04 | Magnitude in a plausible range |  | 1757 | 1750 | 7 | 3293 | Ne+N outside Ne+N |
-| NUM-05 | Counts are whole numbers | yes | 153 | 153 | 0 | 4897 |  |
-| NUM-06 | Percentages in range | yes | 335 | 335 | 0 | 4715 |  |
-| NUM-07 | Holdings add up to 100% or less | yes | 61 | 60 | 1 | 4989 | holdings add up to N% |
-| NUM-08 | Breakdown adds up to the company total (5%) |  | 127 | 92 | 35 | 4923 | adds up to N vs N (N% apart) |
-| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 224 | 224 | 0 | 4826 |  |
-| NUM-11 | STI paid not above its maximum |  | 111 | 109 | 2 | 4939 | paid N% of baseN maximum N% |
-| NUM-12 | A role's amounts share currency and period |  | 1292 | 1268 | 24 | 3758 | currency N the role's other amounts GBP |
-| NUM-13 | FTE not above headcount |  | 38 | 33 | 5 | 5012 | FTE N above headcount N |
-| DER-03 | Derived value recalculates | yes | 38 | 38 | 0 | 5012 |  |
-| DER-06 | Derived value shows its formula |  | 170 | 170 | 0 | 4880 |  |
-| XF-01 | Parts not above the stated total (2%) | yes | 222 | 213 | 9 | 4828 | parts add up to N more than the stated N |
-| XF-02 | Total equals its parts (2%) |  | 222 | 181 | 41 | 4828 | parts add up to N stated N |
+| CORE-01 | Locator present (PDF links open at a page) | yes | 5054 | 5050 | 4 | 0 | no endpoint URL |
+| CORE-02 | Value can be read off its quote | yes | 2201 | 2034 | 167 | 2853 | N not in the quote |
+| CORE-03 | Quote is in the cached source, on the linked page | yes | 3465 | 3229 | 236 | 1589 | quote not in the source text |
+| CORE-04 | Period end present (dated fields only) |  | 2851 | 2478 | 373 | 2203 | no period_end |
+| CORE-05 | Type matches (number, date, breakdown) |  | 5054 | 5052 | 2 | 0 | period_end 'N December' is not a date |
+| COD-01 | Value in its code list or closed set | yes | 1660 | 1657 | 3 | 3394 | 'Vienna' matches no ISO N exchange |
+| COD-02 | Classification scheme named |  | 84 | 84 | 0 | 4970 |  |
+| COD-03 | Identifier check digits (LEI, ISIN) | yes | 177 | 177 | 0 | 4877 |  |
+| COD-06 | Dates are valid | yes | 131 | 126 | 5 | 4923 | not a year or a date |
+| NUM-01 | Money has an ISO 4217 currency | yes | 1551 | 1519 | 32 | 3503 | unit '' is not ISO N |
+| NUM-02 | Printed figure and unit recorded |  | 1436 | 1436 | 0 | 3618 |  |
+| NUM-04 | Magnitude in a plausible range |  | 1757 | 1750 | 7 | 3297 | Ne+N outside Ne+N |
+| NUM-05 | Counts are whole numbers | yes | 153 | 153 | 0 | 4901 |  |
+| NUM-06 | Percentages in range | yes | 335 | 335 | 0 | 4719 |  |
+| NUM-07 | Holdings add up to 100% or less | yes | 61 | 60 | 1 | 4993 | holdings add up to N% |
+| NUM-08 | Breakdown adds up to the company total (5%) |  | 134 | 99 | 35 | 4920 | adds up to N vs N (N% apart) |
+| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 224 | 224 | 0 | 4830 |  |
+| NUM-11 | STI paid not above its maximum |  | 111 | 109 | 2 | 4943 | paid N% of baseN maximum N% |
+| NUM-12 | A role's amounts share currency and period |  | 1292 | 1268 | 24 | 3762 | currency N the role's other amounts GBP |
+| NUM-13 | FTE not above headcount |  | 38 | 33 | 5 | 5016 | FTE N above headcount N |
+| DER-03 | Derived value recalculates | yes | 38 | 38 | 0 | 5016 |  |
+| DER-06 | Derived value shows its formula |  | 174 | 174 | 0 | 4880 |  |
+| XF-01 | Parts not above the stated total (2%) | yes | 222 | 213 | 9 | 4832 | parts add up to N more than the stated N |
+| XF-02 | Total equals its parts (2%) |  | 222 | 181 | 41 | 4832 | parts add up to N stated N |
 
 ## Fill rate
 
-Company fields: 2680 of 4059 filled (66%). Blank values are not checked above.
+Company fields: 2684 of 4059 filled (66%). Blank values are not checked above.
 
 | Field | Filled | Of |
 |---|---|---|
 | cik | 9 | 99 |
 | staff_by_segment | 17 | 99 |
-| market_cap_band | 22 | 99 |
 | staff_by_country | 25 | 99 |
+| market_cap_band | 26 | 99 |
 | share_price | 37 | 99 |
 | controlling_owner_name | 39 | 99 |
 | revenue_by_country | 44 | 99 |
@@ -121,15 +121,13 @@ Pay fields, over 288 executive roles:
 | pension_contribution | 203 (70%) |
 | total_remuneration | 264 (92%) |
 
-## Failed values (544)
+## Failed values (479)
 
 | Company | Field | Role | Value | Status | Why |
 |---|---|---|---|---|---|
 | 4imprint-group-plc | revenue_by_segment |  | North America: 1321.5; UK & Ir | Fail (hard) | CORE-03: quote not in the source text |
-| 4imprint-group-plc | share_price |  | 4474 | Fail (hard) | NUM-01: unit 'GBX' is not ISO 4217 |
 | 4imprint-group-plc | total_assets |  | 308900000 | Fail (hard) | CORE-03: quote not in the source text |
 | aberdeen-group-plc | lti_vested | CEO | 497000 | Fail (hard) | CORE-02: 497 not in the quote |
-| aberdeen-group-plc | share_price |  | 230 | Fail (hard) | CORE-04: no period_end; NUM-01: unit 'GBp' is not ISO 4217 |
 | aberdeen-group-plc | sti_paid | CEO | 1550000 | Fail (hard) | CORE-02: 1550 not in the quote |
 | aberdeen-group-plc | sti_paid | Chief Financial Officer | 258000 | Fail (hard) | CORE-02: 258 not in the quote |
 | addex-therapeutics-ltd | lti_granted | Executive Management | 0 | Fail (hard) | CORE-02: 0 not in the quote; NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts CHF |
@@ -164,12 +162,6 @@ Pay fields, over 288 executive roles:
 | agilyx | exchange |  | OSE | Fail (hard) | COD-01: 'OSE' matches no ISO 10383 exchange |
 | agilyx | revenue_by_country |  | Europe: 544402; USA: 255044; A | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
 | agilyx | revenue_by_segment |  | Cyclyx: 16574621; Agilyx: 1214 | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 17,789,146 vs 1,214,525 (1364.7% apart) |
-| aiq-limited | base_salary | Executive Director (Li Chun Ch | 19320 | Fail (hard) | NUM-01: unit '£' is not ISO 4217 |
-| aiq-limited | base_salary | Executive Director (Charles Yo | 14400 | Fail (hard) | NUM-01: unit '£' is not ISO 4217 |
-| aiq-limited | pay_currency | Executive Director (Li Chun Ch | £ | Fail (hard) | COD-01: £ is not ISO 4217 |
-| aiq-limited | pay_currency | Executive Director (Charles Yo | £ | Fail (hard) | COD-01: £ is not ISO 4217 |
-| aiq-limited | total_remuneration | Executive Director (Li Chun Ch | 19320 | Fail (hard) | NUM-01: unit '£' is not ISO 4217 |
-| aiq-limited | total_remuneration | Executive Director (Charles Yo | 14400 | Fail (hard) | NUM-01: unit '£' is not ISO 4217 |
 | airtel-africa-plc | accounting_basis |  | International Financial Report | Fail (hard) | CORE-03: quote not in the source text |
 | airtel-africa-plc | benefits_value | Former CFO (until 9 July 2025) | 55000 | Fail (hard) | CORE-02: 55 not in the quote |
 | airtel-africa-plc | exchange_segment |  | premium listing segment | Fail (hard) | CORE-03: quote not in the source text |
@@ -203,36 +195,20 @@ Pay fields, over 288 executive roles:
 | allreal-holding-ag | lti_target | CEO | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | allreal-holding-ag | lti_target | Other members of Group Managem | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | allreal-holding-ag | staff_by_segment |  | Real Estate: 50 | Fail | CORE-04: no period_end; NUM-08: adds up to 50 vs 224 (77.7% apart) |
-| altyngold-plc | base_salary | Executive Director (Kanat Assa | 39300 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | base_salary | Chief Executive Officer | 98250 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | base_salary | Executive Director (Sanzhar As | 39300 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | base_salary | Chief Financial Officer | 50108 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
 | altyngold-plc | benefits |  | Health insurance for the Execu | Fail (hard) | CORE-03: quote not in the source text |
-| altyngold-plc | pay_currency | Executive Director (Kanat Assa | US$ | Fail (hard) | COD-01: US$ is not ISO 4217 |
-| altyngold-plc | pay_currency | Chief Executive Officer | US$ | Fail (hard) | COD-01: US$ is not ISO 4217 |
-| altyngold-plc | pay_currency | Executive Director (Sanzhar As | US$ | Fail (hard) | COD-01: US$ is not ISO 4217 |
-| altyngold-plc | pay_currency | Chief Financial Officer | US$ | Fail (hard) | COD-01: US$ is not ISO 4217 |
 | altyngold-plc | role_disclosure | Chief Executive Officer | individual | Fail (hard) | CORE-03: quote not in the source text |
 | altyngold-plc | role_disclosure | Executive Director (Sanzhar As | individual | Fail (hard) | CORE-03: quote not in the source text |
 | altyngold-plc | role_disclosure | Chief Financial Officer | individual | Fail (hard) | CORE-03: quote not in the source text |
-| altyngold-plc | total_remuneration | Executive Director (Kanat Assa | 39300 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | total_remuneration | Chief Executive Officer | 98250 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | total_remuneration | Executive Director (Sanzhar As | 39300 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| altyngold-plc | total_remuneration | Chief Financial Officer | 50108 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
 | amigo-resources-plc | total_assets |  | 4000 | Fail (hard) | CORE-03: quote not in the source text |
-| aminex-plc | ebitda |  | -2885000 | Fail (hard) | NUM-01: unit 'US$' is not ISO 4217 |
-| aminex-plc | share_price |  | 2.08 | Fail (hard) | CORE-03: quote not in the source text; NUM-01: unit 'GBX' is not ISO 4217 |
+| aminex-plc | share_price |  | 0.0208 | Fail (hard) | CORE-03: quote not in the source text |
 | amrize-ltd | benefits |  | deferred compensation plan, 40 | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
 | amrize-ltd | lti_granted | Chief Executive Officer (23 Ju | 9942122 | Fail (hard) | CORE-02: 9942122 not in the quote |
 | amrize-ltd | lti_granted | Other Members of Executive Man | 12411396 | Fail (hard) | CORE-02: 12411396 not in the quote |
 | amrize-ltd | pension_type |  | defined benefit (cash balance  | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
-| amrize-ltd | revenue_by_segment |  | Building Materials: 8514; Buil | Fail (hard) | CORE-03: quote not in the source text |
 | amrize-ltd | role_disclosure | Board of Directors (non-execut | aggregate | Fail (hard) | CORE-01: no endpoint URL |
 | amrize-ltd | sub_sector |  | The Company is organized into  | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
-| antofagasta-plc | ebitda |  | 5201900000 | Fail (hard) | NUM-01: unit '$' is not ISO 4217 |
-| antofagasta-plc | headcount |  | 8457 | Fail (hard) | CORE-02: 8457 not in the quote; CORE-03: quote not in the source text |
+| antofagasta-plc | headcount |  | 8457 | Fail (hard) | CORE-02: 8457 not in the quote |
 | antofagasta-plc | listing_date |  | 1888 | Fail (hard) | CORE-02: not in the quote: 1888; COD-06: not a year or a date |
-| antofagasta-plc | share_price |  | 3125 | Fail (hard) | NUM-01: unit 'GBX' is not ISO 4217 |
 | antofagasta-plc | staff_by_country |  | Chile: 6053; United Kingdom: 5 | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 6,062 vs 8,457 (28.3% apart) |
 | ao-world-plc | fte |  | 2892 | Fail (hard) | CORE-03: quote not in the source text |
 | aptitude-software-group-plc | fte |  | 359 | Fail (hard) | CORE-03: quote not in the source text; NUM-13: FTE 359 above headcount 317 |
@@ -241,15 +217,11 @@ Pay fields, over 288 executive roles:
 | aptitude-software-group-plc | staff_by_country |  | United Kingdom: 102; Rest of W | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start); NUM-08: adds up to 359 vs 317 (13.2% apart) |
 | ashmore-group-plc | listing_date |  | 2006 | Fail (hard) | CORE-02: not in the quote: 2006 |
 | ashmore-group-plc | role_disclosure | Board of directors (non-execut | aggregate | Fail (hard) | CORE-03: quote not in the source text |
-| asia-strategic-holdings-limited | ebitda |  | -250237 | Fail (hard) | NUM-01: unit '$' is not ISO 4217 |
 | associated-british-foods-plc | largest_holders |  | Wittington Investments Limited | Fail (hard) | NUM-07: holdings add up to 121.6% |
 | associated-british-foods-plc | lti_granted | Chief Executive | 200 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
 | associated-british-foods-plc | lti_granted | Finance Director (interim CEO  | 200 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
-| aston-martin-lagonda-global-holdings-plc | base_salary | Executive Director | 1000 | Fail (hard) | CORE-03: quote not in the source text |
-| aston-martin-lagonda-global-holdings-plc | benefits_value | Executive Director | 1000 | Fail (hard) | CORE-03: quote not in the source text |
-| aston-martin-lagonda-global-holdings-plc | pension_contribution | Executive Director | 1000 | Fail (hard) | CORE-03: quote not in the source text |
 | aston-martin-lagonda-global-holdings-plc | role_disclosure | CEO | individual | Fail (hard) | CORE-03: quote not in the source text |
-| aston-martin-lagonda-global-holdings-plc | total_remuneration | Executive Director | 1000 | Fail (hard) | CORE-03: quote not in the source text; XF-01: parts add up to 3,000, more than the stated 1,000; XF-02: parts add up to 3,000, stated 1,000 |
+| aston-martin-lagonda-global-holdings-plc | total_remuneration | Executive Director | 1000 | Fail (hard) | XF-01: parts add up to 3,000, more than the stated 1,000; XF-02: parts add up to 3,000, stated 1,000 |
 | atalaya-mining-copper-s-a | fte |  | 509 | Fail (hard) | CORE-03: quote not in the source text |
 | atalaya-mining-copper-s-a | headcount |  | 518 | Fail (hard) | CORE-03: quote not in the source text |
 | atalaya-mining-copper-s-a | role_disclosure | Chief Financial Officer (PDMR) | individual | Fail (hard) | CORE-03: quote not in the source text |
@@ -268,10 +240,9 @@ Pay fields, over 288 executive roles:
 | avolta-ag | ebitda |  | 1324000000 | Fail (hard) | CORE-03: quote not in the source text |
 | avolta-ag | lti_granted | Other members of Global Execut | 5772800 | Fail (hard) | CORE-02: 5772.8 not in the quote |
 | avolta-ag | pension_contribution | Other members of Global Execut | 1310800 | Fail (hard) | CORE-02: 1310.8 not in the quote |
-| avolta-ag | revenue_by_segment |  | Europe, Middle East and Africa | Fail (hard) | CORE-03: quote not in the source text |
+| avolta-ag | revenue_by_segment |  | Europe, Middle East and Africa | Fail (hard) | CORE-03: quote on page 207, link says page 206 |
 | avolta-ag | sti_paid | Other members of Global Execut | 7231600 | Fail (hard) | CORE-02: 7231.6 not in the quote |
 | avolta-ag | total_remuneration | Other members of Global Execut | 21103400 | Fail (hard) | CORE-02: 21103.4 not in the quote |
-| avon-technologies-plc | ebitda |  | 51500000 | Fail (hard) | NUM-01: unit '$' is not ISO 4217 |
 | avon-technologies-plc | fte |  | 911 | Fail (hard) | CORE-03: quote not in the source text |
 | avon-technologies-plc | lti_granted | CEO | 175 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
 | avon-technologies-plc | lti_granted | CFO | 150 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
@@ -327,12 +298,10 @@ Pay fields, over 288 executive roles:
 | blencowe-resources-plc | aggregate_headcount | Key management personnel (excl | 2 | Fail (hard) | CORE-03: quote not in the source text |
 | blencowe-resources-plc | headcount |  | 2 | Fail (hard) | CORE-02: 2 not in the quote |
 | blencowe-resources-plc | revenue |  | 0 | Fail (hard) | CORE-02: 0 not in the quote |
-| blencowe-resources-plc | share_price |  | 5.85 | Fail (hard) | NUM-01: unit 'GBp' is not ISO 4217 |
 | bodycote-plc | base_salary | CEO | 640000 | Fail (hard) | CORE-02: 640000 not in the quote |
 | bodycote-plc | base_salary | CFO | 537000 | Fail (hard) | CORE-02: 537000 not in the quote |
 | bodycote-plc | benefits_value | CEO | 19000 | Fail (hard) | CORE-02: 19000 not in the quote |
 | bodycote-plc | benefits_value | CFO | 16000 | Fail (hard) | CORE-02: 16000 not in the quote |
-| bodycote-plc | lti_granted | CFO | 145195 | Fail (hard) | CORE-03: quote not in the source text |
 | bodycote-plc | pension_contribution | CEO | 64000 | Fail (hard) | CORE-02: 64000 not in the quote |
 | bodycote-plc | pension_contribution | CFO | 54000 | Fail (hard) | CORE-02: 54000 not in the quote |
 | bodycote-plc | role_disclosure | Board of directors (non-execut | aggregate | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
@@ -345,7 +314,6 @@ Pay fields, over 288 executive roles:
 | branicks-group-ag | revenue |  | 100000000 | Fail (hard) | CORE-03: quote not in the source text |
 | branicks-group-ag | share_price |  | 2.23 | Fail (hard) | CORE-02: 2.23 not in the quote; CORE-03: quote not in the source text |
 | breedon-group-plc | fte |  | 4780 | Fail (hard) | CORE-03: quote not in the source text |
-| breedon-group-plc | share_price |  | 345.4 | Fail (hard) | CORE-04: no period_end; NUM-01: unit 'GBX' is not ISO 4217 |
 | bridgepoint-group-plc | share_price |  | 2.838 | Fail (hard) | CORE-02: 2.838 not in the quote |
 | brooks-macdonald-group-plc | lti_granted | CEO | 200 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
 | brooks-macdonald-group-plc | lti_granted | CFO | 200 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
@@ -372,7 +340,6 @@ Pay fields, over 288 executive roles:
 | caledonia-investments-plc | headcount |  | 82 | Fail (hard) | CORE-02: 82 not in the quote |
 | caledonia-investments-plc | lti_vested | Executive Director (J M B Cayz | 409000 | Fail (hard) | CORE-03: quote not in the source text |
 | caledonia-investments-plc | revenue_by_segment |  | Public Companies: 21.8; Privat | Fail | CORE-04: no period_end; NUM-08: adds up to 43,700,000 vs 166,000,000 (73.7% apart) |
-| caledonia-investments-plc | share_price |  | 382.5 | Fail (hard) | NUM-01: unit 'GBX' is not ISO 4217 |
 | caledonia-investments-plc | sti_paid | Executive Director (J M B Cayz | 259000 | Fail (hard) | CORE-03: quote not in the source text |
 | capital-limited | base_salary | Executive Chair | 528000 | Fail (hard) | CORE-03: quote not in the source text |
 | capital-limited | base_salary | CEO (until 8 March 2025) | 442000 | Fail (hard) | CORE-03: quote not in the source text |
@@ -406,7 +373,6 @@ Pay fields, over 288 executive roles:
 | centrica-plc | listing_date |  | 1997-02-17 | Fail (hard) | CORE-02: not in the quote: 1997 |
 | centrica-plc | lti_granted | Group Chief Executive | 150 | Fail (hard) | NUM-01: unit '' is not ISO 4217; NUM-12: currency , the role's other amounts GBP |
 | centrica-plc | lti_granted | Group Chief Financial Officer | 125 | Fail (hard) | NUM-01: unit '' is not ISO 4217 |
-| centrica-plc | revenue_by_segment |  | Retail: 16300; Optimisation: 5 | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 22,365,000,000 vs 19,492,000,000 (14.7% apart) |
 | centrica-plc | share_price |  | 1.4065 | Fail (hard) | NUM-01: unit 'pence' is not ISO 4217 |
 | close-brothers-group-plc | listing_date |  | 2983 | Fail (hard) | COD-06: not a year or a date |
 | close-brothers-group-plc | lti_granted | Chief Executive (from 10 Septe | 726000 | Fail (hard) | CORE-02: 726 not in the quote |
@@ -416,10 +382,7 @@ Pay fields, over 288 executive roles:
 | cmb-tech-nv | sti_paid | CEO | 62499 | Fail (hard) | CORE-03: quote not in the source text |
 | cmb-tech-nv | sti_paid | Management Board Members (excl | 250000 | Fail (hard) | CORE-02: 250000 not in the quote |
 | cmb-tech-nv | total_remuneration | CEO | 312495 | Fail (hard) | CORE-03: quote not in the source text; XF-02: parts add up to 62,499, stated 312,495 |
-| cmc-markets-plc | controlling_owner |  | family | Fail (hard) | CORE-03: quote not in the source text |
-| cmc-markets-plc | controlling_owner_name |  | Lord Peter Andrew Cruddas | Fail (hard) | CORE-03: quote not in the source text |
 | cmc-markets-plc | ebitda |  | 117842 | Fail (hard) | CORE-02: 117.842 not in the quote |
-| cmc-markets-plc | ownership_type |  | family_owned | Fail (hard) | CORE-03: quote not in the source text |
 | cmc-markets-plc | revenue_by_country |  | UK: 133.4; Rest of the world:  | Fail (hard) | CORE-03: quote not in the source text |
 | commerzbank-ag | base_salary | ehemaliger Vorsitzender (bis 3 | 481000 | Fail (hard) | CORE-02: 481 not in the quote; CORE-03: quote not in the source text; CORE-04: no period_end |
 | commerzbank-ag | benefits_value | Vorsitzende (seit 1. Oktober 2 | 228000 | Fail (hard) | CORE-02: 228 not in the quote; CORE-03: quote not in the source text; CORE-04: no period_end |
@@ -469,12 +432,10 @@ Pay fields, over 288 executive roles:
 | corem-property-d | pay_currency | Andra ledande befattningshavar | SEK | Fail | CORE-04: no period_end |
 | corem-property-d | sti_paid | Andra ledande befattningshavar | 900000 | Fail (hard) | CORE-02: 0.9 not in the quote; CORE-04: no period_end |
 | cranswick-plc | fte |  | 13033 | Fail (hard) | CORE-03: quote not in the source text |
-| cranswick-plc | share_price |  | 5130 | Fail (hard) | NUM-01: unit 'GBp' is not ISO 4217 |
 | delticom-ag-na-o-n | listing_date |  | October 2006 | Fail (hard) | COD-06: not a year or a date |
 | delticom-ag-na-o-n | share_price |  | 2.14 | Fail (hard) | CORE-02: 2.14 not in the quote; CORE-03: quote not in the source text |
 | digia-oyj | aggregate_headcount | Other key personnel | 20 | Fail (hard) | CORE-03: quote not in the source text |
 | digia-oyj | shareholding_requirement |  | participants have the chance t | Fail (hard) | CORE-03: quote not in the source text |
-| digia-oyj | staff_by_country |  | Finland: 1409; Sweden: 120; Po | Fail (hard) | CORE-03: quote not in the source text |
 | erste-group-bank-ag | benefits |  | insurance benefits, other non- | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
 | erste-group-bank-ag | exchange |  | Vienna | Fail (hard) | COD-01: 'Vienna' matches no ISO 10383 exchange |
 | erste-group-bank-ag | listing_date |  | 1997-12-04 | Fail (hard) | CORE-02: not in the quote: 1997 |
@@ -516,7 +477,6 @@ Pay fields, over 288 executive roles:
 | hermana-holding | fte |  | 0 | Fail (hard) | CORE-02: 0 not in the quote; CORE-05: period_end '2025-04' is not a date; NUM-04: 0 outside 0.5..5e+06 |
 | hermana-holding | headcount |  | 0 | Fail (hard) | CORE-02: 0 not in the quote; NUM-04: 0 outside 1..5e+06 |
 | holand-og-setskog-sparebank | ebitda |  | 57700000 | Fail (hard) | CORE-02: 57.7 not in the quote |
-| holand-og-setskog-sparebank | revenue_by_segment |  | Privatmarked: 137049; Bedrifts | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 227,561,000 vs 195,672,000 (16.3% apart) |
 | holand-og-setskog-sparebank | role_disclosure | Banksjef (1) | individual | Fail (hard) | CORE-03: quote not in the source text |
 | holand-og-setskog-sparebank | role_disclosure | Banksjef (2) | individual | Fail (hard) | CORE-03: quote not in the source text |
 | intea-fastigheter-d | pay_currency | Verkställande direktör | SEK | Fail | CORE-04: no period_end |
@@ -573,40 +533,15 @@ Pay fields, over 288 executive roles:
 | seb-a | total_remuneration | Deputy CEO (Mats Torstendahl) | 8887000 | Fail (hard) | CORE-03: quote not in the source text |
 | seb-a | total_remuneration | Deputy CEO (Jonas Ahlström) | 12911000 | Fail (hard) | CORE-03: quote not in the source text |
 | seb-a | total_remuneration | Other members of the Group Exe | 85984864 | Fail (hard) | XF-01: parts add up to 105,243,201, more than the stated 85,984,864; XF-02: parts add up to 105,243,201, stated 85,984,864 |
-| sentia | base_salary | Konsernsjef | 4309000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | base_salary | Visekonsernsjef og konserndire | 3132000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | base_salary | Konserndirektør HENT | 1700000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | base_salary | Konserndirektør kommunikasjon  | 901000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | benefits_value | Konsernsjef | 260000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | benefits_value | Visekonsernsjef og konserndire | 248000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | benefits_value | Konserndirektør HENT | 58000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | benefits_value | Konserndirektør kommunikasjon  | 63000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
 | sentia | controlling_owner |  | corporate | Fail (hard) | CORE-03: quote not in the source text |
 | sentia | controlling_owner_name |  | Ratos AB | Fail (hard) | CORE-03: quote not in the source text |
-| sentia | ebitda |  | 683000000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
 | sentia | largest_holders |  | Ratos AB 39% | Fail (hard) | CORE-03: quote not in the source text |
 | sentia | ownership_type |  | subsidiary | Fail (hard) | CORE-03: quote not in the source text |
-| sentia | pay_currency | Konsernsjef | kroner | Fail (hard) | COD-01: kroner is not ISO 4217 |
-| sentia | pay_currency | Visekonsernsjef og konserndire | kroner | Fail (hard) | COD-01: kroner is not ISO 4217 |
-| sentia | pay_currency | Konserndirektør HENT | kroner | Fail (hard) | COD-01: kroner is not ISO 4217 |
-| sentia | pay_currency | Konserndirektør kommunikasjon  | kroner | Fail (hard) | COD-01: kroner is not ISO 4217 |
 | sentia | pe_stake_5pct |  | no | Fail (hard) | CORE-03: quote not in the source text |
-| sentia | pension_contribution | Konsernsjef | 422000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | pension_contribution | Visekonsernsjef og konserndire | 910000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | pension_contribution | Konserndirektør HENT | 97000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | pension_contribution | Konserndirektør kommunikasjon  | 38000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
 | sentia | revenue_by_country |  | Norge: 9404; Sverige: 2369 | Fail (hard) | CORE-03: quote not in the source text |
 | sentia | revenue_by_segment |  | HENT: 9404; Sentia Sverige: 23 | Fail (hard) | CORE-03: quote not in the source text |
-| sentia | share_price |  | 62.99 | Fail (hard) | CORE-02: 62.99 not in the quote; NUM-01: unit 'kroner' is not ISO 4217 |
+| sentia | share_price |  | 62.99 | Fail (hard) | CORE-02: 62.99 not in the quote |
 | sentia | staff_by_segment |  | HENT: 1338; Sentia Sverige: 17 | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 1,516 vs 6 (25166.7% apart) |
-| sentia | sti_paid | Konsernsjef | 2159000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | sti_paid | Visekonsernsjef og konserndire | 461000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | sti_paid | Konserndirektør HENT | 0 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | sti_paid | Konserndirektør kommunikasjon  | 0 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | total_remuneration | Konsernsjef | 7150000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | total_remuneration | Visekonsernsjef og konserndire | 4751000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | total_remuneration | Konserndirektør HENT | 1854000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
-| sentia | total_remuneration | Konserndirektør kommunikasjon  | 1002000 | Fail (hard) | NUM-01: unit 'kroner' is not ISO 4217 |
 | sparebank-1-helgeland | base_salary | Administrerende direktør | 2918081 | Fail (hard) | CORE-03: quote not in the source text |
 | sparebank-1-helgeland | base_salary | Finansdirektør | 1758912 | Fail (hard) | CORE-03: quote not in the source text |
 | sparebank-1-helgeland | base_salary | Direktør risikostyring | 1587358 | Fail (hard) | CORE-03: quote not in the source text |

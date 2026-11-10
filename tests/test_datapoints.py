@@ -717,3 +717,17 @@ def test_values_from_a_parents_accounts_keep_figures_not_identity():
     assert [f.data_point for f in kept] == ["revenue"]
     assert kept[0].note.endswith("group figures from the parent company's consolidated "
                                  "accounts (BP INV3 TOPCO LTD)")
+
+
+def test_currencies_become_iso_codes():
+    from extractor.datapoints import iso_codes
+    row = lambda dp, value, unit, country="GB", note="": dict(
+        grain="company", data_point=dp, value=value, unit=unit, country=country, note=note)
+    rows = [row("pay_currency", "US$", ""), row("base_salary", "900000", "US$"),
+            row("revenue_by_segment", "A: 1", "US$ millions"), row("pay_currency", "kroner", "", "NO"),
+            row("share_price", "1234.5", "GBp", note='web page: "1,234.5p"'), row("revenue", "5", "EUR")]
+    iso_codes(rows)
+    assert [r["value"] for r in rows[:4:3]] == ["USD", "NOK"]
+    assert rows[1]["unit"] == "USD" and rows[2]["unit"] == "USD millions" and rows[5]["unit"] == "EUR"
+    assert rows[4]["value"] == "12.345" and rows[4]["unit"] == "GBP"
+    assert rows[4]["note"].endswith("; printed 1234.5 pence")

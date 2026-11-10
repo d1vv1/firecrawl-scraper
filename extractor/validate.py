@@ -21,6 +21,29 @@ SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX
 USD UYU UZS VES VND VUV WST XAF XCD XCG XOF XPF YER ZAR ZMW ZWG
 """.split())
 
+# How reports write a currency, to its ISO 4217 code. "kroner" is Danish or Norwegian:
+# the company's country decides.
+CURRENCY_ALIASES = {
+    "US$": "USD", "$US": "USD", "USD$": "USD", "$": "USD", "US DOLLARS": "USD",
+    "CA$": "CAD", "C$": "CAD", "A$": "AUD", "AU$": "AUD", "NZ$": "NZD", "HK$": "HKD",
+    "S$": "SGD", "€": "EUR", "EURO": "EUR", "EUROS": "EUR", "£": "GBP", "STG": "GBP",
+    "SFR": "CHF", "SFR.": "CHF", "FR.": "CHF", "KRONOR": "SEK", "SKR": "SEK",
+    "NKR": "NOK", "DKR": "DKK", "¥": "JPY",
+}
+KRONER = {"DK": "DKK", "NO": "NOK", "FO": "DKK", "GL": "DKK"}
+
+
+def iso_currency(text: str, country: str = "") -> str:
+    """The ISO 4217 code for a currency as a report writes it ("US$" -> "USD"); a code,
+    or anything not recognised, comes back unchanged."""
+    t = (text or "").strip()
+    if t.upper() in ISO_4217:
+        return t.upper()
+    if t.lower() in ("kroner", "kr", "kr."):
+        return KRONER.get(country, t)
+    return CURRENCY_ALIASES.get(t.upper(), t)
+
+
 BALANCE_TOLERANCE = 0.005
 MAX_FISCAL_YEAR_AGE = 3
 _GAP_TOKENS = 3   # loose quote match: max extra tokens between quote tokens
@@ -94,10 +117,58 @@ def quote_in_text(quote: str, source: str) -> str | None:
     qc, sc = re.sub(r"\s+", "", q), re.sub(r"\s+", "", s)
     if len(qc) >= _COMPACT_MIN and qc in sc:
         return "loose"
+    if _rows_in_order(qt, source):
+        return "loose"
     return None
 
 
 _COMPACT_MIN = 40       # characters of a quote compared without spaces, at least
+
+
+_ROWS_APART = 3   # lines between two pieces of a quote taken from several table rows, at most
+
+
+def _rows_in_order(qt: list[str], source: str) -> bool:
+    """A quote the AI took from several rows of a table, skipping columns: "Personnel by
+    countries: 31 Dec 2025 Finland 1,409 Sweden 120" from a heading, a column header
+    "31 Dec 2025 31 Dec 2024 Change" and the rows "Finland 1,409 1,444 -35" and
+    "Sweden 120 122 -2" (Digia). The quote is cut into pieces where a word follows a
+    figure (a new row's label); each piece is in one line of the source, in order with
+    any gaps, the lines in order and at most _ROWS_APART apart. So a label never pairs
+    with a figure from another full row, and a wrong figure still fails."""
+    pieces, cur = [], []
+    for t in qt:
+        if cur and not t[0].isdigit() and cur[-1][0].isdigit():
+            pieces.append(cur)
+            cur = []
+        cur.append(t)
+    pieces.append(cur)
+    if len(pieces) < 2 or not any(t[0].isdigit() for t in qt):
+        return False
+    lines = [_tokens(normalize(l)) for l in source.splitlines() if l.strip()]
+    # a heading line (no figures) reads on into the row below it
+    lines = [(lines[i - 1] if i and not any(t[0].isdigit() for t in lines[i - 1]) else []) + toks
+             for i, toks in enumerate(lines)]
+
+    def match(piece, line, pos):   # end position of piece in lines[line] from pos, or -1
+        for tok in piece:
+            try:
+                pos = lines[line].index(tok, pos) + 1
+            except ValueError:
+                return -1
+        return pos
+
+    def rest(k, line, pos):        # pieces k.. placed from (line, pos) onwards
+        if k == len(pieces):
+            return True
+        for ln in range(line, min(line + _ROWS_APART + 1, len(lines))):
+            end = match(pieces[k], ln, pos if ln == line else 0)
+            if end >= 0 and rest(k + 1, ln, end):
+                return True
+        return False
+
+    first = pieces[0][0]
+    return any(rest(0, i, 0) for i, toks in enumerate(lines) if first in toks)
 _ELLIPSIS = re.compile(r"\s*(?:\.\.\.|…)\s*")
 _PARTS_SPAN = 400          # characters of normalized text between two quoted parts, at most
 

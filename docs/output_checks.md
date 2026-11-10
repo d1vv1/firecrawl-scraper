@@ -60,6 +60,16 @@ Limits:
 - The quotes in the output notes are cut at 160 characters. A figure past the cut can't be checked against the quote (CORE-02 is n/a then), and only the start of the quote is looked up (CORE-03).
 - CORE-03 needs the run's cache (`--cache`, `--results`). Without it the check is n/a, unless the run itself flagged the quote as not found.
 
+## Results: Wave 1 half 1, 10 November 2026 (saved results refreshed)
+
+99 companies, no source asked again, 0 Firecrawl credits: **5,054 filled values, 4,257 Pass (84%), 318 Review, 64 Fail, 415 Fail (hard)** (before: 4,192 Pass, 480 Fail (hard)). Two fixes:
+- **Currencies as ISO codes.** "US$", "CA$", "€", "kroner" and the like become USD, CAD, EUR, DKK/NOK (by country) in currency fields and units; a share price in pence (GBp) becomes pounds, the pence kept in the note.
+- **Quotes from several table rows.** A quote that skips columns across rows ("Finland 1,409 Sweden 120" from rows with a 2024 column too) is found when each label-and-figures piece is in one row, in order, the rows at most 3 lines apart. A label never pairs with another full row's figures.
+
+What still fails CORE-03 in Wave 1 (sampled): about half the quotes have every word and figure in the source close by, but the AI put cells together in another order (a wrapped label from the next row, a header word joined to a row, a column the converter wrote one value per line). Accepting those would let a label match the wrong row's figure, so they stay failed. About one in ten quotes are mostly absent from the source.
+
+Half 2 ran on another machine, whose cache holds its source texts; it is refreshed there with `python -m extractor.datapoints data/wave1_half2.csv --out output/wave1_half2_datapoints.csv --only none` (no company runs, the CSV and checks are rewritten).
+
 ## Results: Nordic/UK test set, 5 November 2026 (run 22, quote matching)
 
 Same values, quotes matched in more of the shapes they take (`docs/known_issues.md`, issue 12): **735 filled values, 702 Pass (96%), 13 Review, 1 Fail, 19 Fail (hard)**; graded C by the run 38 → 23.
