@@ -124,7 +124,25 @@ def discover(legal_name: str, slug: str, fc: FirecrawlClient, website: str | Non
     if website:
         site_info = {"website": website, "website_score": None, "website_source": "override"}
     else:
-        site_info = find_official_website(legal_name, fc, lei_record, country)
+        try:
+            site_info = find_official_website(legal_name, fc, lei_record, country)
+        except WebsiteNotFoundError as e:
+            # No website (APG SGA, Bergbahnen Engelberg): a web search for the report itself
+            # on the name; its site, when the host carries the company's name, is the website
+            log.info("%s; searching the web for the report itself", str(e)[:150])
+            r = find_report(None, fc, country=(lei_record or {}).get("country") or country,
+                            company_name=legal_name, other_countries=[country])
+            own = registered_domain(urlparse(r.url).netloc)
+            site = f"https://www.{own}" if host_names_company(r.url, legal_name) else None
+            log.info("Report: %s (year %s, pdf=%s), found without a website", r.url, r.year, r.is_pdf)
+            result = {"website": site, "website_score": None,
+                      "website_source": "the report's site (no website found)" if site else None,
+                      "report_url": r.url, "report_year": r.year, "report_source": "web search",
+                      "report_alternatives": r.alternatives,
+                      "report_candidates": [asdict(c) for c in r.candidates]}
+            CACHE_DIR.mkdir(exist_ok=True)
+            path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+            return result
 
     report_country = (lei_record or {}).get("country") or country
     log.info("Step 3: looking for the latest annual report on %s", site_info["website"])

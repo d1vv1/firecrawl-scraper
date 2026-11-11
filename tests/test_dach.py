@@ -56,8 +56,19 @@ def test_a_report_the_site_map_never_reaches_is_found_by_a_web_search():
                                 {"url": "https://www.annualreports.com/Company/adidas-ag", "title": "Adidas AG"}])
     r = rf.find_report("https://www.adidas.com", fc, country="DE", company_name="ADIDAS AG NA O.N.")
     assert r.url == pdf
-    assert fc.calls[:3] == ["map:annual report", "scrape:https://www.adidas.com/investors/",
-                            "search:adidas annual report %d pdf" % YEAR]
+    assert fc.calls[:2] == ["map:annual report", "search:adidas annual report %d pdf" % YEAR]
+    assert not any(c.startswith("scrape:") for c in fc.calls)      # found: no page guessed
+
+
+def test_without_a_website_the_report_is_searched_for_by_name():
+    pdf = f"https://www.apgsga.ch/files/geschaeftsbericht-{YEAR}.pdf"
+    fc = FakeFC(maps=[], search_results=[{"url": pdf, "title": f"Geschäftsbericht {YEAR}"},
+                                         {"url": f"https://www.bcv.ch/annual-report-{YEAR}.pdf", "title": "x"}])
+    r = rf.find_report(None, fc, country="CH", company_name="APG SGA SA")
+    assert r.url == pdf and not any(c.startswith("map:") for c in fc.calls)
+    import pytest
+    with pytest.raises(rf.ReportNotFoundError):
+        rf.find_report(None, FakeFC(maps=[]), country="CH", company_name="APG SGA SA")
 
 
 def test_german_and_french_reports_get_the_right_excerpts():

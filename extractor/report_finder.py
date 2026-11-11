@@ -557,7 +557,7 @@ def web_search_report(fc: FirecrawlClient, company_name: str, website_url: str |
     return [search_result_candidate(r, allowed) for r in own], own
 
 
-def find_report(website_url: str, fc: FirecrawlClient, country: str | None = None,
+def find_report(website_url: str | None, fc: FirecrawlClient, country: str | None = None,
                 company_name: str | None = None, other_countries=()) -> ReportResult:
     """Cheapest first, stopping as soon as a recent PDF turns up:
     1. map "annual report";
@@ -607,12 +607,12 @@ def find_report(website_url: str, fc: FirecrawlClient, country: str | None = Non
         """No recent report on the site: search the web for it (2 credits), then scrape the
         page most likely to link its PDF (an online report's downloads page)."""
         if not company_name:
-            return pick_best(all_cands)
+            return scrape_ir_page() if website_url else pick_best(all_cands)
         try:
             _reserve_left(fc, 2)
         except CreditBudgetExceeded as e:     # the cheaper map searches still go on
             log.info("No web search for the report: %s", e)
-            return pick_best(all_cands)
+            return scrape_ir_page() if website_url else pick_best(all_cands)
         cands, results = web_search_report(fc, company_name, website_url, allowed)
         _log_candidates(cands, "web search")
         all_cands.extend(cands)
@@ -621,8 +621,21 @@ def find_report(website_url: str, fc: FirecrawlClient, country: str | None = Non
         if is_fresh(best):
             return best
         page = downloads_page(results, cands)
-        return scrape_page(page) if page and page not in scraped else scrape_ir_page()
+        if page and page not in scraped:
+            return scrape_page(page)
+        return scrape_ir_page() if website_url else best
 
+    if not website_url:
+        # no website found (APG, Bergbahnen Engelberg): the web search on the name alone
+        try:
+            web_search()
+        except CreditBudgetExceeded as e:
+            log.warning("%s; choosing from what was found so far", e)
+        best = pick_best(all_cands)
+        if not best or not _is_doc(best):
+            raise ReportNotFoundError(f"No website, and no annual report found by a web search "
+                                      f"for {company_name}")
+        return _result(best, all_cands)
     try:
         for i, term in enumerate(search_terms(country)):
             _reserve_left(fc, 1)
@@ -631,9 +644,7 @@ def find_report(website_url: str, fc: FirecrawlClient, country: str | None = Non
             all_urls += urls
             if is_fresh(add(urls, f"map '{term}'")):
                 break
-            if i == 0 and is_fresh(scrape_ir_page()):
-                break
-            if i == 0 and is_fresh(web_search()):
+            if i == 0 and is_fresh(web_search()):     # then an investor page if needed
                 break
         else:
             scrape_ir_page()                 # a better IR page may have turned up since

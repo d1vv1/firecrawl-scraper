@@ -84,7 +84,9 @@ def test_stale_pdf_triggers_ir_page_scrape_which_finds_current_report():
                 scrape_links=[f"https://storage.mfn.se/abc/aak-annual-report-{THIS_YEAR - 1}.pdf"])
     r = rf.find_report("https://aak.com", fc, country="SE", company_name="AAK AB")
     assert r.url.endswith(f"aak-annual-report-{THIS_YEAR - 1}.pdf")
-    assert fc.calls[:2] == ["map:annual report", "scrape:https://aak.com/investors/reports-and-presentations/"]
+    # the web search comes first (it finds nothing here), then the investor page
+    assert fc.calls[0] == "map:annual report" and fc.calls[1].startswith("search:")
+    assert "scrape:https://aak.com/investors/reports-and-presentations/" in fc.calls
 
 
 def test_fresh_pdf_stops_after_one_map():

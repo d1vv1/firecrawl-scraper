@@ -143,7 +143,7 @@ DOC_TOPIC_WORDS = 1_500              # words per needed topic from each fallback
 DOC_ROUNDS = 3                       # AI calls over fallback documents, at most
 DOCS_PER_ROUND = 3                   # documents read per round
 DEFAULT_DOC_CREDITS = 10             # maps and page scrapes; PDFs are downloaded for free
-DEFAULT_PIPELINE_CREDITS = 6
+DEFAULT_PIPELINE_CREDITS = 8           # website (2), map (1), web search (2), page (1), maps
 
 OWNER_CATEGORY = {"private_equity": "private_equity", "family_or_individual": "family",
                   "state": "state", "listed_company": "corporate", "other_company": "corporate",
