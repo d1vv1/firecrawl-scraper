@@ -96,3 +96,21 @@ def test_a_change_to_the_code_during_a_run_is_reported(tmp_path, monkeypatch, ca
     assert "changed while this run is going" in capsys.readouterr().out
     assert dp.warn_if_code_changed("after") == "after"
     assert capsys.readouterr().out == ""
+
+
+def test_gleif_waits_as_long_as_it_is_told_on_too_many_requests(monkeypatch):
+    import httpx
+    from extractor import lei
+    calls, slept = [], []
+    monkeypatch.setattr(lei, "_MIN_INTERVAL_S", 0)
+    monkeypatch.setattr(lei._get.retry, "sleep", lambda s: slept.append(s))
+
+    def fake_get(url, params=None, headers=None, timeout=None):
+        calls.append(url)
+        req = httpx.Request("GET", url)
+        if len(calls) < 3:
+            return httpx.Response(429, headers={"retry-after": "40"}, request=req)
+        return httpx.Response(200, json={"data": []}, request=req)
+    monkeypatch.setattr(lei.httpx, "get", fake_get)
+    assert lei.fetch_by_lei("529900ABCDEFGHIJKL12") is None
+    assert len(calls) == 3 and slept == [41, 41]
