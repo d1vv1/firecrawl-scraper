@@ -73,6 +73,7 @@ class Company:
     segment: str | None = None   # e.g. "nordic_listed", from the CSV if given
     lei: str | None = None       # from the CSV if given: skips the GLEIF name search
     report_url: str | None = None  # the annual report to read (a URL or a file): no search
+    website: str | None = None     # the company list's website: used instead of a website search
 
     @property
     def slug(self) -> str:
@@ -454,7 +455,7 @@ def process_company(c: Company, force: bool, per_company_cap: int,
             try:
                 r = run(c.name, company_id=c.company_id, country=c.country, fc=fc,
                         use_cache=not force, lei=c.lei, qualitative=qualitative,
-                        report_url=c.report_url)
+                        report_url=c.report_url, website_hint=c.website)
                 c.error_path.unlink(missing_ok=True)
                 return result("done", status=r["status"])
             except FATAL as e:
