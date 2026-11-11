@@ -91,3 +91,38 @@ def test_the_reports_own_domain_becomes_the_website(tmp_path, monkeypatch):
     monkeypatch.setattr(pipeline, "find_report", lambda *a, **k: rf.ReportResult(cdn, YEAR, True, [], []))
     found = pipeline.discover("Essentra plc", "essentra", None, "https://www.essentraplc.com", None, False)
     assert found["website"] == "https://www.essentraplc.com"           # never a file server
+
+
+def test_german_listing_lines_are_not_part_of_the_name():
+    from extractor.config import without_share_class as w
+    assert w("STABILUS SE INH. EO-,01") == "STABILUS SE"
+    assert w("DRAEGERWERK ST.A.O.N.") == "DRAEGERWERK"
+    assert w("BAYWA AG VINK.NA. O.N.") == "BAYWA AG"
+    assert w("MUENCH.RUECKVERSICHERUNGS GESELLSCHAFT.VNA O.N.") == "MUENCH.RUECKVERSICHERUNGS GESELLSCHAFT"
+    assert w("PROCREDIT HOLDING AG NA EO 5") == "PROCREDIT HOLDING AG"
+    assert w("DT.TELEKOM AG NA") == "DT.TELEKOM AG"
+    assert w("FAIR VALUE REIT-AG INH.ON") == "FAIR VALUE REIT-AG"
+    for keep in ("Stamm AG", "Nestle SA", "Banque Cantonale du Jura SA", "SF Urban Properties AG"):
+        assert w(keep) == keep
+
+
+def test_the_tracker_saved_as_utf8_csv_is_read_as_it_is(tmp_path, monkeypatch):
+    from pathlib import Path
+    from extractor import datapoints as dp
+    monkeypatch.setattr(dp, "known_ids", lambda: {"DE000BAY0017": "bayer-ag-old-id"})
+    p = tmp_path / "set2.csv"
+    p.write_text("﻿Company Name,Country,Region,Tier,ISIN,LEI,Pipeline Run,Run required,Find Required,"
+                 "Company Data,Company URL,Remuneration Files,Link,Date,Annual Reports,Annual Link,Date2,"
+                 "Additional Files_1,Link3,Date4\n"
+                 "SOFTING AG O.N.,DE,DACH,Tier 2,DE0005178008,,required,Company Data,OpenAPI,YES,"
+                 "https://investor.softing.com,YES,https://investor.softing.com/rem-2025.pdf,,NO,,,,,\n"
+                 "BAYER AG NA O.N.,DE,DACH,Tier 2,DE000BAY0017,,required,Pay Data,NA,NO,,NO,,,YES,"
+                 "https://www.bayer.com/ar-2025.pdf,,Remuneration report,https://www.bayer.com/rem-2025.pdf,\n",
+                 encoding="utf-8")
+    softing, bayer = dp.read_targets(Path(p))
+    assert softing.company.company_id.startswith("softing-ag-") and softing.isin == "DE0005178008"
+    assert softing.company.website == "https://investor.softing.com" and softing.run_required == "Company Data"
+    assert softing.remuneration_report_url.endswith("rem-2025.pdf") and softing.company.segment == "Tier 2"
+    assert bayer.company.company_id == "bayer-ag-old-id"                 # reused: no duplicate
+    assert bayer.annual_report_url.endswith("ar-2025.pdf")
+    assert bayer.remuneration_report_url.endswith("bayer.com/rem-2025.pdf")   # from Link3

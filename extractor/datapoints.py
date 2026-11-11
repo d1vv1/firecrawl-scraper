@@ -181,9 +181,38 @@ FILINGS_SEARCH = re.compile(
     r"filings\.xbrl\.org/api/filings\?.*entity\.identifier(?:\]|%5D)?=([A-Z0-9]{20})\b", re.I)
 
 
+def known_ids() -> dict[str, str]:
+    """ISIN -> company_id of every company in the runs saved in output/ (their isin rows),
+    so a company list without ids reuses a company's id and a merge doesn't add it twice."""
+    out: dict[str, str] = {}
+    for f in sorted(OUTPUT_DIR.glob("*_datapoints.csv")):
+        try:
+            with open(f, encoding="utf-8-sig") as fh:
+                for r in csv.DictReader(fh):
+                    if r.get("data_point") == "isin" and r.get("value"):
+                        for code in re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", r["value"].upper()):
+                            out.setdefault(code, r["company_id"])
+        except (OSError, csv.Error, KeyError):
+            continue
+    return out
+
+
+def new_id(name: str, isin: str) -> str:
+    """'STABILUS SE INH. EO-,01', DE000STAB1L8 -> 'stabilus-se-1f0c2a9e': the name without
+    its listing line, and a hash of the ISIN so two companies never share an id."""
+    from .config import slugify, without_share_class
+    tail = hashlib.sha1((isin or name).encode()).hexdigest()[:8]
+    return f"{slugify(without_share_class(name))[:50]}-{tail}"
+
+
 def read_targets(path: Path) -> list[Target]:
     """One Target per company_id, in first-seen order. The country "(none)" (and any
-    value that isn't a 2-letter code) means unknown."""
+    value that isn't a 2-letter code) means unknown.
+
+    Also reads the company tracker saved as a UTF-8 CSV ("Company Name", "ISIN", "Run
+    required", "Company URL", "Link" = remuneration report, "Annual Link", "Link3" as
+    "Additional Files_1" says): without a company_id column, a company's id is the one it
+    has in earlier runs (by ISIN), else a new one from its name and ISIN."""
     text = path.read_text(encoding="utf-8-sig")
     dialect = csv.Sniffer().sniff(text.splitlines()[0], delimiters=",;\t")
     rows = list(csv.DictReader(text.splitlines(), dialect=dialect))
@@ -191,13 +220,33 @@ def read_targets(path: Path) -> list[Target]:
 
     def col(*names):
         return next((h for h, l in low.items() if l in names), None)
-    c_id, c_name = col("company_id", "id"), col("company_name", "name", "legal_name")
-    c_country, c_seg = col("country", "country_code"), col("segment")
+    c_id = col("company_id", "id")
+    c_name = col("company_name", "name", "legal_name", "company name")
+    c_country, c_seg = col("country", "country_code"), col("segment", "tier")
     c_lei, c_bid = col("lei"), col("business_id", "registration_id", "org_number")
-    c_rem, c_ar = col("remuneration_report_url"), col("annual_report_url")
-    c_isin, c_req = col("isin"), col("run_required")
-    if not c_id or not c_name:
-        raise ValueError(f"{path} needs company_id and company_name columns")
+    tracker = col("remuneration files") is not None
+    c_rem = col("remuneration_report_url") or (col("link") if tracker else None)
+    c_ar = col("annual_report_url", "annual link")
+    c_extra_type, c_extra = col("additional files_1"), col("link3")
+    c_isin, c_req = col("isin"), col("run_required", "run required")
+    c_site = col("website", "company url", "company_url")
+    if not c_name or not (c_id or c_isin):
+        raise ValueError(f"{path} needs company_id (or ISIN) and company_name columns")
+    ids = known_ids() if not c_id else {}
+    if not c_id:
+        for r in rows:
+            name = (r.get(c_name) or "").strip()
+            isin = (r.get(c_isin) or "").strip().upper()
+            r["_id"] = ids.get(isin) or new_id(name, isin) if name else ""
+        c_id = "_id"
+    for r in rows:
+        # the tracker's extra file goes where its type says, when that column is empty
+        kind = (r.get(c_extra_type) or "").lower() if c_extra_type else ""
+        url = (r.get(c_extra) or "").strip() if c_extra else ""
+        if url and "remuneration" in kind and c_rem and not (r.get(c_rem) or "").strip():
+            r[c_rem] = url
+        elif url and "annual" in kind and c_ar and not (r.get(c_ar) or "").strip():
+            r[c_ar] = url
     out: dict[str, Target] = {}
     for r in rows:
         cid = (r.get(c_id) or "").strip()
@@ -214,6 +263,9 @@ def read_targets(path: Path) -> list[Target]:
                                           lei if len(lei) == 20 else None))
         if bid and not t.business_id:
             t.business_id = bid
+        site = (r.get(c_site) or "").strip() if c_site else ""
+        if site and not t.company.website:
+            t.company.website = site if site.startswith("http") else f"https://{site}"
         isin = (r.get(c_isin) or "").strip().upper() if c_isin else ""
         if re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}\d", isin) and not t.isin:
             t.isin = isin

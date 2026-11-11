@@ -97,14 +97,20 @@ _SHARE_CLASS = re.compile(
     r"\s+(?:pref(?:erence)?(?:\s+[a-d])?|(?:ser(?:ies)?|class)\.?\s*[a-d]|sdb"
     r"|(?:vink\.?\s*)?na\s+o\.?\s*n\.?|o\.?\s*n\.?|[a-d]"
     # German listing lines (DACH): "Porsche AG VZO", "BMW AG ST", "Rheinmetall AG INH",
-    # "Sixt SE VZO O.N.", "Henkel AG&CO.KGAA VZO"
-    r"|vzo|vz|st|stamm|inh|vna|namens?(?:aktien)?)\.?\s*$", re.I)
+    # "Sixt SE VZO O.N.", "Henkel AG&CO.KGAA VZO", "DRAEGERWERK ST.A.O.N.", "BAYWA AG VINK.NA.",
+    # a nominal value ("PROCREDIT HOLDING AG NA EO 5", "STABILUS SE INH. EO-,01")
+    r"|vzo|vz|st|stamm|inh(?:\.?\s*on)?|vna|vink\.?\s*na|namens?(?:aktien)?|st\.?\s*a\.?(?:\s*o\.?\s*n)?"
+    r"|(?:eo|sf|chf|dl)\s*-?\s*,?\s*\d+(?:[.,]\d+)?)\.?\s*$"
+    # joined to the name by a dot: "MUENCH.RUECKVERSICHERUNGS GESELLSCHAFT.VNA"
+    r"|\.(?:vna|vzo|inh|na)\.?\s*$", re.I)
 
 
 def without_share_class(name: str) -> str:
     """'SCA A' -> 'SCA', 'Besqab Pref B' -> 'Besqab', 'BayWa AG na o.N.' -> 'BayWa AG'."""
     while True:
         short = _SHARE_CLASS.sub("", name).strip()
+        # "NA" (registered shares) right after the legal form: "DT.TELEKOM AG NA"
+        short = re.sub(r"(\b(?:ag|se|kgaa|a-sp|sa|nv)\.?)\s+na\.?$", r"\1", short, flags=re.I)
         if short == name or not short:
             return name
         name = short

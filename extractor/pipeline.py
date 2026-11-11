@@ -104,7 +104,7 @@ def find_official_website(legal_name: str, fc: FirecrawlClient, lei_record: dict
 
 def discover(legal_name: str, slug: str, fc: FirecrawlClient, website: str | None,
              report_url: str | None, use_cache: bool, lei_record: dict | None = None,
-             country: str | None = None) -> dict:
+             country: str | None = None, website_hint: str | None = None) -> dict:
     """Steps 2-3, with overrides and a small JSON cache so re-runs cost nothing."""
     if report_url:
         # a report on disk says nothing about the website: found later if needed
@@ -123,6 +123,9 @@ def discover(legal_name: str, slug: str, fc: FirecrawlClient, website: str | Non
 
     if website:
         site_info = {"website": website, "website_score": None, "website_source": "override"}
+    elif website_hint:
+        # the company list's website (the tracker's "Company URL"): no website search
+        site_info = {"website": website_hint, "website_score": None, "website_source": "input"}
     else:
         try:
             site_info = find_official_website(legal_name, fc, lei_record, country)
@@ -353,7 +356,7 @@ def _identifier(filing) -> str:
 def run(legal_name: str, website: str | None = None, report_url: str | None = None,
         use_cache: bool = True, lei: str | None = None, company_id: str | None = None,
         country: str | None = None, fc: FirecrawlClient | None = None,
-        qualitative: bool = True) -> dict:
+        qualitative: bool = True, website_hint: str | None = None) -> dict:
     """One company, steps 1-7. `qualitative=False` skips the revenue-model and
     business-structure LLM call (the data-point collector doesn't use them). `company_id` (if given) names the cache/output files;
     `country` (ISO alpha-2) helps the LEI search and is the fallback country when no
@@ -409,7 +412,7 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
         website_error = None
         try:
             found = discover(legal_name, slug, fc, website, report_url, use_cache,
-                             lei_info["record"], country)
+                             lei_info["record"], country, website_hint)
             web_year = found.get("report_year")
             # A recent filing in another language (Rosenbauer files in German) or an
             # older one: either way the filing wins over an even older website report.
