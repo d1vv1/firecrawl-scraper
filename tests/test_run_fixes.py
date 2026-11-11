@@ -53,9 +53,15 @@ def test_subsidiary_report_named_after_another_country_is_excluded():
 class FakeFC:
     """map/scrape responses by call order; records calls; optional credit cap."""
 
-    def __init__(self, maps, scrape_links=(), cap=None):
+    def __init__(self, maps, scrape_links=(), cap=None, search_results=()):
         self.maps, self.scrape_links, self.calls = list(maps), list(scrape_links), []
         self.spent, self.cap = 0, cap
+        self.search_results = list(search_results)
+
+    def search(self, query, limit):
+        self._pay(f"search:{query}")
+        self._pay("search (2nd credit)")
+        return list(self.search_results)
 
     def _pay(self, kind):
         if self.cap is not None and self.spent + 1 > self.cap:

@@ -12,7 +12,8 @@ from . import llm
 from .config import CACHE_DIR, OUTPUT_DIR, clean_name, load_settings, slugify, without_share_class
 from .extract import extract, iso_period_end, money_with_full_value
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
-from .report_finder import ReportNotFoundError, find_report, reports_linked_from
+from .report_finder import (ReportNotFoundError, find_report, host_names_company,
+                            reports_linked_from)
 from . import edgar, ocr, registries
 from .edgar import EdgarFiling
 from .registries import RegistryFiling
@@ -151,6 +152,14 @@ def discover(legal_name: str, slug: str, fc: FirecrawlClient, website: str | Non
         r = find_report(w.url, fc, country=report_country,
                         company_name=legal_name, other_countries=[country])
     log.info("Report: %s (year %s, pdf=%s)", r.url, r.year, r.is_pdf)
+    own = registered_domain(urlparse(r.url).netloc)
+    if own != registered_domain(urlparse(site_info["website"]).netloc)             and host_names_company(r.url, legal_name):
+        # found by the web search on the company's investor domain (adidas-group.com, not
+        # adidas.com): its other documents (the remuneration report) are there too
+        log.info("Website: %s, the report's own site (was %s)", f"https://www.{own}",
+                 site_info["website"])
+        site_info = site_info | {"website": f"https://www.{own}",
+                                 "website_source": f"the report's site (was {site_info['website']})"}
     result = site_info | {"report_url": r.url, "report_year": r.year, "report_source": "map",
                           "report_alternatives": r.alternatives,
                           "report_candidates": [asdict(c) for c in r.candidates]}

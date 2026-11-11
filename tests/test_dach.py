@@ -1,0 +1,82 @@
+"""DACH: the report found by a web search, German and French keywords."""
+
+import datetime as dt
+
+from extractor import report_finder as rf
+from extractor.sections import Chunk, select_chunks
+from tests.test_run_fixes import FakeFC
+
+YEAR = dt.date.today().year - 1
+
+
+def test_only_the_companys_own_documents_count():
+    own = rf.own_document
+    assert own("https://report.adidas-group.com/2025/en/annual-report-adidas-ar25.pdf", "ADIDAS AG NA O.N.", "https://www.adidas.com")
+    assert own("https://www.bellfoodgroup.com/en/investors/annual-report", "Bell Food Group AG", "http://www.bell.ch")
+    assert not own("https://www.bellfg.com.au/bfg-2025-annual-report/", "Bell Food Group AG", "http://www.bell.ch")
+    assert not own("https://www.datocms-assets.com/1/brickworks_fy25_annual_report.pdf", "BKW AG", "https://www.bkw.ch")
+    assert own("https://www.bcj.ch/fr/Rapport-de-gestion-2025.html", "Banque Cantonale du Jura SA", "https://www.bcj.ch")
+    assert not own("https://www.bcv.ch/rapports/rapport-annuel-2025.pdf", "Banque Cantonale du Jura SA", "https://www.bcj.ch")
+    assert own("https://a.storyblok.com/f/2/x/e5/32845-essentra-ar2025-interactive.pdf", "Essentra plc", "https://www.essentraplc.com")
+    assert not own("https://companiesmarketcap.com/bkw-ag/annual-reports/", "BKW AG", "https://www.bkw.ch")
+    assert not own("https://investor.asml.com/annual-reports/2025/downloads", "ASMALLWORLD AG", "http://www.asmallworld.com")
+    assert not own("https://www.advantech.com/en-us/investor/annual-report", "Adval Tech Holding AG", "https://www.advaltech.com")
+
+
+def test_search_results_are_judged_by_title_when_the_url_misleads():
+    allowed = rf.allowed_place_words("Arbonia AG", ["CH"])
+    arbonia = rf.search_result_candidate({
+        "url": "https://www.arbonia.com/fileadmin/05_Investoren/Gesch%C3%A4fts-_und_Halbjahresberichte/Arbonia_Annual_Report_2025.pdf",
+        "title": "Annual report - Arbonia"}, allowed)
+    assert arbonia.kept and arbonia.is_pdf and arbonia.year == 2025
+    bucher = rf.search_result_candidate({
+        "url": "https://www.bucherindustries.com/index.php?eID=dumpFile&t=f&f=4706&token=8", "title": "Financial report 2025"}, frozenset())
+    assert bucher.kept and bucher.is_pdf and bucher.year == 2025
+    essentra = rf.search_result_candidate({
+        "url": "https://a.storyblok.com/f/2/x/e5/32845-essentra-ar2025-interactive.pdf",
+        "title": "UNLOCKING OPPORTUNITIES THROUGH EVERY ..."}, frozenset())
+    assert essentra.kept and essentra.year == 2025
+    semi = rf.search_result_candidate({"url": "https://a.storyblok.com/f/1/x/15/advaltech_hjb26_en_final.pdf",
+                                       "title": "Semi-Annual Report"}, frozenset())
+    assert not semi.kept
+
+
+def test_the_downloads_page_of_an_online_report_is_scraped_for_the_pdf():
+    results = [{"url": "https://report.bystronic.com/", "title": "Bystronic - Annual Report 2025"},
+               {"url": "https://report.bystronic.com/2025/downloads", "title": "Downloads"},
+               {"url": "https://ir.bystronic.com/en/publications/financial-reports", "title": "Financial reports"}]
+    cands = [rf.search_result_candidate(r, frozenset()) for r in results]
+    assert rf.downloads_page(results, cands) == "https://report.bystronic.com/2025/downloads"
+
+
+def test_a_report_the_site_map_never_reaches_is_found_by_a_web_search():
+    pdf = f"https://report.adidas-group.com/{YEAR}/en/_assets/downloads/annual-report-adidas-ar{str(YEAR)[2:]}.pdf"
+    fc = FakeFC(maps=[["https://www.adidas.com/us/adiclub"]] * 5,
+                search_results=[{"url": pdf, "title": f"annual report {YEAR} - pdf"},
+                                {"url": "https://www.annualreports.com/Company/adidas-ag", "title": "Adidas AG"}])
+    r = rf.find_report("https://www.adidas.com", fc, country="DE", company_name="ADIDAS AG NA O.N.")
+    assert r.url == pdf
+    assert fc.calls[:3] == ["map:annual report", "scrape:https://www.adidas.com/investors/",
+                            "search:adidas annual report %d pdf" % YEAR]
+
+
+def test_german_and_french_reports_get_the_right_excerpts():
+    chunks = [Chunk(0, "Die Bilanz zeigt Vorräte und Forderungen. " * 20, [1]),
+              Chunk(1, "Mitarbeitende: Per 31. Dezember beschäftigte die Gruppe 4'512 Mitarbeitende "
+                       "(Vollzeitstellen 4'100). Personalaufwand stieg.", [2]),
+              Chunk(2, "Le nombre de collaborateurs s'élevait à 1 234 (équivalents plein temps 1 100).", [3])]
+    picked = {c.id for c in select_chunks(chunks, "employees", 200)}
+    assert {1, 2} <= picked
+
+
+def test_the_reports_own_domain_becomes_the_website(tmp_path, monkeypatch):
+    from extractor import pipeline
+    monkeypatch.setattr(pipeline, "CACHE_DIR", tmp_path)
+    pdf = f"https://report.adidas-group.com/{YEAR}/en/annual-report-adidas.pdf"
+    monkeypatch.setattr(pipeline, "find_report", lambda *a, **k: rf.ReportResult(pdf, YEAR, True, [], []))
+    found = pipeline.discover("ADIDAS AG", "adidas", None, "https://www.adidas.com", None, False)
+    assert found["website"] == "https://www.adidas-group.com" and found["report_url"] == pdf
+    cdn = "https://a.storyblok.com/f/1/x/e5/essentra-ar2025.pdf"
+    monkeypatch.setattr(pipeline, "find_report", lambda *a, **k: rf.ReportResult(cdn, YEAR, True, [], []))
+    found = pipeline.discover("Essentra plc", "essentra", None, "https://www.essentraplc.com", None, False)
+    assert found["website"] == "https://www.essentraplc.com"           # never a file server
