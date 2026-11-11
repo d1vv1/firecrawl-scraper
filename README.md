@@ -345,6 +345,12 @@ collected: this run asked only for pay") never replaces a value. The combined fi
 scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's CSV and its
 `_checks.csv` to whoever merges.
 
+**Finding the report when the website doesn't have it** (`report_finder.web_search_report`): after
+the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits), keeping
+only the company's own documents (its site, a host carrying its name, or a PDF named for it). The
+report's own domain then becomes the website. With no website at all, the report is searched for
+by name. Report search budget: 8 credits per company (`--pipeline-credits`).
+
 **Before and during a run:** `--dry-run` also lists input problems per company (a report
 link that needs a login, such as Google Drive or SharePoint; no LEI and no ISIN). A run
 without `--max-run-credits` says how many credits it could use. A run warns if the code or

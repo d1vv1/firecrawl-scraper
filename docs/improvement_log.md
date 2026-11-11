@@ -340,6 +340,35 @@ Each improvement is three lines:
 - **Now:** the run notices the change and prints a warning.
 - **Example:** "WARNING: the code or prompts changed while this run is going".
 
+### Getting ready for Swiss and German companies
+
+#### 21. Searching the web for the report itself
+- **Before:** the tool only looked on the company's main website. Swiss and German companies keep reports on a separate investor site, so it found nothing.
+- **Now:** if the website has no recent report, the tool searches the web for "<company> annual report 2025" and keeps only the company's own documents.
+- **Example:** Adidas's report on report.adidas-group.com, Bell's on bellfoodgroup.com, Arbonia's on its new domain.
+
+#### 22. Even without a website
+- **Before:** if no website was found, the report was never looked for.
+- **Now:** the report is searched for by the company's name, and its site becomes the website.
+- **Example:** APG SGA got its 2025 report.
+
+#### 23. Reading German and French reports better
+- **Before:** the words that pick which parts of a report the AI reads were English and Nordic only.
+- **Now:** German, French and Italian words are included (Mitarbeitende, Umsatz, Verwaltungsrat, collaborateurs, chiffre d'affaires...), and Swiss numbers like 1'234'567.
+- **Example:** a German-only report now sends its staff and pay pages to the AI.
+
+#### 24. German share names cleaned
+- **Before:** names like "Porsche AG VZO" or "BMW AG ST" were searched with the share type attached.
+- **Now:** share-type endings (VZO, ST, INH, NA O.N.) are removed before searching.
+- **Example:** "Porsche AG VZO" is searched as "Porsche".
+
+#### 25. Three people running at once
+- **Before:** if three computers asked the company register (GLEIF) too fast, it refused, and the company lost its ID.
+- **Now:** the tool waits as long as GLEIF asks, then tries again.
+- **Example:** three runs of 125 companies at the same time.
+
+**Test on the 19 companies with no report:** 13 now have their 2025 report (11 of the 12 Swiss and German ones). Fiscal year filled went from 92% to 98%.
+
 ### Runs done today
 - **Run 4 (19 companies, 52 credits):** 15 now read their 2025 report.
 - **Run 5 (31 companies without a report, 181 credits):** 12 now have one. The other 19 still can't be found by the search; that needs separate work.
