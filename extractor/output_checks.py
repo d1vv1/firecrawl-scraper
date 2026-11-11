@@ -135,6 +135,7 @@ class Row:
             return None, None
         rest = self.note[m.end():]
         ends = [i for i in (rest.find('" (quote not found'), rest.find('" (the source row'),
+                            rest.find("\" (the figure's own cell"),
                             rest.find('"; ')) if i >= 0]
         q = rest[:min(ends)] if ends else rest.rstrip('"')
         return q.rstrip("…").strip(), int(m.group(1)) if m.group(1) else None
@@ -345,7 +346,7 @@ def core_03(r: Row, ctx: Ctx):
     if pages is None:
         if "quote not found verbatim" in r.note:
             return bad("CORE-03", "source not cached; the run itself did not find the quote")
-        return na("CORE-03", "source text not cached")
+        return na("CORE-03", NOT_CACHED)
     if page:
         # the linked page, or the one before it (a quote can run over a page break)
         if any(quote_in_text(q, pages.get(n, "")) for n in (page, page - 1)):
@@ -574,6 +575,8 @@ def der_03(r: Row, ctx: Ctx):
         want = float(m.group(1)) * float(m.group(2)) / 100
     elif m := re.search(r"stated as ([\d.]+) months of salary", n):
         want = float(m.group(1)) / 12 * 100
+    elif m := re.search(r"rounded from ([\d.]+)", n):
+        want = int(float(m.group(1)) + 0.5)      # a headcount from an FTE count, half up
     elif "printed " in n:
         p, mult = r.printed
         want = p * mult
@@ -671,12 +674,13 @@ class Scored:
 
 
 def score_row(r: Row, ctx: Ctx) -> Scored:
-    results, hard_failed = [], []
-    for fn, hard, _ in CHECKS:
-        res = fn(r, ctx)
-        results.append(res)
-        if hard and res.outcome == "fail":
-            hard_failed.append(res.check)
+    return judge(r, [fn(r, ctx) for fn, _, _ in CHECKS])
+
+
+def judge(r: Row, results: list[Result]) -> Scored:
+    """A value's score and status from its checks' results (in CHECKS order)."""
+    hard = {CHECK_ID[fn] for fn, h, _ in CHECKS if h}
+    hard_failed = [x.check for x in results if x.check in hard and x.outcome == "fail"]
     applied = [x for x in results if x.outcome != "n/a"]
     score = 100 * sum(x.outcome == "pass" for x in applied) / len(applied) if applied else None
     status = ("Fail (hard)" if hard_failed else "Pass" if score is None or score >= PASS
@@ -705,6 +709,34 @@ def saved(csv_path: Path, checks_path: Path) -> tuple[list[Scored], list[Row]]:
             scored.append(Scored(r, results, [x.check for x in results if x.check in hard and x.outcome == "fail"],
                                  score, status))
     return scored, rows
+
+
+NOT_CACHED = "source text not cached"
+
+
+def rescore(csv_path: Path, checks_path: Path, sources: Sources,
+            ranges: dict) -> tuple[list[Scored], list[Row]]:
+    """Score a run again under the current rules where its source texts are partly on another
+    machine: every value is scored afresh, but a check that needs a source not cached here
+    keeps the result saved for that field in <name>_checks.csv (a headcount derived from an
+    FTE count: the FTE's), so a quote checked there is not left unchecked here."""
+    prior: dict[tuple, dict[str, Result]] = defaultdict(dict)
+    for d in csv.DictReader(open(checks_path, encoding="utf-8-sig")):
+        prior[(d["company_id"], d["data_point"], d["role_row"])].setdefault(
+            d["check"], Result(d["check"], d["outcome"], d["reason"]))
+    scored, rows = run(csv_path, sources, ranges)
+    out = []
+    for s in scored:
+        r = s.row
+        before = prior.get((r.company_id, r.data_point, r.role_row), {})
+        if r.data_point == "headcount" and "full-time equivalents" in r.note:
+            before = prior.get((r.company_id, "fte", r.role_row), before)
+        if not any(x.outcome == "n/a" and x.reason == NOT_CACHED for x in s.results) or not before:
+            out.append(s)
+            continue
+        out.append(judge(r, [before.get(x.check, x) if x.outcome == "n/a" and x.reason == NOT_CACHED
+                             else x for x in s.results]))
+    return out, rows
 
 
 def run(csv_path: Path, sources: Sources, ranges: dict) -> tuple[list[Scored], list[Row]]:

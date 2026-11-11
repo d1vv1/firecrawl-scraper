@@ -242,6 +242,28 @@ def source_row(quote: str, figure: float, text: str) -> str | None:
     return None if tie else best
 
 
+_CELL_ONLY = re.compile(r"[-–(]?[\d.,' ]+\)?%?")
+_CELL_NOISE = re.compile(r"<br>|<!--.*?-->|[|*\s]")
+
+
+def lone_cell(quote: str, figure: float, texts: list[tuple]) -> tuple[str, object] | None:
+    """(the line, its key) for a table drawn cell by cell, where a label and its figure are
+    separate boxes and no line holds both (Flughafen Wien: "Fixed compensation" in the
+    header box, "1,186.8<br>" alone below it), so source_row finds nothing. The figure must
+    be printed alone on a line exactly once in the whole document, on a page that also holds
+    every word of the quote; None otherwise. `texts`: (key, text) of every page."""
+    words = {t for t in _tokens(normalize(quote)) if t.isalpha() and len(t) > 2}
+    if not words:
+        return None
+    hits = [(key, line.strip()) for key, text in texts for line in text.splitlines()
+            if _has_figure(figure, line) and _CELL_ONLY.fullmatch(_CELL_NOISE.sub("", line) or "x")]
+    if len(hits) != 1:
+        return None
+    key, line = hits[0]
+    page = dict(texts)[key]
+    return (line, key) if words <= set(_tokens(normalize(page))) else None
+
+
 def numbers_in(text: str) -> list[float]:
     """Figures in a quote, thousands separators removed: '1,242 | 96<br>23' -> [1242, 96, 23].
     Space-grouped figures count both whole and in parts ("1 057 875" -> 1057875, 1, 57, 875),

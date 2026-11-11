@@ -3,6 +3,11 @@ each value came from.
 
     python -m extractor.datapoints data/golden_test_sample_5_per_segment_country_all.csv
         [--workers 3] [--only ID,ID] [--limit N] [--retry-failed] [--redo] [--no-docs]
+        [--fields pay|company|revenue,headcount...] [--ignore-run-required] [--dry-run]
+
+--fields collects only those data points and replaces only them in the saved rows; the
+input's run_required ("Pay Data", "Company Data") limits a company the same way unless
+--ignore-run-required (fields.py, issue 16).
 
 Input: any CSV with company_id, company_name and (optional) segment, country, lei,
 business_id, isin, annual_report_url, remuneration_report_url. Several rows per company
@@ -53,6 +58,7 @@ import hashlib
 import json
 import logging
 import re
+import shutil
 import sys
 import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
@@ -65,18 +71,20 @@ import openai
 from firecrawl import PaymentRequiredError
 
 from . import apis, edgar, fx, listing, llm, pay, pay_tables, sector
+from . import fields as selection
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
-from .documents import DP_DOC_TYPES, Candidate, DocType, Document, Library
+from .documents import (DP_DOC_TYPES, Candidate, DocType, Document, Library, _stem as doc_stem,
+                        title_year)
 from .extract import full_value, full_value_quoted
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
-from .pipeline import find_official_website, identify_lei
+from .pipeline import find_official_website, identify_lei, run as run_report
 from .report_finder import extract_year, is_pdf_url
 from .schemas import DataPointFacts, Holder, NumberFact, TextFact
-from .scraper import Page, local_file, markdown_to_pages, pages_to_markdown
+from .scraper import Page, cache_stem, local_file, markdown_to_pages, pages_to_markdown
 from .sections import DATAPOINT_TOPICS, Chunk, select_chunks, split_chunks
-from .validate import figure_in_quote, iso_currency, quote_in_text, source_row
+from .validate import figure_in_quote, iso_currency, lone_cell, quote_in_text, source_row
 from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
@@ -163,6 +171,14 @@ class Target:
     # for reports no search reaches (Equinor's FY2025 report on a CDN under a hash).
     remuneration_report_url: str | None = None
     annual_report_url: str | None = None
+    # The tracker's run_required ("Pay Data", "Company Data", "Company and Pay Data")
+    run_required: str | None = None
+    # The data points this run collects (fields.py); None: all of them
+    fields: frozenset[str] | None = None
+
+
+FILINGS_SEARCH = re.compile(
+    r"filings\.xbrl\.org/api/filings\?.*entity\.identifier(?:\]|%5D)?=([A-Z0-9]{20})\b", re.I)
 
 
 def read_targets(path: Path) -> list[Target]:
@@ -179,7 +195,7 @@ def read_targets(path: Path) -> list[Target]:
     c_country, c_seg = col("country", "country_code"), col("segment")
     c_lei, c_bid = col("lei"), col("business_id", "registration_id", "org_number")
     c_rem, c_ar = col("remuneration_report_url"), col("annual_report_url")
-    c_isin = col("isin")
+    c_isin, c_req = col("isin"), col("run_required")
     if not c_id or not c_name:
         raise ValueError(f"{path} needs company_id and company_name columns")
     out: dict[str, Target] = {}
@@ -201,8 +217,18 @@ def read_targets(path: Path) -> list[Target]:
         isin = (r.get(c_isin) or "").strip().upper() if c_isin else ""
         if re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}\d", isin) and not t.isin:
             t.isin = isin
+        required = (r.get(c_req) or "").strip() if c_req else ""
+        if required and not t.run_required:
+            t.run_required = required
         for attr, column in (("remuneration_report_url", c_rem), ("annual_report_url", c_ar)):
             url = (r.get(column) or "").strip() if column else ""
+            searched = FILINGS_SEARCH.search(url)
+            if searched:
+                # a filings.xbrl.org search, not a report (K2A, SED Energy): its LEI lets the
+                # report step find the filing itself
+                if not t.company.lei:
+                    t.company.lei = searched.group(1).upper()
+                continue
             if url.startswith(("http", "file:")) and not getattr(t, attr):
                 setattr(t, attr, url)
         # a report supplied on disk is the one the report step reads (from_reports.py)
@@ -246,18 +272,22 @@ def text_fragment(url: str, quote: str | None) -> str:
 
 # note on a value whose quote is the source line the code found, not the AI's (source_row)
 REPLACED = " (the source row; the AI's quote pieced table cells together)"
+# ... or the figure's own cell of a table drawn cell by cell (validate.lone_cell)
+LONE_CELL = " (the figure's own cell; the table is drawn cell by cell and the quote's words are on this page)"
 
 
 def find_source_row(quote: str, figure: float, near: list[tuple], texts: list[tuple]):
-    """(line, key) of validate.source_row in the (key, text) pairs `near` the quote's place,
-    else in all `texts`; None when no line or more than one qualifies."""
+    """(line, key, note) of validate.source_row in the (key, text) pairs `near` the quote's
+    place, else in all `texts`, else the figure's own cell (validate.lone_cell); None when
+    no line or more than one qualifies."""
     for group in (near, texts):
         hits = [(row, key) for key, text in group if (row := source_row(quote, figure, text))]
         if len(hits) == 1:
-            return hits[0]
+            return (*hits[0], REPLACED)
         if len(hits) > 1:
             return None
-    return None
+    cell = lone_cell(quote, figure, texts)
+    return (*cell, LONE_CELL) if cell else None
 
 
 _NOT_FOUND = re.compile(r'(PDF page (\d+)|report text|web page): "(.*?)…?" \(quote not found verbatim\)')
@@ -285,13 +315,13 @@ def repair_quotes(rows: list[dict], pages_of) -> None:
         found = find_source_row(m.group(3), figure, near, texts)
         if not found:
             continue
-        row, key = found
+        row, key, tail = found
         base = r["endpoint"].split("#")[0]
         if m.group(2):
             where, r["endpoint"] = f"PDF page {key}", f"{base}#page={key}"
         else:
             where, r["endpoint"] = m.group(1), text_fragment(base, row)
-        note = r["note"].replace(m.group(0), f'{where}: "{clip(row)}"{REPLACED}')
+        note = r["note"].replace(m.group(0), f'{where}: "{clip(row)}"{tail}')
         r["note"] = re.sub(r"; the figure \S+ is not in the quote", "", note)
         if r["confidence"] == "C":
             r["confidence"] = "B"
@@ -344,7 +374,7 @@ class Origin:
               figure: float | None = None) -> tuple["Origin", str, str, str, str | None]:
         return (self, *self.where(quote, chunk_id, figure))
 
-    def source_row(self, quote: str, chunk_id: int | None, figure: float) -> tuple[str, int | None] | None:
+    def source_row(self, quote: str, chunk_id: int | None, figure: float) -> tuple[str, int | None, str] | None:
         """(the source line, its page or chunk id) for a quote not in the text: the one line
         printing the figure with the quote's words (validate.source_row), looked for in the
         quote's chunk first, then in the whole document, where it must be the only one."""
@@ -379,7 +409,7 @@ class Origin:
                     quote, ok = fixed[0], True
                     url = (self.page_urls or {}).get(fixed[1], url)
             return (text_fragment(url, quote) if ok else url, "B" if ok else "C",
-                    f'web page: "{clip(quote)}"' + (REPLACED if fixed else "" if ok
+                    f'web page: "{clip(quote)}"' + (fixed[2] if fixed else "" if ok
                                                     else " (quote not found verbatim)"), quote)
         loc = locate(quote, chunk_id, self.chunks, self.pages)
         fixed = None
@@ -388,7 +418,7 @@ class Origin:
             if fixed:
                 quote, loc = fixed[0], Located(fixed[1], True)
         conf = "B" if loc.verified else "C"
-        tail = REPLACED if fixed else "" if loc.verified else " (quote not found verbatim)"
+        tail = fixed[2] if fixed else "" if loc.verified else " (quote not found verbatim)"
         if self.kind == "pdf":
             page = loc.page
             return (f"{self.url}#page={page}" if page else self.url, conf,
@@ -514,6 +544,11 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
     period = result.get("period_end_date") or ""
     at = result.get("extracted_at") or ""
     money = next((f for f in out), None)
+    if money is None and origin is not None:
+        # no revenue or total assets read (a pre-revenue company, a bank): the year and its
+        # end are still the report's (Chesterfield's FY2025 report had no fiscal year row)
+        money = Found("_report", None, source=origin.source, endpoint=origin.url, method="PARSE",
+                      confidence="B")
     if result.get("fiscal_year") and money:
         out.append(Found("fiscal_year", result["fiscal_year"], period_end=period, source=money.source,
                          endpoint=money.endpoint.split("#")[0], method=money.method,
@@ -1081,6 +1116,9 @@ def name_core(name: str | None) -> frozenset[str]:
     return frozenset(w for w in words if len(w) > 2 and w not in _NAME_NOISE)
 
 
+OTHER_COMPANY = "possibly another company's report"
+
+
 def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
     """Is the report really this company's? Two signals from the report's own text: the
     country it says the company is registered in, and its legal name (the Siemens run
@@ -1099,7 +1137,7 @@ def identity_check(values: list[Found], country: str | None, names: list[str], s
         reasons.append(f"the report is by '{clip(str(legal), 60)}', not {names[0]}")
     if not reasons:
         return
-    why = "check: " + " and ".join(reasons) + ": possibly another company's report"
+    why = "check: " + " and ".join(reasons) + f": {OTHER_COMPANY}"
     log.warning("Identity check: %s", why)
     for f in values:
         if f.source == source and f.method != "XBRL":
@@ -1148,6 +1186,116 @@ def website_for(t: Target, result: dict | None, lei_record: dict | None,
         log.info("No website for the HTML backup: %s", str(e)[:150])
     except httpx.HTTPError as e:
         log.warning("Website lookup failed: %s", str(e)[:150])
+    return None
+
+
+# --- 1b. an annual report found outside the report step (issue 15) -------------------------
+
+def sought_year(today: dt.date | None = None) -> int:
+    """The fiscal year a run looks for: the last full year (FY2025 during 2026), as for
+    ESEF filings (esef.is_recent)."""
+    return (today or dt.date.today()).year - 1
+
+
+def report_year(result: dict | None) -> int | None:
+    return fiscal_end_year(str((result or {}).get("fiscal_year") or ""))
+
+
+def lacks_report(result: dict | None) -> bool:
+    """The report step read no annual report, or one for a year before the one sought."""
+    year = report_year(result)
+    return result is None or (year is not None and year < sought_year())
+
+
+def share_conversion(slug: str, url: str) -> None:
+    """A PDF converts once: the report step (scraper.fetch_report) and the document
+    library (documents.Library) cache it under different names; copy whichever exists to
+    the other (a 177-page report takes minutes to convert)."""
+    report, doc = CACHE_DIR / cache_stem(slug, url), CACHE_DIR / doc_stem(slug, url)
+    for src, dst in ((doc, report), (report, doc)):
+        if src.with_suffix(".md").exists() and not dst.with_suffix(".md").exists():
+            if src.with_suffix(".pdf").exists():
+                shutil.copyfile(src.with_suffix(".pdf"), dst.with_suffix(".pdf"))
+            shutil.copyfile(src.with_suffix(".md"), dst.with_suffix(".md"))
+
+
+def use_as_report(t: Target, url: str, site: str | None, fc: FirecrawlClient,
+                  how: str) -> dict | None:
+    """Run the report step on a document found outside it: it reads the fiscal year, its
+    end and the core figures as for any report, and its result replaces the report
+    step's (a failure, or an older year's report). None when the document gives no
+    usable report, or no newer year than the result it would replace."""
+    c = t.company
+    old = json.loads(c.result_path.read_text(encoding="utf-8")) if c.result_path.exists() else None
+    share_conversion(c.slug, url)
+    log.info("Report step on %s (%s)", url, how)
+    try:
+        result = run_report(c.name, website=site, report_url=url, use_cache=True, lei=c.lei,
+                            company_id=c.company_id, country=c.country, fc=fc,
+                            qualitative=False)
+    except FATAL:
+        raise
+    except Exception as e:  # noqa: BLE001 - the run goes on as without this document
+        log.warning("Report step on %s failed: %s", url, str(e)[:200])
+        return None
+    share_conversion(c.slug, url)
+    new_year, old_year = report_year(result), report_year(old)
+    if old and old_year and (new_year is None or new_year <= old_year):
+        log.info("%s is FY%s, not newer than the report read before (FY%s); kept that one",
+                 url, new_year, old_year)
+        c.result_path.write_text(json.dumps(old, indent=2, ensure_ascii=False), encoding="utf-8")
+        return None
+    result.pop("_output_path", None)
+    if not site:
+        # run() takes the report's host for the website (image.tallink.com): unknown instead
+        result["website"], result["website_source"] = None, None
+    result["report_source"] = how
+    c.result_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    c.error_path.unlink(missing_ok=True)
+    log.info("Annual report: FY%s from %s (%s)", result.get("fiscal_year"), url, how)
+    return result
+
+
+def report_files(c: Company) -> dict[Path, str | None]:
+    """The report step's result and error files as they are, for restore_files."""
+    return {p: p.read_text(encoding="utf-8") if p.exists() else None
+            for p in (c.result_path, c.error_path)}
+
+
+def restore_files(saved: dict[Path, str | None]) -> None:
+    for p, text in saved.items():
+        if text is None:
+            p.unlink(missing_ok=True)
+        else:
+            p.write_text(text, encoding="utf-8")
+
+
+def find_annual_report(lib: Library, year: int) -> Document | None:
+    """The company's annual report for `year` among its documents: a candidate dated
+    `year` or later (or undated), fetched, and plainly that report (documents.title_year:
+    tens of pages, "Annual report 2025" on its cover). A web page that isn't (a reports
+    page) still adds its links, so the second try can be the PDF it links to."""
+    def recent(cand: Candidate) -> bool:
+        return cand.year is None or cand.year >= year
+    for _ in range(2):
+        doc = lib.find("annual_report", accept=recent)
+        if doc is None:
+            return None
+        found = title_year(doc.pages)
+        if found and found >= year:
+            return doc
+        log.info("Documents: %s is not the FY%s annual report (%s)", doc.url, year,
+                 f"FY{found}" if found else "no annual-report title with a year on its cover")
+    return None
+
+
+def known_website(result: dict | None, slug: str) -> str | None:
+    """The website found before (the report step's or its search cache), no lookup."""
+    if result and result.get("website"):
+        return result["website"]
+    disc = CACHE_DIR / f"{slug}_discovery.json"
+    if disc.exists():
+        return json.loads(disc.read_text(encoding="utf-8")).get("website")
     return None
 
 
@@ -1243,17 +1391,22 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
         return None, f"not derived: no {missing}"
     cap = float(shares.value) * float(price.value)
     in_eur, at = cap, ""
+    # a year-end price read without its date: the report's fiscal year end dates it
+    fye = getattr(chosen.get("fiscal_year_end"), "value", "") or ""
+    date = price.period_end or (str(fye) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(fye)) else "")
     if price.unit != "EUR":
         # The ECB's euro rate on the price's date (the last working day before it)
-        rate = fx.eur_rate(price.unit, price.period_end)
+        rate = fx.eur_rate(price.unit, date)
         if not rate:
             return None, (f"not derived: market cap {cap:,.0f} {price.unit}; no ECB euro rate "
-                          f"for {price.unit} on {price.period_end or 'an unknown date'}")
+                          f"for {price.unit} on {date or 'an unknown date'}")
         in_eur = cap / rate[0]
         at = f", {cap:,.0f} {price.unit} at {rate[0]:g} {price.unit} per EUR ({fx.SOURCE}, {rate[1]})"
+        if not price.period_end:
+            at += f"; the price has no date: the rate of the fiscal year end {date}"
     band = next(name for floor, name in MARKET_CAP_BANDS_EUR if in_eur >= floor)
     worst = min((shares, price), key=lambda f: CONFIDENCE_RANK[f.confidence])
-    return Found("market_cap_band", band, unit="", period_end=price.period_end,
+    return Found("market_cap_band", band, unit="", period_end=price.period_end or date,
                  source="derived", endpoint=price.endpoint, method="DERIVED",
                  confidence=worst.confidence,
                  note=f"market cap {in_eur:,.0f} EUR = shares outstanding x share price{at} "
@@ -1327,20 +1480,85 @@ def from_apis(t: Target, result: dict | None, lei_record: dict | None
     return values, answered, isins
 
 
+def read_report(t: Target, result: dict, lei_record: dict | None, values: list[Found],
+                sel: frozenset[str] | None = None) -> tuple[Origin | None, list[Found]]:
+    """Step 2: the figures the report step read (tags or the report), then one AI pass over
+    the report for what they and the APIs (`values`) left open, and a C-graded value,
+    which a quoted one beats; only for the selected data points (`sel`). The report's own
+    legal name and country are always asked for, for the identity check. Returns the
+    report and its values."""
+    c = t.company
+    origin = report_origin(result)
+    tagged = from_result(result, origin)
+    out = parent_group(tagged) if origin and PARENT_ACCOUNTS in origin.source else tagged
+    gaps = [g for g in report_gaps(best(values + out)) if selection.wants(sel, g)]
+    chunks = report_chunks(origin, gaps) if origin and gaps else []
+    if not chunks:
+        return origin, out + year_of_report(result, origin, out)
+    log.info("Data points: asking the AI about %d report chunks for %d open data point(s)",
+             len(chunks), len(gaps))
+    facts = ask(c.name, origin.url, chunks, "the company's annual report",
+                Path(result["debug"]["markdown_file"]).stem,
+                wanted_fields(gaps + list(IDENTITY_FIELDS)))
+    report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
+    if not result.get("period_end_date"):
+        # the report step gave no period end: the fiscal year end the report states
+        # dates its values (and the pay rows) instead
+        result["period_end_date"] = next(
+            (f.value for f in report_values if f.data_point == "fiscal_year_end"
+             and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
+    with_report_period(report_values, result.get("period_end_date"))
+    if PARENT_ACCOUNTS in origin.source:
+        report_values = parent_group(report_values)
+    else:
+        # The LEI record's legal country first: the input's country can be the listing
+        # market (2020 Bulkers: listed in Norway, registered in Bermuda).
+        identity_check(report_values + values + out,
+                       (lei_record or {}).get("country") or c.country,
+                       [c.name, (lei_record or {}).get("legal_name") or ""], origin.source)
+    return origin, out + report_values + year_of_report(result, origin, out + report_values)
+
+
+def year_of_report(result: dict, origin: Origin | None, have: list[Found]) -> list[Found]:
+    """The fiscal year when the report step gave none (Commerzbank's report: no figures read,
+    no year): from the year end the report states (2025-12-31 -> 2025; 2026-03-31 -> 2025/26),
+    else from the title on its cover ("Geschäftsbericht 2025"). Sets it in `result` too, for
+    the pay step. [] when the year is known or not to be found."""
+    if result.get("fiscal_year") or origin is None or any(f.data_point == "fiscal_year" for f in have):
+        return []
+    end = str(result.get("period_end_date") or "")
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", end):
+        day = dt.date.fromisoformat(end)
+        year = str(day.year) if day.month > 6 else f"{day.year - 1}/{str(day.year)[2:]}"
+        how = f"derived: the fiscal year ending {end}, the year end the report states"
+    elif title := title_year(origin.pages):
+        year, how = str(title), f"derived: the year in the report's title ({origin.source})"
+    else:
+        return []
+    result["fiscal_year"] = year
+    return [Found("fiscal_year", year, period_end=end, source=origin.source,
+                  endpoint=origin.url.split("#")[0], method="DERIVED", confidence="B", note=how,
+                  retrieved_at=result.get("extracted_at") or "")]
+
+
 def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS,
             error: str | None = None, flags: set | None = None,
             meter: dict | None = None, use_apis: bool = True) -> list[Found]:
     """`error`: why the annual-report pipeline has no result (if not in its error file).
     `flags` gets "no_credits" when Firecrawl refused for lack of credits; `meter`
-    gets "credits", the Firecrawl credits spent here."""
+    gets "credits", the Firecrawl credits spent here. Only the data points of
+    `t.fields` are looked for (None: all); the rows of the others are not for saving."""
     c = t.company
+    sel = t.fields
     flags = flags if flags is not None else set()
+    meter = meter if meter is not None else {}
     result = json.loads(c.result_path.read_text(encoding="utf-8")) if c.result_path.exists() else None
     if result is None and c.error_path.exists():
         e = json.loads(c.error_path.read_text(encoding="utf-8"))
         error = f"{e.get('error_type')}: {e.get('error')}"
     values: list[Found] = []
     tried: list[str] = []
+    want_report = selection.needs_report(sel)
 
     # 1. the annual-report pipeline
     lei_record = (result or {}).get("lei_record")
@@ -1351,56 +1569,40 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
             log.warning("LEI lookup failed: %s", e)
     if not c.lei and (lei_record or {}).get("lei"):
         c.lei = lei_record["lei"]
+
+    # 1b. the report step found no report of the year, but the input names one (issue 15:
+    # Tallink's report step chose an AGM board report; its annual report was in the input)
+    supplied = t.annual_report_url
+    if want_report and supplied and not local_file(supplied) and lacks_report(result):
+        pfc = FirecrawlClient(load_settings(), max_credits=1)    # a PDF downloads for free
+        found = use_as_report(t, supplied, known_website(result, c.slug), pfc,
+                              "annual_report_url in the input")
+        meter["pipeline"] = meter.get("pipeline", 0) + pfc.credits.total
+        if found:
+            result, error = found, None
+            lei_record = result.get("lei_record") or lei_record
+
     gleif_isins: list[str] = []
     if use_apis:
         # 0. the official APIs first; the documents below fill what they leave empty
         api_values, answered, gleif_isins = from_apis(t, result, lei_record)
         values += api_values
         tried += answered
-    origin = report_origin(result) if result else None
-    if result:
-        tagged = from_result(result, origin)
-        values += parent_group(tagged) if origin and PARENT_ACCOUNTS in origin.source else tagged
-        tried.append(origin.source if origin else "annual report")
 
-    # 2. the AI pass over the report, only for what the APIs and tags left open (and
-    # a C-graded value, which a quoted one beats); the report's own legal name and
-    # country are always asked for, for the identity check
-    gaps = report_gaps(best(values))
-    if origin and gaps:
-        chunks = report_chunks(origin, gaps)
-        if chunks:
-            log.info("Data points: asking the AI about %d report chunks for %d open data "
-                     "point(s)", len(chunks), len(gaps))
-            facts = ask(c.name, origin.url, chunks, "the company's annual report",
-                        Path(result["debug"]["markdown_file"]).stem,
-                        wanted_fields(gaps + list(IDENTITY_FIELDS)))
-            report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
-            if not result.get("period_end_date"):
-                # the report step gave no period end: the fiscal year end the report
-                # states dates its values (and the pay rows) instead
-                result["period_end_date"] = next(
-                    (f.value for f in report_values if f.data_point == "fiscal_year_end"
-                     and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
-            with_report_period(report_values, result.get("period_end_date"))
-            if PARENT_ACCOUNTS in origin.source:
-                report_values = parent_group(report_values)
-            else:
-                # The LEI record's legal country first: the input's country can be the
-                # listing market (2020 Bulkers: listed in Norway, registered in Bermuda).
-                identity_check(report_values + values,
-                               (lei_record or {}).get("country") or c.country,
-                               [c.name, (lei_record or {}).get("legal_name") or ""], origin.source)
-            values += report_values
+    # 2. the report: its figures, then the AI pass for what the APIs and tags left open
+    origin, from_report = (read_report(t, result, lei_record, values, sel)
+                           if result and want_report else (None, []))
+    values += from_report
+    report_label = None
+    if result and want_report:
+        report_label = origin.source if origin else "annual report"
+        tried.append(report_label)
 
-    chosen = best(values)
-    listed = chosen.get("listing_status")
-    unlisted = bool(listed and listed.value == "unlisted")
     fc = lib = site = None
     roles: list[Found] = []
-    roles_why = "not applicable: the company is not listed" if unlisted else ""
+    roles_why = ""
     try:
-        if docs:
+        if docs and selection.needs_documents(sel):
             fc = FirecrawlClient(load_settings(), max_credits=doc_credits)
             site = website_for(t, result, lei_record, fc)
             if site:
@@ -1408,8 +1610,40 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 lib = Library(c.slug, site, int(year) if year.isdigit() else None, fc,
                               skip_urls=[(result or {}).get("report_url")])
 
+        # 2b. still no report of the year: look for it among the company's documents (a
+        # report the search missed, linked elsewhere on the site), and read it as the report
+        if lib and want_report and lacks_report(result):
+            doc = find_annual_report(lib, sought_year())
+            saved = report_files(c)
+            found = use_as_report(t, doc.url, site, fc, "found among the company's documents") \
+                if doc else None
+            if found:
+                # the older year's report gives way: its values and its place in `tried`
+                stale = {id(f) for f in from_report}
+                others = [f for f in values if id(f) not in stale]
+                new_origin, new_values = read_report(t, found, lei_record, others, sel)
+                if any(OTHER_COMPANY in f.note for f in new_values):
+                    # a report on the company's site by another company (Jinhui Shipping's
+                    # site has its Hong Kong parent's): not used; a supplied one is trusted
+                    log.warning("Annual report %s fails the identity check; not used", doc.url)
+                    restore_files(saved)
+                else:
+                    if report_label in tried:
+                        tried.remove(report_label)
+                    result, error, origin, from_report = found, None, new_origin, new_values
+                    values = others + from_report
+                    lib.report_year = report_year(result)
+                    tried.append(origin.source if origin else "annual report")
+
+        chosen = best(values)
+        listed = chosen.get("listing_status")
+        unlisted = bool(listed and listed.value == "unlisted")
+        roles_why = ("not applicable: the company is not listed" if unlisted
+                     else "" if selection.needs_pay(sel)
+                     else selection.NOT_COLLECTED + selection.label(sel))
+
         # 3. executive pay (role grain) and the company-level pay terms
-        if not unlisted:
+        if not unlisted and selection.needs_pay(sel):
             fy = fiscal_end_year(str((result or {}).get("fiscal_year") or ""))
             roles, terms, read = from_pay(
                 c.name, c.slug, lib, origin,
@@ -1427,7 +1661,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
 
         # 4. document fallback for the company-grain data points still missing
         chosen = best(values)
-        gaps = gap_list(chosen)
+        gaps = [g for g in gap_list(chosen) if selection.wants(sel, g)]
         if lib and gaps:
             log.info("Document fallback on %s for: %s", site, ", ".join(gaps))
             found, read = from_documents(c.name, c.slug, site, gaps, lib, fc,
@@ -1440,8 +1674,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         roles_why = roles_why or f"remuneration report not searched: {NO_CREDITS}"
     if fc:
         log.info("Documents used %d Firecrawl credit(s)", fc.credits.total)
-        if meter is not None:
-            meter["credits"] = fc.credits.total
+        meter["credits"] = fc.credits.total
     chosen = best(values)
     parent = chosen.get("ultimate_parent")
     if parent and any(same_company(parent.value, n) for n in
@@ -1449,7 +1682,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         del chosen["ultimate_parent"]          # the company itself: it is the top of its group
     # The sector from the business description, the client's route (issue 7); the
     # register's code, often the holding company's, stays in the note.
-    classified = sector.from_description(chosen, c.name)
+    classified = sector.from_description(chosen, c.name) \
+        if selection.wants(sel, "sector_code") else None
     if classified:
         chosen["sector_code"] = classified
     return finish(t, chosen, tried, error, gleif_isins) + (roles or no_roles(roles_why))
@@ -1498,7 +1732,7 @@ def process(t: Target, opts: dict) -> dict:
     meter = {"credits": 0}
     error = None
     resolve_lei(t)
-    if needs_pipeline(c, opts):
+    if selection.needs_report(t.fields) and needs_pipeline(c, opts):
         res = process_company(c, False, opts["pipeline_credits"], qualitative=False)
         meter["pipeline"] = res.get("credits", 0)
         if res["kind"] == "fatal" and "PaymentRequired" in res.get("error", ""):
@@ -1524,16 +1758,28 @@ def process(t: Target, opts: dict) -> dict:
     finally:
         logging.getLogger().removeHandler(handler)
         handler.close()
-    rows = rows_for(t, found)
-    DP_DIR.mkdir(parents=True, exist_ok=True)
-    dp_path(c).write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
+    rows = save_rows(t, rows_for(t, found))
     if "no_credits" in flags:
         no_credits_path(c).write_text(NO_CREDITS, encoding="utf-8")
     else:
         no_credits_path(c).unlink(missing_ok=True)
+    mine = [r for r in rows if t.fields is None or r["data_point"] in t.fields]
     return {"kind": "done", "no_credits": "no_credits" in flags,
-            "found": sum(1 for r in rows if r["value"]), "total": len(rows),
+            "found": sum(1 for r in mine if r["value"]), "total": len(mine),
+            "fields": selection.label(t.fields),
             "seconds": time.monotonic() - started, "credits": spent(meter)}
+
+
+def save_rows(t: Target, rows: list[dict]) -> list[dict]:
+    """Write a company's rows; a run limited to some data points (t.fields) replaces only
+    those in the rows saved before (fields.merge). Returns the rows saved."""
+    path = dp_path(t.company)
+    if t.fields is not None:
+        old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        rows = selection.merge(old, rows, t.fields)
+    DP_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
+    return rows
 
 
 def resolve_lei(t: Target) -> None:
@@ -1569,11 +1815,42 @@ def needs_pipeline(c: Company, opts: dict) -> bool:
 
 
 def worst_case(t: Target, opts: dict) -> int:
-    """The most Firecrawl credits one company can spend (both caps hold per company)."""
-    # a report supplied on disk needs no search: the report step spends nothing
-    search = needs_pipeline(t.company, opts) and not (t.company.report_url
-                                                      and local_file(t.company.report_url))
-    return (opts["pipeline_credits"] if search else 0) + (opts["doc_credits"] if opts["docs"] else 0)
+    """The most Firecrawl credits one company can spend (both caps hold per company), for
+    the steps its selected data points need (t.fields)."""
+    return sum(credits for _, credits in plan(t, opts))
+
+
+def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
+    """The steps a company's run takes, each with its worst-case Firecrawl credits."""
+    c, sel = t.company, t.fields
+    steps = [("official APIs", 0)] if opts.get("apis", True) else []
+    if selection.needs_report(sel):
+        if needs_pipeline(c, opts):
+            # a report supplied on disk needs no search: the report step spends nothing
+            local = bool(c.report_url and local_file(c.report_url))
+            steps.append(("report step (file given)" if local else "report search",
+                          0 if local else opts["pipeline_credits"]))
+        elif c.result_path.exists():
+            steps.append(("report (found before)", 0))
+        else:
+            steps.append(("report (failed before; --retry-failed searches again)", 0))
+        url = t.annual_report_url
+        if url and not local_file(url) and lacks_report(_saved_result(c)):
+            steps.append(("annual_report_url as the report", 0 if is_pdf_url(url) else 1))
+        steps.append(("report AI pass", 0))
+    docs = opts["docs"] and selection.needs_documents(sel)
+    if selection.needs_pay(sel):
+        steps.append(("executive pay", 0))
+    if docs:
+        steps.append(("company documents (pay, fallback)", opts["doc_credits"]))
+    return steps
+
+
+def _saved_result(c: Company) -> dict | None:
+    try:
+        return json.loads(c.result_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 # --- outputs --------------------------------------------------------------------------------
@@ -1653,6 +1930,30 @@ def iso_codes(rows: list[dict]) -> None:
                 r["unit"] = f"{code} {rest}".strip()
 
 
+FROM_FTE = "derived: full-time equivalents (no headcount stated)"
+
+
+def headcount_from_fte(by: dict[str, dict]) -> None:
+    """No headcount but an FTE count: the FTE count, rounded, is the headcount (the closest
+    size measure the company states; decided 11 Nov 2026), method DERIVED, its note
+    saying so. `by`: a company's rows by data point."""
+    hc, fte = by.get("headcount"), by.get("fte")
+    if not hc or hc["value"] or not fte or not fte["value"] or hc["note"].startswith(selection.NOT_COLLECTED):
+        return
+    try:
+        n = float(fte["value"])
+    except ValueError:
+        return
+    whole = int(n + 0.5)                 # half up (round() gives 1234 for 1234.5)
+    if whole < 1:
+        return
+    how = FROM_FTE if whole == n else f"{FROM_FTE}, rounded from {fte['value']}"
+    printed = "" if whole == n or "printed " in fte["note"] else f"printed {fte['value']}; "
+    hc.update({k: fte[k] for k in ("unit", "period_end", "source", "endpoint", "retrieved_at",
+                                   "confidence", "scraper_version")},
+              value=str(whole), method="DERIVED", note=f"{how}; {printed}{fte['note']}")
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -1662,11 +1963,13 @@ def refresh(rows: list[dict]) -> list[dict]:
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
+    headcount_from_fte(by)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
         names = [f.name for f in fields(Found)]
         chosen = {k: Found(**{n: by[k][n] for n in names if n in by[k]})
-                  for k in ("shares_outstanding", "share_price") if by.get(k, {}).get("value")}
+                  for k in ("shares_outstanding", "share_price", "fiscal_year_end")
+                  if by.get(k, {}).get("value")}
         new, why = market_cap_band(chosen)
         if new:
             band.update({k: v for k, v in asdict(new).items() if k in band}, retrieved_at=_now())
@@ -1805,12 +2108,23 @@ def main(argv: list[str] | None = None) -> int:
                         f"(now {SCRAPER_VERSION}; column scraper_version)")
     p.add_argument("--no-dashboard", action="store_true",
                    help="Don't run the output checks and update the dashboard at the end")
+    p.add_argument("--fields",
+                   help="Only these data points, comma-separated: names (revenue,headcount) or "
+                        f"groups ({', '.join(selection.GROUPS)}). Only they are replaced in the "
+                        "company's saved rows. Companies done before run again when one of "
+                        "them has no value (or with --redo)")
+    p.add_argument("--ignore-run-required", action="store_true",
+                   help="Collect every data point whatever the input's run_required says "
+                        "('Pay Data': the pay fields only; 'Company Data': the company fields only)")
+    p.add_argument("--dry-run", action="store_true",
+                   help="Show each company's steps and worst-case Firecrawl credits; run nothing")
     args = p.parse_args(argv)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     _setup_logging()
     try:
         everyone = read_targets(args.csv)
+        cli_fields = selection.parse(args.fields)
     except (OSError, ValueError, csv.Error) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 1
@@ -1820,13 +2134,35 @@ def main(argv: list[str] | None = None) -> int:
         targets = [t for t in targets if t.company.company_id in wanted]
     if args.limit:
         targets = targets[:args.limit]
-    todo = [t for t in targets if args.redo or not dp_path(t.company).exists()
-            or no_credits_path(t.company).exists()
-            or (args.outdated and saved_version(t.company) < SCRAPER_VERSION)]
+    nothing = []
+    for t in targets:
+        required = None if args.ignore_run_required else selection.from_run_required(t.run_required)
+        t.fields = selection.combine(cli_fields, required)
+        if t.fields is not None and not t.fields:
+            nothing.append(t)
+    if nothing:
+        print(f"{len(nothing)} companies skipped: --fields asks for nothing their run_required "
+              f"needs ({', '.join(t.company.company_id for t in nothing[:5])}"
+              f"{', ...' if len(nothing) > 5 else ''})")
+        targets = [t for t in targets if t not in nothing]
+
+    def due(t: Target) -> bool:
+        c = t.company
+        if (args.redo or not dp_path(c).exists() or no_credits_path(c).exists()
+                or (args.outdated and saved_version(c) < SCRAPER_VERSION)):
+            return True
+        # --fields tops up: a company runs again when a field asked for has no value
+        return cli_fields is not None and bool(selection.missing(
+            json.loads(dp_path(c).read_text(encoding="utf-8")), t.fields))
+    todo = [t for t in targets if due(t)]
     print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before"
-          + (f" with scraper version {SCRAPER_VERSION}" if args.outdated else ""))
+          + (f" with scraper version {SCRAPER_VERSION}" if args.outdated else "")
+          + (f" with {selection.label(cli_fields)}" if cli_fields is not None else ""))
     opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits, "apis": not args.no_apis,
             "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
+    if args.dry_run:
+        dry_run(todo, opts)
+        return 0
 
     workers = max(1, args.workers)
     code = 0
@@ -1901,10 +2237,27 @@ class Budget:
         return self.spent + reserved + worst_case(t, opts) <= self.cap
 
 
+def dry_run(todo: list[Target], opts: dict) -> None:
+    """--dry-run: per company, the fields asked for, the steps and their worst case."""
+    total = 0
+    for i, t in enumerate(todo, 1):
+        steps = plan(t, opts)
+        credits = sum(n for _, n in steps)
+        total += credits
+        print(f"[{i}/{len(todo)}] {t.company.company_id} {t.company.name}: "
+              f"fields {selection.label(t.fields)}"
+              + (f" (run_required: {t.run_required})" if t.run_required else ""))
+        print("    " + "; ".join(f"{s} ({n} credits)" if n else s for s, n in steps)
+              + f"; worst case {credits} credits")
+    print(f"\nDry run: {len(todo)} companies, at most {total} Firecrawl credits "
+          f"(caps per company; most companies spend far less)")
+
+
 def _report(i: int, n: int, t: Target, res: dict) -> int:
     prefix = f"[{i}/{n}] {t.company.company_id} {t.company.name}"
     if res["kind"] == "done":
-        print(f"{prefix}: {res['found']}/{res['total']} data points ({res['seconds']:.0f}s)"
+        fields = f" of {res['fields']}" if res.get("fields", "all") != "all" else ""
+        print(f"{prefix}: {res['found']}/{res['total']} data points{fields} ({res['seconds']:.0f}s)"
               + (f" [{NO_CREDITS}: free sources only]" if res.get("no_credits") else ""), flush=True)
         return 0
     print(f"{prefix}: {res['kind'].upper()} {res.get('error', '')}", flush=True)

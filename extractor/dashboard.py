@@ -157,14 +157,13 @@ def fields_list() -> list[dict]:
     except (OSError, ValueError, KeyError):
         reqs = {}
     try:
-        ranks = {r["d"]: r["rank"] for r in json.loads(BENCHMARK_RANK.read_text(encoding="utf-8"))["fields"]}
+        # the benchmarking severity workbook: rank, and severity and requirement when it has them
+        ranks = {r["d"]: r for r in json.loads(BENCHMARK_RANK.read_text(encoding="utf-8"))["fields"]}
     except (OSError, ValueError, KeyError):
         ranks = {}
     for f in fields:
-        r = reqs.get(f["d"], {})
-        f.update({k: r[k] for k in ("req", "sev", "fill50", "milestone", "why") if k in r})
-        if f["d"] in ranks:
-            f["rank"] = ranks[f["d"]]
+        for r in (reqs.get(f["d"], {}), ranks.get(f["d"], {})):
+            f.update({k: r[k] for k in ("req", "sev", "fill50", "milestone", "why", "rank") if k in r})
     return fields
 
 
@@ -202,12 +201,15 @@ def render_report(schema_js: str, data: dict) -> str:
 
 
 def build(csv_path: Path | list[Path], cache: Path = CACHE_DIR, results: Path = OUTPUT_DIR,
-          ranges: dict | None = None, out: Path = DASHBOARD, saved_checks: bool = False) -> Path:
+          ranges: dict | None = None, out: Path = DASHBOARD, saved_checks: bool = False,
+          rescore: bool = False) -> Path:
     """Score the run's CSV and refresh the dashboard's files and the checks report next to
     the CSV (<name>_checks.md and .csv). Returns the HTML report.
 
     Several CSVs (the halves of one wave) show as one run. saved_checks: take each CSV's
-    <name>_checks.csv as it is instead of scoring again (a run cached on another machine)."""
+    <name>_checks.csv as it is instead of scoring again (a run cached on another machine).
+    rescore: score again, keeping the saved result of a check whose source isn't cached
+    here (output_checks.rescore; a run cached partly on another machine)."""
     paths = [csv_path] if isinstance(csv_path, Path) else list(csv_path)
     scored, rows = [], []
     for p in paths:
@@ -215,7 +217,11 @@ def build(csv_path: Path | list[Path], cache: Path = CACHE_DIR, results: Path = 
         if saved_checks:
             s, r = oc.saved(p, checks.with_suffix(".csv"))
         else:
-            s, r = oc.run(p, oc.Sources(cache, results), ranges or dict(oc.DEFAULT_RANGES))
+            if rescore and checks.with_suffix(".csv").exists():
+                s, r = oc.rescore(p, checks.with_suffix(".csv"), oc.Sources(cache, results),
+                                  ranges or dict(oc.DEFAULT_RANGES))
+            else:
+                s, r = oc.run(p, oc.Sources(cache, results), ranges or dict(oc.DEFAULT_RANGES))
             checks.with_suffix(".md").write_text(oc.report(s, r, p.name), encoding="utf-8")
             oc.write_csv(s, checks.with_suffix(".csv"))
         scored += s

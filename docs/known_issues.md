@@ -4,8 +4,9 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
-| 16 | No way to run companies for only one field or a few fields; the input's `run_required` (Pay Data / Company Data) is ignored | open | about a day |
-| 15 | The annual report found only by the document step isn't used as the report: no fiscal year, revenue or total assets, undated pay | open | about half a day |
+| 17 | Weak links on the High-severity fields (dashboard review against the benchmarking severity workbook) | mostly fixed: every High field up | 19 companies still without a report (report and website finders, issue 4); pay quotes pieced together from separate cells |
+| 16 | No way to run companies for only one field or a few fields; the input's `run_required` (Pay Data / Company Data) is ignored | fixed: `--fields`, `run_required` followed, rows merged | — |
+| 15 | An annual report found outside the report step isn't used as the report: no fiscal year, revenue or total assets, undated pay | fixed: the input's `annual_report_url`, then the site's documents (FY2025 run 4: 15 of 19 companies now read their FY2025 report) | 3 inputs give a filings.xbrl.org search, not a report |
 | 14 | HTML annual reports (ESEF) converted with table rows run together and letters lost to private font codes | fixed | — |
 | 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
 | 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 19 hard fails of 735 values | quotes the AI pieces together from several places; Bang & Olufsen's totals (bonus definition) |
@@ -21,9 +22,51 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
 
-## 16. Runs always collect every field — open
+## 17. Weak links on the High-severity fields — mostly fixed
 
-*Noted 11 November 2026.*
+*Found 11 November 2026, reviewing the dashboard's data (`Dashboard/report.json`, the combined FY2025 file) against `Allshares_Benchmarking_Field_Severity_filled.xlsx`: 14 High fields, 13 Required and `market_cap_band` Required if listed. Aim: every High field passing every check for every company.*
+
+**Found, and done the same day:**
+
+| Weak link | Change | Effect |
+|---|---|---|
+| The dashboard's severities differed from the workbook on 17 fields (`sector_code` Medium/Optional, `market_cap_band` "Never used") | `accuracy/benchmark_rank_from_excel.py` also takes severity, requirement, reason and fill from the workbook; they override `field_requirements.json` | The dashboard ranks fields as the workbook does |
+| 104 companies without a headcount, 53 of them with an FTE count | `datapoints.headcount_from_fte`: the FTE count, rounded half up, is the headcount, method DERIVED, note "derived: full-time equivalents (no headcount stated)" (decided 11 Nov 2026). DER-03 recalculates the rounding | headcount 41% → 61% perfect |
+| Values with "US$", "CA$", "£" as currency in merged rows never refreshed | The current rules applied to every saved row of the combined file (`refresh`) | 27 hard fails gone |
+| 8 market-cap bands not derived: a share price without a date has no ECB rate | The report's fiscal year end dates an undated year-end price | market_cap_band 35% → 43% (with the reports below) |
+| Chesterfield and Cobra read their FY2025 report but showed no fiscal year: it was written only with revenue or total assets | The report's year and its end are written without figures too | |
+| Commerzbank's report gave no fiscal year | `year_of_report`: from the year end the report states, else the year in its cover title | |
+| K2A, SED Energy, Bluebird: the input's report URL is a filings.xbrl.org search | `read_targets` takes the LEI from it; the report step finds the filing by LEI | K2A and SED Energy read their FY2025 ESEF filing |
+| A pay table drawn cell by cell (Flughafen Wien): label and figure in separate boxes, so no quote is one passage | `validate.lone_cell`: the figure printed alone exactly once in the document, on a page holding every word of the quote, is the quote; note "(the figure's own cell; …)" | 28 values now verified |
+| Re-scoring a run whose sources are partly on another machine made their quote checks n/a (and so hid failures) | `output_checks.rescore` / `dashboard.build(rescore=True)`: fresh checks, but a check needing a source not cached here keeps its saved result | No status improves without a reason: the 27 hard fails → pass are all the currency fix |
+
+**FY2025 run 5: the 31 companies without a report** (`data/fy2025_run5_no_report.csv`, `output/fy2025_run5_datapoints.csv`; 181 Firecrawl credits). 12 now read a FY2025 report: Adecco, Alina, Alpine Select, Basellandschaftliche Kantonalbank, BSF, Cancom, Chesterfield, Cobra, Commerzbank, Jinhui (its own ESEF filing, USD 157.5m revenue), K2A and SED Energy. Still none, 19: the report search fails (Adidas, Adval Tech, Arbonia, Asmallworld, Aterian, Banque Cantonale du Jura, Bell, BKW, Bucher, Bystronic on its old domain conzzeta.ch, Essentra; Burkhalter only FY2022), the website search fails (Airtel Mobile Commerce, APG SGA, Bergbahnen Engelberg, Bluebird, City of London Investment, IQM), and Melhus Sparebank's report is a web page without a year. These need work on the finders (issue 4), not another run.
+
+**Merging into the combined file:** a company run here for the first time under "Pay Data" has no saved rows to merge into, so its company fields come out "not collected"; such a row must not replace a value in the combined file (74 values of Adecco, BLKB and Cancom were restored after the run-5 merge).
+
+**High fields, perfect (filled and passing every check), before → after:** headcount 41 → 61%, market_cap_band 35 → 43%, total_remuneration 61 → 64%, base_salary 75 → 77%, revenue 76 → 78%, role_disclosure 87 → 88%, fiscal_year 88 → 92%, pay_currency 91 → 93%, sub_sector 91 → 92%, listing_status 96 → 97%, legal_name and country_code 98 → 99%; sector_code 96% and reporting_currency 94% unchanged.
+
+**Still open:**
+- the 19 companies above (12% of the High-field gaps for the company fields);
+- pay quotes the AI pieces together where the table isn't drawn cell by cell (the prompt already asks for one continuous passage); a space-insensitive match would clear only 26 of 293 quote failures;
+- `market_cap_band`: 112 companies lack a share price or share count; reading the market capitalisation the report states would be the next lever;
+- headcount still missing for about 1 company in 5.
+
+## 16. Runs always collect every field — fixed
+
+*Noted 11 November 2026; **fixed the same day** (`extractor/fields.py`; README, "Only some data points").*
+
+**Built, as planned below:**
+- `--fields` takes names and groups (`pay`, `company`, `ownership`, `listing`, `financials`, `staff`). `pay` also holds `fiscal_year` and `fiscal_year_end`: they date the pay rows, so a pay-only run keeps them in step. A derived value brings what it rests on (`market_cap_band` → shares and price, `sector_code` → the description).
+- The report AI pass, the document fallback and the sector call ask only for the selected fields; the pay step runs only for pay fields; the report search is skipped when every field is one an API gives (`fields.API_FIELDS`), and a report found before is reused. Firecrawl is not used at all when only API fields are asked for.
+- The run replaces only the selected rows in `output/datapoints/<id>.json` (`fields.merge`); the others keep their values and `scraper_version`. A field never collected gets an empty row, "not collected: this run asked only for …". Role fields: all of them replace the whole role block; some of them are replaced per role.
+- `run_required` is followed by default ("Pay Data" → `pay`, "Company Data" → `company`); `--ignore-run-required` turns it off. With `--fields` as well, a company gets what both ask for, and is skipped when that is nothing.
+- With `--fields`, a company done before runs again only when a field asked for has no value (a top-up); `--redo` runs them all.
+- `--dry-run` prints each company's fields, steps and worst-case credits. FY2025 run 2: 100 companies, at most 1,010 credits with `--redo`.
+
+**Still true:** the AI answer cache is keyed by the facts asked for, so a run for a few fields asks the AI afresh and can get a different answer for them than a full run (issue 5).
+
+**Original note.**
 
 **Now.** `python -m extractor.datapoints` always collects all data points for each company: the free APIs, the report search and read, executive pay, and the document fallback for whatever is still missing. Options choose companies (`--only`, `--limit`, `--redo`, `--outdated`) and limit spending (`--no-docs`, `--doc-credits`, `--max-run-credits`), but none chooses fields. The input's `run_required` column ("Pay Data", "Company Data", "Company and Pay Data", from the tracker) is read by nobody: a company that only needs pay still has its company fields collected, and the reverse.
 
@@ -38,15 +81,37 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 3. Follow `run_required` by default: "Pay Data" runs the pay fields only, "Company Data" the company fields only; an option turns this off.
 4. A dry run shows, per company, the steps that would run and their worst-case credits.
 
-## 15. An annual report found only by the document step isn't used as the report — open
+## 15. An annual report found outside the report step isn't used as the report — fixed
 
-*Found 11 November 2026 in FY2025 run 2 (Tallink Grupp).*
+*Found 11 November 2026 in FY2025 run 2 (Tallink Grupp); **fixed the same day** (`datapoints.use_as_report`, `find_annual_report`; `documents.title_year`).*
+
+**The cause was narrower than first written.** Tallink's annual report was not found by the document step: it was already in the input's `annual_report_url`, which only the pay step read (the report step took the column only for `file:` links). So the workaround below was already in place and did nothing. The report search itself had only the archive pages `annual-reports-2015` … `2024` and chose the AGM PDF.
+
+**The fix.** When the report step read no report, or one older than last year (`sought_year`: FY2025 during 2026), the report step runs again on a report found elsewhere, and its result replaces the old one (only when newer; the error file goes):
+1. the input's `annual_report_url`, before the API step, so the pay step and the report pass use it;
+2. otherwise the site's documents: a new `annual_report` document type (about 15 languages), candidates dated before the year left out, and a document used only when it plainly is that year's report (`title_year`: 40 pages or more, an annual-report title with the year on its first 3 pages, not "Annual report on remuneration"). A reports page that isn't one adds its links, and the second try can be the PDF.
+
+The report step and the document library cache a PDF's conversion under different names; it is now copied between them (Tallink's 177 pages took 4 minutes to convert). On cached reports the title test accepts Equinor (FY2025) and Bang & Olufsen (2025/26 → 2026), and rejects remuneration and sustainability reports; Marimekko's "Financial Statements and Report of the Board of Directors" has no annual-report title and is not accepted, which errs on the safe side.
+
+**Tallink re-run (pay fields, its `run_required`):** report FY2025, year end 2025-12-31, revenue €765.3m and total assets €1,330.8m in the report step's result; every pay row now dated 2025-12-31; `fiscal_year_end` 2025-12-31 (was 2023-12-31, from the share page); `benefits` found on page 106. 0 Firecrawl credits, 140 s. The pay figures are unchanged. The report's values are graded C by the identity check: the input says FI and the report EE (Tallink is Estonian, listed in Tallinn and Helsinki), and GLEIF found no LEI under the name in FI. The input's country should be EE.
+
+**Reach:** a dry run of FY2025 run 2 showed 18 of 100 companies whose `annual_report_url` the report step left unused (it failed or read an older year), Endeavour Mining among them (it read FY2024; the input names the FY2025 PDF).
+
+**FY2025 run 4 (11 November 2026): those 18 and Tallink re-run** (`data/fy2025_run4_found_reports.csv`, `output/fy2025_run4_datapoints.csv`, merged into `fy2025_runs_datapoints.csv`; 52 Firecrawl credits):
+- **15 now read their FY2025 report** (fiscal year, year end, revenue and total assets, every pay row dated): Canal+ (was FY2024), Endeavour Mining (was FY2024), Emilshus Pref, Voss Veksel, UIE, Brøndby (an ESEF annual filing ending 2026-06-30), Ostasiatiske, Addtech, Arzneiwerk, Atlantic Petroleum, Basilea, Revolutionrace (2025/26), S.D. Standard ETC and Tallink. Their values checked went from 627 to 791, the pass rate from 64% to 89%.
+- Endeavour Mining and Addtech are "Pay Data" companies: their fiscal year and pay are the new report's, while their revenue and total assets rows stay from the earlier run, with that run's period end.
+- **3 inputs give no report:** K2A Pref, SED Energy and Bluebird Mining's `annual_report_url` is a filings.xbrl.org search (`/api/filings?filter[entity.identifier]=<LEI>`), a list of filings. The LEI in it would let the report step find the filing itself; the input should give the LEI (or the filing's report) instead.
+- **Chill Brands:** the supplied Companies House filing is FY2024, no newer than the report read before; kept.
+- **Jinhui Shipping: a guard added.** The site search found `jh2025ARe_3371.pdf`, the annual report of Jinhui Holdings, its Hong Kong parent. The identity check flagged it (HK, another legal name), but the first run still used it. A report found on the site is now used only when it passes the identity check; otherwise the report step's files are restored and its values dropped. A report the input supplies stays trusted, since the name check also flags trade names (RVRC Holding for Revolutionrace, Det Østasiatiske Kompagni for Ostasiatiske). Jinhui was re-run under the guard and is as before: no report (its own FY2025 report isn't on its site).
+- Identity check grades C on 5 of them; 4 look like false alarms from the name check (Revolutionrace, Ostasiatiske, Brøndby, Addtech Nordic: names that differ from the legal one), and Tallink's input country is FI where the report says EE.
+
+**Original note.**
 
 **Symptom.** Tallink got 62 values, 36 of them from its FY2025 annual report, yet it shows no fiscal year, revenue or total assets, its executive pay has no period end, and the dashboard counts it as having no FY2025 report.
 
 **Cause.** A company is read in two stages. The report step finds the annual report and reads the core figures from it: fiscal year, fiscal year end, revenue, total assets. The year end also dates the pay rows. The document step then fills fields still missing from other documents. For Tallink the report step chose a one-page image of the 2023 supervisory board report (`AGM-2024-AS-Tallink-Grupp-Supervisory-Board-report-2023-eng.pdf`), found no text in it, had no other candidate and failed. The document step later found `tallink-annual-report-2025-eng.pdf` (177 pages, "Annual Report 2025", financial year 1 January to 31 December 2025) and read pay and other fields from it, but only fills gaps: the core figures, the fiscal year and the dates stay empty.
 
-**Workaround.** Put the report's address in the input CSV's `annual_report_url` column and run the company again; the report step then reads that file.
+**Workaround (did not work, see above).** Put the report's address in the input CSV's `annual_report_url` column and run the company again; the report step then reads that file.
 
 **Fix (about half a day).** When the report step has failed, or read a report older than the year sought, and the document step reads a file that is plainly the annual report for the year (titled "Annual report 2025" or the local equivalent, a financial year ending in that year, tens of pages or more), use it as the report: read the core figures from it as the report step would, take its fiscal year and year end, and date the values with them. This helps every company whose report search misses but whose website links the report elsewhere.
 
