@@ -186,7 +186,15 @@ Per company, cheapest and most exact first:
    city, name; NO also headcount; UK also the controlling owner) and SEC EDGAR for SEC
    registrants (`SEC_CONTACT` in `.env`). Their values win (method `API`, confidence A);
    the steps below fill what they leave empty, and a differing value goes in `note`;
-1. the annual-report pipeline above (run first if the company has no result yet);
+1. the annual-report pipeline above (run first if the company has no result yet). When it
+   found no report, or one older than last year (FY2025 during 2026), the report is looked
+   for elsewhere and read by the same pipeline (fiscal year, year end, revenue, total
+   assets): first the input's `annual_report_url`, then the company's own documents (an
+   `annual_report` search of the site; a document counts only when it plainly is that
+   year's report: 40 pages or more, "Annual report 2025" or the local equivalent on its
+   cover, and the identity check passes: Jinhui Shipping's site has its parent's report).
+   The newer report replaces the result; the PDF is converted once
+   (`datapoints.use_as_report`, issue 15);
 2. one more AI pass over the same report for identity (legal name, register number,
    country, city, website, former names, parent), EBITDA, fiscal year end and accounting
    basis, employees, share data and year-end price, largest holders and owners, listing,
@@ -210,6 +218,12 @@ Per company, cheapest and most exact first:
    blocked domains, news and blog pages, and documents more than 2 years older than the
    report are skipped. Default cap: 10 credits per company (`--doc-credits`,
    `--no-docs`).
+
+`headcount`: when only an FTE count is stated, the FTE count rounded is the headcount
+(method `DERIVED`, note "derived: full-time equivalents (no headcount stated)"). A company
+without a fiscal year from the report step gets it from the year end its report states,
+else from its cover title. An input `annual_report_url` that is a filings.xbrl.org search
+gives its LEI, not a report.
 
 `lei` comes only from the APIs. `sector_code` is a NACE Rev. 2 class picked by the AI from
 the business description (`sub_sector`, `extractor/sector.py`), the client's route; the
@@ -239,6 +253,27 @@ XBRL, then report, then web). A different value from another source is mentioned
   It is the PDF's page number (what `#page=` opens), not the number printed on the page.
 
 Re-runs skip companies already done (`output/datapoints/<id>.json`; `--redo` to redo).
+
+**Only some data points** (`extractor/fields.py`):
+- `--fields revenue,headcount`, or groups: `pay` (role fields, pay terms, fiscal year and
+  its end), `company`, `ownership`, `listing`, `financials`, `staff`. A derived value brings
+  what it rests on (`market_cap_band`: shares and price; `sector_code`: the description).
+- Only those are looked for: the report AI pass, the document fallback and the sector
+  call ask only for them; the pay step runs only for pay fields; the report search is
+  skipped when every field comes from an API (identifiers, listing, legal name, city),
+  and a report found before is reused (no credits).
+- Only those are replaced in the company's saved rows; the other rows, and their
+  `scraper_version`, stay as they were. A field never collected gets an empty row,
+  `note` "not collected: this run asked only for …".
+- Companies done before run again when a field asked for has no value (a top-up), or
+  all of them with `--redo`.
+- The input's `run_required` is followed by default: "Pay Data" collects the `pay` group,
+  "Company Data" the `company` group, "Company and Pay Data" everything.
+  `--ignore-run-required` collects everything; with `--fields` too, a company gets what
+  both ask for (none: skipped).
+- `--dry-run` lists each company's fields, steps and worst-case Firecrawl credits, and
+  runs nothing.
+
 When the input is the golden sample, `output/golden_test_filled.csv` is the same file with
 `build_value` filled in, in the golden unit (millions), for the reviewers.
 
@@ -297,6 +332,13 @@ rebuilt from the run (`--no-dashboard` turns this off). You get:
 
 The dashboard compares each run with the one before it. To rebuild it for any CSV:
 `python -m extractor.dashboard output/nordic_uk_10_datapoints.csv`. More in `Dashboard/README.md`.
+
+A file that combines runs made on several machines (`fy2025_runs_datapoints.csv`) can't be
+scored again in full here: a quote whose source isn't cached would go unchecked. Use
+`dashboard.build(csv, rescore=True)`: every value is scored again, but a check that needs a
+source not on this machine keeps its saved result (`output_checks.rescore`). Fields'
+severity and requirement come from the benchmarking severity workbook
+(`python accuracy/benchmark_rank_from_excel.py <xlsx>`).
 
 ## ESEF route (tried first)
 

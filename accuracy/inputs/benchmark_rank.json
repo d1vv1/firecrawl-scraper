@@ -1,225 +1,406 @@
 {
- "_about": "Benchmarking rank per field (1 = most critical), from Allshares_Benchmarking_Field_Severity.xlsx sheet 'Benchmarking Fields' by accuracy/benchmark_rank_from_excel.py.",
+ "_about": "Benchmarking rank per field (1 = most critical), from Allshares_Benchmarking_Field_Severity_filled.xlsx sheet 'Benchmarking Fields' by accuracy/benchmark_rank_from_excel.py.",
  "fields": [
   {
    "d": "role_disclosure",
-   "rank": 1
+   "rank": 1,
+   "sev": "High",
+   "req": "Required",
+   "why": "Decides whether a pay line can be used at all",
+   "fill50": 46
   },
   {
    "d": "pay_currency",
-   "rank": 2
+   "rank": 2,
+   "sev": "High",
+   "req": "Required",
+   "why": "Currency and unit for every pay value",
+   "fill50": 46
   },
   {
    "d": "base_salary",
-   "rank": 3
+   "rank": 3,
+   "sev": "High",
+   "req": "Required",
+   "why": "Core of every exec-comp exhibit",
+   "fill50": 41
   },
   {
    "d": "total_remuneration",
-   "rank": 4
+   "rank": 4,
+   "sev": "High",
+   "req": "Required",
+   "why": "Headline figure, and the check against the parts",
+   "fill50": 40
   },
   {
    "d": "fiscal_year",
-   "rank": 5
+   "rank": 5,
+   "sev": "High",
+   "req": "Required",
+   "why": "Anchors which year the pay covers; drives aging of observations"
   },
   {
    "d": "legal_name",
-   "rank": 6
+   "rank": 6,
+   "sev": "High",
+   "req": "Required",
+   "why": "Identifies the company in the reference-company table"
   },
   {
    "d": "country_code",
-   "rank": 7
+   "rank": 7,
+   "sev": "High",
+   "req": "Required",
+   "why": "Country and region comparability; local-practice peer groups"
   },
   {
    "d": "revenue",
-   "rank": 8
+   "rank": 8,
+   "sev": "High",
+   "req": "Required",
+   "why": "Primary size column in the reference-company table"
   },
   {
    "d": "headcount",
-   "rank": 9
+   "rank": 9,
+   "sev": "High",
+   "req": "Required",
+   "why": "Second size column; employee-based size view"
   },
   {
    "d": "sector_code",
-   "rank": 10
+   "rank": 10,
+   "sev": "High",
+   "req": "Required",
+   "why": "Industry criterion for peer selection"
   },
   {
    "d": "sub_sector",
-   "rank": 11
+   "rank": 11,
+   "sev": "High",
+   "req": "Required",
+   "why": "Business description used for similarity-based peer scoring"
   },
   {
    "d": "listing_status",
-   "rank": 12
+   "rank": 12,
+   "sev": "High",
+   "req": "Required",
+   "why": "Listed vs private decides disclosure availability and peer eligibility"
   },
   {
    "d": "market_cap_band",
-   "rank": 13
+   "rank": 13,
+   "sev": "High",
+   "req": "Required if listed",
+   "why": "Size view for listed peers (large/mid/small cap)"
   },
   {
    "d": "reporting_currency",
-   "rank": 14
+   "rank": 14,
+   "sev": "High",
+   "req": "Required",
+   "why": "Needed to normalise financial size figures to one currency"
   },
   {
    "d": "aggregate_headcount",
-   "rank": 15
+   "rank": 15,
+   "sev": "Medium",
+   "req": "Required if aggregate line",
+   "why": "Turns aggregate pay into a per-head figure",
+   "fill50": 27
   },
   {
    "d": "benefits_value",
-   "rank": 16
+   "rank": 16,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "Part of fixed pay; record 0, not blank",
+   "fill50": 37
   },
   {
    "d": "pension_contribution",
-   "rank": 17
+   "rank": 17,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "Part of fixed pay",
+   "fill50": 40
   },
   {
    "d": "controlling_owner",
-   "rank": 18
+   "rank": 18,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "Control flag behind ownership comparability",
+   "fill50": 43
   },
   {
    "d": "largest_holders",
-   "rank": 19
+   "rank": 19,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Source data for the required ownership fields",
+   "fill50": 46
   },
   {
    "d": "pe_stake_5pct",
-   "rank": 20
+   "rank": 20,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Peer selection for PE-backed clients",
+   "fill50": 43
   },
   {
    "d": "ownership_type",
-   "rank": 21
+   "rank": 21,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "Ownership column shown when one mixed peer group is used"
   },
   {
    "d": "sti_paid",
-   "rank": 22
+   "rank": 22,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Total cash view (base + STI); outside the 1 Dec scope"
   },
   {
    "d": "lti_granted",
-   "rank": 23
+   "rank": 23,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Long-term incentive benchmarking, core to share-plan advice; outside the 1 Dec scope"
   },
   {
    "d": "sti_target",
-   "rank": 24
+   "rank": 24,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Target bonus levels for incentive design; outside the 1 Dec scope"
   },
   {
    "d": "lti_target",
-   "rank": 25
+   "rank": 25,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Target LTI levels for plan design; outside the 1 Dec scope"
   },
   {
    "d": "total_assets",
-   "rank": 26
+   "rank": 26,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Size measure for financial-sector peers, where revenue is less meaningful"
   },
   {
    "d": "shares_outstanding",
-   "rank": 27
+   "rank": 27,
+   "sev": "Medium",
+   "req": "Required if listed",
+   "why": "Input to market_cap_band"
   },
   {
    "d": "exchange_segment",
-   "rank": 28
+   "rank": 28,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Segment-based peer groups (e.g. Large Cap lists)"
   },
   {
    "d": "fiscal_year_end",
-   "rank": 29
+   "rank": 29,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "Precise aging of pay observations"
   },
   {
    "d": "business_id",
-   "rank": 30
+   "rank": 30,
+   "sev": "Medium",
+   "req": "Required",
+   "why": "De-duplication and matching across sources"
   },
   {
    "d": "lei",
-   "rank": 31
+   "rank": 31,
+   "sev": "Medium",
+   "req": "Optional",
+   "why": "Join key to GLEIF/FIRDS lookups"
   },
   {
    "d": "exchange",
-   "rank": 32
+   "rank": 32,
+   "sev": "Medium",
+   "req": "Required if listed",
+   "why": "Local-market comparability for listed peers"
   },
   {
    "d": "staff_by_country",
-   "rank": 33
+   "rank": 33,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Talent benchmarking",
+   "fill50": 23
   },
   {
    "d": "revenue_by_segment",
-   "rank": 34
+   "rank": 34,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Business-mix check",
+   "fill50": 20
   },
   {
    "d": "revenue_by_country",
-   "rank": 35
+   "rank": 35,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "International footprint, low weight",
+   "fill50": 17
   },
   {
    "d": "other_names",
-   "rank": 36
+   "rank": 36,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Name matching in search and AI chat",
+   "fill50": 30
   },
   {
    "d": "controlling_owner_name",
-   "rank": 37
+   "rank": 37,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Display only",
+   "fill50": 27
   },
   {
    "d": "lti_vested",
-   "rank": 38
+   "rank": 38,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Realised LTI; secondary to grant value for benchmarking"
   },
   {
    "d": "sti_max",
-   "rank": 39
+   "rank": 39,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Incentive design context"
   },
   {
    "d": "lti_max",
-   "rank": 40
+   "rank": 40,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Incentive design context"
   },
   {
    "d": "ultimate_parent",
-   "rank": 41
+   "rank": 41,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Flags subsidiaries whose pay may sit at group level"
   },
   {
    "d": "fte",
-   "rank": 42
+   "rank": 42,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Alternative to headcount where reported"
   },
   {
    "d": "ebitda",
-   "rank": 43
+   "rank": 43,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Profitability context, not a size column"
   },
   {
    "d": "pension_type",
-   "rank": 44
+   "rank": 44,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Pension policy context for fixed-pay comparison"
   },
   {
    "d": "benefits",
-   "rank": 45
+   "rank": 45,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Descriptive benefits policy"
   },
   {
    "d": "shareholding_requirement",
-   "rank": 46
+   "rank": 46,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Governance context for LTI design"
   },
   {
    "d": "website",
-   "rank": 47
+   "rank": 47,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Used to find reports; not used in benchmarking itself"
   },
   {
    "d": "head_office_city",
-   "rank": 48
+   "rank": 48,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Display only"
   },
   {
    "d": "isin",
-   "rank": 49
+   "rank": 49,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Join key for listing data"
   },
   {
    "d": "ticker",
-   "rank": 50
+   "rank": 50,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Display and lookup only"
   },
   {
    "d": "share_price",
-   "rank": 51
+   "rank": 51,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Input to market cap only"
   },
   {
    "d": "listing_date",
-   "rank": 52
+   "rank": 52,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Context only"
   },
   {
    "d": "accounting_basis",
-   "rank": 53
+   "rank": 53,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "Context for comparing financials"
   },
   {
    "d": "cik",
-   "rank": 54
+   "rank": 54,
+   "sev": "Low",
+   "req": "Optional",
+   "why": "US registrants only; outside the protocol"
   },
   {
    "d": "staff_by_segment",
-   "rank": 55
+   "rank": 55,
+   "sev": "Never used",
+   "req": "Optional",
+   "why": "Not used by any benchmarking step",
+   "fill50": 8
   }
  ]
 }

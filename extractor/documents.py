@@ -114,6 +114,15 @@ DOC_TYPES = {d.key: d for d in [
         "annual-reports", "reports", "reports-and-presentations", "downloads", "publications",
         "download-centre", "download-center", "reporting-centre", "rapporter", "berichte",
         "publikationen", "julkaisut", "publicaties", "rapports", "informes", "relazioni")),
+    # Only looked for when the report step found no annual report of the year (issue 15).
+    DocType("annual_report", "Annual report", "annual report", (
+        "annual-report", "annual-and-sustainability-report", "report-and-accounts",
+        "annual-financial-report", "årsredovisning", "års-och-hållbarhetsredovisning",
+        "årsrapport", "årsberetning", "vuosikertomus", "geschäftsbericht", "jaarverslag",
+        "rapport-annuel", "informe-anual", "relazione-finanziaria-annuale", "ársskýrsla",
+        "aastaaruanne"),
+        avoid=("remuneration", "sustainability", "governance", "supervisory", "agm",
+               "summary"), pdf_first=True),
     DocType("about", "Company profile", "about us", (
         "about-us", "about", "who-we-are", "at-a-glance", "in-brief", "om-oss", "om-os",
         "über-uns", "unternehmen", "à-propos", "qui-sommes-nous", "chi-siamo",
@@ -171,6 +180,16 @@ _SKIP = [re.compile(rf"(?<![a-z0-9]){w}(?![a-z0-9])") for w in (
 _NEWS_PAGE = re.compile(r"(?<![a-z0-9])(news|blog|press|media|announcements?|releases?|"
                         r"nyheter|nyheder|uutiset|tiedotteet|meddelelser|borsmeddelelser|"
                         r"pressmeddelanden?|pressemitteilungen?|aktuelles)(?![a-z0-9])")
+# A report's title (the cover's words), in the languages of the company lists.
+ANNUAL_TITLE = re.compile(
+    r"annual report|annual and sustainability report|report and accounts|annual financial report|"
+    r"form 10-k|form 20-f|årsredovisning|års- och hållbarhetsredovisning|årsrapport|årsberetning|"
+    r"vuosikertomus|tilinpäätös|geschäftsbericht|jahresbericht|rapport annuel|jaarverslag|"
+    r"document d.enregistrement universel|relazione finanziaria annuale|informe anual|"
+    r"ársskýrsla|aastaaruanne|majandusaasta aruanne", re.I)
+MIN_REPORT_PAGES = 40        # a full annual report runs to tens of pages or more
+COVER_PAGES = 3              # where its title is
+_TITLE_YEAR = re.compile(r"(?<!\d)(20\d{2})(?:\s*[/-]\s*(\d{4}|\d{2}))?(?!\d)")
 STALE_YEARS = 2              # a dated document older than the report year - this is skipped
 MAX_DOCS_PER_TYPE = 2        # documents tried per type over all rounds
 MIN_TEXT_CHARS = 200         # shorter pages hold nothing
@@ -261,6 +280,24 @@ class Document:
     @property
     def source(self) -> str:
         return f"{self.doc_type.label} ({'PDF' if self.kind == 'pdf' else 'web page'})"
+
+
+def title_year(pages: list[Page]) -> int | None:
+    """The year a full annual report is for, from the title on its cover ("ANNUAL REPORT
+    2025", "Annual Report 2025/26" -> 2026: the year its financial year ends in); None when
+    the document is short or its cover has no annual-report title with a year. Not "Annual
+    report on remuneration" (a UK remuneration report's heading)."""
+    if len(pages) < MIN_REPORT_PAGES:
+        return None
+    cover = "\n".join(p.text for p in pages[:COVER_PAGES])
+    for m in ANNUAL_TITLE.finditer(cover):
+        if re.match(r"\s+on\s+(directors.?\s+)?remuneration", cover[m.end():], re.I):
+            continue
+        near = cover[max(0, m.start() - 40):m.end() + 40]
+        for y in _TITLE_YEAR.finditer(near):
+            end = y.group(2)
+            return int(end if len(end or "") == 4 else y.group(1)[:2] + end) if end else int(y.group(1))
+    return None
 
 
 def _canonical(url: str) -> str:
@@ -380,17 +417,21 @@ class Library:
         return sorted((c for c in found if c), key=lambda c: _rank(c, self.report_year),
                       reverse=True)
 
-    def _best(self, dt_: DocType) -> Candidate | None:
+    def _best(self, dt_: DocType, accept=None) -> Candidate | None:
         """The best unread candidate of a type: cached URL lists first, then a plain
-        map, then a map search for the type (each map only once per company)."""
+        map, then a map search for the type (each map only once per company). `accept`
+        (Candidate -> bool) leaves out candidates not worth fetching."""
         if self.tries.get(dt_.key, 0) >= MAX_DOCS_PER_TYPE:
             return None
-        cands = self.candidates(dt_)
+
+        def found():
+            return [c for c in self.candidates(dt_) if accept is None or accept(c)]
+        cands = found()
         for term in (None, dt_.search):
             if cands:
                 break
             self._map(term)
-            cands = self.candidates(dt_)
+            cands = found()
         if self.out_of_credits:
             cands = [c for c in cands if c.is_pdf]      # PDFs are downloaded for free
         if not cands:
@@ -399,15 +440,16 @@ class Library:
         self.tries[dt_.key] = self.tries.get(dt_.key, 0) + 1
         return cands[0]
 
-    def find(self, key: str, search: bool = False) -> Document | None:
+    def find(self, key: str, search: bool = False, accept=None) -> Document | None:
         """The best document of one type, fetched; the next candidate if one is unusable.
         `search`: run the type's map search first even if cached URLs have candidates
         (the first document found was the wrong kind, e.g. a committee page, and the
-        real report sits in a folder no cached list reaches; 1 credit)."""
+        real report sits in a folder no cached list reaches; 1 credit). `accept`: see
+        _best."""
         if search:
             self._map(DOC_TYPES[key].search)
         for _ in range(MAX_DOCS_PER_TYPE):
-            c = self._best(DOC_TYPES[key])
+            c = self._best(DOC_TYPES[key], accept)
             if c is None:
                 return None
             doc = self.fetch(c)

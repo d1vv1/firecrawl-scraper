@@ -36,6 +36,7 @@ import httpx
 from . import lei as gleif
 from . import llm, ocr
 from .config import CACHE_DIR, OUTPUT_DIR, fold, slugify
+from .documents import ANNUAL_TITLE
 from .output_checks import isin_ok, lei_ok
 from .schemas import ReportIdentity
 from .scraper import (NeedsOCRError, Page, check_not_scanned, markdown_to_pages,
@@ -66,11 +67,7 @@ REGISTERS = {
           r"(\d{2}\s?\d{2}\s?\d{2}\s?\d{2})\b",
     "FI": r"(?:business id|y-tunnus|business identity code)\s*:?\s*(\d{7}-\d)\b",
 }
-ANNUAL = re.compile(
-    r"annual report|annual and sustainability report|report and accounts|annual financial report|"
-    r"form 10-k|form 20-f|årsredovisning|års- och hållbarhetsredovisning|årsrapport|årsberetning|"
-    r"vuosikertomus|tilinpäätös|geschäftsbericht|jahresbericht|rapport annuel|"
-    r"document d.enregistrement universel|relazione finanziaria annuale|informe anual", re.I)
+ANNUAL = ANNUAL_TITLE
 REMUNERATION = re.compile(
     r"remuneration report|compensation report|remuneration policy|directors.? remuneration|"
     r"ersättningsrapport|lønrapport|godtgørelsesrapport|vederlagsrapport|palkitsemisraportti|"
