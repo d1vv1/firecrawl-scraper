@@ -36,9 +36,9 @@ export class Issues {
     <div class="vis card"><h3>{{ chartTitle() }}</h3><app-chart [options]="chart()" [height]="332" /><app-legend [items]="leg" /></div>
     <div class="vis card">
       <div class="bar"><div class="opt" style="flex:1 1 240px"><label class="form-label">Search fields</label><input class="form-control form-control-sm" type="search" placeholder="Field, ID or group" [value]="q()" (input)="q.set($any($event.target).value)"></div></div>
-      <div class="tbl tall"><table class="table table-sm table-hover">
+      <div class="tbl tall"><table class="table table-sm table-hover nosort">
         <thead><tr>
-          @for (h of heads; track h[0]) {<th [class.n]="h[2]" (click)="sort.set(next(h[0]))">{{ h[1] }}{{ sort().k === h[0] ? (sort().dir > 0 ? ' ▲' : ' ▼') : '' }}</th>}<th></th>
+          @for (h of heads; track h[0]) {<th [class.n]="h[2]" style="cursor:pointer" (click)="sort.set(next(h[0]))">{{ h[1] }}{{ sort().k === h[0] ? (sort().dir > 0 ? ' ▲' : ' ▼') : '' }}</th>}<th></th>
         </tr></thead>
         <tbody>
           @for (x of list(); track x.d) {
@@ -129,8 +129,8 @@ export class Empty {
       <div class="sub">One row per company, counted by LEI. Click a company to drill into its values and gate results.</div>
       <div class="vis card">
         <div class="bar"><div class="opt" style="flex:1 1 240px"><label class="form-label">Search companies</label><input class="form-control form-control-sm" type="search" placeholder="Name, ID or LEI" [value]="q()" (input)="q.set($any($event.target).value)"></div></div>
-        <div class="tbl tall"><table class="table table-sm table-hover">
-          <thead><tr>@for (h of heads; track h[0]) {<th [class.n]="h[2]" (click)="h[0] && sort.set(next(h[0]))">{{ h[1] }}{{ sort().k === h[0] ? (sort().dir > 0 ? ' ▲' : ' ▼') : '' }}</th>}<th></th></tr></thead>
+        <div class="tbl tall"><table class="table table-sm table-hover nosort">
+          <thead><tr>@for (h of heads; track h[0]) {<th [class.n]="h[2]" [style.cursor]="h[0] ? 'pointer' : null" (click)="h[0] && sort.set(next(h[0]))">{{ h[1] }}{{ sort().k === h[0] ? (sort().dir > 0 ? ' ▲' : ' ▼') : '' }}</th>}<th></th></tr></thead>
           <tbody>@for (x of list(); track x.key) {
             <tr class="click" tabindex="0" [routerLink]="['/companies', x.key]"><td>{{ x.o }}</td><td>{{ x.c }}</td><td class="mono">{{ x.idList.join(', ') }}</td><td class="n">{{ C.fmt(x.rows) }}</td><td class="n">{{ C.fmt(x.found) }}</td><td class="n">{{ C.fmt(x.partial) }}</td><td class="n">{{ C.fmt(x.nf) }}</td>
               <td class="n">{{ C.fmt(x.P) }}</td><td class="n">{{ C.fmt(x.R) }}</td><td class="n">{{ C.fmt(x.I) }}</td><td class="n">{{ C.fmt(x.F) }}</td><td class="n">{{ C.fmt(x.H) }}</td><td class="n">{{ x.avg ?? '–' }}</td><td>›</td></tr>

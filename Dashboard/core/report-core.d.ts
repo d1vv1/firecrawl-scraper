@@ -11,10 +11,15 @@ export interface ReportData {
           countries?: string[]; checksPct?: number; foundPct?: number };
   gates: Record<string, [string, string]>; gateIds: string[]; reasons: string[]; values: Value[];
   baseline: { checksPct: number; foundPct: number; label: string };
+  fieldList?: FieldListItem[];
+  delivery?: any;
 }
+/** One field of the protocol field list (allshares_fields_list.xlsx, Company Data / Pay Data sheets). */
+export interface FieldListItem { sheet: string; n: number; d: string; f: string; k: string; g: string; what?: string; format?: string; readFrom?: string; method?: string; checks: string[]; note?: string;
+  req?: string; sev?: string; fill50?: number; milestone?: string; why?: string }
 export interface HistPoint { label: string; checks: number; found: number; fileFound?: number; n: number | null; groups: Record<string, number> | null }
 export interface Model { data: ReportData; recs: Value[]; hist: HistPoint[]; histBase: number; impCount: number; fidToDp: Record<string, string[]>; dpMeta: Record<string, any> }
-export interface Filters { country: string; source: string; dtype: string; cat: string; company: string; status: string }
+export interface Filters { country: string; source: string; dtype: string; cat: string; company: string; status: string; fill: string }
 export interface Kpi { key: string; v: string | number; l: string; cls: string; d: string }
 
 export const PAL: string[];
@@ -70,3 +75,34 @@ export function commitImport(model: Model, pending: any): any;
 export function toCSV(header: string[], rows: any[][], bom?: boolean): string;
 export function rangesCSV(res: any): string;
 export function metricsCSV(ms: any[]): string;
+export const FILL_OPTIONS: [string, string][];
+export const SRC_GROUPS: [string, string][];
+export const EXPORT_DEFAULTS: { summary: boolean; sources: boolean; coverage: boolean; notFound: boolean; values: string; compact: boolean; notes: boolean; maxValues: number };
+export function sourceGroup(so: string | undefined): '' | 'annual' | 'rem' | 'other';
+export function srcGroupName(g: string): string;
+export function sources(model: Model, vs: Value[]): { rows: any[]; totals: any; byCountry: any[]; title: string };
+export function notFoundMatrix(vs: Value[], ranks?: Record<string, number>): { countries: string[]; tree: any[]; total: any; title: string };
+export function fieldRanks(model: Model): Record<string, number>;
+export function notFoundValues(vs: Value[], sel: { p?: number | null; k?: string; d?: string; c?: string }): any[];
+export function fieldList(model: Model): FieldListItem[];
+export function fieldCoverage(model: Model, vs: Value[]): { sheets: any[]; all: any; title: string };
+export function claudeExport(model: Model, vs: Value[], opts?: any, ctx?: { filters?: Filters; notes?: string; page?: string; now?: string }): string;
+export function valuesCSV(model: Model, list: Value[], compact?: boolean): string;
+export function exportValues(vs: Value[], mode: string): Value[];
+export function filterText(f: Filters, model: Model): string;
+export function sourcesCSV(rows: any[]): string;
+export const SEVERITIES: string[];
+export const REQ_CLASSES: [string, string][];
+export function reqClass(req: string | undefined): '' | 'required' | 'conditional' | 'optional';
+export function dataPage(model: Model, vs: Value[], sheet: string): { sheet: string; fields: any[]; companies: number; required: any; all: any; bySev: any[]; byReq: any[]; gaps: any[]; neverUsed: number; milestones: any[]; title: string };
+export function dataPageCSV(dp: any): string;
+export function coverageCSV(fc: any): string;
+export function notFoundCSV(nm: any): string;
+// Delivery pages (SPEC 6.4). report.json "delivery" is built by extractor/delivery.py.
+export const DISC_STATES: [string, string, string][];
+export function discState(s: string): string;
+/** Everything the five Delivery pages show; ok false with an error when report.json has no delivery data. */
+export function delivery(model: Model, country?: string, today?: string): any;
+export function deliveryFailCSV(rows: any[]): string;
+export function exceptionsCSV(rows: any[]): string;
+export function discoveryCSV(rows: any[]): string;

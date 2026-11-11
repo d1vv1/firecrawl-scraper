@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import * as Core from '../../../core/report-core.js';
+import * as UI from '../../../core/report-ui.js';
 import type { Filters, Model, ReportData, Value } from '../../../core/report-core.js';
 
 /** Holds the report model and filters. All logic comes from the shared core (SPEC.md section 2). */
@@ -11,6 +12,8 @@ export class ReportService {
   readonly filters = signal<Filters>({ ...Core.EMPTY_FILTERS });
   /** Bumped whenever model.recs or model.hist change in place (import, reset). */
   readonly version = signal(0);
+  /** The notes bar text (kept in this browser by report-ui.js); the export for Claude includes it. */
+  readonly notes = signal(UI.getNotes());
   model!: Model;
   schema: any = null;
 

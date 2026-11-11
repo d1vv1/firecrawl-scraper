@@ -1,0 +1,225 @@
+{
+ "_about": "Benchmarking rank per field (1 = most critical), from Allshares_Benchmarking_Field_Severity.xlsx sheet 'Benchmarking Fields' by accuracy/benchmark_rank_from_excel.py.",
+ "fields": [
+  {
+   "d": "role_disclosure",
+   "rank": 1
+  },
+  {
+   "d": "pay_currency",
+   "rank": 2
+  },
+  {
+   "d": "base_salary",
+   "rank": 3
+  },
+  {
+   "d": "total_remuneration",
+   "rank": 4
+  },
+  {
+   "d": "fiscal_year",
+   "rank": 5
+  },
+  {
+   "d": "legal_name",
+   "rank": 6
+  },
+  {
+   "d": "country_code",
+   "rank": 7
+  },
+  {
+   "d": "revenue",
+   "rank": 8
+  },
+  {
+   "d": "headcount",
+   "rank": 9
+  },
+  {
+   "d": "sector_code",
+   "rank": 10
+  },
+  {
+   "d": "sub_sector",
+   "rank": 11
+  },
+  {
+   "d": "listing_status",
+   "rank": 12
+  },
+  {
+   "d": "market_cap_band",
+   "rank": 13
+  },
+  {
+   "d": "reporting_currency",
+   "rank": 14
+  },
+  {
+   "d": "aggregate_headcount",
+   "rank": 15
+  },
+  {
+   "d": "benefits_value",
+   "rank": 16
+  },
+  {
+   "d": "pension_contribution",
+   "rank": 17
+  },
+  {
+   "d": "controlling_owner",
+   "rank": 18
+  },
+  {
+   "d": "largest_holders",
+   "rank": 19
+  },
+  {
+   "d": "pe_stake_5pct",
+   "rank": 20
+  },
+  {
+   "d": "ownership_type",
+   "rank": 21
+  },
+  {
+   "d": "sti_paid",
+   "rank": 22
+  },
+  {
+   "d": "lti_granted",
+   "rank": 23
+  },
+  {
+   "d": "sti_target",
+   "rank": 24
+  },
+  {
+   "d": "lti_target",
+   "rank": 25
+  },
+  {
+   "d": "total_assets",
+   "rank": 26
+  },
+  {
+   "d": "shares_outstanding",
+   "rank": 27
+  },
+  {
+   "d": "exchange_segment",
+   "rank": 28
+  },
+  {
+   "d": "fiscal_year_end",
+   "rank": 29
+  },
+  {
+   "d": "business_id",
+   "rank": 30
+  },
+  {
+   "d": "lei",
+   "rank": 31
+  },
+  {
+   "d": "exchange",
+   "rank": 32
+  },
+  {
+   "d": "staff_by_country",
+   "rank": 33
+  },
+  {
+   "d": "revenue_by_segment",
+   "rank": 34
+  },
+  {
+   "d": "revenue_by_country",
+   "rank": 35
+  },
+  {
+   "d": "other_names",
+   "rank": 36
+  },
+  {
+   "d": "controlling_owner_name",
+   "rank": 37
+  },
+  {
+   "d": "lti_vested",
+   "rank": 38
+  },
+  {
+   "d": "sti_max",
+   "rank": 39
+  },
+  {
+   "d": "lti_max",
+   "rank": 40
+  },
+  {
+   "d": "ultimate_parent",
+   "rank": 41
+  },
+  {
+   "d": "fte",
+   "rank": 42
+  },
+  {
+   "d": "ebitda",
+   "rank": 43
+  },
+  {
+   "d": "pension_type",
+   "rank": 44
+  },
+  {
+   "d": "benefits",
+   "rank": 45
+  },
+  {
+   "d": "shareholding_requirement",
+   "rank": 46
+  },
+  {
+   "d": "website",
+   "rank": 47
+  },
+  {
+   "d": "head_office_city",
+   "rank": 48
+  },
+  {
+   "d": "isin",
+   "rank": 49
+  },
+  {
+   "d": "ticker",
+   "rank": 50
+  },
+  {
+   "d": "share_price",
+   "rank": 51
+  },
+  {
+   "d": "listing_date",
+   "rank": 52
+  },
+  {
+   "d": "accounting_basis",
+   "rank": 53
+  },
+  {
+   "d": "cik",
+   "rank": 54
+  },
+  {
+   "d": "staff_by_segment",
+   "rank": 55
+  }
+ ]
+}

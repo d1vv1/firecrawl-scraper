@@ -1,6 +1,9 @@
 # Allshares Part 1 accuracy dashboard: specification
 
-Version 1.1, 5 Nov 2026 (1.0, 4 Nov 2026, scored the client's tracker with its own engine). Scope: extraction accuracy only (Part 1). Cross-source verification is out of scope.
+Version 1.3, 9 Nov 2026: the Delivery pages (stand-up, throughput, discovery queue, exceptions, pipeline
+health) for the FY2025 gap-fill (section 6.4). 1.2, 9 Nov 2026: Reports & sources, Field coverage and Export for Claude pages, the not-found matrix
+on Pay vs company, the Values filter, sortable tables and the notes bar (1.1, 5 Nov 2026; 1.0, 4 Nov 2026,
+scored the client's tracker with its own engine). Scope: extraction accuracy only (Part 1). Cross-source verification is out of scope.
 
 This spec is the contract for the dashboard's data, the Angular dashboard and the single-file HTML export.
 When something here changes, change the spec first, then the code, then the tests listed in section 9.
@@ -23,14 +26,17 @@ extractor/output_checks.py  (all check rules, one place) ──► <run>_datapoi
         │
 extractor/dashboard.py
         ├──► Dashboard/report.json, app/public/report.json ──► Dashboard/app (Angular)
-        └──► Dashboard/allshares_report.html (single file)
+        ├──► Dashboard/allshares_report.html (single file)
+        └── extractor/delivery.py adds report.json "delivery" (tracker, all runs, run outputs, inputs/delivery/)
                      both use Dashboard/core/report-core.js
 ```
 
 - `extractor/output_checks.py`: the only place check rules live (`docs/output_checks.md`).
 - `extractor/dashboard.py`: maps scored values to `report.json` (section 5). No rules.
 - `Dashboard/core/report-core.js`: the only place for front-end logic (filters, aggregations, import
-  validation and upsert, ranges, metrics). No check rules. Used by the Angular app and inlined in the HTML.
+  validation and upsert, ranges, metrics, source groups, the not-found matrix, field coverage, the export
+  for Claude). No check rules. Used by the Angular app and inlined in the HTML.
+- `Dashboard/core/report-ui.js`: DOM helpers shared by both front ends: sortable tables and the notes bar.
 - Front ends render; they do not compute rules.
 - Dependencies: Python (the collector's own); vanilla JS for the core and the HTML; Angular (npm) for the
   app only (agreed 4 Nov 2026).
@@ -90,8 +96,19 @@ tolerance, D12 annualisation and performance period, D13 cik without protocol ID
 | `allshares_results_template.csv` | `Dashboard/app/public/` |
 | `allshares_report.html` (single file, data and schema inline) | `Dashboard/` |
 | `<run>_datapoints_checks.md` and `.csv` (the checks report) | next to the run's CSV |
+| `delivery` in `report.json` (section 6.4) | rebuilt on every build and on `--rerender` |
 
 The schema source is `accuracy/schema/allshares_import_schema.json`. Edit only that file.
+
+The protocol field list is `accuracy/inputs/fields_list.json`, made from the Company Data and Pay Data sheets
+of `allshares_fields_list.xlsx` by `python accuracy/fields_list_from_excel.py <xlsx>`. Re-run it when the
+Excel changes. Each field's benchmarking rank (1 = most critical) is `accuracy/inputs/benchmark_rank.json`,
+made from the Benchmarking Fields sheet of `Allshares_Benchmarking_Field_Severity.xlsx` by
+`python accuracy/benchmark_rank_from_excel.py <xlsx>`; the build merges it into `fieldList` as `rank`.
+
+`python -m extractor.dashboard --rerender` rewrites the HTML (and the field list in `report.json`) from the
+`report.json` already built, without scoring again and without moving the baseline: for front-end or
+field-list changes only.
 
 ## 5. Report data contract (`report.json`)
 
@@ -107,6 +124,10 @@ values[]: s source (T the run, I import), c country, o company name, ck company 
           filled only: pe period end, me method, so source, ep locator URL, nt note (first 300 chars),
           sc score status (P R F H I), sp score, gr [[gateIndex, "P"|"F"|"N", reasonIndex|-1], ...]
 baseline: checksPct, foundPct, label (the previous run, or "This run")
+fieldList[]: sheet ("Company Data" | "Pay Data"), n, d data point, f field ID, k category, g grain, what,
+          format, readFrom, method, checks[] (checks applied), note   (from accuracy/inputs/fields_list.json),
+          req, sev, fill50, milestone, why   (merged from accuracy/inputs/field_requirements.json)
+delivery: see section 6.4 (absent or {error} when the tracker can't be read; the Delivery pages then say so)
 ```
 
 Pay data = categories Pay policy, Role and disclosure, Pay: fixed, Pay: STI, Pay: LTI, Pay: total.
@@ -116,9 +137,22 @@ Company data = everything else.
 
 ### 6.1 Layout
 
-- Top bar: title, page tabs, values count.
+- Top bar: title, page navigation, values count. Navigation (9 Nov 2026): Overview, then four menu buttons,
+  each opening a list of its pages: **Coverage** (Company data, Pay data, Field coverage, Fields, Empty
+  fields, Not found), **Companies** (Companies, Reports & sources, Countries, Pay vs company), **Checks**
+  (Failures, Validation steps, Ranges, Trend, Metric register), **Delivery** (Stand-up, Throughput, Discovery
+  queue, Exceptions, Pipeline health; section 6.4), **Data** (Export for Claude, Import data).
+  The button of the open page's group is underlined and names that page. A menu closes when a page is
+  chosen, on a click elsewhere or on Escape; arrow keys move through it (`report-ui.js` navMenus).
 - Filters (sticky, top, apply to every page): Country, Source (all / this run / imported), Data type
-  (all / company / pay), Field group (category), Company, Score status.
+  (all / company / pay), Field group (category), Company, Score status, Values (all / filled = found or
+  partial / empty = not found).
+- Every table sorts by a click on a column header, again to reverse (numbers largest first, text A to Z,
+  blanks last). The sort stays when the rows change. Tables with group rows sort within each group; the
+  not-found matrix sorts each level of its tree.
+- Notes bar (right edge, every page): free text kept in this browser (localStorage), saved as you type.
+  "Add current view" stamps the date, page and filters; Copy, Download .txt, Clear. Included in the export
+  for Claude. Not shared and not in the report file.
 - KPI strip (sticky): Companies (distinct LEI), Countries, Values in view, Found %, Partial, Not found,
   Checks passing (vs the previous run and the 95% target), Values passing (Pass status), Hard fails,
   Imports applied. Each card has a comparison line.
@@ -135,12 +169,50 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
 ### 6.3 Pages
 
 1. **Overview**: companies by country, value-status pie, country summary table.
+1a. **Reports & sources** (new, 9 Nov 2026): whether each company's annual report and remuneration report
+   were found, with links. A value's source group comes from its source name: Remuneration report (any
+   source naming a remuneration report or policy), Annual report (annual report, ESEF filing, SEC 20-F /
+   10-K, Companies House accounts), Other sources (the rest), as in the Source List sheet of
+   `allshares_fields_list.xlsx`. A report counts as found when at least one value in view was read from it.
+   KPIs: companies, annual found, remuneration found, both, neither, protocol fields filled (average per
+   company). Chart of those counts; table by country. Company table: annual report found, its links,
+   remuneration report found, its links, other source links (one link per document, URL fragment dropped,
+   with the number of values read from it), protocol fields, fields filled, fields empty, values, found,
+   partial, not found, found %, values from each source group, values pass %, checks pass %. Search,
+   annual / remuneration found filters, Export CSV. Click a company to open it.
+1b. **Company data** and **Pay data** (new, 9 Nov 2026): one page per sheet of the field list. The field
+   review (`accuracy/inputs/field_requirements.json`: requirement, severity High / Medium / Low / Never
+   used, fill in the 50-company review sample, why, and for pay the 1 Dec milestone In scope / Deferred)
+   next to this run: companies with a value, filled %, found %, check pass %, values pass %. Requirement
+   classes: Required, Required (conditional: "Required (one of …)", "Required if …"), Optional. KPIs:
+   fields, required fields and their average filled %, high severity average filled %, required fields'
+   check pass %, high-severity fields under 80% filled, and per milestone (pay) or fields never used
+   (company). Chart: required fields by filled % (lowest 15), coloured by severity. Table of averages by
+   requirement class, severity and milestone. Field table with search and requirement / severity /
+   milestone filters, Export CSV; sorting Severity puts High first. Click a field to open it.
 2. **Pay vs company**: status by data type, share of values, by-country table.
+2a. **Not found** (moved from Pay vs company, 9 Nov 2026): KPIs (values not found, company and pay data
+   not found, companies with something missing), then a matrix with rows data type › field group › field (each level opens and closes; open all /
+   close all) and columns Rank (the field's benchmarking rank, 1 = most critical; a group or data-type row
+   shows "top n", its best-ranked field, so sorting by Rank works at every level and unranked rows sort
+   last; added 10 Nov 2026), Not found, Not found %, Companies missing, Companies with data (companies with at least one value
+   found or partial in that row, of the companies the row applies to; added 10 Nov 2026) and one per country. Cells show not
+   found of the values that apply (not-applicable values excluded), as a count or a %, shaded by the share
+   missing. Click any cell (any level, any country, or the All values row) to list the not-found values
+   behind it: company, country, data type, group, field, ID, role, note; click a company to open it.
 3. **Countries**: status by country, companies by country, country × data type table.
 4. **Fields** (new): one row per data point: field ID, category, rows, found, partial, not found, Pass,
    Review, Incomplete, Fail, Fail (hard), pass %, average score. Stacked bar of score status for the
    12 fields with most failures. Search and sort. Click a field to see every value of that field across
    companies (company, role, value, unit, status, score, reasons) and the companies where it is empty.
+4a. **Field coverage** (new, 9 Nov 2026): every field of the protocol field list (`fieldList`, section 5),
+   in the Excel's order, grouped by sheet and field group. Per field: values (that apply), found, partial,
+   not found, found %, filled % (found + partial), companies with a value, checks run and failed, check
+   pass % (PASS / (PASS + FAIL)), values pass % (Pass / scored), average score, checks applied. Group rows
+   and KPI cards give the average across fields (each field counts once) of found %, check pass % and
+   values pass %, per field group and per sheet; also fields never found and fields always filled. Charts:
+   the 15 fields with the lowest found % and the lowest check pass %. Search, sheet filter, group on/off,
+   Export CSV. Click a field to open it on the Fields page.
 5. **Empty fields** (new): not-found values only. KPIs: empty values, fields with any empty, companies
    affected. Charts: top 12 fields by empty count, empty by data type. Tables: by field (rows, empty,
    empty %, companies with it empty), by company (rows, empty, empty %, empty fields listed). Click a
@@ -175,7 +247,74 @@ Score status colours: Pass #009988, Review #0077BB, Incomplete #888888, Fail #EE
 10. **Metric register** (new): Metric, Category, Source module, Formula or method, Period, Value, Target,
     Trend, Owner, Last updated, Metric ID, for the current view. Targets only where agreed (95% checks
     passing); others show "not set". Owner "not assigned" until Allshares names one. Export CSV (UTF-8 BOM).
+10a. **Export for Claude** (new, 9 Nov 2026): the data in the current filters as one Markdown text to paste
+    into Claude or upload as a file: a header (run, date, filters, a legend of statuses and source groups),
+    then the parts ticked: My notes, Summary KPIs (with reports found), Companies (the Reports & sources
+    table, links joined by " | "), Field coverage, Not found by field and country (cells "not found /
+    values"), and Values (none / filled / empty / all; compact by default: no URL, note or company ID
+    columns, failed checks as IDs only, values cut at 200 characters; optional row limit). Each table is a
+    CSV block. Shows the size in characters and tokens (characters / 4) and advises downloading above about
+    150,000 tokens. Copy to clipboard, Download .md, Download values CSV (all columns).
 11. **Import data**: see section 7.
+
+### 6.4 Delivery (new, 9 Nov 2026)
+
+The daily stand-up view and client update for the FY2025 gap-fill: 1,258 companies remaining on 9 Nov, due
+27 Nov at about 125 a day, exceptions accepted by Allshares on 1 Dec. Built by `extractor/delivery.py` from
+`accuracy/inputs/delivery.json` (plan, batch windows, required fields, check → failure reason, Firecrawl
+balance) and:
+
+| Source | Used for |
+|---|---|
+| `../Excel_Documents/FY2025_Company_Pipeline_Tracker.xlsx`, Companies sheet | required companies, regional batch (Region), discovery needs, tracker exceptions |
+| every `*_datapoints.csv` and `*_datapoints_checks.csv` in `output/` and `../Excel_Documents/OUTPUT/` | extracted values, extraction date, value status, failed checks |
+| `output/*.json`, `output/*.error.json` | runs, failed runs, Firecrawl credits, the fiscal year of the report read |
+| `accuracy/inputs/delivery/spot_checks.csv` | spot-check sample: company_id, batch, data_point, role_row, reviewer, checked_on, result (pass / fail), reason |
+| `accuracy/inputs/delivery/discovery.csv` | company_id, status (open / in progress / found / not available), next_step, owner, updated_on, note |
+| `accuracy/inputs/delivery/scheduled_runs.csv` | run_id, batch, scheduled_for, started_at, finished_at, status, companies, credits_used, note |
+| `accuracy/inputs/delivery/exceptions.csv` | company_id, category, reason, accepted (yes / no / pending), note |
+
+Companies join on the slug of the company name (`company_id`). Only the Country filter applies to these pages
+(their data is per company, not per value).
+
+Stages (each company counts at the furthest stage reached in order): Required (Pipeline Run = required) →
+Document found (Find Required = NA) → Extracted (values in a run, or a run status ok / needs_review) →
+Required fields 100% (every field in `required_fields` for its run type has a value) → Rules passed (no value
+with status Fail or Fail (hard), and no report of an earlier fiscal year) → Spot-checked (its own sampled
+values all pass, or, not sampled, its batch sample is at or above the pass line) → Done. Done date = the later
+of the extraction date and the spot-check date.
+
+Failure patterns: failed checks map to a reason through `failure_categories` (unmapped: "Wrong currency" when
+the reason names a currency or ISO 4217, else "Other rule failure"); "Missing field" also counts required
+fields without a value; "Wrong document" counts a report of an earlier fiscal year or a tracker "Wrong
+document: replace".
+
+Exceptions: tracker status "FY2025 not published" → No FY2025 report; "Still to find" → Document missing;
+"Wrong document: replace" → Wrong document; a run with status not_found → Document missing; a run that read
+an earlier year's report → Wrong document; a discovery row marked not available → No FY2025 report;
+`exceptions.csv` adds rows and records acceptance.
+
+Pages:
+1. **Stand-up**: KPIs (remaining vs plan, done, extracted, working days left and the pace needed, rules pass
+   rate, discovery open, exceptions); the status funnel: a table of stages × (all batches, each batch) with
+   counts and % of required, the biggest drop per batch marked as the stuck stage; validation pass rate by
+   batch against the 95% line, automated rules (values with status Pass of scored values) and the spot-check
+   sample (values judged correct of those sampled) side by side; failure patterns: companies affected per
+   reason (chart and table), click a reason for the company work list (company, batch, reason, count,
+   example), Export CSV.
+2. **Throughput**: burn-down of the remaining companies from the baseline date to the deadline: actual,
+   plan at the daily target per working day, and the projection at the last three working days' pace;
+   a batch table: window, to do, needed per day, expected done by today, done, status (not started, on track
+   = done at least 90% of expected, behind by n, complete), so slippage shows from day two of a batch.
+3. **Discovery queue**: the companies whose Find Required is not NA: counts by status and by need; table of
+   company, country, batch, need, next step, owner (Unassigned when blank), status, updated; search and status
+   filter.
+4. **Exceptions**: counts by category with accepted / pending; table of company, country, batch, category,
+   reason, source, Allshares acceptance; search; Export CSV (the list for the 1 Dec sign-off).
+5. **Pipeline health**: KPIs (company runs, failed runs and their share, scheduled runs and missed ones,
+   Firecrawl credits used, credits per run, credits needed for the remaining companies, balance when set);
+   charts of runs per day (completed, failed) and credits per day; scheduled runs (a run past its time with no
+   start and no done status is Missed); failed runs with their error.
 
 ## 7. Import
 
@@ -203,8 +342,9 @@ The tests read the last built run and check the pages against its own data.
 | Test | Command |
 |---|---|
 | report.json from the output checks | `python -m pytest tests/test_dashboard.py` |
-| Core logic (filters, import, ranges, metrics, steps) | `node Dashboard/core/report-core.test.js` |
-| Single-file HTML in a DOM stub (KPIs, filters, failures attention, import preview/apply/reset, trend, pages) | `node accuracy/tests/report_dom.test.js` |
+| Delivery data from the tracker and run outputs | `python -m pytest tests/test_delivery.py` |
+| Core logic (filters, import, ranges, metrics, steps, delivery) | `node Dashboard/core/report-core.test.js` |
+| Single-file HTML in a DOM stub (KPIs, filters incl. Values, failures attention, reports & sources, not-found matrix, field coverage, export, import preview/apply/reset, trend, pages) | `node accuracy/tests/report_dom.test.js` |
 | Angular app builds and unit tests pass | `npm --prefix Dashboard/app test` |
 
 Angular 21 is used because this machine runs Node 22.20; Angular 22 needs Node 22.22.3 or later.

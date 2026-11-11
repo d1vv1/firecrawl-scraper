@@ -19,6 +19,11 @@ body{font-size:13px}
 .navbar.top{padding:0 16px;height:48px;flex-wrap:nowrap}
 .navbar.top .navbar-brand{font-size:15px;font-weight:600;color:#fff;margin-right:8px}
 .navbar.top .nav-underline{flex-wrap:nowrap;overflow-x:auto;height:100%;gap:0;scrollbar-width:thin;--bs-nav-underline-border-width:3px;--bs-nav-underline-gap:0}
+/* Grouped menus drop below the bar: a scrolling nav would clip them and show a scrollbar instead */
+.navbar.top .nav-underline.navgroups{overflow:visible}
+.navbar.top .navmenu .nav-link{color:var(--ink);height:auto;padding:8px 14px;display:block;font-size:13px;border-bottom:0}
+.navbar.top .navmenu .nav-link:hover{color:var(--ink);background:#f3f9fd}
+.navbar.top .navmenu .nav-link.active{color:var(--ink);font-weight:600;background:#e6f1f8;border-left-color:var(--brand)}
 .navbar.top .nav-link{color:#c8c6c4;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;font-size:13px}
 .navbar.top .nav-link:hover{color:#fff}
 .navbar.top .nav-link.active{color:#fff;border-bottom-color:var(--brand);font-weight:400}

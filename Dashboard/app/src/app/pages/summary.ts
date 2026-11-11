@@ -4,7 +4,6 @@ import * as G from '../chart';
 import { ReportService } from '../report.service';
 import { Legend } from '../svg';
 import { download } from '../download';
-
 @Component({
   selector: 'app-overview',
   imports: [Chart, Legend],

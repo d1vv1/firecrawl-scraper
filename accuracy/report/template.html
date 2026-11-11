@@ -12,26 +12,65 @@
 <script>
 /*__CHARTS__*/
 </script>
+<script>
+/*__UI__*/
+</script>
 <style>
 /*__CSS__*/
 </style></head>
 <body>
 <div class="top">
   <div class="brand">Allshares Part 1 accuracy</div>
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" data-p="overview" aria-selected="true">Overview</button>
-    <button class="tab" role="tab" data-p="paycomp" aria-selected="false">Pay vs company</button>
-    <button class="tab" role="tab" data-p="countries" aria-selected="false">Countries</button>
-    <button class="tab" role="tab" data-p="fields" aria-selected="false">Fields</button>
-    <button class="tab" role="tab" data-p="empty" aria-selected="false">Empty fields</button>
-    <button class="tab" role="tab" data-p="companies" aria-selected="false">Companies</button>
-    <button class="tab" role="tab" data-p="failures" aria-selected="false">Failures</button>
-    <button class="tab" role="tab" data-p="steps" aria-selected="false">Validation steps</button>
-    <button class="tab" role="tab" data-p="ranges" aria-selected="false">Ranges</button>
-    <button class="tab" role="tab" data-p="trend" aria-selected="false">Trend</button>
-    <button class="tab" role="tab" data-p="metrics" aria-selected="false">Metric register</button>
-    <button class="tab" role="tab" data-p="import" aria-selected="false">Import data</button>
-  </div>
+  <nav class="tabs navgroups" aria-label="Pages">
+    <button class="tab" data-p="overview" aria-selected="true">Overview</button>
+    <div class="navgrp">
+      <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">Coverage</span><span class="cur"></span><span class="caret">▾</span></button>
+      <div class="navmenu" role="menu" hidden>
+        <button class="tab" role="menuitem" data-p="codata" aria-selected="false">Company data</button>
+        <button class="tab" role="menuitem" data-p="paydata" aria-selected="false">Pay data</button>
+        <button class="tab" role="menuitem" data-p="coverage" aria-selected="false">Field coverage</button>
+        <button class="tab" role="menuitem" data-p="fields" aria-selected="false">Fields</button>
+        <button class="tab" role="menuitem" data-p="empty" aria-selected="false">Empty fields</button>
+        <button class="tab" role="menuitem" data-p="notfound" aria-selected="false">Not found</button>
+      </div>
+    </div>
+    <div class="navgrp">
+      <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">Companies</span><span class="cur"></span><span class="caret">▾</span></button>
+      <div class="navmenu" role="menu" hidden>
+        <button class="tab" role="menuitem" data-p="companies" aria-selected="false">Companies</button>
+        <button class="tab" role="menuitem" data-p="sources" aria-selected="false">Reports &amp; sources</button>
+        <button class="tab" role="menuitem" data-p="countries" aria-selected="false">Countries</button>
+        <button class="tab" role="menuitem" data-p="paycomp" aria-selected="false">Pay vs company</button>
+      </div>
+    </div>
+    <div class="navgrp">
+      <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">Checks</span><span class="cur"></span><span class="caret">▾</span></button>
+      <div class="navmenu" role="menu" hidden>
+        <button class="tab" role="menuitem" data-p="failures" aria-selected="false">Failures</button>
+        <button class="tab" role="menuitem" data-p="steps" aria-selected="false">Validation steps</button>
+        <button class="tab" role="menuitem" data-p="ranges" aria-selected="false">Ranges</button>
+        <button class="tab" role="menuitem" data-p="trend" aria-selected="false">Trend</button>
+        <button class="tab" role="menuitem" data-p="metrics" aria-selected="false">Metric register</button>
+      </div>
+    </div>
+    <div class="navgrp">
+      <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">Delivery</span><span class="cur"></span><span class="caret">▾</span></button>
+      <div class="navmenu" role="menu" hidden>
+        <button class="tab" role="menuitem" data-p="standup" aria-selected="false">Stand-up</button>
+        <button class="tab" role="menuitem" data-p="throughput" aria-selected="false">Throughput</button>
+        <button class="tab" role="menuitem" data-p="discovery" aria-selected="false">Discovery queue</button>
+        <button class="tab" role="menuitem" data-p="exceptions" aria-selected="false">Exceptions</button>
+        <button class="tab" role="menuitem" data-p="health" aria-selected="false">Pipeline health</button>
+      </div>
+    </div>
+    <div class="navgrp">
+      <button class="navbtn" type="button" aria-haspopup="true" aria-expanded="false"><span class="lbl">Data</span><span class="cur"></span><span class="caret">▾</span></button>
+      <div class="navmenu" role="menu" hidden>
+        <button class="tab" role="menuitem" data-p="export" aria-selected="false">Export for Claude</button>
+        <button class="tab" role="menuitem" data-p="import" aria-selected="false">Import data</button>
+      </div>
+    </div>
+  </nav>
   <div class="meta" id="meta"></div>
 </div>
 <aside class="slicers">
@@ -41,6 +80,7 @@
   <div class="slicer"><h4>Field group</h4><select id="fCat"></select></div>
   <div class="slicer"><h4>Company</h4><select id="fCompany"></select></div>
   <div class="slicer"><h4>Score status</h4><select id="fStatus"></select></div>
+  <div class="slicer"><h4>Values</h4><select id="fFill"></select></div>
   <div><button class="linkbtn" id="fClear">Clear filters</button></div>
 </aside>
 <main>
@@ -65,6 +105,76 @@
     <div class="vis"><h3>Pay vs company by country</h3><div class="tbl"><table><thead><tr><th>Country</th><th class="n">Company values</th><th class="n">Company found %</th><th class="n">Pay values</th><th class="n">Pay found %</th></tr></thead><tbody id="pcTable"></tbody></table></div></div>
   </section>
 
+  <section class="page" id="p-notfound">
+    <div class="title" id="nfTitle">What was not found</div>
+    <div class="sub">Every value with no result in any source tried, by data type, field group, field and country. Not-applicable values are left out.</div>
+    <div class="kmini" id="nfKpis"></div>
+    <div class="vis">
+      <div class="sub">Rows: data type › field group › field (▸ opens a level). Cells: values not found of the values that apply; the colour is the share missing. Click any cell to list the companies behind it; click a header to sort.</div>
+      <div class="bar"><div class="opt"><h4>Cells show</h4><select id="nfShow"><option value="n">Not found (count)</option><option value="pct">Not found %</option></select></div>
+        <button class="btn" id="nfExpand">Open all</button><button class="btn" id="nfCollapse">Close all</button></div>
+      <div class="tbl tall"><table class="matrix"><thead id="nfHead"></thead><tbody id="nfBody"></tbody></table></div></div>
+    <div id="nfDetail"></div>
+  </section>
+
+  <section class="page" id="p-codata">
+    <div class="title" id="cdTitle"></div>
+    <div class="sub">The company fields of the protocol: how much each one matters (requirement, severity and why, from the field review, with its fill in the 50-company review sample) next to how this run did (companies with a value, filled %, found %, checks). Filled = found or partial. Averages count each field once. Click a field to see its values.</div>
+    <div class="kmini" id="cdKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3 id="cdChartTitle">Required fields by filled %</h3><div id="chCd"></div><div class="legend" id="lgCd"></div></div>
+      <div class="vis"><h3>By requirement and severity (average across fields)</h3><div class="tbl"><table><thead><tr><th>Group</th><th class="n">Fields</th><th class="n">Filled %</th><th class="n">Found %</th><th class="n">Check pass %</th><th class="n">Values pass %</th></tr></thead><tbody id="cdGroups"></tbody></table></div></div>
+    </div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search fields</h4><input type="search" id="cdSearch" placeholder="Field, ID, group or why"></div>
+        <div class="opt"><h4>Requirement</h4><select id="cdReq"></select></div>
+        <div class="opt"><h4>Severity</h4><select id="cdSev"></select></div>
+        <a class="btn" id="cdExport" href="#" download="allshares_company_data_fields.csv">Export CSV</a>
+      </div>
+      <div class="tbl tall"><table><thead id="cdHead"></thead><tbody id="cdTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-paydata">
+    <div class="title" id="pdTitle"></div>
+    <div class="sub">The pay fields of the protocol: how much each one matters (requirement, severity, 1 Dec milestone and why, from the field review, with its fill in the 50-company review sample) next to how this run did (companies with a value, filled %, found %, checks). Filled = found or partial. Averages count each field once. Click a field to see its values.</div>
+    <div class="kmini" id="pdKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3 id="pdChartTitle">Required fields by filled %</h3><div id="chPd"></div><div class="legend" id="lgPd"></div></div>
+      <div class="vis"><h3>By requirement, severity and milestone (average across fields)</h3><div class="tbl"><table><thead><tr><th>Group</th><th class="n">Fields</th><th class="n">Filled %</th><th class="n">Found %</th><th class="n">Check pass %</th><th class="n">Values pass %</th></tr></thead><tbody id="pdGroups"></tbody></table></div></div>
+    </div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search fields</h4><input type="search" id="pdSearch" placeholder="Field, ID, group or why"></div>
+        <div class="opt"><h4>Requirement</h4><select id="pdReq"></select></div>
+        <div class="opt"><h4>Severity</h4><select id="pdSev"></select></div>
+        <div class="opt"><h4>1 Dec milestone</h4><select id="pdMs"><option value="">All</option><option value="In scope">In scope</option><option value="Deferred">Deferred</option></select></div>
+        <a class="btn" id="pdExport" href="#" download="allshares_pay_data_fields.csv">Export CSV</a>
+      </div>
+      <div class="tbl tall"><table><thead id="pdHead"></thead><tbody id="pdTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-sources">
+    <div class="title" id="srTitle"></div>
+    <div class="sub">For each company: whether values were read from its annual report and from its remuneration report, links to those documents and to other sources, and how many protocol fields were filled. A report counts as found when at least one value in view was read from it. Annual report includes ESEF filings, SEC 20-F / 10-K and Companies House accounts; remuneration report includes the remuneration policy.</div>
+    <div class="kmini" id="srKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3 id="srChartTitle">Companies by reports found</h3><div id="chSrc"></div></div>
+      <div class="vis"><h3>Reports found by country</h3><div class="tbl"><table><thead><tr><th>Country</th><th class="n">Companies</th><th class="n">Annual report</th><th class="n">Annual %</th><th class="n">Remuneration report</th><th class="n">Remuneration %</th><th class="n">Both</th><th class="n">Neither</th></tr></thead><tbody id="srCountry"></tbody></table></div></div>
+    </div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search companies</h4><input type="search" id="srSearch" placeholder="Name, ID or LEI"></div>
+        <div class="opt"><h4>Annual report</h4><select id="srAnnual"><option value="">All</option><option value="yes">Found</option><option value="no">Not found</option></select></div>
+        <div class="opt"><h4>Remuneration report</h4><select id="srRem"><option value="">All</option><option value="yes">Found</option><option value="no">Not found</option></select></div>
+        <a class="btn" id="srExport" href="#" download="allshares_reports_and_sources.csv">Export CSV</a>
+      </div>
+      <div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Annual report</th><th>Annual report links</th><th>Remuneration report</th><th>Remuneration report links</th><th>Other source links</th><th class="n">Protocol fields</th><th class="n">Fields filled</th><th class="n">Fields empty</th><th class="n">Values</th><th class="n">Found</th><th class="n">Partial</th><th class="n">Not found</th><th class="n">Found %</th><th class="n">From annual report</th><th class="n">From remuneration report</th><th class="n">From other sources</th><th class="n">Values pass %</th><th class="n">Checks pass %</th></tr></thead><tbody id="srTable"></tbody></table></div>
+    </div>
+  </section>
+
   <section class="page" id="p-countries">
     <div class="title" id="cnTitle"></div><div class="sub">Status of values by country, with the companies run in each.</div>
     <div class="grid">
@@ -80,6 +190,25 @@
     <div class="vis"><div class="bar"><div class="opt" style="flex:1 1 240px"><h4>Search fields</h4><input type="search" id="fdSearch" placeholder="Field, ID or group"></div></div>
       <div class="tbl tall"><table><thead><tr><th data-sort="d">Field</th><th data-sort="f">ID</th><th data-sort="k">Group</th><th class="n" data-sort="rows">Rows</th><th class="n" data-sort="found">Found</th><th class="n" data-sort="partial">Partial</th><th class="n" data-sort="nf">Not found</th><th class="n" data-sort="P">Pass</th><th class="n" data-sort="R">Review</th><th class="n" data-sort="I">Incomplete</th><th class="n" data-sort="F">Fail</th><th class="n" data-sort="H">Fail (hard)</th><th class="n" data-sort="passPct">Pass %</th><th class="n" data-sort="avg">Avg score</th><th></th></tr></thead><tbody id="fdTable"></tbody></table></div></div>
     <div id="fdDetail"></div>
+  </section>
+
+  <section class="page" id="p-coverage">
+    <div class="title" id="cvTitle"></div>
+    <div class="sub">Every field of the protocol field list (allshares_fields_list.xlsx, sheets Company Data and Pay Data). Found % = found values of the values that apply; filled % adds partial values. Check pass % = PASS of the checks run on the field (PASS + FAIL); values pass % = values with status Pass of the scored values. Averages count each field once. Click a field to see its values.</div>
+    <div class="kmini" id="cvKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3 id="cvFoundTitle">Found % by field (lowest 15)</h3><div id="chCvFound"></div></div>
+      <div class="vis"><h3 id="cvCheckTitle">Check pass % by field (lowest 15)</h3><div id="chCvCheck"></div></div>
+    </div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search fields</h4><input type="search" id="cvSearch" placeholder="Field, ID, group or description"></div>
+        <div class="opt"><h4>Sheet</h4><select id="cvSheet"><option value="">Company and pay</option><option value="Company Data">Company Data</option><option value="Pay Data">Pay Data</option></select></div>
+        <label><input type="checkbox" id="cvGroup" checked> Group by field group</label>
+        <a class="btn" id="cvExport" href="#" download="allshares_field_coverage.csv">Export CSV</a>
+      </div>
+      <div class="tbl tall"><table><thead><tr><th class="n">#</th><th>Field</th><th>ID</th><th>Group</th><th>Grain</th><th>What it is</th><th class="n">Values</th><th class="n">Found</th><th class="n">Partial</th><th class="n">Not found</th><th class="n">Found %</th><th class="n">Filled %</th><th class="n">Companies with value</th><th class="n">Checks run</th><th class="n">Checks failed</th><th class="n">Check pass %</th><th class="n">Values pass %</th><th class="n">Avg score</th><th>Checks applied</th></tr></thead><tbody id="cvTable"></tbody></table></div>
+    </div>
   </section>
 
   <section class="page" id="p-empty">
@@ -156,6 +285,112 @@
       <div class="tbl tall"><table><thead><tr><th>Metric</th><th>Category</th><th>Source module</th><th>Formula or method</th><th>Period</th><th class="n">Value</th><th class="n">Target</th><th>Trend</th><th>Owner</th><th>Last updated</th><th>Metric ID</th></tr></thead><tbody id="mtBody"></tbody></table></div></div>
   </section>
 
+  <section class="page export" id="p-export">
+    <div class="title">Export for Claude: the data in the current filters, ready to paste or upload</div>
+    <div class="sub">Markdown with CSV tables and a short legend, so Claude can read it without the dashboard. Global filters apply. Paste small exports into a chat; download large ones and upload the file.</div>
+    <div class="vis">
+      <div class="checks">
+        <label><input type="checkbox" id="exSummary" checked> Summary KPIs</label>
+        <label><input type="checkbox" id="exSources" checked> Companies: reports, links and coverage</label>
+        <label><input type="checkbox" id="exCoverage" checked> Field coverage</label>
+        <label><input type="checkbox" id="exNotFound" checked> Not found by field and country</label>
+        <label><input type="checkbox" id="exNotes" checked> My notes</label>
+      </div>
+      <div class="bar">
+        <div class="opt"><h4>Values</h4><select id="exValues"><option value="none">No value rows</option><option value="filled">Filled values</option><option value="empty">Empty values</option><option value="all">All values</option></select></div>
+        <div class="opt" style="flex-basis:120px"><h4>Max value rows</h4><input type="number" id="exMax" min="0" value="0" title="0 = all"></div>
+        <label><input type="checkbox" id="exCompact" checked> Compact values (no URL and note columns)</label>
+      </div>
+      <div class="sizeinfo" id="exSize"></div>
+      <div class="bar"><button class="btn" id="exCopy">Copy to clipboard</button><button class="btn" id="exDownload">Download .md</button><button class="btn" id="exCsv">Download values CSV (all columns)</button><span id="exStatus" class="hint"></span></div>
+      <textarea id="exText" readonly aria-label="Export preview"></textarea>
+      <div class="note" id="exNote"></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-standup">
+    <div class="title" id="suTitle"></div>
+    <div class="sub" id="suSub"></div>
+    <div id="suErr"></div>
+    <div class="kmini" id="suKpis"></div>
+    <div class="vis"><h3>Status funnel by regional batch</h3>
+      <div class="hint">Companies that reached each stage, in order, with the share of the batch's required companies. The outlined cell in each column is the biggest drop: where that batch is stuck.</div>
+      <div class="tbl"><table><thead id="suFunHead"></thead><tbody id="suFunnel"></tbody></table></div></div>
+    <div class="grid">
+      <div class="vis"><h3 id="suPassTitle">Validation pass rate by batch</h3><div id="chSuPass"></div><div class="legend" id="lgSuPass"></div></div>
+      <div class="vis"><h3>Pass rate by batch against the 95% line</h3>
+        <div class="hint">Automated rules = values with status Pass of the values scored. Spot-check = sampled values judged correct. Rules low but sample fine points to the rules; both low points to extraction.</div>
+        <div class="tbl"><table><thead><tr><th>Batch</th><th class="n">Values scored</th><th class="n">Rules pass %</th><th class="n">Review</th><th class="n">Fail</th><th class="n">Sampled</th><th class="n">Spot-check pass %</th><th>Reading</th></tr></thead><tbody id="suPass"></tbody></table></div></div>
+    </div>
+    <div class="grid">
+      <div class="vis"><h3 id="suFailTitle">Failure patterns</h3><div id="chSuFail"></div></div>
+      <div class="vis">
+        <div class="bar"><div class="opt" style="flex:1 1 220px"><h4>Work list: reason</h4><select id="suFailSel"></select></div><a class="btn" id="suFailExport" href="#" download="allshares_failure_patterns.csv">Export CSV</a></div>
+        <div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Batch</th><th>Reason</th><th class="n">Count</th><th>Example</th></tr></thead><tbody id="suFailRows"></tbody></table></div></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-throughput">
+    <div class="title" id="tpTitle"></div>
+    <div class="sub" id="tpSub"></div>
+    <div id="tpErr"></div>
+    <div class="kmini" id="tpKpis"></div>
+    <div class="vis"><h3>Remaining companies against plan</h3><div id="chTp"></div>
+      <div class="legend"><span><i style="background:#0077BB"></i>Remaining (actual)</span><span><i style="background:#888888"></i>Plan (dashed)</span><span><i style="background:#0077BB;opacity:.5"></i>Projection at recent pace (dotted)</span><span><i style="background:#CC3311"></i>Deadline</span></div></div>
+    <div class="vis"><h3>Batches against plan</h3>
+      <div class="hint">Expected by today = the batch's companies spread evenly over its working days. Behind = done below 90% of expected, so slippage shows from day two.</div>
+      <div class="tbl"><table><thead><tr><th>Batch</th><th>Window</th><th class="n">Day</th><th class="n">To do</th><th class="n">Needs per day</th><th class="n">Expected by today</th><th class="n">Done</th><th>Status</th></tr></thead><tbody id="tpBatches"></tbody></table></div></div>
+  </section>
+
+  <section class="page" id="p-discovery">
+    <div class="title" id="dqTitle"></div>
+    <div class="sub">Companies whose document or data source is still to find (tracker Find Required). Owner, status and next step come from accuracy/inputs/delivery/discovery.csv; the next step defaults from the need.</div>
+    <div id="dqErr"></div>
+    <div class="kmini" id="dqKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3>Queue by status</h3><div id="chDq"></div></div>
+      <div class="vis"><h3>Queue by need</h3><div class="tbl"><table><thead><tr><th>Need</th><th class="n">Companies</th></tr></thead><tbody id="dqNeed"></tbody></table></div></div>
+    </div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search</h4><input type="search" id="dqSearch" placeholder="Company, owner or country"></div>
+        <div class="opt"><h4>Status</h4><select id="dqStatus"></select></div>
+        <a class="btn" id="dqExport" href="#" download="allshares_discovery_queue.csv">Export CSV</a>
+      </div>
+      <div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Batch</th><th>Need</th><th>Next step</th><th>Owner</th><th>Status</th><th>Updated</th></tr></thead><tbody id="dqTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-exceptions">
+    <div class="title" id="xcTitle"></div>
+    <div class="sub" id="xcSub"></div>
+    <div id="xcErr"></div>
+    <div class="kmini" id="xcKpis"></div>
+    <div class="vis">
+      <div class="bar">
+        <div class="opt" style="flex:1 1 220px"><h4>Search</h4><input type="search" id="xcSearch" placeholder="Company or reason"></div>
+        <div class="opt"><h4>Category</h4><select id="xcCat"></select></div>
+        <a class="btn" id="xcExport" href="#" download="allshares_FY2025_exceptions.csv">Export for Allshares</a>
+      </div>
+      <div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Batch</th><th>Category</th><th>Reason</th><th>Source</th><th>Allshares</th></tr></thead><tbody id="xcTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="page" id="p-health">
+    <div class="title" id="phTitle"></div>
+    <div class="sub">Scheduled runs, failed runs and Firecrawl credit use, so a broken run or a credit shortfall does not quietly stop a batch. Runs and credits come from the per-company run outputs; scheduled runs from accuracy/inputs/delivery/scheduled_runs.csv.</div>
+    <div id="phErr"></div>
+    <div class="kmini" id="phKpis"></div>
+    <div class="grid">
+      <div class="vis"><h3>Company runs per day</h3><div id="chPhRuns"></div><div class="legend"><span><i style="background:#0077BB"></i>Completed</span><span><i style="background:#CC3311"></i>Failed</span></div></div>
+      <div class="vis"><h3>Firecrawl credits per day</h3><div id="chPhCredits"></div></div>
+    </div>
+    <div class="grid">
+      <div class="vis"><h3>Scheduled runs</h3><div class="tbl"><table><thead><tr><th>Run</th><th>Batch</th><th>Scheduled</th><th>Started</th><th>Status</th><th class="n">Companies</th><th class="n">Credits</th></tr></thead><tbody id="phSched"></tbody></table></div></div>
+      <div class="vis"><h3>Failed runs</h3><div class="tbl tall"><table><thead><tr><th>Company</th><th>Date</th><th>Error</th></tr></thead><tbody id="phFailed"></tbody></table></div></div>
+    </div>
+  </section>
+
   <section class="page" id="p-import">
     <div class="title">Import data</div>
     <div class="sub">Load a results CSV in the schema below. A company is matched by LEI when given and known, otherwise by name and country; then by field ID, role row and data point. Reset restores the run's values.</div>
@@ -189,7 +424,8 @@
   var C = window.ReportCore, G = window.ReportCharts, S = window.ALLSHARES_IMPORT_SCHEMA;
   var M = C.createModel(DATA);
   var F = Object.assign({}, C.EMPTY_FILTERS);
-  var UI = {fieldSort: {k: "problems", dir: -1}, coSort: {k: "c", dir: 1}, field: null, company: null, coMode: "all", step: {gate: "", dp: "", mode: "all"}, ranges: Object.assign({}, C.RANGE_DEFAULTS)};
+  var UI = {fieldSort: {k: "problems", dir: -1}, coSort: {k: "c", dir: 1}, field: null, company: null, coMode: "all", step: {gate: "", dp: "", mode: "all"}, ranges: Object.assign({}, C.RANGE_DEFAULTS),
+            nfShow: "n", nfSort: {k: "", dir: -1}, nfOpen: {}, nfSel: null};
   var pending = null;
   var esc = G.esc, fmt = C.fmt;
   function $(id){ return document.getElementById(id); }
@@ -217,6 +453,207 @@
     $("chPCpie").innerHTML = G.pie([{label:"Company data", value:p.co, color:"#0077BB"},{label:"Pay data", value:p.pa, color:"#EE7733"}]);
     $("pcTable").innerHTML = rows(p.rows.map(function(r){ return '<tr><td>'+r.c+'</td><td class="n">'+fmt(r.co)+'</td><td class="n">'+r.coFound+'%</td><td class="n">'+fmt(r.pa)+'</td><td class="n">'+r.paFound+'%</td></tr>'; }), 5);
   }
+
+  // ---- Company data / Pay data: the field review next to this run's results ----
+  var SEV_CHIP = {"High": "H", "Medium": "F", "Low": "R", "Never used": "X"};
+  function sevChip(s){ return s ? '<span class="chip '+(SEV_CHIP[s]||"X")+'">'+esc(s)+'</span>' : ''; }
+  var SEV_COLOR = {"High": "#CC3311", "Medium": "#EE7733", "Low": "#0077BB", "Never used": "#888888"};
+  function dataFieldsPage(px, sheet, vs){
+    var d = C.dataPage(M, vs, sheet), pay = sheet === "Pay Data";
+    var q = $(px+"Search").value.trim().toLowerCase(), fr = $(px+"Req").value, fs = $(px+"Sev").value, fm = pay ? $("pdMs").value : "";
+    $(px+"Title").textContent = d.title;
+    function p(x){ return x == null ? '–' : x+'%'; }
+    $(px+"Kpis").innerHTML = kmini([[d.all.n, "Fields in the protocol"], [d.required.n+' <small>· '+p(d.required.avgFilled)+' filled</small>', "Required fields (incl. conditional)"],
+      [p((d.bySev.filter(function(g){ return g.sev === "High"; })[0] || {}).avgFilled), "High severity: filled on average"], [p(d.required.avgCheck), "Required fields: checks pass"],
+      [d.gaps.length, "High-severity fields under 80% filled"]]
+      .concat(pay ? d.milestones.map(function(m){ return [p(m.avgFilled), "1 Dec "+m.name+": filled on average ("+m.n+" fields)"]; }) : [[d.neverUsed, "Fields never used in analysis"]])
+      .concat([[d.companies, "Companies in view"]]));
+    var req = d.fields.filter(function(r){ return r.reqClass === "required" || r.reqClass === "conditional"; }).filter(function(r){ return r.filledPct != null; }).sort(function(a,b){ return a.filledPct - b.filledPct; });
+    $(px+"ChartTitle").textContent = req.length ? "Required fields by filled %: " + req[0].d + " is lowest (" + req[0].filledPct + "%)" : "Required fields by filled %";
+    $(px === "cd" ? "chCd" : "chPd").innerHTML = G.hbars(req.slice(0,15).map(function(r){ return {label:r.d, value:r.filledPct, color:SEV_COLOR[r.sev] || "#888888", sub:r.sev}; }), {max:100, suffix:"%"});
+    $(px === "cd" ? "lgCd" : "lgPd").innerHTML = G.legend(C.SEVERITIES.slice(0,3).map(function(s){ return {label:s+" severity", color:SEV_COLOR[s]}; }));
+    var groups = d.byReq.map(function(g){ return [g.label, g]; }).concat(d.bySev.map(function(g){ return [g.sev+" severity", g]; })).concat(pay ? d.milestones.map(function(g){ return ["1 Dec: "+g.name, g]; }) : []);
+    $(px+"Groups").innerHTML = rows(groups.map(function(x){ var g = x[1]; return '<tr><td>'+esc(x[0])+'</td><td class="n">'+g.n+'</td><td class="n">'+p(g.avgFilled)+'</td><td class="n">'+p(g.avgFound)+'</td><td class="n">'+p(g.avgCheck)+'</td><td class="n">'+p(g.avgPass)+'</td></tr>'; }), 6);
+    if (!($(px+"Req").options || []).length){
+      fillSelect($(px+"Req"), [["","All"]].concat(C.REQ_CLASSES), "");
+      fillSelect($(px+"Sev"), [["","All"]].concat(C.SEVERITIES.map(function(s){ return [s,s]; })), "");
+    }
+    $(px+"Head").innerHTML = '<tr><th class="n">#</th><th>Field</th><th>ID</th><th>Group</th><th>Requirement</th><th>Severity</th>'+(pay ? '<th>1 Dec milestone</th>' : '')+
+      '<th class="n">Fill (of 50) review</th><th class="n">Companies with value</th><th class="n">Filled %</th><th class="n">Found %</th><th class="n">Check pass %</th><th class="n">Values pass %</th><th>Why</th></tr>';
+    var list = d.fields.filter(function(r){
+      return (!q || (r.d+" "+r.f+" "+r.k+" "+r.why+" "+r.req).toLowerCase().indexOf(q) >= 0) && (!fr || r.reqClass === fr) && (!fs || r.sev === fs) && (!fm || r.milestone === fm);
+    });
+    $(px+"Table").innerHTML = rows(list.map(function(r){
+      return '<tr class="click" tabindex="0" data-field="'+esc(r.d)+'"><td class="n">'+r.n+'</td><td>'+esc(r.d)+'</td><td>'+esc(r.f)+'</td><td>'+esc(r.k)+'</td><td>'+esc(r.req)+'</td><td data-v="'+(r.sev ? C.SEVERITIES.length - C.SEVERITIES.indexOf(r.sev) : '')+'">'+sevChip(r.sev)+'</td>'+
+        (pay ? '<td>'+esc(r.milestone)+'</td>' : '')+'<td class="n">'+(r.fill50 == null ? '–' : r.fill50)+'</td><td class="n">'+fmt(r.filledCos)+' <span class="hint">of '+fmt(d.companies)+'</span></td>'+
+        pctCell(r.filledPct, 90)+pctCell(r.foundPct, 90)+pctCell(r.checkPct, 95)+pctCell(r.passPct, 95)+'<td class="iss">'+esc(r.why)+'</td></tr>';
+    }), pay ? 14 : 13, "No fields match.");
+    $(px+"Export").setAttribute("href", dataUrl(C.dataPageCSV(d)));
+  }
+  ["cd","pd"].forEach(function(px){
+    $(px+"Search").addEventListener("input", refresh);
+    [px+"Req", px+"Sev"].forEach(function(id){ $(id).addEventListener("change", refresh); });
+  });
+  $("pdMs").addEventListener("change", refresh);
+
+  // ---- not-found matrix (Pay vs company): data type › field group › field × country, drill to companies ----
+  function heat(p){ return p <= 0 ? "heat0" : p < 25 ? "heat1" : p < 50 ? "heat2" : p < 75 ? "heat3" : "heat4"; }
+  function selKey(sel, c){ return [sel.p == null ? "" : sel.p, sel.k || "", sel.d || "", c || ""].join("|"); }
+  function parseSel(s){ var a = s.split("|"); return {p: a[0] === "" ? null : Number(a[0]), k: a[1], d: a[2], c: a[3]}; }
+  function nfSortKey(n, k){
+    if (k === "label") return n.label.toLowerCase();
+    if (k === "rank") return n.rank == null ? 1e9 * UI.nfSort.dir : n.rank;   // unranked last either way
+    if (k === "nf" || k === "pct" || k === "companies" || k === "withData") return n[k];
+    var x = n.byC[k]; return x ? (UI.nfShow === "pct" ? x.pct : x.nf) : -1;
+  }
+  function nfOrder(list){
+    var s = UI.nfSort; if (!s.k) return list;
+    return list.slice().sort(function(a,b){ var x = nfSortKey(a, s.k), y = nfSortKey(b, s.k); return (typeof x === "string" ? x.localeCompare(y) : x - y) * s.dir; });
+  }
+  function notFound(vs){
+    var m = C.notFoundMatrix(vs, C.fieldRanks(M)), show = UI.nfShow, cur = UI.nfSel ? selKey(UI.nfSel, UI.nfSel.c) : "";
+    $("nfTitle").textContent = "What was not found: " + m.title;
+    var tco = m.tree.filter(function(t){ return t.sel.p === 0; })[0], tpa = m.tree.filter(function(t){ return t.sel.p === 1; })[0];
+    var cosMissing = {}; vs.forEach(function(v){ if (v.st === "not_found") cosMissing[C.companyKey(v)] = 1; });
+    $("nfKpis").innerHTML = kmini([[fmt(m.total.nf)+' <small>('+m.total.pct+'%)</small>', "Values not found"],
+      [tco ? fmt(tco.nf)+' <small>('+tco.pct+'%)</small>' : '–', "Company data not found"], [tpa ? fmt(tpa.nf)+' <small>('+tpa.pct+'%)</small>' : '–', "Pay data not found"],
+      [fmt(Object.keys(cosMissing).length)+' <small>of '+fmt(C.companiesOf(vs))+'</small>', "Companies with something missing"]]);
+    var heads = [["label","Data type › group › field"],["rank","Rank"],["nf","Not found"],["pct","Not found %"],["companies","Companies missing"],["withData","Companies with data"]].concat(m.countries.map(function(c){ return [c,c]; }));
+    $("nfHead").innerHTML = '<tr>' + heads.map(function(h,i){ var s = UI.nfSort.k === h[0] ? ' aria-sort="'+(UI.nfSort.dir > 0 ? 'ascending' : 'descending')+'"' : ''; return '<th data-sort="'+esc(h[0])+'"'+(i ? ' class="n"' : '')+s+' tabindex="0">'+esc(h[1])+'</th>'; }).join("") + '</tr>';
+    function cell(sel, c, x){
+      if (!x || !x.rows) return '<td class="n">–</td>';
+      var k = selKey(sel, c);
+      return '<td class="cell '+heat(x.pct)+(k === cur ? ' on' : '')+'" tabindex="0" data-nf="'+esc(k)+'" title="'+fmt(x.nf)+' of '+fmt(x.rows)+' values not found ('+x.pct+'%)">'+(show === "pct" ? x.pct+'%' : fmt(x.nf)+'<small>/ '+fmt(x.rows)+'</small>')+'</td>';
+    }
+    function withData(n){
+      if (n.withData == null) return '<td class="n">–</td>';
+      return '<td class="n" title="'+fmt(n.withData)+' of '+fmt(n.cosAll)+' companies have at least one value found or partial here">'+fmt(n.withData)+(show === "pct" ? '' : '<small>/ '+fmt(n.cosAll)+'</small>')+'</td>';
+    }
+    function rankCell(n){
+      if (n.level == null || n.level < 0) return '<td class="n">–</td>';
+      if (n.level === 2) return '<td class="n" title="'+(n.rank == null ? 'Not ranked in the benchmarking field list' : 'Benchmarking rank '+n.rank+' (1 = most critical)')+'">'+(n.rank == null ? '–' : n.rank)+'</td>';
+      return '<td class="n hint"'+(n.rank == null ? '' : ' title="Best-ranked field in this row: '+n.rank+'"')+'>'+(n.rank == null ? '–' : 'top '+n.rank)+'</td>';
+    }
+    var html = [];
+    function line(n, label, sel){
+      return rankCell(n) + cell(sel, "", n) + '<td class="n">'+n.pct+'%</td><td class="n">'+(n.companies == null ? '–' : fmt(n.companies))+'</td>' + withData(n) + m.countries.map(function(c){ return cell(sel, c, n.byC[c]); }).join("");
+    }
+    function walk(n){
+      var open = UI.nfOpen[n.id] != null ? UI.nfOpen[n.id] : n.level === 0;
+      var tog = n.level < 2 ? '<button class="tog" data-nftog="'+esc(n.id)+'" aria-expanded="'+open+'" aria-label="'+(open ? 'Close' : 'Open')+' '+esc(n.label)+'">'+(open ? '▾' : '▸')+'</button>' : '<span class="tog"></span>';
+      var name = n.level === 2 ? '<button class="linkbtn" data-field="'+esc(n.label)+'" title="Open this field">'+esc(n.label)+'</button>' : esc(n.label);
+      html.push('<tr class="l'+n.level+'"><td>'+tog+name+(n.level < 2 ? ' <span class="hint">('+n.children.length+')</span>' : '')+'</td>'+line(n, n.label, n.sel)+'</tr>');
+      if (open) nfOrder(n.children).forEach(walk);
+    }
+    if (m.tree.length) html.push('<tr class="l0"><td><span class="tog"></span>All values</td>'+line(m.total, "", {})+'</tr>');
+    nfOrder(m.tree).forEach(walk);
+    $("nfBody").innerHTML = rows(html, 6 + m.countries.length, "Nothing missing in this selection.");
+    $("nfShow").value = show;
+    nfDetail(vs);
+  }
+  function nfDetail(vs){
+    var s = UI.nfSel;
+    if (!s){ $("nfDetail").innerHTML = ""; return; }
+    var list = C.notFoundValues(vs, s), cos = {};
+    list.forEach(function(x){ cos[x.key] = 1; });
+    var label = [s.p == null ? "" : (s.p ? "Pay data" : "Company data"), s.k, s.d, s.c].filter(Boolean).join(" · ") || "All values";
+    var LIM = 3000;
+    $("nfDetail").innerHTML = '<div class="vis"><div class="back"><button class="linkbtn" id="nfClose">← Close list</button></div>' +
+      '<h3>Not found: '+esc(label)+': '+fmt(list.length)+' values at '+fmt(Object.keys(cos).length)+' companies</h3>' +
+      '<div class="sub">Click a company to open it.</div><div class="tbl tall"><table><thead><tr><th>Company</th><th>Country</th><th>Data type</th><th>Group</th><th>Field</th><th>ID</th><th>Role</th><th>Note</th></tr></thead><tbody>' +
+      rows(list.slice(0, LIM).map(function(x){ return '<tr class="click" tabindex="0" data-co="'+esc(x.key)+'"><td>'+esc(x.o)+'</td><td>'+x.c+'</td><td>'+x.type+'</td><td>'+esc(x.k)+'</td><td>'+esc(x.d)+'</td><td>'+esc(x.f)+'</td><td>'+esc(x.r)+'</td><td class="iss">'+esc(x.note)+'</td></tr>'; }), 8, "Nothing missing here.") +
+      '</tbody></table></div>' + (list.length > LIM ? '<div class="note">First '+fmt(LIM)+' of '+fmt(list.length)+' shown. Narrow the filters or use Export for Claude for all of them.</div>' : '') + '</div>';
+    $("nfClose").addEventListener("click", function(){ UI.nfSel = null; refresh(); });
+  }
+
+  // ---- reports and sources ----
+  function linkList(ls){
+    if (!ls.length) return '<span class="hint">–</span>';
+    var a = ls.map(function(l){ return '<a href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer" title="'+esc(l.url)+'">'+esc(l.label)+' · '+esc(l.host)+' ('+l.n+')</a>'; });
+    return '<div class="links">'+a.slice(0,2).join("")+(a.length > 2 ? '<details><summary>+'+(a.length-2)+' more</summary>'+a.slice(2).join("")+'</details>' : '')+'</div>';
+  }
+  function yesNo(b){ return b ? '<span class="yes">Found</span>' : '<span class="no">Not found</span>'; }
+  function kmini(items){ return items.map(function(x){ return '<div><b>'+x[0]+'</b><span>'+esc(x[1])+'</span></div>'; }).join(""); }
+  function sourcesPage(vs){
+    var s = C.sources(M, vs), t = s.totals, q = $("srSearch").value.trim().toLowerCase(), fa = $("srAnnual").value, fr = $("srRem").value;
+    var avgFilled = s.rows.length ? Math.round(s.rows.reduce(function(a,x){ return a + (x.fields ? x.fieldsFilled / x.fields : 0); }, 0) / s.rows.length * 100) : 0;
+    $("srTitle").textContent = s.title;
+    $("srKpis").innerHTML = kmini([[t.companies, "Companies in view"], [t.annual+' <small>('+t.annualPct+'%)</small>', "Annual report found"], [t.rem+' <small>('+t.remPct+'%)</small>', "Remuneration report found"],
+      [t.both+' <small>('+t.bothPct+'%)</small>', "Both found"], [t.neither+' <small>('+t.neitherPct+'%)</small>', "Neither found"], [avgFilled+'%', "Protocol fields filled (average per company)"]]);
+    $("srChartTitle").textContent = t.companies ? t.neither + " of " + t.companies + " companies have neither report in view" : "Companies by reports found";
+    $("chSrc").innerHTML = G.bars([{label:"Annual report", value:t.annual, color:"#0077BB"},{label:"Remuneration", value:t.rem, color:"#EE7733"},{label:"Both", value:t.both, color:"#009988"},{label:"Neither", value:t.neither, color:"#CC3311"}]);
+    $("srCountry").innerHTML = rows(s.byCountry.map(function(r){ return '<tr><td>'+r.c+'</td><td class="n">'+r.companies+'</td><td class="n">'+r.annual+'</td><td class="n">'+r.annualPct+'%</td><td class="n">'+r.rem+'</td><td class="n">'+r.remPct+'%</td><td class="n">'+r.both+'</td><td class="n">'+r.neither+'</td></tr>'; }), 8);
+    var list = s.rows.filter(function(x){
+      return (!q || (x.o+" "+x.key+" "+x.idList.join(" ")).toLowerCase().indexOf(q) >= 0) && (!fa || (fa === "yes") === x.hasAnnual) && (!fr || (fr === "yes") === x.hasRem);
+    });
+    $("srTable").innerHTML = rows(list.map(function(x){
+      return '<tr><td><button class="linkbtn" data-co="'+esc(x.key)+'" title="Open company">'+esc(x.o)+'</button></td><td>'+x.c+'</td><td>'+yesNo(x.hasAnnual)+'</td><td>'+linkList(x.links.annual)+'</td><td>'+yesNo(x.hasRem)+'</td><td>'+linkList(x.links.rem)+'</td><td>'+linkList(x.links.other)+'</td>' +
+        '<td class="n">'+x.fields+'</td><td class="n">'+x.fieldsFilled+'</td><td class="n">'+x.fieldsEmpty+'</td><td class="n">'+fmt(x.values)+'</td><td class="n">'+fmt(x.found)+'</td><td class="n">'+fmt(x.partial)+'</td><td class="n">'+fmt(x.nf)+'</td><td class="n">'+x.foundPct+'%</td>' +
+        '<td class="n">'+fmt(x.n.annual)+'</td><td class="n">'+fmt(x.n.rem)+'</td><td class="n">'+fmt(x.n.other)+'</td><td class="n">'+(x.passPct == null ? '–' : x.passPct+'%')+'</td><td class="n">'+(x.checksPct == null ? '–' : x.checksPct+'%')+'</td></tr>';
+    }), 20, "No companies match.");
+    $("srExport").setAttribute("href", dataUrl(C.sourcesCSV(list)));
+  }
+
+  // ---- field coverage (by field, from the protocol field list) ----
+  function pctCell(p, good){ if (p == null) return '<td class="n">–</td>'; var col = p >= good ? "#009988" : p >= good - 20 ? "#EE7733" : "#CC3311"; return '<td class="n"><span class="pctbar"><i style="width:'+p+'%;background:'+col+'"></i></span>'+p+'%</td>'; }
+  function coveragePage(vs){
+    var fc = C.fieldCoverage(M, vs), q = $("cvSearch").value.trim().toLowerCase(), sh = $("cvSheet").value, grouped = $("cvGroup").checked;
+    $("cvTitle").textContent = fc.title;
+    $("cvKpis").innerHTML = kmini(fc.sheets.map(function(s){ return [(s.avgFound == null ? '–' : s.avgFound+'%')+' <small>found</small>', s.name+": average over "+s.inView+" fields"]; })
+      .concat(fc.sheets.map(function(s){ return [(s.avgCheck == null ? '–' : s.avgCheck+'%')+' <small>checks pass</small>', s.name+": values pass "+(s.avgPass == null ? '–' : s.avgPass+'%')]; }))
+      .concat([[fc.all.neverFound, "Fields never found in view"], [fc.all.alwaysFound, "Fields always filled"]]));
+    var all = []; fc.sheets.forEach(function(s){ all = all.concat(s.fields); });
+    var lowF = all.filter(function(r){ return r.foundPct != null; }).sort(function(a,b){ return a.foundPct - b.foundPct; }).slice(0,15);
+    var lowC = all.filter(function(r){ return r.checkPct != null; }).sort(function(a,b){ return a.checkPct - b.checkPct; }).slice(0,15);
+    $("cvFoundTitle").textContent = lowF.length ? "Found % by field: " + lowF[0].d + " is lowest (" + lowF[0].foundPct + "%); lowest 15" : "Found % by field";
+    $("cvCheckTitle").textContent = lowC.length ? "Check pass % by field: " + lowC[0].d + " is lowest (" + lowC[0].checkPct + "%); lowest 15" : "Check pass % by field";
+    $("chCvFound").innerHTML = G.hbars(lowF.map(function(r){ return {label:r.d, value:r.foundPct, color:r.foundPct < 50 ? "#CC3311" : r.foundPct < 80 ? "#EE7733" : "#009988", sub:fmt(r.found)+"/"+fmt(r.rows)}; }), {max:100, suffix:"%"});
+    $("chCvCheck").innerHTML = G.hbars(lowC.map(function(r){ return {label:r.d, value:r.checkPct, color:r.checkPct < 80 ? "#CC3311" : r.checkPct < 95 ? "#EE7733" : "#009988", sub:fmt(r.checkFail)+" fails"}; }), {max:100, suffix:"%"});
+    function match(r){ return (!sh || r.sheet === sh) && (!q || (r.d+" "+r.f+" "+r.k+" "+r.what).toLowerCase().indexOf(q) >= 0); }
+    function row(r){
+      return '<tr class="click" tabindex="0" data-field="'+esc(r.d)+'"><td class="n">'+r.n+'</td><td>'+esc(r.d)+'</td><td>'+esc(r.f)+'</td><td>'+esc(r.k)+'</td><td>'+esc(r.g)+'</td><td class="iss">'+esc(r.what)+'</td>' +
+        '<td class="n">'+fmt(r.rows)+'</td><td class="n">'+fmt(r.found)+'</td><td class="n">'+fmt(r.partial)+'</td><td class="n">'+fmt(r.nf)+'</td>'+pctCell(r.foundPct, 90)+pctCell(r.filledPct, 90) +
+        '<td class="n">'+fmt(r.filledCos)+' <span class="hint">of '+fmt(r.companies)+'</span></td><td class="n">'+fmt(r.checkRuns)+'</td><td class="n">'+fmt(r.checkFail)+'</td>'+pctCell(r.checkPct, 95)+pctCell(r.passPct, 95) +
+        '<td class="n">'+(r.avg == null ? '–' : r.avg)+'</td><td class="iss mono">'+esc(r.checks.join(", "))+'</td></tr>';
+    }
+    var html = [];
+    fc.sheets.forEach(function(s){
+      if (sh && s.name !== sh) return;
+      if (grouped) s.cats.forEach(function(k){
+        var fs = k.fields.filter(match); if (!fs.length) return;
+        html.push('<tr class="group"><td colspan="19"><b>'+esc(s.name)+' › '+esc(k.k)+'</b> · '+k.nFields+' '+(k.nFields === 1 ? 'field' : 'fields')+' · average found '+(k.avgFound == null ? '–' : k.avgFound+'%')+' · checks pass '+(k.avgCheck == null ? '–' : k.avgCheck+'%')+' · values pass '+(k.avgPass == null ? '–' : k.avgPass+'%')+'</td></tr>');
+        fs.forEach(function(r){ html.push(row(r)); });
+      });
+      else s.fields.filter(match).forEach(function(r){ html.push(row(r)); });
+    });
+    $("cvTable").innerHTML = rows(html, 19, "No fields match.");
+    $("cvExport").setAttribute("href", dataUrl(C.coverageCSV(fc)));
+  }
+
+  // ---- export for Claude ----
+  var exText = "";
+  function notesText(){ return window.ReportUI ? window.ReportUI.getNotes() : ""; }
+  function pageName(){ var t = document.querySelector('.tab[aria-selected="true"]'); return t ? t.textContent : active(); }
+  function exportOpts(){ return {summary:$("exSummary").checked, sources:$("exSources").checked, coverage:$("exCoverage").checked, notFound:$("exNotFound").checked, notes:$("exNotes").checked,
+                                 values:$("exValues").value || "filled", compact:$("exCompact").checked, maxValues:Number($("exMax").value) || 0}; }
+  function exportPage(vs){
+    exText = C.claudeExport(M, vs, exportOpts(), {filters:F, notes:notesText()});
+    var tokens = Math.round(exText.length / 4), LIM = 60000;
+    $("exSize").innerHTML = fmt(exText.length)+' characters, about '+fmt(tokens)+' tokens. '+(tokens > 150000 ? '<b>Large: download the .md file and upload it to Claude</b>, or set Values to “No value rows” to paste.' : 'Small enough to paste into a chat.');
+    $("exText").value = exText.length > LIM ? exText.slice(0, LIM) + "\n\n… preview cut at " + fmt(LIM) + " characters. Copy and Download include everything." : exText;
+    $("exNote").textContent = "Filters: " + C.filterText(F, M) + ". Notes are taken from the Notes bar (right edge).";
+  }
+  function stamp(){ return new Date().toISOString().slice(0,10); }
+  ["exSummary","exSources","exCoverage","exNotFound","exNotes","exValues","exCompact","exMax"].forEach(function(id){ $(id).addEventListener("change", refresh); });
+  $("exValues").value = "filled";
+  $("exCopy").addEventListener("click", function(){ window.ReportUI.copyText(exText).then(function(ok){ $("exStatus").textContent = ok ? "Copied " + fmt(exText.length) + " characters." : "Copy failed: use Download instead."; }); });
+  $("exDownload").addEventListener("click", function(){ window.ReportUI.saveFile(exText, "allshares_export_" + stamp() + ".md"); });
+  $("exCsv").addEventListener("click", function(){ var mode = $("exValues").value; window.ReportUI.saveFile(C.valuesCSV(M, C.exportValues(view(), mode === "none" ? "all" : mode), false), "allshares_values_" + stamp() + ".csv"); });
+  $("nfShow").addEventListener("change", function(){ UI.nfShow = this.value; refresh(); });
+  $("nfExpand").addEventListener("click", function(){ C.notFoundMatrix(view()).tree.forEach(function(t){ UI.nfOpen[t.id] = true; t.children.forEach(function(k){ UI.nfOpen[k.id] = true; }); }); refresh(); });
+  $("nfCollapse").addEventListener("click", function(){ C.notFoundMatrix(view()).tree.forEach(function(t){ UI.nfOpen[t.id] = false; t.children.forEach(function(k){ UI.nfOpen[k.id] = false; }); }); refresh(); });
+  ["srSearch","cvSearch"].forEach(function(id){ $(id).addEventListener("input", refresh); });
+  ["srAnnual","srRem","cvSheet","cvGroup"].forEach(function(id){ $(id).addEventListener("change", refresh); });
   function countries(vs){
     var c = C.countriesPage(vs);
     $("chCountry").innerHTML = G.stacked(c.countries, c.series); $("lgCountry").innerHTML = G.legend(C.VSTAT.map(function(x){ return {label:x[1], color:x[2]}; }));
@@ -424,8 +861,126 @@
     fillSelect($("fCat"), [["","All field groups"]].concat(o.categories.map(function(c){ return [c,c]; })), F.cat);
     fillSelect($("fCompany"), [["","All companies"]].concat(o.companies.map(function(c){ return [c.key,c.label]; })), F.company);
     fillSelect($("fStatus"), [["","All statuses"]].concat(o.statuses.map(function(s){ return [s.key,s.label]; })), F.status);
+    fillSelect($("fFill"), C.FILL_OPTIONS, F.fill);
     $("fSource").value = F.source; $("fType").value = F.dtype;
   }
+  // ---- Delivery (SPEC 6.4): stand-up, throughput, discovery queue, exceptions, pipeline health ----
+  function dl(){ return C.delivery(M, F.country); }
+  function p1(x){ return x == null ? "–" : x + "%"; }
+  function dlFail(px, x){
+    $(px+"Err").innerHTML = x.ok ? "" : '<div class="attn">'+esc(x.error)+'</div>';
+    return !x.ok;
+  }
+  function dlNote(x){ return x.country ? " Country filter: " + x.country + " (other filters do not apply to these pages)." : " Only the Country filter applies to these pages."; }
+  function passReading(r){
+    if (r.rules == null) return '<span class="hint">not extracted yet</span>';
+    var line = DATA.delivery.plan.pass_line * 100, rOk = r.rules >= line;
+    if (r.spot == null) return rOk ? '<span class="yes">Rules at the line</span> · no sample yet' : '<span class="no">Rules below the line</span> · no sample yet';
+    var sOk = r.spot >= line;
+    return rOk && sOk ? '<span class="yes">Both at the line</span>' : !rOk && sOk ? '<span class="no">Rules problem</span> (sample fine)' : !rOk ? '<span class="no">Extraction problem</span> (both low)' : '<span class="no">Rules miss errors</span> the sample finds';
+  }
+  function standupPage(){
+    var x = dl(); if (dlFail("su", x)) return;
+    var k = x.kpis;
+    $("suTitle").textContent = x.titles.standup;
+    $("suSub").textContent = "FY" + x.fy + " gap-fill. Delivery data built " + x.built + "; deadline " + x.deadline + "; exceptions sign-off " + x.acceptance + "." + dlNote(x);
+    $("suKpis").innerHTML = kmini([
+      [fmt(k.remaining)+' <small>of '+fmt(x.plan.baseline_remaining)+'</small>', k.behind > 0 ? "Remaining: "+fmt(k.behind)+" behind plan" : "Remaining: on or ahead of plan"],
+      [fmt(k.done), "Done (of "+fmt(k.companies)+" required)"], [fmt(k.extracted), "Extracted so far"],
+      [fmt(k.workLeft), k.needed == null ? "Working days left" : "Working days left · need "+fmt(k.needed)+"/day (plan "+x.plan.daily_target+")"],
+      [p1(k.passPct), "Rules pass rate ("+fmt(k.passN)+" of "+fmt(k.valuesN)+" values; line "+Math.round(x.plan.pass_line*100)+"%)"],
+      [fmt(k.discOpen), "Discovery open (of "+fmt(k.discN)+")"], [fmt(k.exc), "Exceptions ("+fmt(k.excYes)+" accepted)"]]);
+    $("suFunHead").innerHTML = '<tr><th>Stage</th>' + x.funnel.map(function(f){ return '<th class="n">'+esc(f.name)+'</th>'; }).join("") + '</tr>';
+    $("suFunnel").innerHTML = x.stages.map(function(s, i){
+      return '<tr><td>'+esc(s)+'</td>' + x.funnel.map(function(f){
+        var st = i === f.stuck, tip = st ? ' title="Stuck here: '+fmt(f.drop)+' companies waiting"' : '';
+        return '<td class="n'+(st ? ' stuck' : '')+'"'+tip+'><span class="pctbar"><i style="width:'+f.pcts[i]+'%;background:#0077BB"></i></span>'+fmt(f.counts[i])+' <span class="hint">'+f.pcts[i]+'%</span></td>';
+      }).join("") + '</tr>';
+    }).join("") + '<tr><td class="hint">Stuck at</td>' + x.funnel.map(function(f){ return '<td class="n hint">'+(f.stuck > 0 && f.counts[0] ? esc(x.stages[f.stuck]) : '–')+'</td>'; }).join("") + '</tr>';
+    var line = x.plan.pass_line * 100, items = [];
+    x.passByBatch.forEach(function(r){
+      if (r.rules != null) items.push({label: r.b + " · rules", value: r.rules, color: "#0077BB", sub: r.rules >= line ? "at the line" : "below"});
+      if (r.spot != null) items.push({label: r.b + " · spot-check", value: r.spot, color: "#EE7733", sub: r.spot >= line ? "at the line" : "below"});
+    });
+    var below = x.passByBatch.filter(function(r){ return r.rules != null && r.rules < line; }).length;
+    $("suPassTitle").textContent = items.length ? below + " of " + x.passByBatch.filter(function(r){ return r.rules != null; }).length + " extracted batches are below the " + line + "% line on the automated rules" : "Validation pass rate by batch";
+    $("chSuPass").innerHTML = G.hbars(items, {max: 100, suffix: "%"});
+    $("lgSuPass").innerHTML = G.legend([{label: "Automated rules", color: "#0077BB"}, {label: "Spot-check sample", color: "#EE7733"}]);
+    $("suPass").innerHTML = rows(x.passByBatch.map(function(r){
+      return '<tr><td>'+esc(r.b)+'</td><td class="n">'+fmt(r.n)+'</td>'+pctCell(r.rules, line)+'<td class="n">'+fmt(r.review)+'</td><td class="n">'+fmt(r.fail)+'</td><td class="n">'+fmt(r.spotN)+'</td>'+pctCell(r.spot, line)+'<td>'+passReading(r)+'</td></tr>';
+    }), 8);
+    $("suFailTitle").textContent = x.failures.length ? "Top failure: " + x.failures[0].cat + " (" + fmt(x.failures[0].companies) + " companies)" : "Failure patterns";
+    $("chSuFail").innerHTML = G.hbars(x.failures.map(function(f){ return {label: f.cat, value: f.companies, color: /Wrong|Missing/.test(f.cat) ? "#CC3311" : "#0077BB", sub: fmt(f.values) + " values"}; }));
+    var cur = $("suFailSel").value;
+    fillSelect($("suFailSel"), [["", "All reasons"]].concat(x.failures.map(function(f){ return [f.cat, f.cat + " (" + f.companies + ")"]; })), cur);
+    var list = x.failRows.filter(function(r){ return !$("suFailSel").value || r.cat === $("suFailSel").value; });
+    $("suFailRows").innerHTML = rows(list.slice(0, 500).map(function(r){
+      return '<tr><td>'+esc(r.o)+'</td><td>'+esc(r.c)+'</td><td>'+esc(r.b)+'</td><td>'+esc(r.cat)+'</td><td class="n">'+fmt(r.n)+'</td><td class="iss">'+esc(r.ex)+'</td></tr>';
+    }), 6, "No failures for this selection.");
+    $("suFailExport").setAttribute("href", dataUrl(C.deliveryFailCSV(list)));
+  }
+  function throughputPage(){
+    var x = dl(); if (dlFail("tp", x)) return;
+    var k = x.kpis;
+    $("tpTitle").textContent = x.titles.throughput;
+    $("tpSub").textContent = fmt(x.plan.baseline_remaining) + " companies on " + x.baselineDate + ", due " + x.deadline + " at " + x.plan.daily_target + " a working day. " + x.burn.text + " The burn-down covers every batch; the Country filter does not apply to it.";
+    $("tpKpis").innerHTML = kmini([[fmt(k.remaining), "Remaining today"], [fmt(k.planNow), "Plan for today"], [(k.behind > 0 ? "+" : "") + fmt(k.behind), k.behind > 0 ? "Behind plan" : "Against plan (0 or less = on track)"],
+      [fmt(k.workLeft), "Working days left"], [k.needed == null ? "–" : fmt(k.needed), "Needed per working day"], [x.burn.proj ? x.burn.projShort : "–", "Projected finish"]]);
+    $("chTp").innerHTML = G.burn(x.burn.days, x.plan.deadline);
+    $("tpBatches").innerHTML = rows(x.batchPlan.map(function(b){
+      return '<tr><td>'+esc(b.b)+'</td><td>'+esc(b.window)+'</td><td class="n">'+(b.day ? b.day+' of '+b.len : '–')+'</td><td class="n">'+fmt(b.todo)+'</td><td class="n">'+fmt(b.perDay)+'</td><td class="n">'+(b.expected == null ? '–' : fmt(b.expected))+'</td><td class="n">'+fmt(b.done)+'</td><td>'+(b.cls ? '<span class="'+(b.cls === "good" ? "yes" : "no")+'">'+esc(b.status)+'</span>' : '<span class="hint">'+esc(b.status)+'</span>')+'</td></tr>';
+    }), 8);
+  }
+  function discoveryPage(){
+    var x = dl(); if (dlFail("dq", x)) return;
+    var dq = x.discovery, q = $("dqSearch").value.trim().toLowerCase();
+    if (!($("dqStatus").options || []).length) fillSelect($("dqStatus"), [["", "All statuses"]].concat(C.DISC_STATES.map(function(s){ return [s[0], s[1]]; })), "");
+    var st = $("dqStatus").value;
+    $("dqTitle").textContent = x.titles.discovery;
+    $("dqKpis").innerHTML = kmini([[fmt(dq.rows.length), "In the queue"]].concat(dq.counts.map(function(c){ return [fmt(c.n), c.label]; }))
+      .concat([[p1(dq.rows.length ? C.pct(dq.resolved, dq.rows.length) : null), "Resolved (found or not available)"]]));
+    $("chDq").innerHTML = G.bars(dq.counts.map(function(c){ return {label: c.label, value: c.n, color: c.color}; }));
+    $("dqNeed").innerHTML = rows(dq.byNeed.map(function(n){ return '<tr><td>'+esc(n.need)+'</td><td class="n">'+fmt(n.n)+'</td></tr>'; }), 2);
+    var list = dq.rows.filter(function(r){ return (!st || C.discState(r.status) === st) && (!q || (r.o+" "+r.owner+" "+r.c+" "+r.b).toLowerCase().indexOf(q) >= 0); });
+    $("dqTable").innerHTML = rows(list.map(function(r){
+      var s = C.DISC_STATES.filter(function(d){ return d[0] === C.discState(r.status); })[0] || ["", r.status, "#888888"];
+      return '<tr><td>'+esc(r.o)+'</td><td>'+esc(r.c)+'</td><td>'+esc(r.b)+'</td><td>'+esc(r.need)+'</td><td>'+esc(r.next)+'</td><td>'+(r.owner ? esc(r.owner) : '<span class="hint">Unassigned</span>')+'</td><td><span class="chip" style="background:#f3f2f1;border-left:4px solid '+s[2]+'">'+esc(s[1])+'</span></td><td>'+esc(r.updated)+'</td></tr>';
+    }), 8, "No companies match.");
+    $("dqExport").setAttribute("href", dataUrl(C.discoveryCSV(list)));
+  }
+  function exceptionsPage(){
+    var x = dl(); if (dlFail("xc", x)) return;
+    var ex = x.exceptions, q = $("xcSearch").value.trim().toLowerCase(), cur = $("xcCat").value;
+    fillSelect($("xcCat"), [["", "All categories"]].concat(ex.byCat.map(function(c){ return [c.cat, c.cat]; })), cur);
+    var cat = $("xcCat").value;
+    $("xcTitle").textContent = x.titles.exceptions;
+    $("xcSub").textContent = "Each company with no FY" + x.fy + " report, a document still missing, or a wrong document, with the reason. This is the list Allshares formally accepts on " + x.acceptance + ". Record acceptance in accuracy/inputs/delivery/exceptions.csv." + dlNote(x);
+    $("xcKpis").innerHTML = kmini([[fmt(ex.rows.length), "Exceptions"]].concat(ex.byCat.map(function(c){ return [fmt(c.n)+' <small>'+fmt(c.yes)+' accepted</small>', c.cat]; })));
+    var list = ex.rows.filter(function(e){ return (!cat || e.cat === cat) && (!q || (e.o+" "+e.reason+" "+e.c+" "+e.b).toLowerCase().indexOf(q) >= 0); });
+    $("xcTable").innerHTML = rows(list.map(function(e){
+      var acc = e.accepted === "yes" ? '<span class="yes">Accepted</span>' : e.accepted === "no" ? '<span class="no">Rejected</span>' : '<span class="hint">Pending</span>';
+      return '<tr><td>'+esc(e.o)+'</td><td>'+esc(e.c)+'</td><td>'+esc(e.b)+'</td><td>'+esc(e.cat)+'</td><td class="iss">'+esc(e.reason)+(e.note ? ' <i>('+esc(e.note)+')</i>' : '')+'</td><td class="hint">'+esc(e.source)+'</td><td>'+acc+'</td></tr>';
+    }), 7, "No exceptions match.");
+    $("xcExport").setAttribute("href", dataUrl(C.exceptionsCSV(list)));
+  }
+  function healthPage(){
+    var x = dl(); if (dlFail("ph", x)) return;
+    var h = x.health;
+    $("phTitle").textContent = x.titles.health;
+    $("phKpis").innerHTML = kmini([[fmt(h.runs), "Company runs" + (h.span ? " (" + h.span + ")" : "")], [fmt(h.failed)+' <small>'+p1(h.failedPct)+'</small>', "Failed runs"],
+      [fmt(h.scheduled.length), h.scheduled.length ? fmt(h.missed) + " scheduled runs missed" : "Scheduled runs (none recorded)"],
+      [fmt(h.used), "Firecrawl credits used"], [fmt(h.perRun), "Credits per company run"], [fmt(h.need), "Credits needed for the remaining " + fmt(x.kpis.remaining)],
+      [h.balance == null ? "–" : fmt(h.balance), h.balance == null ? "Credit balance (set it in accuracy/inputs/delivery.json)" : h.short ? "Credit balance: short by " + fmt(h.need - h.balance) : "Credit balance: covers what is needed"]]);
+    $("chPhRuns").innerHTML = G.stacked(h.days.map(function(d){ return d.short; }), [{name: "Completed", color: "#0077BB", values: h.days.map(function(d){ return d.ok; })}, {name: "Failed", color: "#CC3311", values: h.days.map(function(d){ return d.failed; })}]);
+    $("chPhCredits").innerHTML = G.bars(h.days.map(function(d){ return {label: d.short, value: Math.round(d.credits), color: "#009988"}; }));
+    $("phSched").innerHTML = rows(h.scheduled.map(function(s){
+      return '<tr><td>'+esc(s.run)+'</td><td>'+esc(s.b)+'</td><td>'+esc(s.at)+'</td><td>'+esc(s.started)+'</td><td>'+(s.bad ? '<span class="no">'+esc(s.status)+'</span>' : esc(s.status))+'</td><td class="n">'+esc(s.companies)+'</td><td class="n">'+esc(s.credits)+'</td></tr>';
+    }), 7, "No scheduled runs recorded. Add one row per planned run to accuracy/inputs/delivery/scheduled_runs.csv; a run past its time with no start is flagged as missed.");
+    $("phFailed").innerHTML = rows(h.failedRuns.map(function(r){ return '<tr><td>'+esc(r.name)+'</td><td>'+esc(r.date)+'</td><td class="iss">'+esc(r.error)+'</td></tr>'; }), 3, "No failed runs.");
+  }
+  ["suFailSel","dqStatus","xcCat"].forEach(function(id){ $(id).addEventListener("change", refresh); });
+  ["dqSearch","xcSearch"].forEach(function(id){ $(id).addEventListener("input", refresh); });
+
   function renderKStrip(vs){
     $("kstrip").innerHTML = C.kpis(M, vs).map(function(c){ return '<div class="kcard '+c.cls+'" data-k="'+c.key+'"><div class="v">'+c.v+'</div><div class="l">'+c.l+'</div><div class="d">'+esc(c.d)+'</div></div>'; }).join("");
   }
@@ -434,6 +989,12 @@
     var vs = view(), p = active(), t = C.titles(M, vs);
     if (p==="overview") overview(vs);
     if (p==="paycomp") paycomp(vs);
+    if (p==="notfound") notFound(vs);
+    if (p==="codata") dataFieldsPage("cd", "Company Data", vs);
+    if (p==="paydata") dataFieldsPage("pd", "Pay Data", vs);
+    if (p==="sources") sourcesPage(vs);
+    if (p==="coverage") coveragePage(vs);
+    if (p==="export") exportPage(vs);
     if (p==="countries") countries(vs);
     if (p==="fields") fields(vs);
     if (p==="empty") emptyPage(vs);
@@ -443,6 +1004,11 @@
     if (p==="ranges") rangesPage(vs);
     if (p==="trend") trend();
     if (p==="metrics") metricsPage(vs);
+    if (p==="standup") standupPage();
+    if (p==="throughput") throughputPage();
+    if (p==="discovery") discoveryPage();
+    if (p==="exceptions") exceptionsPage();
+    if (p==="health") healthPage();
     renderKStrip(vs);
     $("ovTitle").textContent = t.overview; $("pcTitle").textContent = t.paycomp; $("cnTitle").textContent = t.countries;
     $("fdTitle").textContent = t.fields; $("emTitle").textContent = t.empty; $("flTitle").textContent = t.failures; $("trTitle").textContent = t.trend;
@@ -454,6 +1020,12 @@
   function show(p){
     document.querySelectorAll(".tab").forEach(function(t){ t.setAttribute("aria-selected", String(t.getAttribute("data-p")===p)); });
     document.querySelectorAll(".page").forEach(function(s){ s.classList.toggle("on", s.id==="p-"+p); });
+    // the group button of the open page is marked and names the page
+    document.querySelectorAll(".navgrp").forEach(function(g){
+      var cur = g.querySelector('.tab[aria-selected="true"]');
+      g.classList.toggle("on", !!cur);
+      g.querySelector(".cur").textContent = cur ? cur.textContent : "";
+    });
     refresh();
   }
   function openCompany(key){ UI.company = key; UI.coMode = "all"; show("companies"); }
@@ -461,7 +1033,7 @@
   function setFilter(k, v){ F[k] = v; refresh(); }
 
   document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", function(){ show(t.getAttribute("data-p")); }); });
-  [["fCountry","country"],["fSource","source"],["fType","dtype"],["fCat","cat"],["fCompany","company"],["fStatus","status"]].forEach(function(x){
+  [["fCountry","country"],["fSource","source"],["fType","dtype"],["fCat","cat"],["fCompany","company"],["fStatus","status"],["fFill","fill"]].forEach(function(x){
     $(x[0]).addEventListener("change", function(){ setFilter(x[1], this.value); });
   });
   $("fClear").addEventListener("click", function(){ F = Object.assign({}, C.EMPTY_FILTERS); fillFilters(); refresh(); });
@@ -482,7 +1054,22 @@
     el.addEventListener("click", go);
     el.addEventListener("keydown", function(e){ if (e.key === "Enter") go(e); });
   }
-  ["p-fields","p-empty","p-companies"].forEach(delegate);
+  ["p-fields","p-empty","p-companies","p-sources","p-coverage","p-codata","p-paydata"].forEach(delegate);
+  (function(){
+    var el = $("p-notfound");
+    function go(e){
+      var t = e.target;
+      while (t && t !== el && !(t.getAttribute && (t.getAttribute("data-nf") !== null || t.getAttribute("data-nftog") || t.getAttribute("data-sort") || t.getAttribute("data-co") || t.getAttribute("data-field")))) t = t.parentNode;
+      if (!t || t === el) return;
+      if (t.getAttribute("data-co")) openCompany(t.getAttribute("data-co"));
+      else if (t.getAttribute("data-field")) openField(t.getAttribute("data-field"));
+      else if (t.getAttribute("data-nftog")){ var id = t.getAttribute("data-nftog"); UI.nfOpen[id] = t.getAttribute("aria-expanded") !== "true"; refresh(); }
+      else if (t.getAttribute("data-nf") !== null){ var key = t.getAttribute("data-nf"), cur = UI.nfSel && selKey(UI.nfSel, UI.nfSel.c); UI.nfSel = key === cur ? null : parseSel(key); refresh(); }
+      else { var k = t.getAttribute("data-sort"), s = UI.nfSort; s.dir = s.k === k ? -s.dir : (k === "label" || k === "rank" ? 1 : -1); s.k = k; refresh(); }
+    }
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", function(e){ if (e.key === "Enter") go(e); });
+  })();
   (function(){
     var el = $("p-steps");
     function go(e){
@@ -507,10 +1094,19 @@
 
   fillFilters();
   buildSchemaTables();
+  // Sortable tables and the notes bar (core/report-ui.js); skipped where there is no real DOM (tests).
+  if (window.ReportUI && document.body && document.body.appendChild){
+    window.ReportUI.sortable(document.querySelector("main"));
+    window.ReportUI.navMenus(document.querySelector(".navgroups"));
+    window.ReportUI.mountNotes({context: function(){ return pageName() + " · filters: " + C.filterText(F, M); },
+                                onChange: function(){ if (active() === "export") refresh(); }});
+  }
   refresh();
   window.__REPORT = {model: M, filters: function(){ return F; }, setFilter: setFilter, show: show, refresh: refresh,
     openCompany: openCompany, openField: openField, openStep: openStep, setStepMode: function(m){ UI.step.mode = m; refresh(); }, previewText: previewText, applyPending: applyPending, resetAll: resetAll,
-    setRanges: function(o){ Object.assign(UI.ranges, o); refresh(); }};
+    setRanges: function(o){ Object.assign(UI.ranges, o); refresh(); },
+    selectNotFound: function(sel){ UI.nfSel = sel; refresh(); }, exportText: function(){ return exText; },
+    delivery: function(){ return C.delivery(M, F.country); }};
 })();
 </script>
 </body></html>

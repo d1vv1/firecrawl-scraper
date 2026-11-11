@@ -129,9 +129,33 @@
     return s + '</svg>';
   }
 
+  // Burn-down: remaining companies per day (actual, plan, projection) with the deadline marked.
+  function burn(days, deadline) {
+    var W = 520, H = 230, pl = 44, pb = 30, pt = 12, pr = 14;
+    if (!days.length) return empty(W, H);
+    var max = Math.max(1, Math.max.apply(null, days.map(function (d) { return Math.max(d.plan, d.actual || 0); })));
+    var n = days.length, step = n > 1 ? (W - pl - pr) / (n - 1) : 0;
+    function X(i) { return pl + i * step; }
+    function Y(v) { return pt + (H - pt - pb) * (1 - v / max); }
+    var s = axis('<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">', W, pl, Y(0), max);
+    function poly(key, color, dash, width) {
+      var pts = [];
+      days.forEach(function (d, i) { if (d[key] != null) pts.push(X(i) + "," + Y(d[key])); });
+      return pts.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="' + width + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' points="' + pts.join(" ") + '"/>' : "";
+    }
+    var di = days.map(function (d) { return d.d; }).indexOf(deadline);
+    if (di >= 0) s += '<line x1="' + X(di) + '" x2="' + X(di) + '" y1="' + pt + '" y2="' + Y(0) + '" stroke="#CC3311" stroke-dasharray="3 3"/><text x="' + (X(di) - 4) + '" y="' + (pt + 10) + '" text-anchor="end" font-size="10" fill="#CC3311">deadline</text>';
+    s += poly("plan", "#888888", "6 4", 2) + poly("proj", "#0077BB", "2 4", 2) + poly("actual", "#0077BB", "", 2.6);
+    days.forEach(function (d, i) {
+      if (d.actual != null) s += '<circle cx="' + X(i) + '" cy="' + Y(d.actual) + '" r="3" fill="#0077BB"><title>' + esc(d.short) + ': ' + fmt(d.actual) + ' remaining (plan ' + fmt(d.plan) + ')</title></circle>';
+      if (i % Math.ceil(n / 9) === 0) s += '<text x="' + X(i) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="10" fill="' + SOFT + '">' + esc(d.short) + '</text>';
+    });
+    return s + '</svg>';
+  }
+
   function legend(items) {
     return items.map(function (i) { return '<span><i style="background:' + i.color + '"></i>' + esc(i.label) + '</span>'; }).join("");
   }
 
-  return {esc: esc, bars: bars, hbars: hbars, stacked: stacked, stackedH: stackedH, pie: pie, line: line, legend: legend};
+  return {esc: esc, bars: bars, hbars: hbars, stacked: stacked, stackedH: stackedH, pie: pie, line: line, burn: burn, legend: legend};
 });
