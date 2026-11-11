@@ -90,6 +90,23 @@ def clean_name(legal_name: str) -> str:
     return " ".join(kept or tokens)
 
 
+# A share class or listing line after the company's name in a listing ("SCA A",
+# "Besqab Pref B", "Corem Property D", "Alvotech SDB", "BayWa AG na o.N."): not part of
+# the name a register, Wikidata or a web search knows the company by.
+_SHARE_CLASS = re.compile(
+    r"\s+(?:pref(?:erence)?(?:\s+[a-d])?|(?:ser(?:ies)?|class)\.?\s*[a-d]|sdb"
+    r"|(?:vink\.?\s*)?na\s+o\.?\s*n\.?|o\.?\s*n\.?|[a-d])\s*$", re.I)
+
+
+def without_share_class(name: str) -> str:
+    """'SCA A' -> 'SCA', 'Besqab Pref B' -> 'Besqab', 'BayWa AG na o.N.' -> 'BayWa AG'."""
+    while True:
+        short = _SHARE_CLASS.sub("", name).strip()
+        if short == name or not short:
+            return name
+        name = short
+
+
 def slugify(legal_name: str) -> str:
     """'Unilever PLC' -> 'unilever-plc' (used for cache and output file names)."""
     return re.sub(r"[^a-z0-9]+", "-", fold(legal_name, collapse_digraphs=False)).strip("-")

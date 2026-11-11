@@ -261,8 +261,11 @@ def pick_match(legal_name: str, items: list[dict], country: str | None = None) -
     tiers = []
     if country:
         tiers.append(("exact name match", [r for r in exact if _in_country(r, country)]))
-    tiers.append(("exact name match" + (" (registered outside " + country.upper() + ")"
-                                        if country else ""), exact))
+    if not country or len("".join(name_key(legal_name).base)) > 4:
+        # Abroad only for a real name (Stora Enso Oyj, FI, listed in Sweden): an acronym
+        # like "SCA" is an exact name for unrelated companies everywhere (SCA GmbH, AT)
+        tiers.append(("exact name match" + (" (registered outside " + country.upper() + ")"
+                                            if country else ""), exact))
     tiers.append(("partial name match", [r for r in partial if _in_country(r, country)]
                   if country else partial))
 

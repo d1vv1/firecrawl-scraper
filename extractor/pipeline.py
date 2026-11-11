@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import httpx
 
 from . import llm
-from .config import CACHE_DIR, OUTPUT_DIR, clean_name, load_settings, slugify
+from .config import CACHE_DIR, OUTPUT_DIR, clean_name, load_settings, slugify, without_share_class
 from .extract import extract, iso_period_end, money_with_full_value
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .report_finder import ReportNotFoundError, find_report, reports_linked_from
@@ -333,6 +333,12 @@ def run(legal_name: str, website: str | None = None, report_url: str | None = No
     LEI is found. Pass `fc` to read its credit meter even if the run fails."""
     # Step 1
     slug = slugify(company_id) if company_id else slugify(legal_name)
+    if without_share_class(legal_name) != legal_name:
+        # "SCA A", "Besqab Pref B": registers, Wikidata and the web know the company,
+        # not the listing line
+        log.info("Step 1: %r is a share class; searching for %r", legal_name,
+                 without_share_class(legal_name))
+        legal_name = without_share_class(legal_name)
     clean = clean_name(legal_name)
     country = country.strip().upper() if country else None
     log.info("Step 1: %r -> clean name %r, slug %r, country %s", legal_name, clean, slug, country)

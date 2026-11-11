@@ -95,11 +95,23 @@ def markdown_to_pages(md: str) -> list[Page]:
 
 # --- download -----------------------------------------------------------------
 
+def _tls():
+    """Certificates checked against the operating system's store (truststore), which
+    completes a chain the server sends without its intermediate certificate, as a
+    browser does (Commerzbank, Bilfinger). Python's own bundle (certifi) can't."""
+    try:
+        import ssl
+        import truststore
+        return truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    except ImportError:
+        return True
+
+
 @retry(retry=retry_if_exception_type(httpx.TransportError),
        stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=20), reraise=True)
 def _httpx_get(url: str) -> tuple[int, str | None, bytes]:
     with httpx.Client(headers=BROWSER_HEADERS, follow_redirects=True,
-                      timeout=TIMEOUT_S, http2=True) as client:
+                      timeout=TIMEOUT_S, http2=True, verify=_tls()) as client:
         r = client.get(url)
         return r.status_code, r.headers.get("content-type"), r.content
 
@@ -148,6 +160,8 @@ def download(url: str) -> tuple[bytes, str | None]:
             log.info("GET %s -> %s %s, %d bytes (curl_cffi)", url, status, ct, len(body))
         except ImportError:
             log.warning("curl_cffi not installed; cannot retry with browser TLS fingerprint")
+        except Exception as e:  # noqa: BLE001 - curl errors: the file is unusable, not the run
+            raise DownloadError(f"Download failed for {url}: {str(e)[:200]}") from e
     if status != 200:
         raise DownloadError(f"Download failed: HTTP {status} for {url}")
     return body, ct

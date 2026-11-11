@@ -1,4 +1,5 @@
 """LEI lookup and website routing (no network: GLEIF/Wikidata/Firecrawl are faked)."""
+import httpx
 
 import pytest
 
@@ -271,3 +272,35 @@ def test_lei_by_isin_or_register_number(monkeypatch):
     monkeypatch.setattr(lei, "_get", lambda path, params: {"data": [rec, {**rec, "id": "OTHER000000000000000", "attributes": {
         **rec["attributes"], "lei": "OTHER000000000000000"}}]})
     assert lei.find_lei_by_id(isin="DK0062498333")[0] is None             # ambiguous: no answer
+
+
+def test_an_acronym_is_not_matched_abroad():
+    gleif = [_item("529900MSDUNB4VU7SO55", "SCA GmbH", "AT"),
+             _item("549300ZRDMYJ5HKS0B48", "Svenska Cellulosa Aktiebolaget SCA", "SE")]
+    res = pick_match("SCA", gleif, "SE")
+    assert res.record.legal_name == "Svenska Cellulosa Aktiebolaget SCA"    # not SCA GmbH
+    assert pick_match("SCA", gleif[:1], "SE").record is None
+    stora = [_item("7437000ZP669LKUTZ738", "Stora Enso Oyj", "FI")]
+    assert pick_match("Stora Enso", stora, "SE").record.country == "FI"    # a real name may be
+
+
+def test_a_share_class_is_not_part_of_the_name():
+    from extractor.config import without_share_class as w
+    assert [w(n) for n in ("SCA A", "Besqab Pref B", "Emilshus Pref", "Corem Property D",
+                           "Alvotech SDB", "BAYWA AG VINK.NA O.N.", "BILFINGER SE O.N.")] == \
+        ["SCA", "Besqab", "Emilshus", "Corem Property", "Alvotech", "BAYWA AG", "BILFINGER SE"]
+    assert [w(n) for n in ("Novo Nordisk A/S", "UIE", "Group D Holding", "A")] == \
+        ["Novo Nordisk A/S", "UIE", "Group D Holding", "A"]
+
+
+def test_a_browser_download_that_fails_is_an_unusable_file(monkeypatch):
+    import pytest
+    from extractor import scraper
+    def refused(url):
+        raise httpx.ConnectError("certificate verify failed")
+    def curl_fails(url):
+        raise RuntimeError("curl: (60) SSL certificate problem")
+    monkeypatch.setattr(scraper, "_httpx_get", refused)
+    monkeypatch.setattr(scraper, "_impersonated_get", curl_fails)
+    with pytest.raises(scraper.DownloadError):        # the next candidate is tried, the run goes on
+        scraper.download("https://example.com/ar.pdf")
