@@ -4,6 +4,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 16 | No way to run companies for only one field or a few fields; the input's `run_required` (Pay Data / Company Data) is ignored | open | about a day |
 | 15 | The annual report found only by the document step isn't used as the report: no fiscal year, revenue or total assets, undated pay | open | about half a day |
 | 14 | HTML annual reports (ESEF) converted with table rows run together and letters lost to private font codes | fixed | — |
 | 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
@@ -19,6 +20,23 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 16. Runs always collect every field — open
+
+*Noted 11 November 2026.*
+
+**Now.** `python -m extractor.datapoints` always collects all data points for each company: the free APIs, the report search and read, executive pay, and the document fallback for whatever is still missing. Options choose companies (`--only`, `--limit`, `--redo`, `--outdated`) and limit spending (`--no-docs`, `--doc-credits`, `--max-run-credits`), but none chooses fields. The input's `run_required` column ("Pay Data", "Company Data", "Company and Pay Data", from the tracker) is read by nobody: a company that only needs pay still has its company fields collected, and the reverse.
+
+**Why it matters.**
+- Topping up one field across many companies (headcount, `lti_target`, the exchange segment) costs a full run per company today.
+- After a fix to one field, `--redo` re-runs everything for every company, and the AI's answers for unrelated fields can move between runs (issue 5).
+- The tracker already says which half each company needs; following it would skip work and credits.
+
+**Change (about a day).**
+1. `--fields revenue,headcount` or groups (`--fields pay`, `--fields company`, `--fields ownership`). The gap list (`gap_list`), the fields asked of the AI (`wanted_fields`) and the document fallback are limited to them. Steps a field doesn't need are skipped: the pay step without pay fields, the report search when every field asked for comes from an API, and the report already found is reused from the cache when there is one (no credits).
+2. Merge, not replace: the run updates only the chosen fields in the company's saved rows (`output/datapoints/<id>.json`); the other rows, and their scraper version, stay as they were.
+3. Follow `run_required` by default: "Pay Data" runs the pay fields only, "Company Data" the company fields only; an option turns this off.
+4. A dry run shows, per company, the steps that would run and their worst-case credits.
 
 ## 15. An annual report found only by the document step isn't used as the report — open
 
