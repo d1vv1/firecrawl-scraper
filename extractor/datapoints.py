@@ -2160,9 +2160,17 @@ def main(argv: list[str] | None = None) -> int:
           + (f" with {selection.label(cli_fields)}" if cli_fields is not None else ""))
     opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits, "apis": not args.no_apis,
             "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
+    problems = {t.company.company_id: input_problems(t) for t in todo}
     if args.dry_run:
-        dry_run(todo, opts)
+        dry_run(todo, opts, problems)
         return 0
+    flagged = sum(1 for p in problems.values() if p)
+    if flagged:
+        print(f"Input: {flagged} companies with a problem in the input (--dry-run lists them)")
+    worst = sum(worst_case(t, opts) for t in todo)
+    if args.max_run_credits is None and worst:
+        print(f"No --max-run-credits cap: this run could use up to {worst} Firecrawl credits")
+    code_at_start = code_fingerprint()
 
     workers = max(1, args.workers)
     code = 0
@@ -2176,6 +2184,7 @@ def main(argv: list[str] | None = None) -> int:
                 res = process(t, opts)
                 budget.spent += res.get("credits", 0)
                 code = _report(i, len(todo), t, res) or code
+                code_at_start = warn_if_code_changed(code_at_start)
                 if res["kind"] in ("fatal", "offline"):
                     break
                 write_csv(everyone, args.out)
@@ -2203,6 +2212,7 @@ def main(argv: list[str] | None = None) -> int:
                             res = {"kind": "error", "error": f"worker crashed: {e}"}
                         budget.spent += res.get("credits", 0)
                         code = _report(i, len(todo), t, res) or code
+                        code_at_start = warn_if_code_changed(code_at_start)
                         write_csv(everyone, args.out)
     n = write_csv(everyone, args.out)
     print(f"\n{n} rows: {args.out}")
@@ -2237,9 +2247,11 @@ class Budget:
         return self.spent + reserved + worst_case(t, opts) <= self.cap
 
 
-def dry_run(todo: list[Target], opts: dict) -> None:
-    """--dry-run: per company, the fields asked for, the steps and their worst case."""
+def dry_run(todo: list[Target], opts: dict, problems: dict | None = None) -> None:
+    """--dry-run: per company, the fields asked for, the steps and their worst case, and
+    any problem in its input."""
     total = 0
+    problems = problems or {}
     for i, t in enumerate(todo, 1):
         steps = plan(t, opts)
         credits = sum(n for _, n in steps)
@@ -2249,8 +2261,54 @@ def dry_run(todo: list[Target], opts: dict) -> None:
               + (f" (run_required: {t.run_required})" if t.run_required else ""))
         print("    " + "; ".join(f"{s} ({n} credits)" if n else s for s, n in steps)
               + f"; worst case {credits} credits")
+        for p in problems.get(t.company.company_id, []):
+            print(f"    INPUT: {p}")
+    flagged = sum(1 for p in problems.values() if p)
     print(f"\nDry run: {len(todo)} companies, at most {total} Firecrawl credits "
-          f"(caps per company; most companies spend far less)")
+          f"(caps per company; most companies spend far less)"
+          + (f"; {flagged} with an input problem (INPUT lines)" if flagged else ""))
+
+
+# Hosts whose links need a login: the tool can't open them and searches instead (Wave 1's
+# Google Drive links)
+LOGIN_HOSTS = ("drive.google.com", "docs.google.com", "sharepoint.com", "onedrive.live.com",
+               "1drv.ms", "dropbox.com", "box.com")
+
+
+def input_problems(t: Target) -> list[str]:
+    """What in a company's input row will cost it: a report link the tool can't open, or no
+    LEI and no ISIN (the company is then found by name only, and an official filing can't
+    be looked up by its LEI)."""
+    out = []
+    for label, url in (("annual_report_url", t.annual_report_url),
+                       ("remuneration_report_url", t.remuneration_report_url)):
+        host = urlparse(url or "").netloc.lower()
+        if url and any(host == h or host.endswith("." + h) for h in LOGIN_HOSTS):
+            out.append(f"{label} needs a login ({host}): give a direct link to the PDF")
+    if not t.company.lei and not t.isin:
+        out.append("no LEI and no ISIN: found by name only")
+    return out
+
+
+def code_fingerprint() -> str:
+    """The code and prompts a run started with (their files' sizes and times)."""
+    root = Path(__file__).resolve().parent
+    files = sorted(list(root.glob("*.py")) + list((root.parent / "prompts").glob("*.md")))
+    return hashlib.sha1("|".join(f"{f.name}:{f.stat().st_size}:{f.stat().st_mtime_ns}"
+                                 for f in files).encode()).hexdigest()
+
+
+def warn_if_code_changed(at_start: str) -> str:
+    """A run whose code or prompts change while it runs mixes versions: companies after the
+    change ran (partly) with the new code, and a worker can load a half-edited module (FY2025
+    run 5: two companies failed on an import error). Warn once; returns the new fingerprint."""
+    now = code_fingerprint()
+    if now != at_start:
+        msg = ("WARNING: the code or prompts changed while this run is going; the companies "
+               "that follow run with the changed code. Don't edit during a run.")
+        print(msg, flush=True)
+        log.warning(msg)
+    return now
 
 
 def _report(i: int, n: int, t: Target, res: dict) -> int:

@@ -313,6 +313,33 @@ Each improvement is three lines:
 - **Now:** the second part reuses the first one's copy.
 - **Example:** Tallink's 177-page report: no second 4-minute wait.
 
+### Before the DACH runs
+
+#### 16. One safe command to merge runs
+- **Before:** runs were merged into the big combined file with throwaway scripts. Twice today that went wrong (runs mixed up; 74 values wiped).
+- **Now:** `python -m extractor.combine` merges a run in: each company's rows replace its old ones, a field the run skipped never wipes a value, and the checks come along.
+- **Example:** three people each run 125 companies and send their files; one command merges all three.
+
+#### 17. Copy-protected PDFs can be read
+- **Before:** some PDFs say "copying text not allowed". The table reader obeyed and skipped their pay tables.
+- **Now:** the tool makes an unlocked copy and reads that.
+- **Example:** 9 pay tables at Branicks, Cancom, Canal+ and Jinhui became readable.
+
+#### 18. Input problems shown before the run
+- **Before:** a bad input row was only noticed after the run had failed on it.
+- **Now:** `--dry-run` lists, per company, links that need a login (Google Drive, SharePoint, OneDrive) and companies with no LEI or ISIN.
+- **Example:** Wave 1's Google Drive links would have been flagged before spending credits.
+
+#### 19. A warning when no credit cap is set
+- **Before:** a run without `--max-run-credits` could spend without limit, silently.
+- **Now:** the run says how many credits it could use when no cap is set.
+- **Example:** "No --max-run-credits cap: this run could use up to 1,875 Firecrawl credits".
+
+#### 20. A warning if the code changes during a run
+- **Before:** editing the code while a run was going broke two companies (Bell Food, SED Energy) without any warning.
+- **Now:** the run notices the change and prints a warning.
+- **Example:** "WARNING: the code or prompts changed while this run is going".
+
 ### Runs done today
 - **Run 4 (19 companies, 52 credits):** 15 now read their 2025 report.
 - **Run 5 (31 companies without a report, 181 credits):** 12 now have one. The other 19 still can't be found by the search; that needs separate work.

@@ -333,6 +333,23 @@ rebuilt from the run (`--no-dashboard` turns this off). You get:
 The dashboard compares each run with the one before it. To rebuild it for any CSV:
 `python -m extractor.dashboard output/nordic_uk_10_datapoints.csv`. More in `Dashboard/README.md`.
 
+**Merging runs into one file** (several people, several machines):
+
+```bash
+python -m extractor.combine output/run7_datapoints.csv output/run8_datapoints.csv --into output/fy2025_runs_datapoints.csv
+```
+
+Each run's companies replace theirs in the combined file (a new company is added), and
+their checks come along from `<run>_checks.csv`. A row a run did not collect ("not
+collected: this run asked only for pay") never replaces a value. The combined file is then
+scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's CSV and its
+`_checks.csv` to whoever merges.
+
+**Before and during a run:** `--dry-run` also lists input problems per company (a report
+link that needs a login, such as Google Drive or SharePoint; no LEI and no ISIN). A run
+without `--max-run-credits` says how many credits it could use. A run warns if the code or
+prompts change while it is going: don't edit during a run.
+
 A file that combines runs made on several machines (`fy2025_runs_datapoints.csv`) can't be
 scored again in full here: a quote whose source isn't cached would go unchecked. Use
 `dashboard.build(csv, rescore=True)`: every value is scored again, but a check that needs a

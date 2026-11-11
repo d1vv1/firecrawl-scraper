@@ -108,6 +108,32 @@ def clean(cells: list[list[str]]) -> list[list[str]]:
     return [[r[i] if i < len(r) else "" for i in keep] for r in rows]
 
 
+def _read_page(camelot, pdf: Path, page: int):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return camelot.read_pdf(str(pdf), pages=str(page), flavor="stream")
+
+
+def unlocked(pdf: Path) -> Path | None:
+    """A copy of a PDF without its permission flags ("no text extraction"), which Camelot
+    honours although the text is readable; cached next to the PDF. None when it can't be
+    made (a PDF that needs a password to open)."""
+    out = pdf.with_name(pdf.stem + "_unlocked.pdf")
+    if out.exists():
+        return out
+    try:
+        import pymupdf
+        with pymupdf.open(pdf) as doc:
+            if doc.needs_pass:
+                return None
+            doc.save(out, encryption=pymupdf.PDF_ENCRYPT_NONE)
+    except Exception as e:  # noqa: BLE001 - the AI's reading stays
+        log.warning("Pay tables: could not unlock %s: %s", pdf.name, str(e)[:150])
+        return None
+    log.info("Pay tables: %s forbids text extraction; reading an unlocked copy", pdf.name)
+    return out
+
+
 def read_grids(pdf: Path, pages: list[int]) -> list[Grid]:
     """Camelot's stream-mode grids of these pages that hold enough figures to be a pay
     table. Stream mode finds columns from the gaps between text, so it also turns prose
@@ -120,13 +146,20 @@ def read_grids(pdf: Path, pages: list[int]) -> list[Grid]:
     out = []
     for page in pages:
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                tables = camelot.read_pdf(str(pdf), pages=str(page), flavor="stream")
+            tables = _read_page(camelot, pdf, page)
         except Exception as e:  # noqa: BLE001 - a page Camelot can't read keeps the AI's reading
-            log.warning("Pay tables: Camelot failed on page %d of %s: %s", page, pdf.name,
-                        str(e)[:150])
-            continue
+            if "extraction is not allowed" not in str(e) or not (open_copy := unlocked(pdf)):
+                log.warning("Pay tables: Camelot failed on page %d of %s: %s", page, pdf.name,
+                            str(e)[:150])
+                continue
+            # a PDF whose permissions forbid copying text (Jinhui): its unlocked copy
+            pdf = open_copy
+            try:
+                tables = _read_page(camelot, pdf, page)
+            except Exception as e2:  # noqa: BLE001
+                log.warning("Pay tables: Camelot failed on page %d of %s: %s", page, pdf.name,
+                            str(e2)[:150])
+                continue
         for t in tables:
             cells = clean(t.df.values.tolist())
             figures = sum(is_figure(c) for r in cells for c in r)
