@@ -53,9 +53,15 @@ def test_subsidiary_report_named_after_another_country_is_excluded():
 class FakeFC:
     """map/scrape responses by call order; records calls; optional credit cap."""
 
-    def __init__(self, maps, scrape_links=(), cap=None):
+    def __init__(self, maps, scrape_links=(), cap=None, search_results=()):
         self.maps, self.scrape_links, self.calls = list(maps), list(scrape_links), []
         self.spent, self.cap = 0, cap
+        self.search_results = list(search_results)
+
+    def search(self, query, limit):
+        self._pay(f"search:{query}")
+        self._pay("search (2nd credit)")
+        return list(self.search_results)
 
     def _pay(self, kind):
         if self.cap is not None and self.spent + 1 > self.cap:
@@ -78,7 +84,9 @@ def test_stale_pdf_triggers_ir_page_scrape_which_finds_current_report():
                 scrape_links=[f"https://storage.mfn.se/abc/aak-annual-report-{THIS_YEAR - 1}.pdf"])
     r = rf.find_report("https://aak.com", fc, country="SE", company_name="AAK AB")
     assert r.url.endswith(f"aak-annual-report-{THIS_YEAR - 1}.pdf")
-    assert fc.calls[:2] == ["map:annual report", "scrape:https://aak.com/investors/reports-and-presentations/"]
+    # the web search comes first (it finds nothing here), then the investor page
+    assert fc.calls[0] == "map:annual report" and fc.calls[1].startswith("search:")
+    assert "scrape:https://aak.com/investors/reports-and-presentations/" in fc.calls
 
 
 def test_fresh_pdf_stops_after_one_map():

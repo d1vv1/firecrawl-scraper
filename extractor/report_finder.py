@@ -16,10 +16,11 @@ from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 from urllib.parse import unquote, urljoin, urlparse
 
-from .config import MAP_LIMIT, fold
+from .config import MAP_LIMIT, clean_name, fold, without_share_class
 from firecrawl import FirecrawlError
 
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
+from .website import is_blocked, registered_domain
 
 log = logging.getLogger(__name__)
 
@@ -43,8 +44,10 @@ KEEP_KEYWORDS = [
     ("annual-financial-report", "en", 2), ("financial-statements", "en", 2),
     ("annual-and-sustainability", "en", 2),
     ("annual-review", "en", 1),
+    ("financial-report", "en", 1),           # Bucher: "Financial report 2025" (statements)
     ("geschäftsbericht", "de", 2), ("konzernabschluss", "de", 2),
-    ("jahresbericht", "de", 1), ("konzernbericht", "de", 1),
+    ("jahresbericht", "de", 1), ("konzernbericht", "de", 1), ("finanzbericht", "de", 1),
+    ("rapport-de-gestion", "fr", 2), ("rapport-financier", "fr", 1),   # Swiss French
     ("årsredovisning", "sv", 2), ("års-och-hållbarhetsredovisning", "sv", 2),
     ("årsrapport", "no/da", 2), ("årsberetning", "no", 1),
     ("årsregnskap", "no", 1), ("årsregnskab", "da", 1),
@@ -62,7 +65,7 @@ _GB_FILE_RE = re.compile(r"(?<![a-z0-9])gb-(?:[a-z0-9]+-)?20\d{2}(?![0-9])")
 
 # Documents that are never the annual report.
 TYPE_EXCLUDES = [
-    "half-year", "halfyear", "interim", "quarter", "q1", "q2", "q3", "q4", "h1", "9m",
+    "half-year", "halfyear", "semi-annual", "semiannual", "interim", "quarter", "q1", "q2", "q3", "q4", "h1", "9m",
     "summary", "presentation", "factsheet", "capital-markets", "tax-report",
     "impact-report", "green-bond", "modern-slavery", "bulletin", "release",
     "parent-company",
@@ -417,7 +420,144 @@ def _looks_like_report_page(url: str) -> bool:
                 and not re.search(r"(?<![a-z])(reports|archive|arkiv|arkisto)(?![a-z])", name))
 
 
-def find_report(website_url: str, fc: FirecrawlClient, country: str | None = None,
+# --- web search for the report (DACH: reports on investor sites and microsites) -----------
+
+WEB_SEARCH_LIMIT = 10                 # results per search: 2 credits
+# Name words that don't identify a company ("Bell Food Group AG" -> bell, food)
+_GENERIC_NAME_WORDS = {"group", "holding", "holdings", "industries", "industry", "international",
+                       "company", "companies", "corporation", "the", "and", "und", "et", "de",
+                       "du", "la", "le", "des", "der", "die", "das", "tech", "technologies",
+                       "technology", "global", "services", "solutions", "systems", "na", "on",
+                       "o", "n", "se", "sa", "nv", "plc", "ag", "ab", "asa", "as", "oyj", "inc"}
+# Sites that collect other companies' reports: never the company's own copy
+_REPORT_AGGREGATORS = ("annualreports.com", "sustainabilityreports.com", "companiesmarketcap.com",
+                       "scribd.com", "publicnow.com", "quartr.com", "marketscreener.com",
+                       "stockopedia.com", "eqs-news.com", "alphaspread.com", "perplexity.ai",
+                       "yahoo.com", "ft.com", "sec.gov", "heyzine.com", "tracenable.com")
+_DOWNLOAD_HINTS = ("dumpfile", "/download/", "download=", "getfile", "file=", "/files/", "blob")
+
+
+def search_name(company_name: str | None) -> str:
+    """The name a search knows the company by: no listing line ("ADIDAS AG NA O.N.",
+    "Porsche AG VZO"), no legal form, no dangling "and" ("Henkel AG & Co. KGaA")."""
+    name = clean_name(without_share_class(company_name or ""))
+    return re.sub(r"(?:\s+and)+$", "", name).strip()
+
+
+def name_tokens(company_name: str | None) -> set[str]:
+    """The words that identify a company in a host or file name ("Bell Food Group AG" ->
+    {bell, food}; "BKW AG" -> {bkw})."""
+    words = re.findall(r"[a-z0-9]+", fold(search_name(company_name)))
+    return {w for w in words if len(w) >= 3 and w not in _GENERIC_NAME_WORDS}
+
+
+def host_names_company(url: str, company_name: str | None) -> bool:
+    """The host carries every word of the company's name (report.adidas-group.com for
+    adidas; not a file server)."""
+    tokens = name_tokens(company_name)
+    flat_host = re.sub(r"[^a-z0-9]", "", fold(urlparse(url).netloc.lower()))
+    return bool(tokens) and all(t in flat_host for t in tokens)
+
+
+def own_document(url: str, company_name: str | None, website_url: str | None) -> bool:
+    """Is a search result the company's own document? On the company's own site; or on a
+    host carrying every word of its name (adidas-group.com, bellfoodgroup.com, not
+    bellfg.com.au); or a PDF on a file server whose file name carries them
+    (a.storyblok.com/.../essentra-ar2025.pdf). Never a site that collects others' reports."""
+    host = urlparse(url).netloc.lower()
+    domain = registered_domain(host)
+    if any(domain == a or host.endswith("." + a) for a in _REPORT_AGGREGATORS) or is_blocked(host):
+        return False
+    if website_url and domain == registered_domain(urlparse(website_url).netloc.lower()):
+        return True
+    tokens = name_tokens(company_name)
+    if not tokens:
+        return False
+    flat_host = re.sub(r"[^a-z0-9]", "", fold(host))
+    if all(t in flat_host for t in tokens):
+        return True
+    name = re.sub(r"[^a-z0-9]", "", fold(unquote(urlparse(url).path.rsplit("/", 1)[-1])))
+    return is_pdf_url(url) and all(t in name for t in tokens)
+
+
+def _download_link(url: str) -> bool:
+    """A file download that doesn't end in .pdf (Bucher's "index.php?eID=dumpFile&f=4706"):
+    taken for a PDF, the download shows what it is."""
+    page_ext = PurePosixPath(urlparse(url).path).suffix.lower() in (".html", ".htm")
+    return any(h in url.lower() for h in _DOWNLOAD_HINTS) and not page_ext
+
+
+# "essentra-ar2025-interactive.pdf", "annual-report-adidas-ar25.pdf": AR plus the year
+_AR_YEAR = re.compile(r"(?<![a-z0-9])ar[-_]?(?:20)?(\d{2})(?![0-9])")
+
+
+def titled_candidate(url: str, title: str, allowed: frozenset[str]) -> ReportCandidate:
+    """A linked document judged by its URL, else by its title or link text when the URL
+    says nothing or is misleading (a CDN hash; Arbonia's PDF in a folder named "annual and
+    half-year reports"), else by an "ar2025" in its file name."""
+    is_pdf = is_pdf_url(url) or _download_link(url)
+    by_url = classify(url, allowed)
+    if by_url.kept:
+        by_url.is_pdf = by_url.is_pdf or is_pdf
+        return by_url
+    if title:
+        slug = re.sub(r"[^\w]+", "-", title).strip("-")
+        c = classify(f"https://{urlparse(url).netloc}/{slug}{'.pdf' if is_pdf else ''}", allowed)
+        if c.kept:
+            c.url, c.is_pdf = url, is_pdf
+            c.year = c.year or extract_year(url)
+            return c
+    name = fold(unquote(urlparse(url).path.rsplit("/", 1)[-1]))
+    m = _AR_YEAR.search(name) if is_pdf else None
+    if m:
+        c = classify(f"https://{urlparse(url).netloc}/annual-report-20{m.group(1)}.pdf", allowed)
+        if c.kept:
+            c.url, c.is_pdf = url, True
+            return c
+    return by_url
+
+
+def search_result_candidate(r: dict, allowed: frozenset[str]) -> ReportCandidate:
+    """A web search result as a candidate (titled_candidate, by its title)."""
+    return titled_candidate(r["url"], (r.get("title") or "").strip(), allowed)
+
+
+def downloads_page(results: list[dict], cands: list[ReportCandidate]) -> str | None:
+    """The page of the search results most likely to link the report's PDF: a downloads
+    page on the host of a report found (report.bystronic.com/2025/downloads), else the
+    report page itself, else a publications or financial-reports page."""
+    hosts = {urlparse(c.url).netloc for c in cands if c.kept}
+    pages = [r for r in results if not (is_pdf_url(r["url"]) or _download_link(r["url"]))]
+
+    def has(r, words):
+        text = fold(f"{r['url']} {r.get('title') or ''}")
+        return any(w in text for w in words)
+    for test in (lambda r: urlparse(r["url"]).netloc in hosts and has(r, ("download",)),
+                 lambda r: any(c.kept and c.url == r["url"] for c in cands),
+                 lambda r: has(r, ("download", "publication", "publikation", "financial-report",
+                                   "reports-and", "reporting", "berichte", "rapport"))):
+        hit = next((r["url"] for r in pages if test(r)), None)
+        if hit:
+            return hit
+    return None
+
+
+def web_search_report(fc: FirecrawlClient, company_name: str, website_url: str | None,
+                      allowed: frozenset[str], year: int | None = None
+                      ) -> tuple[list[ReportCandidate], list[dict]]:
+    """Search the web for the company's annual report of `year` (last year by default):
+    finds reports on investor sites and microsites that a map of the main website never
+    reaches (adidas.com vs report.adidas-group.com; Arbonia's old domain afg.ch). Only the
+    company's own documents (own_document). Returns (candidates, own results). 2 credits."""
+    year = year or dt.date.today().year - 1
+    query = f"{search_name(company_name)} annual report {year} pdf"
+    log.info("Web search for the report: %r", query)
+    own = [r for r in fc.search(query, limit=WEB_SEARCH_LIMIT)
+           if r.get("url") and own_document(r["url"], company_name, website_url)]
+    return [search_result_candidate(r, allowed) for r in own], own
+
+
+def find_report(website_url: str | None, fc: FirecrawlClient, country: str | None = None,
                 company_name: str | None = None, other_countries=()) -> ReportResult:
     """Cheapest first, stopping as soon as a recent PDF turns up:
     1. map "annual report";
@@ -437,41 +577,65 @@ def find_report(website_url: str, fc: FirecrawlClient, country: str | None = Non
         all_cands.extend(cands)
         return pick_best(all_cands)
 
+    def scrape_page(page_url: str) -> ReportCandidate | None:
+        scraped.add(page_url)
+        log.info("Scraping %s for report links", page_url)
+        try:
+            _reserve_left(fc, 1)
+            page = fc.scrape(page_url, formats=["markdown", "links"])
+        except FirecrawlError as e:          # e.g. "all scraping engines failed"
+            log.warning("Could not scrape %s: %s", page_url, str(e)[:150])
+            return pick_best(all_cands)
+        found = page["links"] + re.findall(r"\((https?://[^)\s]+\.pdf[^)\s]*)\)", page["markdown"])
+        # PDFs and download links, and also links to report *pages* (some companies
+        # publish the annual report as a web page, or link the PDF only through script).
+        linked = _dedupe(urljoin(page_url, u) for u in found)
+        titles = _link_titles(page["markdown"], page_url)
+        cands = [titled_candidate(u, titles.get(u, ""), allowed) for u in linked
+                 if is_pdf_url(u) or _download_link(u) or _looks_like_report_page(u)]
+        _log_candidates(cands, f"scrape {page_url}")
+        all_cands.extend(cands)
+        return pick_best(all_cands)
+
     def scrape_ir_page() -> ReportCandidate | None:
         ir_page = _pick_ir_page(all_cands, _dedupe(all_urls), website_url, exclude=scraped)
         if ir_page is None:
             return pick_best(all_cands)
-        scraped.add(ir_page)
-        log.info("Scraping IR page %s for report links", ir_page)
-        try:
-            _reserve_left(fc, 1)
-            page = fc.scrape(ir_page, formats=["markdown", "links"])
-        except FirecrawlError as e:          # e.g. "all scraping engines failed"
-            log.warning("Could not scrape %s: %s", ir_page, str(e)[:150])
-            return pick_best(all_cands)
-        found = page["links"] + re.findall(r"\((https?://[^)\s]+\.pdf[^)\s]*)\)", page["markdown"])
-        # PDFs, and also links to report *pages* (some companies publish the annual
-        # report as a web page, or link the PDF only through script).
-        linked = _dedupe(urljoin(ir_page, u) for u in found)
-        titles = _link_titles(page["markdown"], ir_page)
-        cands = []
-        for u in linked:
-            if not (is_pdf_url(u) or _looks_like_report_page(u)):
-                continue
-            title = titles.get(u)
-            if title and not rf_keywords_in(u):
-                # "[2025 Annual Report](https://s202.q4cdn.com/.../8769e063.pdf)": the
-                # file name says nothing, so judge it by its link text instead.
-                ext = ".pdf" if is_pdf_url(u) else ""
-                c = classify(f"{u.split('?')[0].rsplit('/', 1)[0]}/{title}{ext}", allowed)
-                c.url, c.is_pdf = u, is_pdf_url(u)
-            else:
-                c = classify(u, allowed)
-            cands.append(c)
-        _log_candidates(cands, f"scrape {ir_page}")
-        all_cands.extend(cands)
-        return pick_best(all_cands)
+        return scrape_page(ir_page)
 
+    def web_search() -> ReportCandidate | None:
+        """No recent report on the site: search the web for it (2 credits), then scrape the
+        page most likely to link its PDF (an online report's downloads page)."""
+        if not company_name:
+            return scrape_ir_page() if website_url else pick_best(all_cands)
+        try:
+            _reserve_left(fc, 2)
+        except CreditBudgetExceeded as e:     # the cheaper map searches still go on
+            log.info("No web search for the report: %s", e)
+            return scrape_ir_page() if website_url else pick_best(all_cands)
+        cands, results = web_search_report(fc, company_name, website_url, allowed)
+        _log_candidates(cands, "web search")
+        all_cands.extend(cands)
+        all_urls.extend(c.url for c in cands)
+        best = pick_best(all_cands)
+        if is_fresh(best):
+            return best
+        page = downloads_page(results, cands)
+        if page and page not in scraped:
+            return scrape_page(page)
+        return scrape_ir_page() if website_url else best
+
+    if not website_url:
+        # no website found (APG, Bergbahnen Engelberg): the web search on the name alone
+        try:
+            web_search()
+        except CreditBudgetExceeded as e:
+            log.warning("%s; choosing from what was found so far", e)
+        best = pick_best(all_cands)
+        if not best or not _is_doc(best):
+            raise ReportNotFoundError(f"No website, and no annual report found by a web search "
+                                      f"for {company_name}")
+        return _result(best, all_cands)
     try:
         for i, term in enumerate(search_terms(country)):
             _reserve_left(fc, 1)
@@ -480,7 +644,7 @@ def find_report(website_url: str, fc: FirecrawlClient, country: str | None = Non
             all_urls += urls
             if is_fresh(add(urls, f"map '{term}'")):
                 break
-            if i == 0 and is_fresh(scrape_ir_page()):
+            if i == 0 and is_fresh(web_search()):     # then an investor page if needed
                 break
         else:
             scrape_ir_page()                 # a better IR page may have turned up since

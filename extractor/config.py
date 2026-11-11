@@ -95,7 +95,10 @@ def clean_name(legal_name: str) -> str:
 # the name a register, Wikidata or a web search knows the company by.
 _SHARE_CLASS = re.compile(
     r"\s+(?:pref(?:erence)?(?:\s+[a-d])?|(?:ser(?:ies)?|class)\.?\s*[a-d]|sdb"
-    r"|(?:vink\.?\s*)?na\s+o\.?\s*n\.?|o\.?\s*n\.?|[a-d])\s*$", re.I)
+    r"|(?:vink\.?\s*)?na\s+o\.?\s*n\.?|o\.?\s*n\.?|[a-d]"
+    # German listing lines (DACH): "Porsche AG VZO", "BMW AG ST", "Rheinmetall AG INH",
+    # "Sixt SE VZO O.N.", "Henkel AG&CO.KGAA VZO"
+    r"|vzo|vz|st|stamm|inh|vna|namens?(?:aktien)?)\.?\s*$", re.I)
 
 
 def without_share_class(name: str) -> str:

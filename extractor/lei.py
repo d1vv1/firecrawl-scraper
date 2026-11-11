@@ -158,10 +158,24 @@ def _retryable(exc: BaseException) -> bool:
 
 _MIN_INTERVAL_S = 1.0        # GLEIF allows 60 requests/minute
 _last_call = 0.0
+_backoff = wait_exponential(min=2, max=30)
 
 
-@retry(retry=retry_if_exception(_retryable), stop=stop_after_attempt(4),
-       wait=wait_exponential(min=2, max=30), reraise=True)
+def _wait(retry_state) -> float:
+    """GLEIF's own Retry-After on a 429, else backoff. The limit is per minute and several
+    machines running at once (each paced for itself) can exceed it together: four quick
+    retries within 15 s would all be refused, so a 429 waits as long as GLEIF says (a
+    minute at most)."""
+    exc = retry_state.outcome.exception()
+    if isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code == 429:
+        try:
+            return min(float(exc.response.headers.get("retry-after", "")) + 1, 61)
+        except ValueError:
+            return min(15 * retry_state.attempt_number, 61)
+    return _backoff(retry_state)
+
+
+@retry(retry=retry_if_exception(_retryable), stop=stop_after_attempt(6), wait=_wait, reraise=True)
 def _get(path: str, params: dict) -> dict:
     global _last_call
     wait = _MIN_INTERVAL_S - (time.monotonic() - _last_call)

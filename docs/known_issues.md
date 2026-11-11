@@ -4,6 +4,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 18 | Swiss and German reports not found: the search reads the consumer site, not the investor site | mostly fixed: web search for the report (13 of 19 found, 11 of 12 Swiss/German) | companies with no website and no report the search finds (Bergbahnen Engelberg, IQM, Bluebird, City of London) |
 | 17 | Weak links on the High-severity fields (dashboard review against the benchmarking severity workbook) | mostly fixed: every High field up | 19 companies still without a report (report and website finders, issue 4); pay quotes pieced together from separate cells |
 | 16 | No way to run companies for only one field or a few fields; the input's `run_required` (Pay Data / Company Data) is ignored | fixed: `--fields`, `run_required` followed, rows merged | — |
 | 15 | An annual report found outside the report step isn't used as the report: no fiscal year, revenue or total assets, undated pay | fixed: the input's `annual_report_url`, then the site's documents (FY2025 run 4: 15 of 19 companies now read their FY2025 report) | 3 inputs give a filings.xbrl.org search, not a report |
@@ -21,6 +22,23 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 18. Swiss and German reports not found — mostly fixed
+
+*Found and fixed 11 November 2026, before the DACH runs (`report_finder.web_search_report`).*
+
+**Cause.** Of the 31 companies without a report, 12 were Swiss or German. The search maps the company's website, but DACH reports live elsewhere: an investor domain or report microsite (adidas.com vs report.adidas-group.com; bell.ch vs bellfoodgroup.com), a file server, or a renamed company's new domain (Arbonia's old afg.ch, Bystronic's conzzeta.ch). The map of a consumer site returns product pages, and the guessed `/investors/` page holds nothing.
+
+**Fix.**
+- After the first site map, a web search for "<name> annual report 2025 pdf" (2 credits), before guessing an investor page. Only the company's own documents: its site, a host carrying every word of its name, or a PDF named for it; never collectors of other companies' reports (annualreports.com, scribd...). A result is judged by its title when its URL misleads; "ar2025" in a file name counts; semi-annual reports don't. When no PDF is in the results, the best report or downloads page is scraped for it.
+- The report's own domain becomes the website when it carries the company's name, so the remuneration report is looked for there.
+- No website found: the report is searched for by name alone.
+- Report search budget 8 credits (was 6): a website found by a paid search left no room for the web search.
+- German, French and Italian section keywords (Mitarbeitende, Umsatz, Bilanzsumme, Verwaltungsrat, collaborateurs, chiffre d'affaires...); "Finanzbericht", "rapport de gestion"; Swiss thousands separators; German listing lines stripped from names ("Porsche AG VZO" -> Porsche).
+
+**Test (FY2025 runs 6 and 6b, 159 credits):** 13 of the 19 found their FY2025 report, 11 of the 12 Swiss/German companies: Adidas, Arbonia, Asmallworld, Banque Cantonale du Jura, Bell Food Group, BKW, Bucher, Burkhalter, Bystronic, Adval Tech, APG SGA; also Essentra and Airtel Mobile Commerce. Perfect fiscal_year in the combined file 92% -> 98%.
+
+**Still open:** Bergbahnen Engelberg, IQM, Bluebird and City of London (no website, nothing found); Aterian (a listing page); Melhus Sparebank (a report web page without a year). Swiss pay: one Swiss report gives both the executive committee's total (with the CEO) and the rest's total (Bachem); and a non-executive board is sometimes read as one person (Aevis, Also, Aryzta, Bioversys).
 
 ## 17. Weak links on the High-severity fields — mostly fixed
 

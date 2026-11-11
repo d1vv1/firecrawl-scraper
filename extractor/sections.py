@@ -33,6 +33,13 @@ FINANCIALS = [
     "konsernin tuloslaskelma", "liikevaihto", "konsernin tase", "vastaavaa yhteensä",
     "vastattavaa yhteensä", "taseen loppusumma",
     "rekstrarreikningur", "rekstrartekjur", "efnahagsreikningur", "eignir samtals",
+    # German, French and Italian reports (DACH: Germany, Austria, Switzerland)
+    "konzern-gewinn- und verlustrechnung", "gewinn- und verlustrechnung", "konzernerfolgsrechnung",
+    "erfolgsrechnung", "umsatzerlöse", "umsatz", "nettoumsatz", "nettoerlös", "nettoerlöse",
+    "konzernbilanz", "bilanzsumme", "summe aktiva", "summe passiva", "total aktiven",
+    "total passiven", "compte de résultat consolidé", "compte de résultat", "chiffre d'affaires",
+    "produits nets", "bilan consolidé", "total de l'actif", "total du bilan", "total des actifs",
+    "conto economico consolidato", "ricavi", "stato patrimoniale", "totale attivo",
 ]
 QUALITATIVE = [
     "business model", "our strategy", "how we create value", "segment information",
@@ -50,6 +57,11 @@ QUALITATIVE = [
     "modervirksomhed", "moderselskab",
     "liiketoimintamalli", "strategiamme", "toimintasegmentit", "segmenttitiedot",
     "konsernirakenne", "tytäryhtiöt", "emoyhtiö",
+    # German and French reports
+    "geschäftsmodell", "unsere strategie", "segmentberichterstattung", "konzernstruktur",
+    "tochtergesellschaften", "beteiligungen", "muttergesellschaft", "modèle d'affaires",
+    "notre stratégie", "information sectorielle", "structure du groupe", "filiales",
+    "société mère",
 ]
 # Data points beyond the core figures (python -m extractor.datapoints), one group
 # per topic so that each topic gets its own share of the word budget.
@@ -62,6 +74,12 @@ OWNERSHIP = [
     "største aksjonærer", "aksjonærer", "eierstruktur", "aksjekapital",
     "største aktionærer", "aktionærer", "ejerforhold", "aktiekapital",
     "suurimmat osakkeenomistajat", "osakkeenomistajat", "omistusrakenne", "osakepääoma",
+    # German and French reports
+    "aktionäre", "bedeutende aktionäre", "aktionärsstruktur", "aktionariat", "aktienkapital",
+    "grundkapital", "anzahl aktien", "namenaktien", "inhaberaktien", "six swiss exchange",
+    "valorennummer", "kotierung", "börsennotiert", "stimmrechte", "beteiligungsverhältnisse",
+    "actionnaires", "principaux actionnaires", "actionnariat", "capital-actions",
+    "capital social", "nombre d'actions", "cotation", "droits de vote",
 ]
 EMPLOYEES = [
     "number of employees", "average number of employees", "full-time equivalents", "fte",
@@ -70,6 +88,12 @@ EMPLOYEES = [
     "årsverk", "antall ansatte", "ansatte",
     "gennemsnitligt antal", "antal ansatte", "medarbejdere",
     "henkilöstön määrä", "henkilöstö", "keskimäärin",
+    # German, French and Italian reports
+    "mitarbeitende", "mitarbeiter", "mitarbeiterinnen und mitarbeiter", "beschäftigte",
+    "anzahl mitarbeitende", "anzahl mitarbeiter", "personalbestand", "vollzeitstellen",
+    "vollzeitäquivalente", "personalaufwand", "belegschaft", "arbeitnehmer",
+    "collaborateurs", "collaboratrices", "effectif", "effectifs", "nombre de collaborateurs",
+    "équivalents plein temps", "charges de personnel", "collaboratori", "dipendenti",
 ]
 REMUNERATION = [
     "remuneration", "pension", "defined contribution", "defined benefit",
@@ -86,12 +110,21 @@ REMUNERATION = [
     "variabele beloning", "retribución fija", "retribución variable", "retribuzione fissa",
     "compensi", "remuneração fixa", "grundlön", "rörlig ersättning", "fastlønn", "grundløn",
     "peruspalkka", "lyhyen aikavälin kannustin",
+    # German and French reports: Swiss reports disclose the highest-paid member of the
+    # executive board and the board's total; German ones each Vorstand member
+    "vergütung", "vergütungsbericht", "vergütungssystem", "vorstand", "vorstandsvergütung",
+    "verwaltungsrat", "geschäftsleitung", "konzernleitung", "aufsichtsrat", "fixe vergütung",
+    "variable vergütung", "höchste vergütung", "pensionskasse", "vorsorge",
+    "rapport de rémunération", "conseil d'administration", "direction générale",
+    "rémunération", "prévoyance", "rapporto di remunerazione", "consiglio di amministrazione",
 ]
 GEOGRAPHY = [
     "geographical information", "geographic information", "geographical areas",
     "revenue by country", "revenue by geography", "by geographical market", "by country",
     "domestic", "rest of the world", "rest of world", "non-current assets by country",
     "geografiska", "geografisk", "geografiske", "maantieteellinen", "maantieteelliset",
+    "nach regionen", "nach ländern", "geografische", "geografisch", "inland", "ausland",
+    "par région", "par pays", "informations géographiques",
 ]
 PROFILE = [
     "registered office", "headquarters", "head office", "domicile", "corporate information",
@@ -101,6 +134,9 @@ PROFILE = [
     "public limited company", "formerly", "domiciled", "incorporated",
     "organisationsnummer", "org.nr", "organisasjonsnummer", "cvr", "y-tunnus",
     "handelsregister", "amtsgericht", "sitz der gesellschaft", "www.",
+    "hauptsitz", "firmensitz", "handelsregisternummer", "unternehmens-identifikationsnummer",
+    "rechtsform", "aktiengesellschaft", "siège", "siège social", "registre du commerce",
+    "société anonyme", "sede",
 ]
 SEGMENTS = [
     "segment information", "operating segments", "reportable segments", "segment reporting",
@@ -118,6 +154,10 @@ KEYFIGURES = [
     "rörelseresultat", "driftsresultat", "liiketulos", "betriebsergebnis", "nyckeltal",
     "nøkkeltall", "hoved- og nøgletal", "tunnusluvut", "kennzahlen", "aktiekurs",
     "aksjekurs", "osakekurssi", "schlusskurs", "börsvärde", "markedsverdi",
+    "operatives ergebnis", "finanzkennzahlen", "auf einen blick", "fünfjahresübersicht",
+    "börsenkurs", "jahresschlusskurs", "marktkapitalisierung", "rechnungslegung",
+    "geschäftsjahr", "chiffres clés", "résultat opérationnel", "résultat d'exploitation",
+    "cours de l'action", "capitalisation boursière", "exercice", "principes comptables",
 ]
 DATAPOINT_TOPICS = {"ownership": OWNERSHIP, "employees": EMPLOYEES,
                     "remuneration": REMUNERATION, "geography": GEOGRAPHY, "profile": PROFILE,
@@ -138,6 +178,9 @@ STATEMENT_HEADINGS = [
     "koncernens resultatopgørelse", "resultatopgørelse", "koncernens balance",
     "konsernin tuloslaskelma", "konsernin tase", "tuloslaskelma",
     "rekstrarreikningur", "efnahagsreikningur",
+    "konzern-gewinn- und verlustrechnung", "gewinn- und verlustrechnung", "konzernerfolgsrechnung",
+    "erfolgsrechnung", "konzernbilanz", "bilanz", "compte de résultat consolidé",
+    "compte de résultat", "bilan consolidé", "conto economico consolidato",
 ]
 STATEMENT_BOOST = 50.0
 HEADING_BONUS = 8.0      # per keyword that appears in one of the chunk's headings
@@ -146,7 +189,7 @@ MIN_SECTION_WORDS = 60   # shorter heading sections are merged into the next one
 HEADINGS_PER_PAGE_MIN = 0.3
 
 _HEADING_RE = re.compile(r"^#{1,6}\s+\S")
-_NUMBER_RE = re.compile(r"\(?-?\d{1,3}(?:[,.  ]\d{3})+(?:\.\d+)?\)?|\(?-?\d+(?:\.\d+)?\)?")
+_NUMBER_RE = re.compile(r"\(?-?\d{1,3}(?:[,.'’  ]\d{3})+(?:\.\d+)?\)?|\(?-?\d+(?:\.\d+)?\)?")
 _WORD_RE = re.compile(r"[^\s|]+")
 
 
