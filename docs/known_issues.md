@@ -4,6 +4,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 15 | The annual report found only by the document step isn't used as the report: no fiscal year, revenue or total assets, undated pay | open | about half a day |
 | 14 | HTML annual reports (ESEF) converted with table rows run together and letters lost to private font codes | fixed | — |
 | 13 | The dashboard's import format writes the UK as "UK"; the collector writes "GB" | fixed: both accepted | — |
 | 12 | Values the output checks flag: computed figures shown as read, wrong target units, unsupported quotes | mostly fixed; 19 hard fails of 735 values | quotes the AI pieces together from several places; Bang & Olufsen's totals (bonus definition) |
@@ -18,6 +19,20 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 15. An annual report found only by the document step isn't used as the report — open
+
+*Found 11 November 2026 in FY2025 run 2 (Tallink Grupp).*
+
+**Symptom.** Tallink got 62 values, 36 of them from its FY2025 annual report, yet it shows no fiscal year, revenue or total assets, its executive pay has no period end, and the dashboard counts it as having no FY2025 report.
+
+**Cause.** A company is read in two stages. The report step finds the annual report and reads the core figures from it: fiscal year, fiscal year end, revenue, total assets. The year end also dates the pay rows. The document step then fills fields still missing from other documents. For Tallink the report step chose a one-page image of the 2023 supervisory board report (`AGM-2024-AS-Tallink-Grupp-Supervisory-Board-report-2023-eng.pdf`), found no text in it, had no other candidate and failed. The document step later found `tallink-annual-report-2025-eng.pdf` (177 pages, "Annual Report 2025", financial year 1 January to 31 December 2025) and read pay and other fields from it, but only fills gaps: the core figures, the fiscal year and the dates stay empty.
+
+**Workaround.** Put the report's address in the input CSV's `annual_report_url` column and run the company again; the report step then reads that file.
+
+**Fix (about half a day).** When the report step has failed, or read a report older than the year sought, and the document step reads a file that is plainly the annual report for the year (titled "Annual report 2025" or the local equivalent, a financial year ending in that year, tens of pages or more), use it as the report: read the core figures from it as the report step would, take its fiscal year and year end, and date the values with them. This helps every company whose report search misses but whose website links the report elsewhere.
+
+Related: the report step's choice of a board report over the annual report is issue 4 (the report finder can still pick the wrong document).
 
 ## 14. HTML annual reports converted badly — fixed
 
