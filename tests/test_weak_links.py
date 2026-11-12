@@ -141,7 +141,8 @@ def test_a_filings_search_url_gives_the_lei_not_a_report(tmp_path):
 def test_a_figure_in_a_table_drawn_cell_by_cell_is_found_in_its_own_cell():
     from extractor.validate import lone_cell
     page = ("<!-- Start of picture text -->\nFixed  Performance<br>compensation based<br>"
-            "<!-- End of picture text -->\n\n<!-- Start of picture text -->\n1,186.8<br>"
+            "<!-- End of picture text -->\n\nRemuneration of the Management Board in thousand euro\n\n"
+            "<!-- Start of picture text -->\n1,186.8<br>"
             "<!-- End of picture text -->\n\n<!-- Start of picture text -->\n452.2<br><!-- End of picture text -->")
     texts = [(152, "Notes"), (153, page)]
     assert lone_cell("Fixed compensation 1,186.8", 1186.8, texts) == ("1,186.8<br><!-- End of picture text -->", 153)

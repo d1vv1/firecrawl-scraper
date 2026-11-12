@@ -636,12 +636,39 @@ def test_report_pass_asks_only_for_what_the_apis_left_open():
 def test_report_chunks_cover_only_the_needed_topics(monkeypatch):
     asked = []
     monkeypatch.setattr(dp, "select_chunks", lambda chunks, topic, words: asked.append(topic) or [])
-    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], {})
+    monkeypatch.setattr(dp, "REPORT_WORDS", 5)             # a report too long to read whole
+    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [],
+                       {0: dp.Chunk(0, "one two three four five six seven", [1])})
     dp.report_chunks(origin, ["fte", "revenue_by_country"])
     assert sorted(asked) == ["employees", "geography", "profile"]
     asked.clear()
     dp.report_chunks(origin)
     assert len(asked) == len(dp.DATAPOINT_TOPICS)
+
+
+def test_a_report_within_the_budget_is_read_whole(monkeypatch):
+    def no_pick(*a):
+        raise AssertionError("no keyword pick for a report read whole")
+    monkeypatch.setattr(dp, "select_chunks", no_pick)
+    chunks = {i: dp.Chunk(i, "Number of employees 64,938 " * 50, [i + 1]) for i in range(4)}
+    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], chunks)
+    assert [c.id for c in dp.report_chunks(origin, ["fte"])] == [0, 1, 2, 3]
+    assert [c.id for c in dp.doc_chunks([origin], ["fte"])] == [0, 1, 2, 3]
+
+
+def test_a_long_report_shares_the_budget_between_its_topics(monkeypatch):
+    budgets = []
+    monkeypatch.setattr(dp, "select_chunks", lambda chunks, topic, words: budgets.append(words) or [])
+    monkeypatch.setattr(dp, "REPORT_WORDS", 70_000)
+    chunks = {i: dp.Chunk(i, "word " * 1_500, [i + 1]) for i in range(60)}       # 90,000 words
+    dp.report_chunks(dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], chunks))
+    assert budgets == [10_000] * 7
+
+
+def test_a_stock_index_is_not_an_exchange_segment():
+    assert dp.STOCK_INDEX.search("FTSE 250") and dp.STOCK_INDEX.search("OMXS30")
+    assert not dp.STOCK_INDEX.search("Large Cap") and not dp.STOCK_INDEX.search("Prime Standard")
+    assert not dp.STOCK_INDEX.search("First North Growth Market (MTF)")
 
 
 def test_qualitative_call_can_be_skipped(monkeypatch):

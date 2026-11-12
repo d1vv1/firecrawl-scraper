@@ -19,6 +19,10 @@ Facts:
 - revenue, total_assets: the group's figure for the most recent full year,
   exactly as printed, with the table's unit and the ISO currency. Use
   the primary statements or a key-figures table; never a segment's figure.
+  When the report prints several revenue figures, take the revenue line of
+  the consolidated income statement: not a figure that adds the share of
+  joint ventures or associates, an adjusted or "business performance"
+  figure, or one that includes other operating income.
 - ebitda: the group's EBITDA as reported (measure "ebitda"), or adjusted
   EBITDA if only that is given ("adjusted_ebitda"). If the company reports
   no EBITDA at all, its operating profit / EBIT ("operating_profit").
@@ -28,7 +32,9 @@ Facts:
 - fte: average number of full-time equivalents in the year. headcount:
   number of employees at year end. Copy the number as printed, unit
   "units", currency null. Do not swap the two: if the text says only
-  "employees" without saying average or year end, use headcount.
+  "employees" without saying average or year end, use headcount. Take the
+  exact count from the employee note or the key figures, not a rounded
+  one from descriptive text ("our 22,000 people").
 - legal_name: the company's full registered name, e.g. "Yubico AB (publ)".
 - business_id: its number in the national company register, as printed
   (e.g. "556720-8851", "HRB 12345, Amtsgericht München").

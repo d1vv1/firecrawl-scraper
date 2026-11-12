@@ -20,7 +20,9 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 # reach old values without a re-run. Values saved before versioning read "0".
 # `python -m extractor.datapoints ... --outdated` re-runs the companies below this version.
 # 1: 10 Nov 2026, the first versioned extraction (after Wave 1).
-SCRAPER_VERSION = 1
+# 2: 12 Nov 2026, the AI reads the whole report (not a keyword pick of it), and looks
+#    again at a quote that is not in the text (datapoints.REPORT_WORDS, requote.py).
+SCRAPER_VERSION = 2
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000

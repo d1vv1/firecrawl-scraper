@@ -64,13 +64,28 @@ _QUOTES = {ord("‘"): "'", ord("’"): "'", ord("“"): '"', ord("”"): '"'}
 _SPACES = dict.fromkeys(map(ord, "     "), " ")
 
 
+_SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
+
+
+def _footnote_marks(text: str) -> str:
+    """A footnote mark written as a superscript character stands apart, as one written
+    in markup does ("compensation⁴" and "compensation<sup>4</sup>" both read
+    "compensation 4"; "1,234²" is 1,234 with note 2, not 12,342)."""
+    return re.sub(r"[⁰¹²³⁴-⁹]+",
+                  lambda m: " " + m.group(0).translate(_SUPERSCRIPTS) + " ", text)
+
+
 def normalize(text: str) -> str:
     """Lowercase, strip markdown/table markup, unify dashes/quotes/spaces, drop
     thousand separators (1,234 / 1.234 / 1 234 -> 1234), collapse whitespace."""
+    # A font whose full stop has no character code comes out of the PDF as U+FFFD
+    # ("45�5", "www�verbio�de"); the AI reads and quotes the full stop it is.
+    text = _footnote_marks(re.sub(r"(?<=\w)�(?=\w)", ".", text))
     # Only thin/no-break spaces count as thousand separators; a normal space
     # between digits usually separates table cells ("Turnover 2 50,503"). Swiss
-    # reports group with an apostrophe ("414'843").
-    t = re.sub(r"(?<=\d)['’,.   ](?=\d{3}(?!\d))", "", strip_markup(text))
+    # reports group with an apostrophe, or a prime or opening quote that looks like one
+    # ("414'843", "1′905′326", "98‘064").
+    t = re.sub(r"(?<=\d)['’‘′,.   ](?=\d{3}(?!\d))", "", strip_markup(text))
     t = t.translate(_DASHES).translate(_QUOTES).translate(_SPACES).lower()
     # Dot leaders in US-style tables ("Net sales . . . . . $ 5,219,376") carry no
     # meaning, and the AI rarely copies their exact number.
@@ -117,12 +132,24 @@ def quote_in_text(quote: str, source: str) -> str | None:
     qc, sc = re.sub(r"\s+", "", q), re.sub(r"\s+", "", s)
     if len(qc) >= _COMPACT_MIN and qc in sc:
         return "loose"
+    # A word broken at a line end ("with the remain- ing 9,572"), which the AI quotes
+    # whole: both sides with such breaks closed.
+    qd, sd = _LINE_BREAK_HYPHEN.sub("", q), _LINE_BREAK_HYPHEN.sub("", s)
+    if qd in sd or (len(qc) >= _COMPACT_MIN and re.sub(r"\s+", "", qd) in re.sub(r"\s+", "", sd)):
+        return "loose"
     if _rows_in_order(qt, source):
+        return "loose"
+    # A footnote mark the AI joined to its word ("Other compensation4|72|32" for
+    # "compensation<sup>4</sup>"): looked for again with the mark apart.
+    apart = _JOINED_MARK.sub(r"\1 \2", q)
+    if apart != q and quote_in_text(apart, source):
         return "loose"
     return None
 
 
 _COMPACT_MIN = 40       # characters of a quote compared without spaces, at least
+_JOINED_MARK = re.compile(r"\b([^\W\d_]{3,})(\d{1,2})\b")
+_LINE_BREAK_HYPHEN = re.compile(r"(?<=[^\W\d_])- (?=[^\W\d_])")
 
 
 _ROWS_APART = 3   # lines between two pieces of a quote taken from several table rows, at most
@@ -271,16 +298,74 @@ def numbers_in(text: str) -> list[float]:
     t = normalize(text)
     found = re.findall(r"\d+(?:\.\d+)?", t)
     found += [g.replace(" ", "") for g in re.findall(r"\d{1,3}(?: \d{3})+(?:\.\d+)?", t)]
+    # a decimal comma ("€ 2,14", "42,3"): thousands separators are gone by now, so a
+    # comma left between digits is read as a decimal point too
+    found += [m.replace(",", ".") for m in re.findall(r"\d+,\d+", t)]
     out = [float(x) for x in found]
     if re.search(r"(^|[\s|])[-–—](?=$|[\s|])", t):
         out.append(0.0)
     return out
 
 
+# Small counts written as words ("three employees", "zwei Prozent", "fem medlemmer").
+_NUMBER_WORDS = {}
+for _n, _words in enumerate([
+        "zero null noll nul nulla",
+        "one ein eine einer eins en ett én un une een",
+        "two zwei två deux twee",            # not Norwegian "to": English "to"
+        "three drei tre trois drie",
+        "four vier fyra quatre",             # not Norwegian "fire"
+        "five fünf fem cinq vijf",
+        "six sechs seks zes",
+        "seven sieben sju syv zeven",        # not French "sept": September
+        "eight acht åtta otte huit",
+        "nine neun nio ni neuf negen",
+        "ten zehn tio ti dix tien",
+        "eleven elf elva elleve onze",
+        "twelve zwölf tolv douze twaalf"]):
+    for _w in _words.split():
+        _NUMBER_WORDS.setdefault(_w, _n)
+_NUMBER_WORD = re.compile(r"\b(" + "|".join(sorted(_NUMBER_WORDS, key=len, reverse=True)) + r")\b")
+
+
+def number_words(text: str) -> set[int]:
+    """Counts up to twelve written as words. "one"/"en"/"un" are articles as often as
+    numbers, so a value of 1 read this way is only as good as the quote it comes from."""
+    return {_NUMBER_WORDS[w] for w in _NUMBER_WORD.findall(normalize(text))}
+
+
+# Wording that states a nil amount or count: "no bonus was paid", "lapsed in full",
+# "keine Mitarbeiter", "ikke foretatt tildeling", "inga anställda", "aucune".
+_NONE_STATED = re.compile(
+    r"\b(no|not|none|nil|nothing|neither|nor|without|lapsed?|lapse|forfeited|"
+    r"kein\w*|nicht|null|ohne|"
+    r"ingen|inga|inget|ikke|ikkje|inte|ej|"
+    r"aucune?|pas|sans|néant|"
+    r"geen|niet|"
+    r"ei)\b")
+
+
+def states_none(quote: str) -> bool:
+    """The quote says, in words, that there was nothing: the source of a value 0."""
+    return bool(_NONE_STATED.search(normalize(quote or "")))
+
+
+def _cell_numbers(quote: str) -> list[float]:
+    """One number per table cell, for a row whose cells are figures ("Markus Ehrle, CEO |
+    154 000 | 28 000"): a cell grouped with plain spaces is one number here."""
+    out = []
+    for cell in (quote or "").split("|"):
+        c = normalize(cell)
+        if re.fullmatch(r"-?\d{1,3}(?: \d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?", c):
+            out.append(float(c.replace(" ", "")))
+    return out
+
+
 def figure_in_quote(figure: float, quote: str, scaled: bool = False) -> bool:
     """The figure appears in the quote as one number, or as the sum of the quote's few
     cells (a table row "Anders Opedal | 96 | 23" for 119). `scaled`: the figure may also be
-    printed in thousands, millions or billions ("(000s) 5 582 534" for 5,582,534,000)."""
+    printed in thousands, millions or billions ("(000s) 5 582 534" for 5,582,534,000).
+    A count up to twelve may be written as a word ("three employees")."""
     nums = numbers_in(quote or "")
     # a table cell that is one number grouped with plain spaces ("|22 868|", Volvo):
     # elsewhere a space between digits separates cells, so only a whole cell counts
@@ -288,7 +373,11 @@ def figure_in_quote(figure: float, quote: str, scaled: bool = False) -> bool:
              if re.fullmatch(r"\d{1,3}(?: \d{3})+", c)]
     wanted = [abs(figure) / k for k in ((1, 1e3, 1e6, 1e9) if scaled else (1,))]
     sums = ([sum(nums)] if 1 < len(nums) <= 4 else []) + ([sum(nums[1:])] if 1 < len(nums) <= 5 else [])
-    return any(abs(abs(n) - w) <= max(0.005 * w, 1e-9) for n in nums + sums for w in wanted)
+    cells = _cell_numbers(quote)
+    sums += [sum(cells)] if 1 < len(cells) <= 4 else []
+    if any(abs(abs(n) - w) <= max(0.005 * w, 1e-9) for n in nums + sums for w in wanted):
+        return True
+    return float(figure).is_integer() and 1 < figure <= 12 and int(figure) in number_words(quote or "")
 
 
 _FIGURE = re.compile(r"\d[\d,.]*\d|\d")
