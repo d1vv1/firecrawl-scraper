@@ -215,7 +215,16 @@ Per company, cheapest and most exact first:
    `annual_report_url`), then SEC documents for SEC registrants (a 20-F's remuneration
    report exhibit, a US proxy statement; free), then the remuneration report found like the
    fallback documents below (including PDFs behind a site's download buttons), and, if
-   needed, the remuneration policy, read with `prompts/remuneration_system.md`;
+   needed, the remuneration policy, read with `prompts/remuneration_system.md`.
+   When the annual report's route gave no result (Firecrawl out of credits, no website
+   found), the documents this step read are also asked for the company data points still
+   empty, one AI call per document and no Firecrawl (`datapoints.from_read_documents`, read
+   like the fallback documents: `ask_documents`, with its year check, and the identity
+   check of the annual report). From a document that is no annual report, the business
+   description and head-office city are not taken, and a year end that does not fit the pay
+   year, or is not 31 December without being called the financial year's, is not used; the
+   fiscal year is then the pay year (grade C). A field still empty says so first: "not
+   found: the annual report was not read (<why>); not in: <documents read>";
 4. **document fallback** (`extractor/documents.py`): the data points still empty are
    looked for in the company's other documents: remuneration report, AGM notice,
    corporate-governance and sustainability reports, "The share" and shareholder pages,

@@ -29,7 +29,7 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 *Asked for 12 November 2026, after DACH Set 2.*
 
-**Problem.** Why a value is empty is written in `note` as free text ("not found in: GLEIF, OpenFIGI, Annual report (PDF)… (annual-report route failed: ReportNotFoundError: …)"). Counting failures by cause needs regex over the notes and the run log, and the run log mixes companies when 3 workers run.
+**Problem.** Why a value is empty is written in `note` as free text ("not found in: GLEIF, OpenFIGI, Annual report (PDF)… (the annual report was not read: ReportNotFoundError: …)"). Counting failures by cause needs regex over the notes and the run log, and the run log mixes companies when 3 workers run.
 
 **To do.** Add a `failure_type` column to the data-point CSV (empty when there is a value), from a fixed list, set where the failure happens rather than parsed afterwards. Also on the dashboard as a filter, and in the checks CSV. First list, from the Set 2 log and notes:
 
