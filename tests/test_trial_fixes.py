@@ -91,3 +91,19 @@ def test_a_group_role_read_from_two_documents_is_kept_once():
     # one field apart: not the same row
     assert pay.duplicate_groups(_roles(("Other EC", True, other),
                                        ("Other", True, {**other, "sti_paid": 1})) ) == []
+
+
+def test_an_accounting_line_is_not_a_person():
+    from extractor import pay
+
+    def role(name, quote, amounts):
+        rows = [{"grain": "role", "role_row": name, "data_point": "role_disclosure",
+                 "value": "individual", "unit": "", "note": f'PDF page 37: "{quote}"'}]
+        return rows + [{"grain": "role", "role_row": name, "data_point": k, "value": str(v),
+                        "unit": "USD", "note": ""} for k, v in amounts.items()]
+    rows = (role("Subsidiary employee", "Option and share program<br>expenses (note 17)<br>-|-|-|(49)|",
+                 {"lti_granted": 0, "total_remuneration": 0})
+            + role("CEO", "Der Vorstandsvorsitzende Hui Wang", {"base_salary": 0, "total_remuneration": 0})
+            + role("CFO", "CFO expenses 105", {"base_salary": 68000, "total_remuneration": 105000}))
+    # a person paid nothing stays; so does a paid role whatever its quote says
+    assert pay.accounting_lines(rows) == ["Subsidiary employee"]

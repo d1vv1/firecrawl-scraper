@@ -508,3 +508,8 @@ Kesko's version 1 values came from its FY2023 report; version 2 read FY2025.
 - **Before:** the remuneration report and the annual report's pay note print the same table, and the AI named the group row differently in each ("Other EC Members" and "Other EC", dormakaba; "Other IEC members" and "Übrige Mitglieder des IEC", Implenia). Both were kept, so the group's pay was counted twice. Found while checking PR #2 (a pay table's "Total" line, AXAC-379).
 - **Now:** a group role whose amounts are the same as an earlier group role's, field for field, is left out: on a new run, and from saved rows when the CSV is next written. Rows of zeros and individual roles are left alone: two executives can be paid the same (Vontobel's co-CEOs).
 - **Effect on the combined file:** 17 companies lose the second copy, among them Givaudan, Sandoz, Sartorius, Implenia, Bell Food, Straumann and dormakaba.
+
+#### 40. A pay table's accounting line is not a person
+- **Before:** S&D Standard's pay table has a section heading "Subsidiary employee:" over a line "Option and share program expenses (note 17)", with dashes for 2025. It was stored as an executive role paid 0.
+- **Now:** an individual role is left out when every amount is zero and its quoted line names an expense, cost, provision or note, not a person. A person paid nothing stays: the combined file has 13 of them (Wild Bunch's CEO, Sino-German's board, United Eco Solutions' Vorstand).
+- **Effect on the combined file:** S&D Standard only.

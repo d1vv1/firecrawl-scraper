@@ -520,3 +520,36 @@ def duplicate_groups(rows: list) -> list[str]:
         else:
             seen[key] = name
     return out
+
+
+# The line of a pay table that is an accounting item, not a person ("Option and share
+# program expenses (note 17)", S&D Standard, where the AI took the section heading
+# "Subsidiary employee:" above it for a role).
+ACCOUNTING_LINE = re.compile(r"\b(expenses?|costs?|provisions?|accruals?|ifrs ?2|note \d+|"
+                             r"aufwand|aufwendungen|kostnad\w*|kostnader|omkostninger)\b", re.I)
+
+
+def accounting_lines(rows: list) -> list[str]:
+    """Individual roles that are an accounting line of the pay table: every amount zero
+    (dashes) and the line quoted names an expense, cost or note, not a person. A person
+    paid nothing stays (Wild Bunch's CEO, Sino-German's board: "Der Vorstandsvorsitzende
+    Hui Wang"). `rows`: role rows as Found or as CSV rows."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    quote, individual, amounts = {}, set(), {}
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure":
+            quote[name] = get(r, "note") or ""
+            if value == "individual":
+                individual.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, []).append(float(value))
+            except ValueError:
+                amounts.setdefault(name, []).append(1.0)
+    return [n for n in amounts if n in individual and not any(amounts[n])
+            and ACCOUNTING_LINE.search(quote.get(n, ""))]
