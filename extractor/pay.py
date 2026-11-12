@@ -425,6 +425,61 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
     return out
 
 
+def total_roles(rows: list) -> list[str]:
+    """The role rows that are a pay table's "Total" line: an aggregate role whose amounts
+    are the sums of the roles listed next to it (Brøndby IF: "Total" = CEO + CFO; Stora
+    Enso: "GLT Total" = CEO + other members). Those people are already in the output, so
+    the line would count their pay twice. An aggregate that is the only record of its
+    people ("Other members of the Group Leadership Team") is no sum of other rows.
+    `rows`: role rows as Found or as CSV rows, in output order.
+
+    The roles next to it: two or more with amounts, directly before or after it. Fields
+    are compared where every one of them states the field in the total's unit. The total
+    remuneration must add up (within 1%, for rounding), or two other fields where it
+    can't be compared; and no field may be off by more than 5%."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    amounts: dict[str, dict[str, tuple[float, str]]] = {}
+    aggregate: set[str] = set()
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure" and value == "aggregate":
+            aggregate.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit"))
+            except ValueError:
+                pass
+    order = list(amounts)
+
+    def is_sum(total: dict, parts: list[dict]) -> bool:
+        good = []
+        for point, (value, unit) in total.items():
+            if not value or not all(p.get(point, (0, None))[1] == unit for p in parts):
+                continue
+            off = abs(sum(p[point][0] for p in parts) - value) / abs(value)
+            if off > 0.05:
+                return False
+            if off <= 0.01:
+                good.append(point)
+        return "total_remuneration" in good or len(good) >= 2
+
+    found: list[str] = []
+    for i, name in enumerate(order):
+        if name not in aggregate:
+            continue
+        before = [n for n in order[:i] if n not in found]
+        after = [n for n in order[i + 1:] if n not in found]
+        runs = [before[-k:] for k in range(2, len(before) + 1)]
+        runs += [after[:k] for k in range(2, len(after) + 1)]
+        if any(is_sum(amounts[name], [amounts[n] for n in run]) for run in runs):
+            found.append(name)
+    return found
+
+
 def check_total(r: RolePay, rows: dict[str, Found]) -> None:
     """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
     LTI figure the total includes is the one that fits: vested, granted or none."""

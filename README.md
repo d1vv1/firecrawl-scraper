@@ -168,7 +168,9 @@ older version.
 - **Role grain** (`grain` = `role`): executive pay (protocol R01-R11), one set of 14 rows per
   disclosed executive role, `role_row` holding the role as stated ("CEO", "Other members of
   group management"; the name is added only when two roles share a title). Non-executive
-  board members get one `role_disclosure` row. Read from the remuneration report, else the
+  board members get one `role_disclosure` row. A pay table's "Total" line, the sum of the
+  roles listed next to it, is not a role and is left out (those people are already in the
+  output); a group row that is the only record of its people stays. Read from the remuneration report, else the
   annual report's remuneration section; target and maximum percentages missing there come
   from the remuneration policy. Pay amounts are in full units like all money; the printed
   figure, bundled components and the LTI form are in `note`, and a stated total that

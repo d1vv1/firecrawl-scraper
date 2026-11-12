@@ -1083,6 +1083,10 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 read.append(policy_origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
+    totals = pay.total_roles(roles)
+    if totals:
+        log.info("Pay: %s left out: the sum of roles already listed", ", ".join(totals))
+        roles = [f for f in roles if f.role_row not in totals]
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
@@ -2014,7 +2018,9 @@ def refresh(rows: list[dict]) -> list[dict]:
         r.setdefault("scraper_version", "0")    # saved before versioning
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
-    by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
+    totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
+    rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
+    by ={r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
