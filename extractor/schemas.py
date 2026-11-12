@@ -276,6 +276,7 @@ class ColumnMap(BaseModel):
 class RemunerationFacts(BaseModel):
     """A remuneration report or policy: pay per executive role, plus company-level terms."""
     fiscal_year: Optional[str]
+    period_end: Optional[str] = None  # YYYY-MM-DD, the last day of that fiscal year
     roles: list[RolePay]
     pension_type: TextFact
     benefits: TextFact

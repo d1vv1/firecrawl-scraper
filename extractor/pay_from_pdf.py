@@ -59,6 +59,11 @@ def pay_rows(pdf: Path, company: str, period_end: str = "") -> list[dict]:
     roles, terms, read = from_pay(company, key, None, origin, key, period_end)
     if not roles:
         log.warning("No executive pay found in %s", pdf.name)
+    # the pay terms hold for the pay year (the full collector dates them the same way)
+    pay_end = period_end or next((f.period_end for f in roles if f.period_end), "")
+    for f in roles + terms:
+        if period_end or (f in terms and not f.period_end):   # a date given here wins
+            f.period_end = pay_end
     return [{"company": company, **{k: v for k, v in asdict(f).items() if k in COLUMNS}}
             for f in roles + terms]
 
@@ -68,7 +73,8 @@ def main(argv: list[str] | None = None) -> int:
                                 description="Executive pay data from one PDF.")
     p.add_argument("pdf", type=Path, help="annual report or remuneration report (PDF)")
     p.add_argument("--company", help="the company's name (default: the file name)")
-    p.add_argument("--period-end", default="", help="YYYY-MM-DD, written on each row")
+    p.add_argument("--period-end", default="",
+                   help="YYYY-MM-DD, written on each row (default: the year end the PDF states)")
     p.add_argument("--out", type=Path, help="CSV to write (default: output/<pdf name>_pay.csv)")
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")

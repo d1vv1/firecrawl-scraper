@@ -391,3 +391,125 @@ None went down.
 - 19 companies whose report or website the search can't find (Adidas, BKW, Bell and others).
 - Read more pay tables directly instead of through the AI: today only 25 of 194 companies use a table.
 - Size band: 112 companies lack a share price or share count.
+
+## 12 November 2026
+
+After DACH Set 2 (102 companies, 64 Swiss and 61 German). Issue 19.
+
+#### 26. Searching for the German "Geschäftsbericht" too
+- **Before:** the web search only asked for "<name> annual report 2025 pdf". Small German companies often publish only in German, so it found nothing.
+- **Now:** for a German, Swiss or Austrian company, when the English search finds nothing new, a second search asks for "<name> Geschäftsbericht 2025" (2 more credits).
+- **Example:** Albis Leasing's 2025 report and 2invest's reports page turn up only in the German search.
+
+#### 27. Small fixes to the report search
+- **Before:** "Edisun Power Europe" wasn't matched to edisunpower.com (the domain leaves out "Europe"). "TISCON AG i.A." was searched as "tiscon ia". A title split across lines ("GESCHÄFTS- BERICHT 2025") wasn't read as a report.
+- **Now:** place words (Europe, Swiss, Deutschland...) don't have to be in the domain. "i.A." / "i.L." (being wound up) are dropped from the name. Split titles are joined.
+- **Example:** Edisun's investor page now counts as its own.
+
+#### 28. "No variable pay" instead of "not found"
+- **Before:** a board member paid only a salary had 7 empty bonus fields marked "not found", which looked like a failure.
+- **Now:** when the total equals salary + benefits + pension and no bonus figure was read, those fields say "not applicable: no variable pay". Applied to saved results too, no re-run.
+- **Example:** 2invest's sole board member: 72,000 salary, total 72,000. 70 values in 9 Set 2 companies (Uniper, which can't pay bonuses under state aid; ALSO's chairman; Dottikon's board).
+
+#### 29. A failed re-run no longer overwrites good data
+- **Before:** merging a run always took the newer rows. ABB's site blocked Set 2 (error 503), so ABB's pay dropped from 118 values to 3.
+- **Now:** if a run gets under half the values already there for a company's facts or its pay, the old ones stay, and the merge says so. `--take-newer` overrides it.
+- **Example:** re-merging Set 2 kept ABB's old pay and nothing else.
+
+#### 30. Google Drive links are skipped, not misread
+- **Before:** a Drive link gives a "view this file" page, not the PDF. Edisun's was read as its "2023 annual report".
+- **Now:** links that need a sign-in (Google Drive, SharePoint, Dropbox...) are skipped, and the document is searched for instead.
+- **Example:** Edisun no longer has a fake FY2023 report.
+
+### Why Set 2 looked bad (and what wasn't really bad)
+- Overall close to earlier runs: company facts 74% filled (76% before), pay 58% (62%).
+- Most "missing" pay was fields small companies don't have: no bonus plan, or only totals published. Item 28 now marks the clear cases.
+- Genuinely missing: 9 companies with no report found. Some have none to find (Accentro postponed its 2023 and 2024 accounts; TISCON is being wound up).
+- Tracker links that don't work: Google Drive links (35 in Set 2) are private and need a sign-in, and a few links are broken (Viscom, Allgeier) or blocked (Barry Callebaut, Vincorion). These need the client to share public links.
+
+### 12 November 2026 (later): what the AI reads, and quotes that failed (scraper version 2)
+
+Measured first on the cached reports and the combined FY2025 file; no company was re-run yet.
+
+#### 31. The AI reads the whole report
+- **Before:** the report pass sent the AI short excerpts picked by keyword lists, 2,500 words per topic: a median 14% of a report (10,400 of 71,700 words, 407 reports). A value stated anywhere else stayed empty.
+- **Now:** a report of up to 200,000 words is read whole (`REPORT_WORDS`); a longer one shares that budget between the topics. Fallback documents are read whole up to 60,000 words each (`DOC_WORDS`). The AI call may take up to 10 minutes (was 3).
+- **Example:** adidas's key figures on pages 5-6 ("Number of employees 64,938", "EBITDA 3,124") were never sent.
+- **Test:** 20 reports, every field asked afresh both ways: values with a verified quote 426 -> 493. Against saved numeric values that pass every check: 71 the same (was 64), 8 not given (was 18), 12 different (was 9).
+- **Watch:** with the whole report in view the AI sometimes takes a headline revenue (Centrica's "business performance" revenue, EnQuest's "revenue and other operating income"). The prompt now names the income statement's revenue line; Balfour Beatty came right, the other two did not. Revenue normally comes from the tags or the financials step, not this pass.
+
+#### 32. A second look at quotes that are not in the text
+- **Before:** a value whose quote wasn't found word for word, or didn't print its figure, was graded C and left.
+- **Now:** such values are shown to the AI again with the part of the document where they should be, and asked for the passage as printed (`extractor/requote.py`). The new quote is used only when it is in the text and prints the figure, and not when it is a figure on its own; the value never changes. `REQUOTE=0` turns it off.
+- **Test:** on the saved answers of 30 reports, 65 quotes failed; 11 got a sound quote (8 of 15 company values, 3 of 50 pay values). A smaller gain than hoped: most of the rest are not quoting mistakes (see below).
+
+#### 33. Text shapes that hid real quotes
+- **Before:** some quotes were in the report but not matched: the PDF converter's "picture text" marks inside a sentence (in 609 of 2,768 cached texts), a full stop the font gives no character code ("45?5"), a footnote mark written "compensation4" or as a superscript, a word broken at a line end ("remain- ing").
+- **Now:** the quote matcher reads through all four (`validate.normalize`, `quote_in_text`, `sections.strip_markup`).
+- **Test:** the combined file scored again without saving: 18 quote checks fail -> pass, none pass -> fail; hard fails 1,122 -> 1,112. A first version that joined footnote marks to their word made 62 more fail and was replaced.
+
+#### Still open after this (found by the second look)
+- **Values the AI worked out:** "other members" = the table's total minus the CEO (Arbonia: 1,078 - 450 = 628); a head count from a list of names; "four members" written as a word. These need rules in code (a derived value with its formula; number words), not better quotes.
+- **A quote that runs over a page break** with the page footer in between.
+- **Saved notes keep only 160 characters of a quote**, so 96 failed quotes can't be checked again without a re-run.
+- **Zero values** shown as a dash (71 hard fails) and **LTI values without a currency** (49): rule fixes. (Done in 34-36 below; the zeros turned out to be stated in words, not dashes.)
+
+#### 34. Values in their quote that the check could not read
+- **Before:** the "value in the quote" check (CORE-02) failed 437 values. Most were right:
+  - a nil stated in words: "No bonuses were paid", "keine Mitarbeiter", "ikke foretatt tildeling" (71);
+  - a count in words: "three employees", "zwei Prozent";
+  - a decimal comma: "€ 2,14", "42,3";
+  - a Swiss separator: "1′905′326", "98‘064";
+  - cells grouped with spaces: "154 000 | 28 000";
+  - "other members" worked out as the group total less the CEO, both in the quote.
+- **Now:** the check reads all of these. A total less the CEO must match within 0.1%, not 0.5%: in a long row some pair of figures comes close by chance (Bachem's 435 - 173 = 262 is not 261).
+- **Before:** when the AI gave the full amount and also the table's unit ("180000", thousands, for "£000 180"), the value was kept right but the note said "printed 180000 thousands". The check then looked for 180,000 in "£000 180", and the run graded these values C.
+- **Now:** the printed figure is worked out (`extract.printed_figure`), at collection and when reading saved notes.
+- **Test:** the combined file scored again without saving: CORE-02 fails 437 -> 205, hard fails 1,112 -> 902, none newly failing. Of 234 checks that turned to pass, 40 per kind were read by hand.
+- **Not this check's job, seen on the way:**
+  - two "EBITDA" values quote operating profit before tax (Holand og Setskog) and EBIT (Müller - Die lila Logistik);
+  - two share prices are today's quote, not the year-end price (BayWa, Readcrest).
+
+#### 35. Nothing paid needs no currency; a percentage is not an amount
+- **Before:** a zero amount with no currency failed "unit is ISO 4217" and "same currency as the role's other amounts". "LTIP award of 200% of salary" was stored as an LTI granted of 200 with no currency.
+- **Now:**
+  - A zero amount needs no currency.
+  - A pay amount printed only as a percentage is not stored; the note says it was stated only as a percentage. This applies from the next run.
+
+#### 36. Quotes are kept whole
+- **Before:** a note kept 160 characters of the quote. A longer quote could not be looked up again (96 failed checks).
+- **Now:** up to 1,000 characters (`datapoints.QUOTE_CHARS`), from the next run.
+
+### 12 November 2026 (evening): the version 2 trial, and two fixes it showed
+
+The trial re-ran 30 companies (4 each from GB, CH, NO, SE, DE, DK; 3 each from AT, FI) under version 2 and compared them with their version 1 results under the same checks. 29 finished:
+- values 1,767 -> 1,792
+- hard fails 182 -> 82
+- grade B 1,187 -> 1,312, grade C 353 -> 243
+
+Kesko's version 1 values came from its FY2023 report; version 2 read FY2025.
+
+#### 37. A page Firecrawl cannot get no longer holds up the run
+- **Before:** Firecrawl answers a page it could not get with a server error ("Failed to scrape. All scraping engines failed"). The client retried that 6 times, so each SEB page took 10-20 minutes to give up, and SEB's run was stopped after an hour.
+- **Now:**
+  - That error is not retried.
+  - A scrape may take 90 seconds.
+  - A company's document fallback stops fetching after 10 minutes (`DOC_MINUTES`) and reads only cached documents after that.
+
+#### 38. A profit line is not the revenue
+- **Before:** Industrivärden's "Operating income 35,655" (its result, including the change in value of its holdings) was given as both its revenue and its EBITDA.
+- **Now:**
+  - The prompt says a profit line is never the revenue, and that an investment company with no revenue line has none.
+  - In code, a revenue whose line label names a profit ("Operating profit", "Rörelseresultat", "Betriebsergebnis") is dropped. A label that also names revenue or the statement ("Statement of Profit or Loss ... management fees") is kept.
+  - A revenue and an EBITDA of the same figure can't both be right. "Operating income" is a bank's total income (ProCredit) but an investment company's result, and the label can't tell which. So the EBITDA is dropped and the revenue is kept, graded C with a note to check it.
+- **Test:** on the combined file, only ProCredit is affected (EBITDA dropped). Industrivärden re-run: no revenue and no EBITDA, total assets unchanged.
+
+#### 39. A group role read from two documents is kept once
+- **Before:** the remuneration report and the annual report's pay note print the same table, and the AI named the group row differently in each ("Other EC Members" and "Other EC", dormakaba; "Other IEC members" and "Übrige Mitglieder des IEC", Implenia). Both were kept, so the group's pay was counted twice. Found while checking PR #2 (a pay table's "Total" line, AXAC-379).
+- **Now:** a group role whose amounts are the same as an earlier group role's, field for field, is left out: on a new run, and from saved rows when the CSV is next written. Rows of zeros and individual roles are left alone: two executives can be paid the same (Vontobel's co-CEOs).
+- **Effect on the combined file:** 17 companies lose the second copy, among them Givaudan, Sandoz, Sartorius, Implenia, Bell Food, Straumann and dormakaba.
+
+#### 40. A pay table's accounting line is not a person
+- **Before:** S&D Standard's pay table has a section heading "Subsidiary employee:" over a line "Option and share program expenses (note 17)", with dashes for 2025. It was stored as an executive role paid 0.
+- **Now:** an individual role is left out when every amount is zero and its quoted line names an expense, cost, provision or note, not a person. A person paid nothing stays: the combined file has 13 of them (Wild Bunch's CEO, Sino-German's board, United Eco Solutions' Vorstand).
+- **Effect on the combined file:** S&D Standard only.

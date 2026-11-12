@@ -200,7 +200,17 @@ Per company, cheapest and most exact first:
 2. one more AI pass over the same report for identity (legal name, register number,
    country, city, website, former names, parent), EBITDA, fiscal year end and accounting
    basis, employees, share data and year-end price, largest holders and owners, listing,
-   pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`);
+   pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`).
+   The AI reads the whole report when it has up to 200,000 words (`REPORT_WORDS` in
+   `.env`; the median report has 72,000), and of a longer one the best parts per topic within that
+   budget. Fallback documents (step 4) are read whole up to 60,000 words each
+   (`DOC_WORDS`). `REPORT_WORDS=0` goes back to short excerpts picked by keywords, for a
+   model with a small context window or a low tokens-per-minute quota;
+   - **a second look at quotes** (`extractor/requote.py`, `REQUOTE=0` turns it off): a
+     value whose quote is not in the text word for word, or does not print its figure, is
+     shown to the AI again with the part of the document where it should be, and asked for
+     the passage as printed. The new quote is used only when it is in the text and prints
+     the figure; the value itself never changes. Also for pay and fallback documents;
 3. **executive pay**: documents supplied in the input (`remuneration_report_url`,
    `annual_report_url`), then SEC documents for SEC registrants (a 20-F's remuneration
    report exhibit, a US proxy statement; free), then the remuneration report found like the
@@ -290,6 +300,9 @@ report): no search, no APIs, no Firecrawl. It uses the collector's pay route: th
 call, the Camelot pay-table reading and the total check. It writes
 `output/<pdf name>_pay.csv` (or `--out`): one row per role and field, plus the company's
 pension type, benefits and shareholding requirement, each with its page, quote and grade.
+Each row's `period_end` is the year end the PDF states for its pay figures (a year named
+without dates counts as the calendar year); `--period-end` overrides it. The full
+collector dates pay rows the same way when the annual report gives it no date.
 Exit code 2 when the PDF has no executive pay. A second run of the same file is free (cached).
 
 ### Companies from report files
@@ -343,12 +356,15 @@ python -m extractor.combine output/run7_datapoints.csv output/run8_datapoints.cs
 
 Each run's companies replace theirs in the combined file (a new company is added), and
 their checks come along from `<run>_checks.csv`. A row a run did not collect ("not
-collected: this run asked only for pay") never replaces a value. The combined file is then
+collected: this run asked only for pay") never replaces a value, and a run that got under
+half the values already there for a company's facts or its pay (a site that blocked it)
+leaves that block as it was (`--take-newer` to replace it anyway). The combined file is then
 scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's CSV and its
 `_checks.csv` to whoever merges.
 
 **Finding the report when the website doesn't have it** (`report_finder.web_search_report`): after
-the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits), keeping
+the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits; for a
+German, Swiss or Austrian company also "<name> Geschäftsbericht <year>" when that finds nothing), keeping
 only the company's own documents (its site, a host carrying its name, or a PDF named for it). The
 report's own domain then becomes the website. With no website at all, the report is searched for
 by name. Report search budget: 8 credits per company (`--pipeline-credits`).

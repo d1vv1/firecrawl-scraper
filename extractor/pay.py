@@ -33,12 +33,22 @@ from pathlib import Path
 from . import llm
 from .apis import Found
 from .config import CACHE_DIR
-from .extract import full_value_quoted
-from .validate import figure_in_quote
+from .extract import full_value_quoted, printed_figure
+from .validate import figure_in_quote, normalize
 from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
 
 log = logging.getLogger(__name__)
+
+
+def percent_only(value: float, quote: str | None) -> bool:
+    """The quote prints the value only as a percentage ("200% of salary"), never bare."""
+    if not quote:
+        return False
+    t = re.sub(r"(?<=\d),(?=\d)", ".", normalize(quote))
+    hits = [m for m in re.finditer(r"\d+(?:\.\d+)?", t) if abs(float(m.group()) - value) < 1e-9]
+    return bool(hits) and all(re.match(r"\s*(%|per ?cent|prozent|procent|prosent)", t[m.end():])
+                              for m in hits)
 
 # Role-grain data points, in output order (protocol field in the comment).
 ROLE_POINTS = [
@@ -360,14 +370,20 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
             if a.value is None or not a.quote:
                 continue
             number = getattr(a, "form", None) == "number_of_instruments"
-            extra = [f"printed {_num(a.value)} {a.unit or ''}".strip()]
+            if not number and not a.currency and percent_only(a.value, a.quote):
+                # "LTIP award of 200% of salary", "Bonus achieved 60%": a share, not an amount
+                rows[name] = missing(name, row, f"stated only as {_num(a.value)}% "
+                                                f"(\"{a.quote[:80]}\"), not as an amount")
+                continue
+            figure = a.value if number else printed_figure(a.value, a.unit, a.quote)
+            extra = [f"printed {_num(figure)} {a.unit or ''}".strip()]
             if getattr(a, "form", None):
                 extra.append(f"form: {a.form.replace('_', ' ')}")
             if a.includes:
                 extra.append(f"includes {a.includes}")
             rows[name] = placed(name, row, _amount(a), a, origin,
                                 unit="instruments" if number else (a.currency or ""),
-                                extra="; ".join(extra), figure=a.value)
+                                extra="; ".join(extra), figure=figure)
         money = next((rows[k] for k in ("total_remuneration", "base_salary") if k in rows), None)
         unit_of = next((getattr(r, f) for f in ("total", "base_salary")
                         if getattr(r, f).value is not None and getattr(r, f).quote), None)
@@ -540,3 +556,77 @@ def needs_policy(facts: RemunerationFacts) -> bool:
     """Some executive role lacks a target or maximum percentage."""
     return any(r.executive and any(getattr(r, k).value is None for k in TARGETS)
                for r in facts.roles)
+
+
+def duplicate_groups(rows: list) -> list[str]:
+    """Group roles read twice: an aggregate role whose amounts are the same as an earlier
+    aggregate role's, field for field, value and unit. The remuneration report and the
+    annual report's pay note print the same table, and the AI names the row differently
+    in each ("Other EC Members" and "Other EC", dormakaba; "Other IEC members" and
+    "Übrige Mitglieder des IEC", Implenia), so the pay was counted twice. The first one,
+    from the document read first, stays. At least two amounts must be non-zero: a row of
+    zeros ("Former members|0|0|0") says nothing about who it is.
+
+    Individual roles are left alone: two executives can be paid the same (Vontobel's
+    co-CEOs), and where they aren't, it is a misread no rule can resolve.
+    `rows`: role rows as Found or as CSV rows, in output order."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    amounts: dict[str, dict[str, tuple[float, str]]] = {}
+    aggregate: set[str] = set()
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure" and value == "aggregate":
+            aggregate.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit") or "")
+            except ValueError:
+                pass
+    seen: dict[tuple, str] = {}
+    out = []
+    for name, d in amounts.items():
+        if name not in aggregate or sum(1 for v, _ in d.values() if v) < 2:
+            continue
+        key = tuple(sorted(d.items()))
+        if key in seen:
+            out.append(name)
+        else:
+            seen[key] = name
+    return out
+
+
+# The line of a pay table that is an accounting item, not a person ("Option and share
+# program expenses (note 17)", S&D Standard, where the AI took the section heading
+# "Subsidiary employee:" above it for a role).
+ACCOUNTING_LINE = re.compile(r"\b(expenses?|costs?|provisions?|accruals?|ifrs ?2|note \d+|"
+                             r"aufwand|aufwendungen|kostnad\w*|kostnader|omkostninger)\b", re.I)
+
+
+def accounting_lines(rows: list) -> list[str]:
+    """Individual roles that are an accounting line of the pay table: every amount zero
+    (dashes) and the line quoted names an expense, cost or note, not a person. A person
+    paid nothing stays (Wild Bunch's CEO, Sino-German's board: "Der Vorstandsvorsitzende
+    Hui Wang"). `rows`: role rows as Found or as CSV rows."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    quote, individual, amounts = {}, set(), {}
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure":
+            quote[name] = get(r, "note") or ""
+            if value == "individual":
+                individual.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, []).append(float(value))
+            except ValueError:
+                amounts.setdefault(name, []).append(1.0)
+    return [n for n in amounts if n in individual and not any(amounts[n])
+            and ACCOUNTING_LINE.search(quote.get(n, ""))]

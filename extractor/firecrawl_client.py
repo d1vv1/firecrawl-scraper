@@ -12,8 +12,7 @@ from dataclasses import dataclass, field
 import httpx
 from firecrawl import Firecrawl
 from firecrawl import InternalServerError, RateLimitError, RequestTimeoutError
-from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
-                      wait_exponential)
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from .config import Settings
 
@@ -21,8 +20,22 @@ log = logging.getLogger(__name__)
 
 _RETRYABLE = (RateLimitError, InternalServerError, RequestTimeoutError,
               httpx.TransportError)
+# Firecrawl answers a page it could not get with a server error ("Failed to scrape. All
+# scraping engines failed..."). That is the page, not a passing fault: six tries of it
+# kept SEB's run waiting 10-20 minutes per page (12 Nov 2026).
+_PAGE_FAILED = ("all scraping engines failed", "failed to scrape")
+SCRAPE_TIMEOUT_MS = 90_000      # per scrape, Firecrawl's own limit
+
+
+def _retryable(e: BaseException) -> bool:
+    if not isinstance(e, _RETRYABLE):
+        return False
+    return not (isinstance(e, InternalServerError)
+                and any(p in str(e).lower() for p in _PAGE_FAILED))
+
+
 _retry = retry(
-    retry=retry_if_exception_type(_RETRYABLE),
+    retry=retry_if_exception(_retryable),
     stop=stop_after_attempt(6),            # rate limits clear within a minute or two
     wait=wait_exponential(multiplier=3, min=5, max=90),
     reraise=True,
@@ -87,7 +100,8 @@ class FirecrawlClient:
     @_retry
     def scrape(self, url: str, formats: list[str]) -> dict:
         self._afford("scrape", 1)
-        doc = self.app.scrape(url, formats=formats, only_main_content=False)
+        doc = self.app.scrape(url, formats=formats, only_main_content=False,
+                              timeout=SCRAPE_TIMEOUT_MS)
         self.credits.add("scrape", url, 1)
         return {"markdown": doc.markdown or "", "links": list(doc.links or [])}
 

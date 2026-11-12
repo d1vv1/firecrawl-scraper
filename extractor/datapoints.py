@@ -57,6 +57,7 @@ import datetime as dt
 import hashlib
 import json
 import logging
+import os
 import re
 import shutil
 import sys
@@ -70,14 +71,14 @@ import httpx
 import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, fx, listing, llm, pay, pay_tables, sector
+from . import apis, edgar, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
 from .documents import (DP_DOC_TYPES, Candidate, DocType, Document, Library, _stem as doc_stem,
                         title_year)
-from .extract import full_value, full_value_quoted
+from .extract import full_value, full_value_quoted, printed_figure
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei, run as run_report
 from .report_finder import extract_year, is_pdf_url
@@ -138,8 +139,15 @@ CONFIDENCE_RANK = {"A": 3, "B": 2, "C": 1, "": 0}
 METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
 
 DP_DIR = OUTPUT_DIR / "datapoints"
-TOPIC_WORDS = 2_500                  # report words sent per topic (7 topics)
-DOC_TOPIC_WORDS = 1_500              # words per needed topic from each fallback document
+# A report up to this long is read whole. The keyword pick below showed the AI a median 14%
+# of a report (12 Nov 2026, 407 reports), and values stated in the rest stayed empty: of 83
+# such values in 8 reports, the whole report gave 32. Longer reports share this budget
+# between the topics. 200,000 words is about 300,000 tokens; set REPORT_WORDS=0 for a
+# model with a small context window or token quota (the keyword pick alone).
+REPORT_WORDS = int(os.getenv("REPORT_WORDS", "200000"))
+DOC_WORDS = int(os.getenv("DOC_WORDS", "60000"))     # the same for each fallback document
+TOPIC_WORDS = 2_500                  # report words sent per topic at least (7 topics)
+DOC_TOPIC_WORDS = 1_500              # words per needed topic at least, from a long fallback document
 DOC_ROUNDS = 3                       # AI calls over fallback documents, at most
 DOCS_PER_ROUND = 3                   # documents read per round
 DEFAULT_DOC_CREDITS = 10             # maps and page scrapes; PDFs are downloaded for free
@@ -301,6 +309,11 @@ def fmt_number(v: float | int | None) -> str:
     return f"{v:.6f}".rstrip("0").rstrip(".")
 
 
+# A quote is kept whole in the note, up to this length: a clipped quote can't be looked
+# up again in the source text (96 failed quote checks in the FY2025 file were clipped).
+QUOTE_CHARS = 1000
+
+
 def clip(text: str | None, n: int = 160) -> str:
     text = re.sub(r"\s+", " ", (text or "")).strip()
     return text if len(text) <= n else text[:n - 1] + "…"
@@ -373,7 +386,7 @@ def repair_quotes(rows: list[dict], pages_of) -> None:
             where, r["endpoint"] = f"PDF page {key}", f"{base}#page={key}"
         else:
             where, r["endpoint"] = m.group(1), text_fragment(base, row)
-        note = r["note"].replace(m.group(0), f'{where}: "{clip(row)}"{tail}')
+        note = r["note"].replace(m.group(0), f'{where}: "{clip(row, QUOTE_CHARS)}"{tail}')
         r["note"] = re.sub(r"; the figure \S+ is not in the quote", "", note)
         if r["confidence"] == "C":
             r["confidence"] = "B"
@@ -461,7 +474,7 @@ class Origin:
                     quote, ok = fixed[0], True
                     url = (self.page_urls or {}).get(fixed[1], url)
             return (text_fragment(url, quote) if ok else url, "B" if ok else "C",
-                    f'web page: "{clip(quote)}"' + (fixed[2] if fixed else "" if ok
+                    f'web page: "{clip(quote, QUOTE_CHARS)}"' + (fixed[2] if fixed else "" if ok
                                                     else " (quote not found verbatim)"), quote)
         loc = locate(quote, chunk_id, self.chunks, self.pages)
         fixed = None
@@ -474,11 +487,11 @@ class Origin:
         if self.kind == "pdf":
             page = loc.page
             return (f"{self.url}#page={page}" if page else self.url, conf,
-                    f'PDF page {page}: "{clip(quote)}"{tail}' if page else f'"{clip(quote)}"{tail}',
+                    f'PDF page {page}: "{clip(quote, QUOTE_CHARS)}"{tail}' if page else f'"{clip(quote, QUOTE_CHARS)}"{tail}',
                     quote)
         # Filed XHTML / HTML report text has no fixed pages: link to the quote itself.
         return (text_fragment(self.url, quote) if loc.verified else self.url, conf,
-                f'report text: "{clip(quote)}"{tail}', quote)
+                f'report text: "{clip(quote, QUOTE_CHARS)}"{tail}', quote)
 
 
 @dataclass
@@ -561,7 +574,7 @@ def _money_found(name: str, m: dict, result: dict, origin: Origin | None) -> Fou
     if origin is None:
         return Found(name, value, unit=m.get("currency") or "", period_end=period,
                      source="Annual report", endpoint=result.get("report_url") or "", method="PARSE",
-                     confidence="C", note=f'"{clip(m.get("quote"))}"', retrieved_at=at)
+                     confidence="C", note=f'"{clip(m.get("quote"), QUOTE_CHARS)}"', retrieved_at=at)
     endpoint, conf, where, _ = origin.where(m.get("quote"), m.get("chunk_id"),
                                             m["value"] if isinstance(m["value"], (int, float)) else None)
     printed = f"printed {fmt_number(m['value'])} {m.get('unit')} ({m.get('label_in_report')})"
@@ -637,8 +650,10 @@ def _user_prompt(name: str, url: str, chunks: list[Chunk], what: str,
     body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
     only = (f"Only these facts are needed: {', '.join(wanted)}. Set every other fact to "
             f"null (empty list / empty items).\n\n" if wanted else "")
+    # said again after the text: a whole report is 100,000 words between the two
     return (f"Company legal name: {name}\nSource: {url}\n\n{only}"
-            f"Excerpts from {what} (tables are in markdown):\n\n{body}")
+            f"Excerpts from {what} (tables are in markdown):\n\n{body}"
+            + (f"\n\n{only.strip()}" if only else ""))
 
 
 def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
@@ -663,14 +678,19 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
 
 
 def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
-    """The report's best chunks per topic: every topic, or only those of `gaps`
-    (plus the profile, for the identity check)."""
+    """What the AI reads of the report: all of it when it is no longer than REPORT_WORDS;
+    of a longer one the best chunks per topic, the topics sharing that budget: every
+    topic, or only those of `gaps` (plus the profile, for the identity check)."""
+    chunks = list(origin.chunks.values())
+    if chunks and sum(c.words for c in chunks) <= REPORT_WORDS:
+        return chunks
     topics = list(DATAPOINT_TOPICS) if gaps is None else sorted(
         {"profile"} | {FACT_TOPIC[g] for g in gaps if FACT_TOPIC.get(g) in DATAPOINT_TOPICS}
         | ({"keyfigures"} if any(FACT_TOPIC.get(g) == "financials" for g in gaps) else set()))
+    words = max(TOPIC_WORDS, REPORT_WORDS // len(topics))
     picked: dict[int, Chunk] = {}
     for topic in topics:
-        for c in select_chunks(list(origin.chunks.values()), topic, TOPIC_WORDS):
+        for c in select_chunks(chunks, topic, words):
             picked[c.id] = c
     return [picked[i] for i in sorted(picked)]
 
@@ -678,6 +698,43 @@ def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
 def _breakdown(b) -> str:
     return "; ".join(f"{getattr(i, 'country', None) or i.segment}: {fmt_number(i.value)}"
                      for i in b.items)
+
+
+# A line of profit, not of income, is never the revenue ("Operating profit 1,234",
+# "Rörelseresultat", "Betriebsergebnis"). A label that also names revenue or the
+# statement ("Statement of Profit or Loss ... management fees") is not one.
+PROFIT_LABEL = re.compile(r"\b(profit|result|ebit|ebitda|resultat|rörelseresultat|driftsresultat|"
+                          r"ergebnis|betriebsergebnis|liiketulos|tulos|overskudd)\b", re.I)
+REVENUE_WORDS = re.compile(r"profit (or|and) loss|revenue|sales|turnover|fees|umsatz|erlöse|"
+                           r"omsättning|omsætning|omsetning|inntekter|intäkter|liikevaihto", re.I)
+SAME_AS_PROFIT = "same figure as the operating profit read: check it is not a profit line"
+
+
+def _label(quote: str | None) -> str:
+    """The words before a quote's first figure: the line label of a table row."""
+    return re.split(r"\d", quote or "", maxsplit=1)[0]
+
+
+def not_a_profit_line(found: list[Found], revenue_quote: str | None) -> list[Found]:
+    """A revenue read off a profit line is dropped. A revenue and an EBITDA of the same
+    figure can't both be right: "Operating income" is a bank's total income (ProCredit)
+    but an investment company's result (Industrivärden), and the label can't tell which.
+    The EBITDA goes, and the revenue is kept graded C for a look."""
+    rev = next((f for f in found if f.data_point == "revenue"), None)
+    if rev is None:
+        return found
+    label = _label(revenue_quote)
+    if PROFIT_LABEL.search(label) and not REVENUE_WORDS.search(label):
+        log.info("Revenue %s dropped: read off a profit line (%r)", rev.value, label.strip())
+        return [f for f in found if f is not rev]
+    ebitda = next((f for f in found if f.data_point == "ebitda"), None)
+    if (ebitda is not None and ebitda.value and rev.value
+            and abs(float(ebitda.value) - float(rev.value)) <= 0.001 * abs(float(rev.value))):
+        log.info("EBITDA %s dropped: it is the revenue figure", ebitda.value)
+        rev.confidence = "C"
+        rev.note = f"{rev.note}; {SAME_AS_PROFIT}" if rev.note else SAME_AS_PROFIT
+        return [f for f in found if f is not ebitda]
+    return found
 
 
 def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | None = None) -> list[Found]:
@@ -703,21 +760,25 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
     for name in ("revenue", "total_assets"):
         n: NumberFact = getattr(facts, name)
         if n.value is not None and n.unit:
+            shown = printed_figure(n.value, n.unit, n.quote)
             add(name, full_value_quoted(n.value, n.unit, n.quote), n, unit=n.currency or "",
-                period=n.period_end, figure=n.value,
-                extra=f"printed {fmt_number(n.value)} {n.unit}")
+                period=n.period_end, figure=shown,
+                extra=f"printed {fmt_number(shown)} {n.unit}")
     e = facts.ebitda
     if e.value is not None and e.unit and e.measure:
         what = e.measure.replace("_", " ") + (" (company-defined)" if e.company_defined else "")
+        shown = printed_figure(e.value, e.unit, e.quote)
         add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
-            figure=e.value, extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
+            figure=shown, extra=f"{what}; printed {fmt_number(shown)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
+    out[:] = not_a_profit_line(out, facts.revenue.quote)
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
         scaled = n.unit not in (None, "units")
+        shown = printed_figure(n.value, n.unit or "units", n.quote)
         add(name, full_value_quoted(n.value, n.unit or "units", n.quote), n, unit="employees",
-            period=n.period_end, figure=n.value, extra=f"printed {fmt_number(n.value)} {n.unit}" if scaled else "")
+            period=n.period_end, figure=shown, extra=f"printed {fmt_number(shown)} {n.unit}" if scaled else "")
     n, t = facts.shares_outstanding, facts.treasury_shares
     if n.value is not None:
         shares = full_value_quoted(n.value, n.unit or "units", n.quote)
@@ -740,6 +801,8 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
                  "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
                  "benefits", "shareholding_requirement"):
         t: TextFact = getattr(facts, name)
+        if name == "exchange_segment" and STOCK_INDEX.search(t.value or ""):
+            continue                    # "FTSE 250": index membership is not a segment
         mic = listing.mic_for_name(t.value, country) if name == "exchange" and t.value else None
         add(name, t.value, t, extra=f"MIC {mic}" if mic else "")
     site = website_domain(facts.website.value)
@@ -792,6 +855,10 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
             add(name, _breakdown(b), b, unit=unit, extra=b.basis or "")
     return out
 
+
+# Stock indices the AI gives as an exchange segment, though the prompt rules them out.
+STOCK_INDEX = re.compile(r"\b(FTSE|M?DAX|SDAX|TecDAX|OBX|OMX\w*|SMI|SPI|CAC|AEX|STOXX|S&P|"
+                         r"index|indices)\b", re.I)
 
 # A share count that already excludes treasury shares.
 OUTSTANDING_WORDS = re.compile(r"outstanding|excluding|excl\.|net of|in circulation|utestående|"
@@ -879,17 +946,18 @@ def doc_origin(doc: Document, first_id: int) -> Origin:
 
 
 def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
-    """Only the parts relevant to the gaps: a short document whole, of a long one the
-    best chunks per needed topic."""
+    """What the AI reads of each document: all of it when it is no longer than DOC_WORDS,
+    of a longer one the best chunks per needed topic, the topics sharing that budget."""
     topics = sorted({FACT_TOPIC[g] for g in gaps})
+    words = max(DOC_TOPIC_WORDS, DOC_WORDS // max(len(topics), 1))
     picked: dict[int, Chunk] = {}
     for o in origins:
         chunks = list(o.chunks.values())
-        if sum(c.words for c in chunks) <= DOC_TOPIC_WORDS:
+        if sum(c.words for c in chunks) <= max(DOC_WORDS, DOC_TOPIC_WORDS):
             picked |= {c.id: c for c in chunks}
             continue
         for topic in topics:
-            picked |= {c.id: c for c in select_chunks(chunks, topic, DOC_TOPIC_WORDS)}
+            picked |= {c.id: c for c in select_chunks(chunks, topic, words)}
     return [picked[i] for i in sorted(picked)]
 
 
@@ -925,6 +993,7 @@ def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Librar
         facts = ask(name, origins[0].url if len(origins) == 1 else site, chunks,
                     "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
                     f"{slug}_docs_{key}", wanted)
+        requote.repair(facts, Bundle(origins), name, f"{slug}_docs_{key}")
         got = [f for f in from_facts(facts, Bundle(origins), country) if f.data_point in gaps]
         for f in got:
             year_check(f, lib.report_year)
@@ -1066,6 +1135,7 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             # the amounts of roles found in a checked pay table come from the table
             facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text())
             origin = o
+            requote.repair(facts, origin, name, f"{key}_pay")
             break
         log.info("Pay: no executive pay figures in %s", o.url)
     if facts is None:
@@ -1080,7 +1150,13 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 policy = pay.ask_pay(name, pdoc.url, chunks, "the company's remuneration policy",
                                      f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}",
                                      policy_origin.pdf, policy_origin.page_text())
+                requote.repair(policy, policy_origin, name,
+                               f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}_pay")
                 read.append(policy_origin.source)
+    period_end = pay_period_end(facts, period_end)
+    if not period_end:
+        log.warning("Pay: %s names no year for its pay figures; the pay rows have no "
+                    "period_end", origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
     totals = pay.total_roles(roles)
@@ -1090,7 +1166,31 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
+    twice = pay.duplicate_groups(roles)
+    if twice:
+        log.info("Pay: %s left out: the same figures as a group role already listed",
+                 ", ".join(twice))
+    items = pay.accounting_lines(roles)
+    if items:
+        log.info("Pay: %s left out: an accounting line of the table, not a person", ", ".join(items))
+    roles = [f for f in roles if f.role_row not in twice + items]
     return roles, terms, read
+
+
+def pay_period_end(facts, report_end: str) -> str:
+    """The date of the pay rows: the annual report's period end when it is for the pay's
+    year. Without one (the report route failed: Aurskog Sparebank, Stora Enso; one PDF
+    read on its own), or when the pay document is for another year, the date the pay
+    document itself states (Brøndby IF: "1. juli 2025 til 30. juni 2026")."""
+    year = fiscal_end_year(facts.fiscal_year)
+    if report_end and (not year or report_end[:4] == str(year)):
+        return report_end
+    own = (facts.period_end or "").strip()
+    try:
+        dt.date.fromisoformat(own)
+    except ValueError:
+        return ""
+    return own if not year or own[:4] == str(year) else ""
 
 
 def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | None,
@@ -1114,6 +1214,7 @@ def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | N
     more = ar.model_copy(update={"roles": extra})
     if not extra or not pay.has_pay(more):
         return []
+    requote.repair(more, report, name, f"{report_key}_pay_aggregates")
     read.append(report.source)
     log.info("Pay: %d aggregate role(s) added from %s", len(extra), report.source)
     return pay.role_found(more, report, period_end=period_end)
@@ -1556,6 +1657,7 @@ def read_report(t: Target, result: dict, lei_record: dict | None, values: list[F
     facts = ask(c.name, origin.url, chunks, "the company's annual report",
                 Path(result["debug"]["markdown_file"]).stem,
                 wanted_fields(gaps + list(IDENTITY_FIELDS)))
+    requote.repair(facts, origin, c.name, Path(result["debug"]["markdown_file"]).stem)
     report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
     if not result.get("period_end_date"):
         # the report step gave no period end: the fiscal year end the report states
@@ -1628,7 +1730,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
 
     # 1b. the report step found no report of the year, but the input names one (issue 15:
     # Tallink's report step chose an AGM board report; its annual report was in the input)
-    supplied = t.annual_report_url
+    supplied = readable(t.annual_report_url)
     if want_report and supplied and not local_file(supplied) and lacks_report(result):
         pfc = FirecrawlClient(load_settings(), max_credits=1)    # a PDF downloads for free
         found = use_as_report(t, supplied, known_website(result, c.slug), pfc,
@@ -1706,8 +1808,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 Path(result["debug"]["markdown_file"]).stem if origin else "",
                 (result or {}).get("period_end_date") or "",
                 (lei_record or {}).get("country") or c.country, fy,
-                tuple((u, label) for u, label in ((t.remuneration_report_url, "Remuneration report"),
-                                                  (t.annual_report_url, "Annual report")) if u),
+                tuple((u, label) for u, label in ((readable(t.remuneration_report_url), "Remuneration report"),
+                                                  (readable(t.annual_report_url), "Annual report")) if u),
                 next((int(f.value) for f in values if f.data_point == "cik" and f.value), None))
             values += terms
             tried += [r for r in read if r not in tried]
@@ -1894,7 +1996,7 @@ def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
             steps.append(("report (found before)", 0))
         else:
             steps.append(("report (failed before; --retry-failed searches again)", 0))
-        url = t.annual_report_url
+        url = readable(t.annual_report_url)
         if url and not local_file(url) and lacks_report(_saved_result(c)):
             steps.append(("annual_report_url as the report", 0 if is_pdf_url(url) else 1))
         steps.append(("report AI pass", 0))
@@ -2014,6 +2116,32 @@ def headcount_from_fte(by: dict[str, dict]) -> None:
               value=str(whole), method="DERIVED", note=f"{how}; {printed}{fte['note']}")
 
 
+VARIABLE_PAY = ("sti_paid", "sti_target", "sti_max", *pay.LTIS, "lti_target", "lti_max")
+NO_VARIABLE_PAY = "not applicable: no variable pay (the total is fixed pay only)"
+
+
+def no_variable_pay(mine: dict[str, dict]) -> None:
+    """A role paid only fixed pay (2invest's sole board member: 72,000 salary, total 72,000):
+    its total is base salary + benefits + pension, and no bonus figure was read. Then the
+    empty STI and LTI rows say so instead of "not found". `mine`: a role's rows by data point."""
+    def amount(k):
+        r = mine.get(k)
+        try:
+            return float(r["value"]) if r and r["value"] else None
+        except ValueError:
+            return None
+    base, total = amount("base_salary"), amount("total_remuneration")
+    if not base or not total or any(mine.get(k, {}).get("value") for k in VARIABLE_PAY):
+        return
+    fixed = base + (amount("benefits_value") or 0) + (amount("pension_contribution") or 0)
+    if not (base <= total and abs(total - fixed) <= 0.01 * total):
+        return
+    for k in VARIABLE_PAY:
+        r = mine.get(k)
+        if r and not r["value"] and r["note"].startswith("not found"):
+            r["note"] = NO_VARIABLE_PAY
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2021,6 +2149,9 @@ def refresh(rows: list[dict]) -> list[dict]:
     (pay.total_roles) is removed. Other rows that already have their values are unchanged."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
+    # a group role read from two documents; a table's accounting line taken for a person
+    gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
+    rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
     totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
@@ -2043,6 +2174,8 @@ def refresh(rows: list[dict]) -> list[dict]:
             band["note"] = why
     names = [f.name for f in fields(Found)]
     for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
+        no_variable_pay({r["data_point"]: r for r in rows
+                         if r["grain"] == "role" and r["role_row"] == role})
         mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
                 and r["data_point"] in pay.TARGETS}
         have = {k: Found(**{n: r[n] for n in names if n in r}) for k, r in mine.items() if r["value"]}
@@ -2341,6 +2474,18 @@ LOGIN_HOSTS = ("drive.google.com", "docs.google.com", "sharepoint.com", "onedriv
                "1drv.ms", "dropbox.com", "box.com")
 
 
+def needs_login(url: str | None) -> bool:
+    host = urlparse(url or "").netloc.lower()
+    return bool(url) and any(host == h or host.endswith("." + h) for h in LOGIN_HOSTS)
+
+
+def readable(url: str | None) -> str | None:
+    """A supplied link, unless it needs a login: a Google Drive link gives a sign-in or
+    viewer page, never the file (DACH Set 2: Edisun's viewer page was read as its "FY2023
+    report"). The document is then searched for instead."""
+    return None if needs_login(url) else url
+
+
 def input_problems(t: Target) -> list[str]:
     """What in a company's input row will cost it: a report link the tool can't open, or no
     LEI and no ISIN (the company is then found by name only, and an official filing can't
@@ -2349,8 +2494,8 @@ def input_problems(t: Target) -> list[str]:
     for label, url in (("annual_report_url", t.annual_report_url),
                        ("remuneration_report_url", t.remuneration_report_url)):
         host = urlparse(url or "").netloc.lower()
-        if url and any(host == h or host.endswith("." + h) for h in LOGIN_HOSTS):
-            out.append(f"{label} needs a login ({host}): give a direct link to the PDF")
+        if needs_login(url):
+            out.append(f"{label} needs a login ({host}): searched for instead; give a direct link to the PDF")
     if not t.company.lei and not t.isin:
         out.append("no LEI and no ISIN: found by name only")
     return out

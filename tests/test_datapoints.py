@@ -595,6 +595,30 @@ def test_a_total_line_of_listed_roles_is_not_a_role(monkeypatch):
     assert {r.role_row for r in roles} == {"CEO", "CFO"}
 
 
+def test_pay_rows_are_dated_by_the_pay_document_when_the_report_gives_no_date(monkeypatch):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("CEO", base_salary=_amount(1218, quote=q))])
+
+    def dated(year, end):
+        return facts.model_copy(update={"fiscal_year": year, "period_end": end})
+    # no report date (the report route failed, or one PDF read on its own): the pay's own
+    assert dp.pay_period_end(dated("2025/26", "2026-06-30"), "") == "2026-06-30"
+    assert dp.pay_period_end(dated("2025", "2025-12-31"), "") == "2025-12-31"
+    # the report's date when it is for the pay's year; the pay's own when it is not
+    assert dp.pay_period_end(dated("2025/26", "2026-06-30"), "2026-03-31") == "2026-03-31"
+    assert dp.pay_period_end(dated("2024", "2024-12-31"), "2025-12-31") == "2024-12-31"
+    assert dp.pay_period_end(dated(None, None), "2025-12-31") == "2025-12-31"
+    # not a date, or a date outside the pay's year: no date rather than a wrong one
+    assert dp.pay_period_end(dated("2025", "31 December 2025"), "") == ""
+    assert dp.pay_period_end(dated("2025", "2024-12-31"), "") == ""
+    assert dp.pay_period_end(dated("2025", None), "") == ""
+
+    monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: dated("2025/26", "2026-06-30"))
+    roles, _, _ = dp.from_pay("Brøndby", "bif", None, _origin(), "k", "")
+    assert roles and {r.period_end for r in roles if r.value is not None} == {"2026-06-30"}
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"
@@ -626,12 +650,39 @@ def test_report_pass_asks_only_for_what_the_apis_left_open():
 def test_report_chunks_cover_only_the_needed_topics(monkeypatch):
     asked = []
     monkeypatch.setattr(dp, "select_chunks", lambda chunks, topic, words: asked.append(topic) or [])
-    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], {})
+    monkeypatch.setattr(dp, "REPORT_WORDS", 5)             # a report too long to read whole
+    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [],
+                       {0: dp.Chunk(0, "one two three four five six seven", [1])})
     dp.report_chunks(origin, ["fte", "revenue_by_country"])
     assert sorted(asked) == ["employees", "geography", "profile"]
     asked.clear()
     dp.report_chunks(origin)
     assert len(asked) == len(dp.DATAPOINT_TOPICS)
+
+
+def test_a_report_within_the_budget_is_read_whole(monkeypatch):
+    def no_pick(*a):
+        raise AssertionError("no keyword pick for a report read whole")
+    monkeypatch.setattr(dp, "select_chunks", no_pick)
+    chunks = {i: dp.Chunk(i, "Number of employees 64,938 " * 50, [i + 1]) for i in range(4)}
+    origin = dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], chunks)
+    assert [c.id for c in dp.report_chunks(origin, ["fte"])] == [0, 1, 2, 3]
+    assert [c.id for c in dp.doc_chunks([origin], ["fte"])] == [0, 1, 2, 3]
+
+
+def test_a_long_report_shares_the_budget_between_its_topics(monkeypatch):
+    budgets = []
+    monkeypatch.setattr(dp, "select_chunks", lambda chunks, topic, words: budgets.append(words) or [])
+    monkeypatch.setattr(dp, "REPORT_WORDS", 70_000)
+    chunks = {i: dp.Chunk(i, "word " * 1_500, [i + 1]) for i in range(60)}       # 90,000 words
+    dp.report_chunks(dp.Origin("pdf", "u", "Annual report (PDF)", "PARSE", "", [], chunks))
+    assert budgets == [10_000] * 7
+
+
+def test_a_stock_index_is_not_an_exchange_segment():
+    assert dp.STOCK_INDEX.search("FTSE 250") and dp.STOCK_INDEX.search("OMXS30")
+    assert not dp.STOCK_INDEX.search("Large Cap") and not dp.STOCK_INDEX.search("Prime Standard")
+    assert not dp.STOCK_INDEX.search("First North Growth Market (MTF)")
 
 
 def test_qualitative_call_can_be_skipped(monkeypatch):
