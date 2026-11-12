@@ -27,7 +27,9 @@ during the year (e.g. "Former CEO (until April 2025)").
   directors (non-executive)"), with is_aggregate true if their pay is a
   total, and leave all their pay fields null.
 - is_aggregate: true when one figure covers several people ("other
-  executives, total").
+  executives"). Leave out a table's total line that only adds up people you
+  list one by one ("Total", "Executive Board total"): their pay would be
+  counted twice. Give a group's total only for people not listed one by one.
 - aggregate_headcount: for an aggregate entry, how many people it covers,
   and in `excludes` who is left out (e.g. "the CEO"). Null for one person.
 - Amounts are what was paid or awarded for the year, as printed, with the

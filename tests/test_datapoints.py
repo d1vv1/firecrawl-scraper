@@ -541,6 +541,60 @@ def test_a_supplied_document_is_read_first_and_skips_the_year_check(monkeypatch)
     assert any(r.data_point == "base_salary" and r.value == 1_142_000 for r in roles)
 
 
+def _role_rows(*roles):
+    """CSV role rows: (role_row, aggregate?, {data point: value})."""
+    return [{"grain": "role", "role_row": name, "data_point": k, "value": str(v),
+             "unit": "" if k == "role_disclosure" else "EUR"}
+            for name, aggregate, pay_ in roles
+            for k, v in {"role_disclosure": "aggregate" if aggregate else "individual", **pay_}.items()]
+
+
+def test_a_total_line_of_listed_roles_is_not_a_role(monkeypatch):
+    from extractor import pay
+    # Stora Enso: the CEO, the other members (the only record of them), and their sum
+    stora = _role_rows(
+        ("CEO", False, {"base_salary": 1013000, "pension_contribution": 129000,
+                        "total_remuneration": 2388000}),
+        ("Other members of the GLT", True, {"base_salary": 4348000, "total_remuneration": 8975000}),
+        ("Group Leadership Team", True, {"base_salary": 5361000, "pension_contribution": 1574000,
+                                         "total_remuneration": 11363000}))
+    assert pay.total_roles(stora) == ["Group Leadership Team"]
+    # the total printed first (Nokia), and parts rounded to thousands (within 1%)
+    first = _role_rows(("CEOs (combined)", True, {"total_remuneration": 7287}),
+                       ("CEO", False, {"total_remuneration": 6346}),
+                       ("Former CEO", False, {"total_remuneration": 940}))
+    assert pay.total_roles(first) == ["CEOs (combined)"]
+    # two fields add up, a third was misread (Aurskog Sparebank's benefits)
+    misread = _role_rows(("CEO", False, {"base_salary": 2569, "pension_contribution": 652, "benefits_value": 237}),
+                         ("CFO", False, {"base_salary": 1676, "pension_contribution": 265, "benefits_value": 89}),
+                         ("Total", True, {"base_salary": 4245, "pension_contribution": 917, "benefits_value": 1277}))
+    assert pay.total_roles(misread) == ["Total"]
+    # an aggregate that is no sum of its neighbours, one that repeats a single role, and
+    # one where only the base salaries add up: all kept
+    kept = _role_rows(("CEO", False, {"base_salary": 500, "total_remuneration": 900}),
+                      ("CFO", False, {"base_salary": 300, "total_remuneration": 500}),
+                      ("Other executives", True, {"base_salary": 800, "total_remuneration": 2100}))
+    assert pay.total_roles(kept) == []
+    assert pay.total_roles(_role_rows(("CEO", False, {"total_remuneration": 900}),
+                                      ("Management", True, {"total_remuneration": 900}))) == []
+    # saved rows lose the line on the next write; a second pass changes nothing
+    rows = [{**r, "period_end": "", "source": "", "endpoint": "", "method": "PARSE",
+             "retrieved_at": "", "confidence": "B", "note": ""} for r in stora]
+    left = dp.refresh(rows)
+    assert {r["role_row"] for r in left} == {"CEO", "Other members of the GLT"}
+    assert dp.refresh([dict(r) for r in left]) == left
+
+    # a new run leaves it out too (Brøndby IF: "Total" = CEO + CFO)
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("CEO", base_salary=_amount(1218, quote=q), total=_amount(1970, quote=q)),
+                  _role("CFO", base_salary=_amount(1472, quote=q), total=_amount(2022, quote=q)),
+                  _role("Direktionen (Total)", is_aggregate=True, base_salary=_amount(2690, quote=q),
+                        total=_amount(3992, quote=q))])
+    monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: facts)
+    roles, _, _ = dp.from_pay("Brøndby", "bif", None, _origin(), "k", "2026-06-30")
+    assert {r.role_row for r in roles} == {"CEO", "CFO"}
+
+
 def test_pay_rows_are_dated_by_the_pay_document_when_the_report_gives_no_date(monkeypatch):
     from extractor import pay
     q = "Net sales|3|2,326.2"
@@ -863,3 +917,55 @@ def test_values_carry_the_scraper_version_and_outdated_companies_are_redone(tmp_
     assert dp.saved_version(c) == 3
     monkeypatch.setattr(dp, "SCRAPER_VERSION", 4)
     assert dp.saved_version(c) < dp.SCRAPER_VERSION
+
+
+def test_a_total_line_found_whatever_its_rounding_and_place():
+    """From the code review of PR #2: a table in millions with one decimal, a Total printed
+    between its parts, a part without the field and no unit, a run limited to some fields."""
+    from extractor import pay
+
+    def with_notes(rows, notes):
+        return [r | ({"note": notes[r["role_row"]][r["data_point"]]}
+                     if r["data_point"] in notes.get(r["role_row"], {}) else {"note": ""}) for r in rows]
+    # EUR m, one decimal: 1.4 + 0.9 = 2.3 against 2.4, 2.4 + 1.5 = 3.9 against 3.8 (rounding)
+    rows = _role_rows(("CEO", False, {"base_salary": 1400000, "total_remuneration": 2400000}),
+                      ("CFO", False, {"base_salary": 900000, "total_remuneration": 1500000}),
+                      ("Total", True, {"base_salary": 2400000, "total_remuneration": 3800000}))
+    notes = {n: {"base_salary": f"printed {v} millions", "total_remuneration": f"printed {t} millions"}
+             for n, v, t in (("CEO", 1.4, 2.4), ("CFO", 0.9, 1.5), ("Total", 2.4, 3.8))}
+    assert pay.total_roles(rows) == []                        # 4% off, no rounding known
+    assert pay.total_roles(with_notes(rows, notes)) == ["Total"]
+    # the Total between its parts
+    rows = _role_rows(("CEO", False, {"base_salary": 1000000, "total_remuneration": 2000000}),
+                      ("Total", True, {"base_salary": 3000000, "total_remuneration": 7000000}),
+                      ("Other members", True, {"base_salary": 2000000, "total_remuneration": 5000000}))
+    assert pay.total_roles(rows) == ["Total"]
+    # a part without the field, and no unit on the total's: no error, the field skipped
+    rows = _role_rows(("CEO", False, {"total_remuneration": 2000000}),
+                      ("CFO", False, {"base_salary": 500000, "total_remuneration": 1000000}),
+                      ("Total", True, {"base_salary": 1500000, "total_remuneration": 3000000}))
+    for r in rows:
+        if r["role_row"] == "Total" and r["data_point"] == "base_salary":
+            r["unit"] = None
+    assert pay.total_roles(rows) == ["Total"]
+
+
+def test_a_run_of_some_pay_fields_leaves_no_part_of_a_total_role(tmp_path, monkeypatch):
+    import json
+    from types import SimpleNamespace
+    monkeypatch.setattr(dp, "DP_DIR", tmp_path)
+    t = SimpleNamespace(company=SimpleNamespace(slug="acme"), fields=frozenset({"total_remuneration"}))
+    base = {"company_id": "acme", "company_name": "", "segment": "", "country": "", "lei": "",
+            "period_end": "", "source": "", "endpoint": "", "method": "PARSE", "retrieved_at": "",
+            "confidence": "B", "note": "", "scraper_version": "1"}
+    roles = (("CEO", False, {"base_salary": 1000000, "sti_paid": 300000, "total_remuneration": 2000000}),
+             ("CFO", False, {"base_salary": 600000, "sti_paid": 200000, "total_remuneration": 1000000}),
+             ("Total", True, {"base_salary": 1600000, "sti_paid": 500000, "total_remuneration": 3000000}))
+    old = [base | r for r in _role_rows(*roles)]
+    dp.dp_path(t.company).write_text(json.dumps(old), encoding="utf-8")
+    # the new run asked only for total_remuneration; its own Total row went in refresh
+    new = [base | r for r in _role_rows(*[(n, a, {"total_remuneration": p["total_remuneration"]})
+                                         for n, a, p in roles[:2]])]
+    saved = dp.save_rows(t, new)
+    assert "Total" not in {r["role_row"] for r in saved}
+    assert {r["role_row"] for r in saved} == {"CEO", "CFO"}
