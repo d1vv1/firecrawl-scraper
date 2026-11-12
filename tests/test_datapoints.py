@@ -541,6 +541,30 @@ def test_a_supplied_document_is_read_first_and_skips_the_year_check(monkeypatch)
     assert any(r.data_point == "base_salary" and r.value == 1_142_000 for r in roles)
 
 
+def test_pay_rows_are_dated_by_the_pay_document_when_the_report_gives_no_date(monkeypatch):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("CEO", base_salary=_amount(1218, quote=q))])
+
+    def dated(year, end):
+        return facts.model_copy(update={"fiscal_year": year, "period_end": end})
+    # no report date (the report route failed, or one PDF read on its own): the pay's own
+    assert dp.pay_period_end(dated("2025/26", "2026-06-30"), "") == "2026-06-30"
+    assert dp.pay_period_end(dated("2025", "2025-12-31"), "") == "2025-12-31"
+    # the report's date when it is for the pay's year; the pay's own when it is not
+    assert dp.pay_period_end(dated("2025/26", "2026-06-30"), "2026-03-31") == "2026-03-31"
+    assert dp.pay_period_end(dated("2024", "2024-12-31"), "2025-12-31") == "2024-12-31"
+    assert dp.pay_period_end(dated(None, None), "2025-12-31") == "2025-12-31"
+    # not a date, or a date outside the pay's year: no date rather than a wrong one
+    assert dp.pay_period_end(dated("2025", "31 December 2025"), "") == ""
+    assert dp.pay_period_end(dated("2025", "2024-12-31"), "") == ""
+    assert dp.pay_period_end(dated("2025", None), "") == ""
+
+    monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: dated("2025/26", "2026-06-30"))
+    roles, _, _ = dp.from_pay("Brøndby", "bif", None, _origin(), "k", "")
+    assert roles and {r.period_end for r in roles if r.value is not None} == {"2026-06-30"}
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"

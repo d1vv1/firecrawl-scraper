@@ -39,6 +39,7 @@ def test_one_pdf_gives_pay_rows(tmp_path, monkeypatch):
     assert [(r["role_row"], r["data_point"], r["value"]) for r in rows] == [
         ("CEO", "base_salary", "1242000"), ("", "pension_type", "defined contribution")]
     assert rows[0]["period_end"] == "2025-12-31" and rows[0]["company"] == "Acme AB"
+    assert rows[1]["period_end"] == "2025-12-31"             # the pay term: the pay year's
     assert list((tmp_path / "cache").glob("pdf_*.md"))       # the text is cached
 
 

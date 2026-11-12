@@ -1081,12 +1081,32 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                                      f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}",
                                      policy_origin.pdf, policy_origin.page_text())
                 read.append(policy_origin.source)
+    period_end = pay_period_end(facts, period_end)
+    if not period_end:
+        log.warning("Pay: %s names no year for its pay figures; the pay rows have no "
+                    "period_end", origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
     return roles, terms, read
+
+
+def pay_period_end(facts, report_end: str) -> str:
+    """The date of the pay rows: the annual report's period end when it is for the pay's
+    year. Without one (the report route failed: Aurskog Sparebank, Stora Enso; one PDF
+    read on its own), or when the pay document is for another year, the date the pay
+    document itself states (Brøndby IF: "1. juli 2025 til 30. juni 2026")."""
+    year = fiscal_end_year(facts.fiscal_year)
+    if report_end and (not year or report_end[:4] == str(year)):
+        return report_end
+    own = (facts.period_end or "").strip()
+    try:
+        dt.date.fromisoformat(own)
+    except ValueError:
+        return ""
+    return own if not year or own[:4] == str(year) else ""
 
 
 def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | None,
