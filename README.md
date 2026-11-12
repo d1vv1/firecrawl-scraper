@@ -298,6 +298,9 @@ report): no search, no APIs, no Firecrawl. It uses the collector's pay route: th
 call, the Camelot pay-table reading and the total check. It writes
 `output/<pdf name>_pay.csv` (or `--out`): one row per role and field, plus the company's
 pension type, benefits and shareholding requirement, each with its page, quote and grade.
+Each row's `period_end` is the year end the PDF states for its pay figures (a year named
+without dates counts as the calendar year); `--period-end` overrides it. The full
+collector dates pay rows the same way when the annual report gives it no date.
 Exit code 2 when the PDF has no executive pay. A second run of the same file is free (cached).
 
 ### Companies from report files

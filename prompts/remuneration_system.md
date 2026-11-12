@@ -86,3 +86,10 @@ Company level, from the policy or report:
   Null if there is no such rule.
 
 fiscal_year: the year the pay figures are for, e.g. "2025" or "2024/25".
+
+period_end: the last day of that fiscal year, as YYYY-MM-DD. Where the
+text gives the period or its end ("year ended 31 March 2026", "perioden
+1. juli 2025 til 30. juni 2026"), that date: "2026-03-31", "2026-06-30".
+Where it names the year only ("regnskapsåret 2025", "Annual Report 2025",
+a pay table headed "2025"), the year is the calendar year: "2025-12-31".
+Null if the text does not say which year the pay figures are for.
