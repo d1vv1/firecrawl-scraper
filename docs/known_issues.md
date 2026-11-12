@@ -4,6 +4,8 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 
 | # | Issue | Status | Needs |
 |---|---|---|---|
+| 20 | A missing value doesn't say why in a form you can count: the reason is free text in `note` | to do | a `failure_type` column (an enum) in the schema |
+| 19 | DACH Set 2: 25 of 102 companies got under half their data points; a re-run blocked by the site replaced a better saved result (ABB) | open | report search for small German caps; pay fields small caps don't disclose; `combine` keeping the better block |
 | 18 | Swiss and German reports not found: the search reads the consumer site, not the investor site | mostly fixed: web search for the report (13 of 19 found, 11 of 12 Swiss/German) | companies with no website and no report the search finds (Bergbahnen Engelberg, IQM, Bluebird, City of London) |
 | 17 | Weak links on the High-severity fields (dashboard review against the benchmarking severity workbook) | mostly fixed: every High field up | 19 companies still without a report (report and website finders, issue 4); pay quotes pieced together from separate cells |
 | 16 | No way to run companies for only one field or a few fields; the input's `run_required` (Pay Data / Company Data) is ignored | fixed: `--fields`, `run_required` followed, rows merged | — |
@@ -22,6 +24,49 @@ Open problems found during test runs, to pick up later. Newest first. Every issu
 | 3 | SEC name lookup misses some registrants | fixed | — |
 | 2 | PDF tables converted with merged columns | fixed for pay tables with a total column | tables with people as columns; tables without a total |
 | 1 | Report downloads behind buttons | fixed | — |
+
+## 20. Failure types as a column — to do
+
+*Asked for 12 November 2026, after DACH Set 2.*
+
+**Problem.** Why a value is empty is written in `note` as free text ("not found in: GLEIF, OpenFIGI, Annual report (PDF)… (annual-report route failed: ReportNotFoundError: …)"). Counting failures by cause needs regex over the notes and the run log, and the run log mixes companies when 3 workers run.
+
+**To do.** Add a `failure_type` column to the data-point CSV (empty when there is a value), from a fixed list, set where the failure happens rather than parsed afterwards. Also on the dashboard as a filter, and in the checks CSV. First list, from the Set 2 log and notes:
+
+| failure_type | Meaning |
+|---|---|
+| `not_collected` | the run didn't ask for this field (`run_required`, `--fields`) |
+| `not_applicable` | doesn't apply (one person in the role, no LTI plan) |
+| `no_website` | no company website found |
+| `no_report` | no annual report found on the site or by web search |
+| `old_report_only` | only reports older than the fiscal year sought |
+| `other_company_report` | the report found is by another company (identity check) |
+| `link_broken` | a supplied or found link gives 404 |
+| `link_blocked` | 403, 503, a cookie or login page, every scraping engine failed |
+| `link_needs_login` | Google Drive, SharePoint, Dropbox… (viewer page, not the file) |
+| `scanned_pdf` | the PDF has no text layer (needs OCR) |
+| `not_in_source` | the document was read; the value isn't there |
+| `not_derived` | a computed value lacks an input (market cap without a share price) |
+| `credit_cap` | the company's Firecrawl budget ran out |
+| `llm_error` | the AI call failed after retries |
+| `register_missing` | no register or API has the value (GLEIF, FIRDS, OpenFIGI, EDGAR) |
+
+Before adding it, list every place that raises or writes a missing-value note (`datapoints.from_result`, the report step, `documents`, `firecrawl_client`, `llm`) to check the list is complete.
+
+## 19. DACH Set 2: weak companies — open
+
+*Found 12 November 2026 (Set 2: 102 companies, 64 CH and 61 DE, all Tier 2; 1,033 credits).*
+
+**Overall** not much below earlier runs: company fields 74% filled (76% in the combined file), role pay 58% (62%). The shortfall is concentrated in 25 companies with under half their data points.
+
+**Why values are missing** (of 2,273 values asked for and not found):
+- 932: the remuneration report was read, but the value isn't in it. Mostly `lti_target`, `lti_vested`, `sti_target`, `lti_max`, `sti_max`, `lti_granted`: small German and Swiss caps often have no LTI, or disclose only totals. Roles come out in the report's language ("Vorstand", "Alleinvorstand", "Membre de Direction"), so role mapping should be checked.
+- 560: the annual report was read, the value isn't in it.
+- 333: no annual report found. Accentro, Albis Leasing, TISCON (no report on the site); 2invest, NEXR, A.I.S. (only old reports); Bergbahnen Engelberg (no website, a Drive link); Edisun (a Drive link); TC Unterhaltungselektronik.
+- Tracker links that don't work: 404 (Viscom, Allgeier), 403 (Barry Callebaut's remuneration report), a cookie page (Vincorion), Google Drive viewer pages (35 in Set 2).
+- Other: EFG International's report is EFG Bank AG's (identity check) and its remuneration PDFs are scans; Richemont's fiscal year ends in March.
+
+**ABB.** ABB's site answered 503 to this run, so pay came back nearly empty (31 values; 154 before). `combine` replaces a company with the newer run, so it took the worse result; the earlier ABB rows were put back by hand. To do: `combine` should keep the saved block when the new run has clearly fewer values (and say so).
 
 ## 18. Swiss and German reports not found — mostly fixed
 
