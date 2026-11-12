@@ -564,6 +564,11 @@ def test_a_total_line_of_listed_roles_is_not_a_role(monkeypatch):
                        ("CEO", False, {"total_remuneration": 6346}),
                        ("Former CEO", False, {"total_remuneration": 940}))
     assert pay.total_roles(first) == ["CEOs (combined)"]
+    # two fields add up, a third was misread (Aurskog Sparebank's benefits)
+    misread = _role_rows(("CEO", False, {"base_salary": 2569, "pension_contribution": 652, "benefits_value": 237}),
+                         ("CFO", False, {"base_salary": 1676, "pension_contribution": 265, "benefits_value": 89}),
+                         ("Total", True, {"base_salary": 4245, "pension_contribution": 917, "benefits_value": 1277}))
+    assert pay.total_roles(misread) == ["Total"]
     # an aggregate that is no sum of its neighbours, one that repeats a single role, and
     # one where only the base salaries add up: all kept
     kept = _role_rows(("CEO", False, {"base_salary": 500, "total_remuneration": 900}),

@@ -435,8 +435,9 @@ def total_roles(rows: list) -> list[str]:
 
     The roles next to it: two or more with amounts, directly before or after it. Fields
     are compared where every one of them states the field in the total's unit. The total
-    remuneration must add up (within 1%, for rounding), or two other fields where it
-    can't be compared; and no field may be off by more than 5%."""
+    remuneration must add up (within 1%, for rounding), or two other fields. One field
+    that doesn't is no objection: Aurskog Sparebank's total line has the base salaries
+    and pensions of its seven executives to the krone, and a benefits figure misread."""
     def get(r, k):
         return r[k] if isinstance(r, dict) else getattr(r, k)
 
@@ -460,10 +461,7 @@ def total_roles(rows: list) -> list[str]:
         for point, (value, unit) in total.items():
             if not value or not all(p.get(point, (0, None))[1] == unit for p in parts):
                 continue
-            off = abs(sum(p[point][0] for p in parts) - value) / abs(value)
-            if off > 0.05:
-                return False
-            if off <= 0.01:
+            if abs(sum(p[point][0] for p in parts) - value) <= 0.01 * abs(value):
                 good.append(point)
         return "total_remuneration" in good or len(good) >= 2
 
