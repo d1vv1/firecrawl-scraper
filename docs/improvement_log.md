@@ -479,3 +479,27 @@ Measured first on the cached reports and the combined FY2025 file; no company wa
 #### 36. Quotes are kept whole
 - **Before:** a note kept 160 characters of the quote. A longer quote could not be looked up again (96 failed checks).
 - **Now:** up to 1,000 characters (`datapoints.QUOTE_CHARS`), from the next run.
+
+### 12 November 2026 (evening): the version 2 trial, and two fixes it showed
+
+The trial re-ran 30 companies (4 each from GB, CH, NO, SE, DE, DK; 3 each from AT, FI) under version 2 and compared them with their version 1 results under the same checks. 29 finished:
+- values 1,767 -> 1,792
+- hard fails 182 -> 82
+- grade B 1,187 -> 1,312, grade C 353 -> 243
+
+Kesko's version 1 values came from its FY2023 report; version 2 read FY2025.
+
+#### 37. A page Firecrawl cannot get no longer holds up the run
+- **Before:** Firecrawl answers a page it could not get with a server error ("Failed to scrape. All scraping engines failed"). The client retried that 6 times, so each SEB page took 10-20 minutes to give up, and SEB's run was stopped after an hour.
+- **Now:**
+  - That error is not retried.
+  - A scrape may take 90 seconds.
+  - A company's document fallback stops fetching after 10 minutes (`DOC_MINUTES`) and reads only cached documents after that.
+
+#### 38. A profit line is not the revenue
+- **Before:** Industrivärden's "Operating income 35,655" (its result, including the change in value of its holdings) was given as both its revenue and its EBITDA.
+- **Now:**
+  - The prompt says a profit line is never the revenue, and that an investment company with no revenue line has none.
+  - In code, a revenue whose line label names a profit ("Operating profit", "Rörelseresultat", "Betriebsergebnis") is dropped. A label that also names revenue or the statement ("Statement of Profit or Loss ... management fees") is kept.
+  - A revenue and an EBITDA of the same figure can't both be right. "Operating income" is a bank's total income (ProCredit) but an investment company's result, and the label can't tell which. So the EBITDA is dropped and the revenue is kept, graded C with a note to check it.
+- **Test:** on the combined file, only ProCredit is affected (EBITDA dropped). Industrivärden re-run: no revenue and no EBITDA, total assets unchanged.

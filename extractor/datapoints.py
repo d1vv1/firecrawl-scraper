@@ -700,6 +700,43 @@ def _breakdown(b) -> str:
                      for i in b.items)
 
 
+# A line of profit, not of income, is never the revenue ("Operating profit 1,234",
+# "Rörelseresultat", "Betriebsergebnis"). A label that also names revenue or the
+# statement ("Statement of Profit or Loss ... management fees") is not one.
+PROFIT_LABEL = re.compile(r"\b(profit|result|ebit|ebitda|resultat|rörelseresultat|driftsresultat|"
+                          r"ergebnis|betriebsergebnis|liiketulos|tulos|overskudd)\b", re.I)
+REVENUE_WORDS = re.compile(r"profit (or|and) loss|revenue|sales|turnover|fees|umsatz|erlöse|"
+                           r"omsättning|omsætning|omsetning|inntekter|intäkter|liikevaihto", re.I)
+SAME_AS_PROFIT = "same figure as the operating profit read: check it is not a profit line"
+
+
+def _label(quote: str | None) -> str:
+    """The words before a quote's first figure: the line label of a table row."""
+    return re.split(r"\d", quote or "", maxsplit=1)[0]
+
+
+def not_a_profit_line(found: list[Found], revenue_quote: str | None) -> list[Found]:
+    """A revenue read off a profit line is dropped. A revenue and an EBITDA of the same
+    figure can't both be right: "Operating income" is a bank's total income (ProCredit)
+    but an investment company's result (Industrivärden), and the label can't tell which.
+    The EBITDA goes, and the revenue is kept graded C for a look."""
+    rev = next((f for f in found if f.data_point == "revenue"), None)
+    if rev is None:
+        return found
+    label = _label(revenue_quote)
+    if PROFIT_LABEL.search(label) and not REVENUE_WORDS.search(label):
+        log.info("Revenue %s dropped: read off a profit line (%r)", rev.value, label.strip())
+        return [f for f in found if f is not rev]
+    ebitda = next((f for f in found if f.data_point == "ebitda"), None)
+    if (ebitda is not None and ebitda.value and rev.value
+            and abs(float(ebitda.value) - float(rev.value)) <= 0.001 * abs(float(rev.value))):
+        log.info("EBITDA %s dropped: it is the revenue figure", ebitda.value)
+        rev.confidence = "C"
+        rev.note = f"{rev.note}; {SAME_AS_PROFIT}" if rev.note else SAME_AS_PROFIT
+        return [f for f in found if f is not ebitda]
+    return found
+
+
 def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | None = None) -> list[Found]:
     """The AI's facts as Found values, each placed by its quote (in its document, when
     several documents were read together). `country` picks the MIC of a growth market
@@ -734,6 +771,7 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
         add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
             figure=shown, extra=f"{what}; printed {fmt_number(shown)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
+    out[:] = not_a_profit_line(out, facts.revenue.quote)
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
