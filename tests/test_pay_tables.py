@@ -54,6 +54,7 @@ def _role(title, name=None, base=None, benefits=None, executive=True):
                    aggregate_headcount=RoleHeadcount(value=None, excludes=None, quote=None,
                                                      chunk_id=None),
                    base_salary=_amount(base, "q" if base else None), sti_paid=_amount(),
+                   sti_deferred=_amount(),
                    lti_vested=_lti(), lti_granted=_lti(5), benefits=_amount(benefits, "q"),
                    pension=_amount(), pension_allowance=_amount(), total=_amount(),
                    sti_target=_target(), sti_max=_target(), lti_target=_target(),

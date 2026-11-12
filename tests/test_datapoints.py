@@ -270,7 +270,7 @@ def _role(title, executive=True, aggregate=False, name=None, **pay):
          "quote": "Net sales|3|2,326.2", "chunk_id": 0,
          "aggregate_headcount": {"value": None, "excludes": None, "quote": None, "chunk_id": None},
          }
-    d |= {k: _amount() for k in ("base_salary", "sti_paid", "benefits", "pension",
+    d |= {k: _amount() for k in ("base_salary", "sti_paid", "sti_deferred", "benefits", "pension",
                                  "pension_allowance", "total")}
     d |= {k: _amount() | {"form": None} for k in ("lti_vested", "lti_granted")}
     d |= {k: none_p | {"form": None, "currency": None, "unit": None}
@@ -563,6 +563,26 @@ def test_pay_rows_are_dated_by_the_pay_document_when_the_report_gives_no_date(mo
     monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: dated("2025/26", "2026-06-30"))
     roles, _, _ = dp.from_pay("Brøndby", "bif", None, _origin(), "k", "")
     assert roles and {r.period_end for r in roles if r.value is not None} == {"2026-06-30"}
+
+
+def test_a_bonus_split_into_cash_and_deferred_is_one_bonus():
+    """Big Yellow: "Annual bonus – cash" 29,689 and "Annual bonus – deferred" 300,494."""
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    role = _role("Executive Chairman", base_salary=_amount(443125, "units", "GBP", q),
+                 sti_paid=_amount(29689, "units", "GBP", q),
+                 sti_deferred=_amount(300494, "units", "GBP", q, includes="deferred into shares"),
+                 total=_amount(773308, "units", "GBP", q))
+    by = {f.data_point: f for f in pay.role_found(_pay([role]), _origin())}
+    sti = by["sti_paid"]
+    assert sti.value == 330183 and sti.method == "DERIVED" and sti.unit == "GBP"
+    assert sti.note.startswith("derived: annual bonus in cash 29,689 + deferred bonus 300,494 "
+                               "(deferred into shares); printed 29689 units")
+    assert "add up" not in by["total_remuneration"].note        # 443,125 + 330,183
+    # only a deferred column: it is the bonus
+    only = _role("CEO", sti_deferred=_amount(500, "thousands", "GBP", q))
+    sti = {f.data_point: f for f in pay.role_found(_pay([only]), _origin())}["sti_paid"]
+    assert sti.value == 500_000 and "no cash part given" in sti.note
 
 
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():

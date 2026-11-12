@@ -348,6 +348,10 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
                 if f not in update:
                     update[f] = LtiAmount(value=None, unit=None, currency=None, form=None,
                                           includes=None, quote=None, chunk_id=None)
+        if "sti_paid" in update:
+            # the table's bonus columns, cash and deferred, are added up in sti_paid
+            update["sti_deferred"] = PayAmount(value=None, unit=None, currency=None,
+                                               includes=None, quote=None, chunk_id=None)
         if "pension" in update and "pension_allowance" not in update:
             update["pension_allowance"] = PayAmount(value=None, unit=None, currency=None,
                                                     includes=None, quote=None, chunk_id=None)

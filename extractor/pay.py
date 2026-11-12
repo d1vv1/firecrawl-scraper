@@ -245,6 +245,22 @@ def months_as_pct(f: Found) -> Found:
                     "note": f"derived: stated as {_num(f.value)} months of salary; {f.note}"})
 
 
+def with_deferred(cash: Found | None, deferred: Found, how: str | None = None) -> Found:
+    """The year's bonus = the part paid in cash + the part deferred, which the pay table
+    gives in two columns (Big Yellow: "Annual bonus – cash" 29,689 and "Annual bonus –
+    deferred" 300,494, in shares). `how`: the form of the deferred part, for the note."""
+    form = f" ({how})" if how else ""
+    if cash is None or not isinstance(cash.value, (int, float)):
+        return Found(**{**deferred.__dict__, "method": "DERIVED",
+                        "note": f"derived: the annual bonus = the part deferred{form} (no cash "
+                                f"part given); {deferred.note}"})
+    return Found(**{**cash.__dict__, "value": cash.value + deferred.value, "method": "DERIVED",
+                    "confidence": max(cash.confidence or "C", deferred.confidence or "C",
+                                      key="ABC".index),
+                    "note": f"derived: annual bonus in cash {cash.value:,.0f} + deferred bonus "
+                            f"{deferred.value:,.0f}{form}; {cash.note}"})
+
+
 def with_allowance(pension: Found | None, allowance: Found) -> Found:
     """Pension = pension cost + a salary addition paid instead of pension (the golden
     definition for Norway: Equinor's EVP pension 123 = addition 93 + pension 30)."""
@@ -416,6 +432,14 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 if d:
                     rows[tgt] = d
         misread_targets(rows)
+        deferred = r.sti_deferred
+        if deferred.value is not None and deferred.quote:
+            rows["sti_paid"] = with_deferred(
+                rows.get("sti_paid"), placed(
+                    "sti_paid", row, _amount(deferred), deferred, origin,
+                    unit=deferred.currency or "", figure=deferred.value,
+                    extra=f"printed {_num(deferred.value)} {deferred.unit or ''}".strip()),
+                deferred.includes)
         allowance = r.pension_allowance
         if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
                 and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):
@@ -448,6 +472,9 @@ def check_total(r: RolePay, rows: dict[str, Found]) -> None:
     if not total or not isinstance(total.value, (int, float)) or not total.value:
         return
     parts = [_amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None]
+    if r.sti_deferred.value is not None:
+        # the deferred part of the bonus: one part with the cash part, or the bonus itself
+        parts = parts + [_amount(r.sti_deferred)] if r.sti_paid.value is None else             [sum(parts) + _amount(r.sti_deferred)] + [0.0] * (len(parts) - 1)
     ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
     ltis = [(k, v) for k, v in ltis if v is not None and not (
         k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
