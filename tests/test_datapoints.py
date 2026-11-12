@@ -1082,3 +1082,88 @@ def test_a_run_of_some_pay_fields_leaves_no_part_of_a_total_role(tmp_path, monke
     saved = dp.save_rows(t, new)
     assert "Total" not in {r["role_row"] for r in saved}
     assert {r["role_row"] for r in saved} == {"CEO", "CFO"}
+
+
+def test_pay_document_dates_from_the_second_review():
+    def end(date, quote):
+        return Found("fiscal_year_end", date, note=f'PDF page 3: "{quote}"')
+    # the usual UK wording is a year end; an impossible date is no date
+    assert dp.year_end_fits(end("2026-03-31", "for the year ended 31 March 2026"), "2025/26")
+    assert dp.stated_year_end([Found("fiscal_year_end", "2025-06-31")]) is None
+    assert not dp.iso_date("2025-02-29") and dp.iso_date("2024-02-29")
+    assert (dp.normal_year("FY2025"), dp.normal_year("2025-26"), dp.normal_year("2025/2026"),
+            dp.normal_year("no year")) == ("2025", "2025/26", "2025/26", None)
+
+
+def test_an_earlier_years_title_gives_no_fiscal_year(monkeypatch):
+    """An FY2024 annual report given in the input, read for FY2025 pay: its title says 2024."""
+    q = "Net sales|3|2,326.2|1,827.3"
+    monkeypatch.setattr(dp, "ask", lambda *a, **k: _facts(
+        revenue={"value": 2326.2, "unit": "millions", "currency": "DKK", "period_end": None,
+                 "quote": q, "chunk_id": 0}))
+    monkeypatch.setattr(dp, "title_year", lambda pages: 2024)
+    rem = _origin()
+    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem], ["revenue", "fiscal_year"],
+                                                          "DK", (), "2025", rem)}
+    assert by["fiscal_year"].value == "2025" and by["fiscal_year"].confidence == "C"
+
+
+def test_a_gap_note_when_the_report_was_read_after_all():
+    t = dp.Target(Company("x-1", "X", "DK"))
+    note = {f.data_point: f for f in dp.finish(t, {}, ["Annual report (PDF)"], "PaymentRequired: no credits",
+                                               report_read=True)}["revenue"].note
+    assert note.startswith("not found in: Annual report (PDF)")
+    assert note.endswith("(annual-report route failed: PaymentRequired: no credits)")
+
+
+def _no_report_collect(monkeypatch, tmp_path, from_pay, read_docs, from_documents=None):
+    """collect() for a company whose annual-report route failed, with fakes for the steps."""
+    from extractor import batch
+    monkeypatch.setattr(dp, "identify_lei", lambda *a, **k: {"record": None})
+    monkeypatch.setattr(dp, "from_pay", from_pay)
+    monkeypatch.setattr(dp, "from_read_documents", read_docs)
+    monkeypatch.setattr(batch, "OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(dp.sector, "from_description", lambda chosen, name: None)
+    docs = from_documents is not None
+    if docs:
+        monkeypatch.setattr(dp, "FirecrawlClient", lambda *a, **k: type("FC", (), {"credits": type(
+            "M", (), {"total": 0})()})())
+        monkeypatch.setattr(dp, "load_settings", lambda: None)
+        monkeypatch.setattr(dp, "website_for", lambda *a: "https://x.com")
+        monkeypatch.setattr(dp, "Library", lambda *a, **k: type("Lib", (), {"report_year": None})())
+        monkeypatch.setattr(dp, "lacks_report", lambda result: False)
+        monkeypatch.setattr(dp, "from_documents", from_documents)
+    t = dp.Target(Company("x-1", "X", "DK"), remuneration_report_url="https://x.com/rem.pdf")
+    return {f.data_point: f for f in dp.collect(t, docs=docs, error="WebsiteNotFoundError: no website",
+                                                use_apis=False) if f.grain == "company"}
+
+
+def test_the_pay_documents_are_read_also_when_firecrawl_ran_out(monkeypatch, tmp_path):
+    from firecrawl import PaymentRequiredError
+    rem = _origin()
+
+    def pay_then_no_credits(*a):
+        a[-1].origins.append(rem)            # the supplied report was read...
+        raise PaymentRequiredError("Payment required", 402)   # ...then the site search failed
+    calls = []
+    by = _no_report_collect(monkeypatch, tmp_path, pay_then_no_credits,
+                            lambda *a: calls.append(a) or [Found("legal_name", "X A/S", source=rem.source,
+                                                                  method="PARSE", confidence="B")])
+    assert len(calls) == 1 and by["legal_name"].value == "X A/S"
+
+
+def test_a_c_graded_value_from_the_pay_documents_is_looked_for_again(monkeypatch, tmp_path):
+    rem = _origin()
+
+    def pay(*a):
+        a[-1].origins.append(rem)
+        return [], [], [rem.source]
+    undated = Found("revenue", 5e8, unit="DKK", source=rem.source, method="PARSE", confidence="C")
+    asked = []
+
+    def fallback(name, slug, site, gaps, lib, fc, country):
+        asked.append(gaps)
+        return [Found("revenue", 6e8, unit="DKK", period_end="2025-12-31", source="Year-end report",
+                      method="PARSE", confidence="B")], ["Year-end report"]
+    by = _no_report_collect(monkeypatch, tmp_path, pay, lambda *a: [undated], fallback)
+    assert "revenue" in asked[0] and by["revenue"].value == 6e8
