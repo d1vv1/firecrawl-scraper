@@ -21,7 +21,9 @@ import hashlib
 import html
 import json
 import logging
+import os
 import re
+import time
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from urllib.parse import urljoin, urlparse
@@ -192,6 +194,9 @@ COVER_PAGES = 3              # where its title is
 _TITLE_YEAR = re.compile(r"(?<!\d)(20\d{2})(?:\s*[/-]\s*(\d{4}|\d{2}))?(?!\d)")
 STALE_YEARS = 2              # a dated document older than the report year - this is skipped
 MAX_DOCS_PER_TYPE = 2        # documents tried per type over all rounds
+# Minutes a company's document fallback may spend fetching; after that only cached
+# documents are read. A site whose pages all fail kept a worker over an hour (SEB).
+DOC_MINUTES = float(os.getenv("DOC_MINUTES", "10"))
 MIN_TEXT_CHARS = 200         # shorter pages hold nothing
 
 
@@ -361,7 +366,17 @@ class Library:
         self.used: set[str] = {_canonical(u) for u in skip_urls if u}
         self.tries: dict[str, int] = {}         # doc type -> documents tried
         self.out_of_credits = False
+        self.deadline = time.monotonic() + DOC_MINUTES * 60
+        self.out_of_time = False
         self._load_discovery()
+
+    def _time_left(self) -> bool:
+        """False once DOC_MINUTES have passed: no more maps, downloads or scrapes."""
+        if not self.out_of_time and time.monotonic() > self.deadline:
+            self.out_of_time = True
+            log.warning("Documents: %s: %g minutes spent fetching; only cached documents from "
+                        "here on", self.slug, DOC_MINUTES)
+        return not self.out_of_time
 
     # --- discovery ---------------------------------------------------------------------
 
@@ -394,6 +409,8 @@ class Library:
         path = CACHE_DIR / f"{self.slug}_map_{hashlib.sha1(f'{self.site}|{term}'.encode()).hexdigest()[:12]}.json"
         if path.exists():
             links = json.loads(path.read_text(encoding="utf-8"))
+        elif not self._time_left():
+            return
         else:
             try:
                 links = self.fc.map(self.site, search=term, limit=MAP_LIMIT)
@@ -491,6 +508,8 @@ class Library:
                 kind, at = ("pdf" if pdf_path.exists() else "web"), _mtime(md_path)
                 files = json.loads(files_path.read_text(encoding="utf-8")) \
                     if files_path.exists() else {}
+            elif not self._time_left():
+                return None
             else:
                 pages, kind, files = self._download(c, pdf_path)
                 at = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")

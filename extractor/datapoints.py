@@ -700,6 +700,43 @@ def _breakdown(b) -> str:
                      for i in b.items)
 
 
+# A line of profit, not of income, is never the revenue ("Operating profit 1,234",
+# "Rörelseresultat", "Betriebsergebnis"). A label that also names revenue or the
+# statement ("Statement of Profit or Loss ... management fees") is not one.
+PROFIT_LABEL = re.compile(r"\b(profit|result|ebit|ebitda|resultat|rörelseresultat|driftsresultat|"
+                          r"ergebnis|betriebsergebnis|liiketulos|tulos|overskudd)\b", re.I)
+REVENUE_WORDS = re.compile(r"profit (or|and) loss|revenue|sales|turnover|fees|umsatz|erlöse|"
+                           r"omsättning|omsætning|omsetning|inntekter|intäkter|liikevaihto", re.I)
+SAME_AS_PROFIT = "same figure as the operating profit read: check it is not a profit line"
+
+
+def _label(quote: str | None) -> str:
+    """The words before a quote's first figure: the line label of a table row."""
+    return re.split(r"\d", quote or "", maxsplit=1)[0]
+
+
+def not_a_profit_line(found: list[Found], revenue_quote: str | None) -> list[Found]:
+    """A revenue read off a profit line is dropped. A revenue and an EBITDA of the same
+    figure can't both be right: "Operating income" is a bank's total income (ProCredit)
+    but an investment company's result (Industrivärden), and the label can't tell which.
+    The EBITDA goes, and the revenue is kept graded C for a look."""
+    rev = next((f for f in found if f.data_point == "revenue"), None)
+    if rev is None:
+        return found
+    label = _label(revenue_quote)
+    if PROFIT_LABEL.search(label) and not REVENUE_WORDS.search(label):
+        log.info("Revenue %s dropped: read off a profit line (%r)", rev.value, label.strip())
+        return [f for f in found if f is not rev]
+    ebitda = next((f for f in found if f.data_point == "ebitda"), None)
+    if (ebitda is not None and ebitda.value and rev.value
+            and abs(float(ebitda.value) - float(rev.value)) <= 0.001 * abs(float(rev.value))):
+        log.info("EBITDA %s dropped: it is the revenue figure", ebitda.value)
+        rev.confidence = "C"
+        rev.note = f"{rev.note}; {SAME_AS_PROFIT}" if rev.note else SAME_AS_PROFIT
+        return [f for f in found if f is not ebitda]
+    return found
+
+
 def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | None = None) -> list[Found]:
     """The AI's facts as Found values, each placed by its quote (in its document, when
     several documents were read together). `country` picks the MIC of a growth market
@@ -734,6 +771,7 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
         add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
             figure=shown, extra=f"{what}; printed {fmt_number(shown)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
+    out[:] = not_a_profit_line(out, facts.revenue.quote)
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
@@ -1122,12 +1160,44 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 requote.repair(policy, policy_origin, name,
                                f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}_pay")
                 read.append(policy_origin.source)
+    period_end = pay_period_end(facts, period_end)
+    if not period_end:
+        log.warning("Pay: %s names no year for its pay figures; the pay rows have no "
+                    "period_end", origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
+    totals = pay.total_roles(roles)
+    if totals:
+        log.info("Pay: %s left out: the sum of roles already listed", ", ".join(totals))
+        roles = [f for f in roles if f.role_row not in totals]
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
+    twice = pay.duplicate_groups(roles)
+    if twice:
+        log.info("Pay: %s left out: the same figures as a group role already listed",
+                 ", ".join(twice))
+    items = pay.accounting_lines(roles)
+    if items:
+        log.info("Pay: %s left out: an accounting line of the table, not a person", ", ".join(items))
+    roles = [f for f in roles if f.role_row not in twice + items]
     return roles, terms, read
+
+
+def pay_period_end(facts, report_end: str) -> str:
+    """The date of the pay rows: the annual report's period end when it is for the pay's
+    year. Without one (the report route failed: Aurskog Sparebank, Stora Enso; one PDF
+    read on its own), or when the pay document is for another year, the date the pay
+    document itself states (Brøndby IF: "1. juli 2025 til 30. juni 2026")."""
+    year = fiscal_end_year(facts.fiscal_year)
+    if report_end and (not year or report_end[:4] == str(year)):
+        return report_end
+    own = (facts.period_end or "").strip()
+    try:
+        dt.date.fromisoformat(own)
+    except ValueError:
+        return ""
+    return own if not year or own[:4] == str(year) else ""
 
 
 def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | None,
@@ -1956,6 +2026,10 @@ def save_rows(t: Target, rows: list[dict]) -> list[dict]:
     path = dp_path(t.company)
     if t.fields is not None:
         old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        # a "Total" role saved before: found while all its fields are there, since the
+        # run's own copy of it is gone (refresh) and merge would keep the fields not run
+        totals = pay.total_roles(old)
+        old = [r for r in old if r["grain"] != "role" or r["role_row"] not in totals]
         rows = selection.merge(old, rows, t.fields)
     DP_DIR.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -2163,11 +2237,20 @@ def no_variable_pay(mine: dict[str, dict]) -> None:
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
-    or an ownership fact read without one. Rows that already have them are unchanged."""
+    or an ownership fact read without one. A role that is a pay table's "Total" line
+    (pay.total_roles) is removed. Other rows that already have their values are unchanged."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
+    # a group role read from two documents; a table's accounting line taken for a person
+    gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
+    rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
+    totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
+    if totals:
+        log.info("Pay: %s left out of the saved rows: the sum of roles already listed",
+                 ", ".join(totals))
+        rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
     band = by.get("market_cap_band")

@@ -441,6 +441,83 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
     return out
 
 
+SUM_TOLERANCE = 0.01        # a total line's parts: within 1%,
+ROUNDED_TOLERANCE = 0.05    # or within their printed rounding, up to 5%
+_PRINTED = re.compile(r"printed (-?\d+(?:\.(\d+))?)(?: (thousands|millions|billions|units))?")
+_SCALE = {"thousands": 1e3, "millions": 1e6, "billions": 1e9, "units": 1}
+
+
+def _rounding(note: str) -> float:
+    """Half the last printed digit of an amount, in full units, from its note: "printed
+    2.4 millions" -> 50,000. 0 when the note doesn't say."""
+    m = _PRINTED.search(note or "")
+    if not m:
+        return 0.0
+    return 0.5 * 10 ** -len(m.group(2) or "") * _SCALE.get(m.group(3) or "units", 1)
+
+
+def total_roles(rows: list) -> list[str]:
+    """The role rows that are a pay table's "Total" line: an aggregate role whose amounts
+    are the sums of the roles listed next to it (Brøndby IF: "Total" = CEO + CFO; Stora
+    Enso: "GLT Total" = CEO + other members). Those people are already in the output, so
+    the line would count their pay twice. An aggregate that is the only record of its
+    people ("Other members of the Group Leadership Team") is no sum of other rows.
+    `rows`: role rows as Found or as CSV rows, in output order.
+
+    The roles next to it: two or more with amounts, directly before it, after it, or on
+    both sides (CEO, Total, Other members). Fields are compared where every one of them
+    states the field in the total's unit. A field adds up within 1%, or within the
+    rounding of the printed figures up to 5% (CEO 1.4 + CFO 0.9 against a Total of 2.4,
+    in EUR m). The total remuneration within 1% is enough; otherwise two fields must add
+    up: a lone figure in whole millions is matched by too many mixes of roles (BMW's
+    "Board of Management 23 million"). One field that doesn't is no objection: Aurskog Sparebank's total line has the base salaries and pensions of
+    its seven executives to the krone, and a benefits figure misread."""
+    def get(r, k):
+        return r.get(k) if isinstance(r, dict) else getattr(r, k, None)
+
+    amounts: dict[str, dict[str, tuple[float, str, float]]] = {}
+    aggregate: set[str] = set()
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure" and value == "aggregate":
+            aggregate.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit") or "",
+                                                       _rounding(get(r, "note")))
+            except ValueError:
+                pass
+    order = list(amounts)
+
+    def is_sum(total: dict, parts: list[dict]) -> bool:
+        exact, good = [], []
+        for point, (value, unit, step) in total.items():
+            if not value or not all(point in p and p[point][1] == unit for p in parts):
+                continue
+            off = abs(sum(p[point][0] for p in parts) - value)
+            rounding = step + sum(p[point][2] for p in parts)
+            if off <= SUM_TOLERANCE * abs(value):
+                exact.append(point)
+                good.append(point)
+            elif off <= rounding and off <= ROUNDED_TOLERANCE * abs(value):
+                good.append(point)
+        return "total_remuneration" in exact or len(good) >= 2
+
+    found: list[str] = []
+    for i, name in enumerate(order):
+        if name not in aggregate:
+            continue
+        before = [n for n in order[:i] if n not in found]
+        after = [n for n in order[i + 1:] if n not in found]
+        runs = [before[len(before) - b:] + after[:a]
+                for b in range(len(before) + 1) for a in range(len(after) + 1) if a + b >= 2]
+        if any(is_sum(amounts[name], [amounts[n] for n in run]) for run in runs):
+            found.append(name)
+    return found
+
+
 def check_total(r: RolePay, rows: dict[str, Found]) -> None:
     """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
     LTI figure the total includes is the one that fits: vested, granted or none."""
@@ -479,3 +556,77 @@ def needs_policy(facts: RemunerationFacts) -> bool:
     """Some executive role lacks a target or maximum percentage."""
     return any(r.executive and any(getattr(r, k).value is None for k in TARGETS)
                for r in facts.roles)
+
+
+def duplicate_groups(rows: list) -> list[str]:
+    """Group roles read twice: an aggregate role whose amounts are the same as an earlier
+    aggregate role's, field for field, value and unit. The remuneration report and the
+    annual report's pay note print the same table, and the AI names the row differently
+    in each ("Other EC Members" and "Other EC", dormakaba; "Other IEC members" and
+    "Übrige Mitglieder des IEC", Implenia), so the pay was counted twice. The first one,
+    from the document read first, stays. At least two amounts must be non-zero: a row of
+    zeros ("Former members|0|0|0") says nothing about who it is.
+
+    Individual roles are left alone: two executives can be paid the same (Vontobel's
+    co-CEOs), and where they aren't, it is a misread no rule can resolve.
+    `rows`: role rows as Found or as CSV rows, in output order."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    amounts: dict[str, dict[str, tuple[float, str]]] = {}
+    aggregate: set[str] = set()
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure" and value == "aggregate":
+            aggregate.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit") or "")
+            except ValueError:
+                pass
+    seen: dict[tuple, str] = {}
+    out = []
+    for name, d in amounts.items():
+        if name not in aggregate or sum(1 for v, _ in d.values() if v) < 2:
+            continue
+        key = tuple(sorted(d.items()))
+        if key in seen:
+            out.append(name)
+        else:
+            seen[key] = name
+    return out
+
+
+# The line of a pay table that is an accounting item, not a person ("Option and share
+# program expenses (note 17)", S&D Standard, where the AI took the section heading
+# "Subsidiary employee:" above it for a role).
+ACCOUNTING_LINE = re.compile(r"\b(expenses?|costs?|provisions?|accruals?|ifrs ?2|note \d+|"
+                             r"aufwand|aufwendungen|kostnad\w*|kostnader|omkostninger)\b", re.I)
+
+
+def accounting_lines(rows: list) -> list[str]:
+    """Individual roles that are an accounting line of the pay table: every amount zero
+    (dashes) and the line quoted names an expense, cost or note, not a person. A person
+    paid nothing stays (Wild Bunch's CEO, Sino-German's board: "Der Vorstandsvorsitzende
+    Hui Wang"). `rows`: role rows as Found or as CSV rows."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    quote, individual, amounts = {}, set(), {}
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure":
+            quote[name] = get(r, "note") or ""
+            if value == "individual":
+                individual.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, []).append(float(value))
+            except ValueError:
+                amounts.setdefault(name, []).append(1.0)
+    return [n for n in amounts if n in individual and not any(amounts[n])
+            and ACCOUNTING_LINE.search(quote.get(n, ""))]

@@ -22,7 +22,9 @@ Facts:
   When the report prints several revenue figures, take the revenue line of
   the consolidated income statement: not a figure that adds the share of
   joint ventures or associates, an adjusted or "business performance"
-  figure, or one that includes other operating income.
+  figure, or one that includes other operating income. Never a profit
+  line ("operating income" meaning operating profit, EBIT, "result"): an
+  investment company that reports no revenue has none (null).
 - ebitda: the group's EBITDA as reported (measure "ebitda"), or adjusted
   EBITDA if only that is given ("adjusted_ebitda"). If the company reports
   no EBITDA at all, its operating profit / EBIT ("operating_profit").

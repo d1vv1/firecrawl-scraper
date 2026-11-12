@@ -27,7 +27,9 @@ during the year (e.g. "Former CEO (until April 2025)").
   directors (non-executive)"), with is_aggregate true if their pay is a
   total, and leave all their pay fields null.
 - is_aggregate: true when one figure covers several people ("other
-  executives, total").
+  executives"). Leave out a table's total line that only adds up people you
+  list one by one ("Total", "Executive Board total"): their pay would be
+  counted twice. Give a group's total only for people not listed one by one.
 - aggregate_headcount: for an aggregate entry, how many people it covers,
   and in `excludes` who is left out (e.g. "the CEO"). Null for one person.
 - Amounts are what was paid or awarded for the year, as printed, with the
@@ -86,3 +88,10 @@ Company level, from the policy or report:
   Null if there is no such rule.
 
 fiscal_year: the year the pay figures are for, e.g. "2025" or "2024/25".
+
+period_end: the last day of that fiscal year, as YYYY-MM-DD. Where the
+text gives the period or its end ("year ended 31 March 2026", "perioden
+1. juli 2025 til 30. juni 2026"), that date: "2026-03-31", "2026-06-30".
+Where it names the year only ("regnskapsåret 2025", "Annual Report 2025",
+a pay table headed "2025"), the year is the calendar year: "2025-12-31".
+Null if the text does not say which year the pay figures are for.
