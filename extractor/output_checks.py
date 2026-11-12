@@ -34,7 +34,7 @@ from pathlib import Path
 from .config import CACHE_DIR, OUTPUT_DIR
 from .datapoints import MARKET_CAP_BANDS_EUR, OWNER_CATEGORY, OWNERSHIP_TYPE
 from .scraper import markdown_to_pages
-from .validate import ISO_4217, figure_in_quote, normalize, quote_in_text
+from .validate import ISO_4217, figure_in_quote, normalize, numbers_in, quote_in_text, states_none
 
 PASS, REVIEW = 95.0, 80.0
 TOTAL_TOLERANCE = 0.02           # protocol R11: parts vs stated total
@@ -146,7 +146,12 @@ class Row:
         m = re.search(r"printed (-?[\d.]+(?:e[+-]?\d+)?)(?: (\w+))?", self.note)
         if not m:
             return self.number, 1
-        return float(m.group(1)), SCALE.get(m.group(2) or "", 1)
+        printed, mult = float(m.group(1)), SCALE.get(m.group(2) or "", 1)
+        if mult > 1 and self.number is not None and printed and same(printed, self.number):
+            # the AI gave the full amount and the table's unit ("printed 180000 thousands"
+            # for £000 180): the run kept the value, so the printed figure is value / unit
+            return self.number / mult, mult
+        return printed, mult
 
     @property
     def read_from_document(self) -> bool:
@@ -173,7 +178,8 @@ def na(check, reason):
 
 
 def self_clipped(r: "Row") -> bool:
-    """The note's quote was shortened (datapoints.clip keeps 160 characters)."""
+    """The note's quote was shortened (datapoints.clip: 160 characters before scraper
+    version 2, QUOTE_CHARS since)."""
     return bool(re.search(r'…"', r.note))
 
 
@@ -289,6 +295,24 @@ def core_01(r: Row, ctx: Ctx):
     return ok("CORE-01")
 
 
+# A role row for the rest of a group ("Other members", "Rest of the Committee",
+# "Übrige Mitglieder", "Övriga ledande befattningshavare"): its amount is often the
+# group's total less the CEO, both printed.
+OTHERS = re.compile(r"\b(other|others|rest|remaining|übrige\w*|weitere\w*|övriga|andre|øvrige|"
+                    r"muut|autres)\b", re.I)
+
+
+def _a_difference(figure: float, quote: str) -> bool:
+    """The figure is one number in the quote less another (a total less one person's)."""
+    nums = sorted({n for n in numbers_in(quote) if n > 0}, reverse=True)
+    if len(nums) > 40:
+        return False
+    w = abs(figure)
+    # tighter than a single figure's 0.5%: with many cells, some pair comes close by chance
+    return any(abs((a - b) - w) <= max(0.001 * w, 1e-9) for i, a in enumerate(nums)
+               for b in nums[i + 1:])
+
+
 def core_02(r: Row, ctx: Ctx):
     """The value can be read off its quote."""
     if not r.read_from_document:
@@ -309,6 +333,10 @@ def core_02(r: Row, ctx: Ctx):
         # the figure as printed; with no "printed" note, also as a table "(000s)" or "m" prints it
         if figure_in_quote(printed, q, scaled="printed " not in r.note):
             return ok("CORE-02")
+        if printed == 0 and states_none(q):
+            return ok("CORE-02", "none, stated in words")
+        if OTHERS.search(r.role_row) and _a_difference(printed, q):
+            return ok("CORE-02", "the total less a named person's amount, both in the quote")
         if self_clipped(r):
             return na("CORE-02", "quote cut short in the note; the figure may be past the cut")
         return bad("CORE-02", f"{fmt(printed)} not in the quote")
@@ -448,6 +476,8 @@ def num_01(r: Row, ctx: Ctx):
         return na("NUM-01", "not money")
     if r.unit == "instruments":
         return na("NUM-01", "a number of instruments, not money")
+    if r.number == 0 and not r.unit:
+        return na("NUM-01", "nothing paid: no currency to state")
     return ok("NUM-01") if r.unit in ISO_4217 else bad("NUM-01", f"unit {r.unit!r} is not ISO 4217")
 
 
@@ -542,8 +572,10 @@ def num_12(r: Row, ctx: Ctx):
     """A role's amounts share one currency and one period."""
     if r.data_point not in PAY_MONEY or r.unit == "instruments":
         return na("NUM-12", "not a pay amount")
+    if r.number == 0 and not r.unit:
+        return na("NUM-12", "nothing paid: no currency to state")
     peers = [x for x in ctx.company if x.role_row == r.role_row and x.data_point in PAY_MONEY
-             and x.value and x.unit != "instruments"]
+             and x.value and x.unit != "instruments" and not (x.number == 0 and not x.unit)]
     cur = Counter(x.unit for x in peers).most_common(1)[0][0]
     per = Counter(x.period_end for x in peers).most_common(1)[0][0]
     if r.unit != cur:

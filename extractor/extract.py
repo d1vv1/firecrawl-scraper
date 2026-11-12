@@ -135,6 +135,15 @@ def full_value_quoted(value: float | None, unit: str | None, quote: str | None) 
     return value * mult
 
 
+def printed_figure(value: float | None, unit: str | None, quote: str | None) -> float | None:
+    """The figure as the table prints it: the AI's value, unless it had already scaled it
+    (then value / multiplier), so a note's "printed 180 thousands" matches "£000 180"."""
+    full = full_value_quoted(value, unit, quote)
+    if full is None or not unit or UNIT_MULTIPLIERS[unit] == 1 or full != value:
+        return value
+    return value / UNIT_MULTIPLIERS[unit]
+
+
 def iso_period_end(raw: str | None, fiscal_year: str | None) -> str | None:
     """'2025-12-31' / '31 December 2025' / '31 December' (+ fiscal year 2025) -> '2025-12-31'.
     Returns None when the date can't be pinned down."""

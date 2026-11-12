@@ -7,7 +7,9 @@ For each company in a run, its rows replace that company's rows in the combined 
 place; a new company goes at the end), with one exception: a row the run did not collect
 ("not collected: this run asked only for pay") never replaces a value already there. The
 same is done for the checks (<name>_checks.csv): the run's checks replace the company's,
-and a value kept from before keeps its checks.
+and a value kept from before keeps its checks. And a run that got under half the values
+already there for a company's facts or its pay (a site that blocked the run) leaves that
+block as it was, unless --take-newer.
 
 Then the combined file is scored again (output_checks.rescore): every value under the
 current rules, but a check whose source text is not cached on this machine keeps the result
@@ -54,16 +56,57 @@ def key(r: dict) -> Key:
     return r["grain"], r["role_row"], r["data_point"]
 
 
-def merge_company(old: list[dict], new: list[dict]) -> tuple[list[dict], set[Key]]:
+# A run whose block (the company's facts, or its pay) has under half the values of the block
+# already in the combined file is taken for a failed run (ABB's site answered 503 in DACH
+# Set 2: 3 pay values instead of 118), and the old block stays. Not for small blocks.
+WORSE_SHARE = 0.5
+WORSE_MIN_VALUES = 5
+
+
+def filled(rows: list[dict]) -> int:
+    return sum(1 for r in rows if r.get("value", "").strip())
+
+
+def worse_blocks(old: list[dict], new: list[dict]) -> set[str]:
+    """The grains ("company", "role") where the run has clearly fewer values than before.
+    Company facts: compared on the fields the run collected (a pay-only run's "not
+    collected" rows are kept from before anyway). Pay: the whole block (role names change
+    between runs: "CEO", "Vorstand")."""
+    out = set()
+    collected = {key(r) for r in new if r["grain"] == "company" and not r["note"].startswith(NOT_COLLECTED)}
+    for grain in ("company", "role"):
+        if grain == "company":
+            o = filled([r for r in old if r["grain"] == grain and key(r) in collected])
+        else:
+            o = filled([r for r in old if r["grain"] == grain])
+        n = filled([r for r in new if r["grain"] == grain])
+        if o >= WORSE_MIN_VALUES and n < WORSE_SHARE * o:
+            out.add(grain)
+    return out
+
+
+def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
+                  ) -> tuple[list[dict], set[Key]]:
     """A company's rows after a run: the run's, except where the run did not collect a
     value the combined file has. Role rows go as a block: a run that collected no pay
-    keeps the old role rows. Returns (rows, keys kept from before)."""
+    keeps the old role rows. With `keep_better`, a block where the run has under half the
+    old values (worse_blocks) stays as it was. Returns (rows, keys kept from before)."""
+    worse = worse_blocks(old, new) if keep_better else set()
+    if worse:
+        new = ([r for r in new if r["grain"] not in worse]
+               + [r for r in old if r["grain"] in worse])
+        kept_worse = {key(r) for r in old if r["grain"] in worse}
+    else:
+        kept_worse = set()
     before = {key(r): r for r in old}
-    kept: set[Key] = set()
+    kept: set[Key] = set(kept_worse)
     out = []
     new_roles = [r for r in new if r["grain"] == "role"]
     roles_skipped = bool(new_roles) and all(r["note"].startswith(NOT_COLLECTED) for r in new_roles)
     for r in new:
+        if key(r) in kept_worse:
+            out.append(r)
+            continue
         if r["grain"] == "role" and roles_skipped:
             continue
         o = before.get(key(r))
@@ -87,12 +130,13 @@ def splice(groups: dict[str, list[dict]], order: list[str], incoming: dict[str, 
     return out
 
 
-def combine(runs: list[Path], into: Path) -> dict:
-    """Merge the runs (in order) into `into`, and their checks into its checks file."""
+def combine(runs: list[Path], into: Path, keep_better: bool = True) -> dict:
+    """Merge the runs (in order) into `into`, and their checks into its checks file.
+    `keep_better`: a block a run got clearly fewer values for stays (merge_company)."""
     rows, cols = read(into) if into.exists() else ([], COLUMNS)
     checks_path = into.with_name(into.stem + "_checks.csv")
     checks, ccols = read(checks_path) if checks_path.exists() else ([], [])
-    stats = {"replaced": 0, "added": 0, "kept": 0}
+    stats = {"replaced": 0, "added": 0, "kept": 0, "worse": []}
     for run in runs:
         groups, order = defaultdict(list), []
         for r in rows:
@@ -114,12 +158,20 @@ def combine(runs: list[Path], into: Path) -> dict:
             run_cby[c["company_id"]].append(c)
         merged, merged_checks = {}, {}
         for cid, new in new_by.items():
-            merged[cid], kept = merge_company(groups.get(cid, []), new)
+            worse = worse_blocks(groups.get(cid, []), new) if keep_better else set()
+            if worse:
+                name = new[0].get("company_name") or cid
+                stats["worse"].append(f"{name} ({', '.join(sorted(worse))})")
+                log.warning("%s: the run has under half the values before for %s; kept the old rows "
+                            "(--take-newer to replace them)", name, " and ".join(sorted(worse)))
+            merged[cid], kept = merge_company(groups.get(cid, []), new, keep_better)
             stats["replaced" if cid in groups else "added"] += 1
             stats["kept"] += len(kept)
-            old_checks = [c for c in cgroups.get(cid, [])
-                          if ("role" if c["role_row"] else "company", c["role_row"], c["data_point"]) in kept]
-            merged_checks[cid] = run_cby.get(cid, []) + old_checks
+            def ckey(c):
+                return "role" if c["role_row"] else "company", c["role_row"], c["data_point"]
+            old_checks = [c for c in cgroups.get(cid, []) if ckey(c) in kept]
+            run_own = [c for c in run_cby.get(cid, []) if ckey(c) not in kept and ckey(c)[0] not in worse]
+            merged_checks[cid] = run_own + old_checks
         rows = splice(groups, order, merged)
         if ccols:
             corder = list(dict.fromkeys(c["company_id"] for c in checks))
@@ -137,14 +189,19 @@ def main(argv=None) -> int:
     p.add_argument("--into", type=Path, required=True, help="The combined CSV (created if missing)")
     p.add_argument("--no-dashboard", action="store_true",
                    help="Don't score the combined file again or rebuild the dashboard")
+    p.add_argument("--take-newer", action="store_true",
+                   help="Replace a company's facts or pay even when the run has under half "
+                        "the values already there (default: the old block stays)")
     args = p.parse_args(argv)
     missing = [r for r in args.runs if not r.exists()]
     if missing:
         print(f"ERROR: not found: {', '.join(map(str, missing))}", file=sys.stderr)
         return 1
-    stats = combine(args.runs, args.into)
+    stats = combine(args.runs, args.into, keep_better=not args.take_newer)
     print(f"{args.into}: {stats['replaced']} companies replaced, {stats['added']} added, "
           f"{stats['kept']} values kept that the runs did not collect")
+    if stats["worse"]:
+        print(f"Kept the old rows where the run got under half the values: {'; '.join(stats['worse'])}")
     if not args.no_dashboard:
         from . import dashboard
         print(f"Scored again, dashboard: {dashboard.build(args.into, rescore=True)}")

@@ -46,7 +46,7 @@ def test_combine_replaces_companies_in_place_and_keeps_what_a_run_did_not_collec
     _write(tmp_path / "run_datapoints_checks.csv", [_check("a", "headcount", "60"),
                                                    _check("c", "revenue", "3")], CHECK_COLS)
     stats = combine.combine([run], into)
-    assert stats == {"replaced": 1, "added": 1, "kept": 1}
+    assert stats == {"replaced": 1, "added": 1, "kept": 1, "worse": []}
     rows = _read(into)
     assert [(r["company_id"], r["data_point"], r["value"]) for r in rows] == [
         ("a", "revenue", "100"), ("a", "headcount", "60"), ("a", "base_salary", "10"),
