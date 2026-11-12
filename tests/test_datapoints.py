@@ -546,12 +546,14 @@ def test_company_data_comes_from_the_pay_documents_when_no_annual_report_was_rea
     the input, prints the legal name, the financial year and the net revenue."""
     q = "Net sales|3|2,326.2|1,827.3"
     text = {"value": None, "quote": q, "chunk_id": 0}
-    asked = []
+    year_end = {"value": "2026-06-30", "quote": "the financial year 1 July 2025 - 30 June 2026",
+                "chunk_id": 0}
+    asked, keys = [], []
 
     def fake_ask(name, url, chunks, what, key, wanted=None):
         asked.append(wanted)
-        return _facts(legal_name=text | {"value": "X A/S"},
-                      fiscal_year_end=text | {"value": "2026-06-30"},
+        keys.append(key)
+        return _facts(legal_name=text | {"value": "X A/S"}, fiscal_year_end=year_end,
                       sub_sector=text | {"value": "The season was marked by"},
                       revenue={"value": 2326.2, "unit": "millions", "currency": "DKK",
                                "period_end": None, "quote": q, "chunk_id": 0})
@@ -559,22 +561,69 @@ def test_company_data_comes_from_the_pay_documents_when_no_annual_report_was_rea
     rem = _origin()
     rem.source = "Remuneration report (PDF)"
     gaps = ["legal_name", "sub_sector", "revenue", "fiscal_year_end", "fiscal_year"]
-    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem, rem], gaps, "DK",
+    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem, rem], gaps, "DK", ("X",),
                                                           "2025/26", rem)}
     assert len(asked) == 1 and "sub_sector" not in asked[0]     # one call per document
+    assert "country_code" in asked[0]                           # asked for the identity check
+    assert keys[0].startswith("x_readdocs_")                    # not the fallback's cache
     assert by["legal_name"].value == "X A/S" and by["legal_name"].source == rem.source
     assert by["revenue"].value == 2_326_200_000 and by["revenue"].period_end == "2026-06-30"
     assert by["fiscal_year"].value == "2025/26" and by["fiscal_year"].period_end == "2026-06-30"
     assert "sub_sector" not in by            # no business description in a remuneration report
 
-    # Aurskog Sparebank: "2025" pay, but the year end read is a bonus period's: not used;
-    # the fiscal year is the pay year
-    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem], gaps, "NO", "2025", rem)}
+    # Aurskog Sparebank: "2025" pay; a year end of another year is not used, and the
+    # fiscal year is the pay year
+    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem], gaps, "NO", (), "2025", rem)}
     assert "fiscal_year_end" not in by and by["revenue"].period_end == ""
+    assert by["revenue"].confidence == "C"                      # undated against FY2025
     assert by["fiscal_year"].value == "2025" and by["fiscal_year"].confidence == "C"
-    assert dp.year_end_fits("2025-12-31", "2025") and dp.year_end_fits("2026-03-31", "2025/26")
-    assert not dp.year_end_fits("2025-09-30", "2025") and not dp.year_end_fits("2025-06-30", "2025/26")
-    assert dp.year_end_fits("2025-09-30", None)
+
+
+def test_a_pay_documents_year_end_must_be_the_financial_years():
+    def end(date, quote):
+        return Found("fiscal_year_end", date, note=f'PDF page 3: "{quote}"')
+    assert dp.year_end_fits(end("2025-12-31", "31 December 2025"), "2025")
+    assert dp.year_end_fits(end("2026-03-31", "for the financial year ended 31 March 2026"), "2025/26")
+    # Siemens: a real 30 September year end, quoted as the fiscal year's
+    assert dp.year_end_fits(end("2025-09-30", "fiscal year 2025 (October 1, 2024 to September 30, 2025)"),
+                            "2025")
+    # Aurskog Sparebank: a bonus measuring period's end, in the pay year
+    assert not dp.year_end_fits(end("2025-09-30", "opptjeningsperioden 1.10.2024-30.09.2025"), "2025")
+    assert not dp.year_end_fits(end("2025-06-30", "financial year ended 30 June 2025"), "2025/26")
+    assert dp.fiscal_year_of("2025-09-30") == "2025" and dp.fiscal_year_of("2026-03-31") == "2025/26"
+
+
+def test_a_failed_ai_answer_about_a_document_skips_it(monkeypatch):
+    import httpx
+    import openai
+
+    def too_long(*a, **k):
+        raise openai.LengthFinishReasonError(completion=type("C", (), {"usage": None})())
+    monkeypatch.setattr(dp, "ask", too_long)
+    rem = _origin()
+    assert dp.ask_documents("X", "x", [rem], ["revenue"], for_pay=True) == []
+
+
+def test_another_companys_pay_document_is_flagged(monkeypatch):
+    q = "Net sales|3|2,326.2|1,827.3"
+    monkeypatch.setattr(dp, "ask", lambda *a, **k: _facts(
+        legal_name={"value": "Jinhui Holdings Company Limited", "quote": q, "chunk_id": 0},
+        revenue={"value": 2326.2, "unit": "millions", "currency": "USD", "period_end": "2025-12-31",
+                 "quote": q, "chunk_id": 0}))
+    rem = _origin()
+    got = dp.ask_documents("Jinhui Shipping", "x", [rem], ["legal_name", "revenue"], "BM",
+                           names=("Jinhui Shipping and Transportation Limited",), for_pay=True,
+                           pay_year="2025")
+    assert got and all(f.confidence == "C" and dp.OTHER_COMPANY in f.note for f in got)
+
+
+def test_the_cause_leads_a_gap_note_once():
+    t = dp.Target(Company("x-1", "X", "DK"))
+    rows = {f.data_point: f for f in dp.finish(t, {}, ["Remuneration report (PDF)"],
+                                               "WebsiteNotFoundError: no website")}
+    note = rows["revenue"].note
+    assert note.startswith("not found: the annual report was not read (WebsiteNotFoundError")
+    assert note.count("annual report was not read") == 1 and "not in: Remuneration report" in note
 
 
 def test_collect_reads_the_pay_documents_only_without_an_annual_report(monkeypatch, tmp_path):

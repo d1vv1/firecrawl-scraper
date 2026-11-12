@@ -961,6 +961,57 @@ def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
     return [picked[i] for i in sorted(picked)]
 
 
+def ask_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
+                  country: str | None = None, report_year: int | None = None,
+                  where: str | None = None, tag: str = "docs", names: tuple[str, ...] = (),
+                  for_pay: bool = False, pay_year: str | None = None) -> list[Found]:
+    """One AI call over documents for the data points in `gaps`; each value is placed by
+    its quote, and a yearly figure from a document not dated `report_year` or later is
+    graded C (year_check). Used by the document fallback (from_documents) and for the
+    documents the pay step read (from_read_documents). [] when the documents say nothing
+    on the gaps or the AI gives no usable answer.
+
+    `where`: the URL to name to the AI (default: the first document's). `tag` keeps the
+    caches of the two steps apart ("docs": the fallback's). `names`: the company's names;
+    when given, the legal name and country are asked for too and checked (identity_check),
+    as for the annual report. `for_pay`: the documents were read for their pay, not as
+    the annual report: a year end they state dates their figures only if it fits
+    `pay_year`, the year the pay is for (year_end_fits)."""
+    chunks = doc_chunks(origins, gaps) if gaps else []
+    if not chunks:
+        return []
+    found_in = Bundle(origins)
+    key = f"{slug}_{tag}_" + hashlib.sha1("|".join(o.url for o in origins).encode()).hexdigest()[:12]
+    log.info("Documents: asking the AI about %d chunk(s) of %d document(s) for: %s",
+             len(chunks), len(origins), ", ".join(gaps))
+    try:
+        facts = ask(name, where or origins[0].url, chunks,
+                    "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
+                    key, wanted_fields(gaps + (list(IDENTITY_FIELDS) if names else [])))
+    except openai.LengthFinishReasonError:
+        # as in the pay step: the model's reasoning ran to the output limit; no answer
+        log.warning("Documents: the AI's answer about %s ran out of length; skipped",
+                    ", ".join(o.url for o in origins))
+        return []
+    requote.repair(facts, found_in, name, key)
+    answered = from_facts(facts, found_in, country)
+    if names:
+        for o in origins:
+            identity_check(answered, country, list(names), o.source)
+    got = [f for f in answered if f.data_point in gaps]
+    if for_pay:
+        end = stated_year_end(got)
+        if end and not year_end_fits(end, pay_year):
+            log.info("Documents: the year end %s does not fit the pay year %s; not used",
+                     end.value, pay_year)
+            got.remove(end)
+            end = None
+        with_report_period(got, end.value if end else None)
+    for f in got:
+        year_check(f, report_year)
+    return got
+
+
 def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Library,
                    fc: FirecrawlClient, country: str | None = None) -> tuple[list[Found], list[str]]:
     """Rounds of: pick the most promising documents for the gaps, read them, ask the AI
@@ -983,20 +1034,8 @@ def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Librar
                 break
             continue                     # every pick was unusable: try the next ones
         read += [o.source for o in origins]
-        chunks = doc_chunks(origins, gaps)
-        if not chunks:
-            continue
-        wanted = wanted_fields(gaps)
-        log.info("Documents: asking the AI about %d chunk(s) of %d document(s) for: %s",
-                 len(chunks), len(origins), ", ".join(gaps))
-        key = hashlib.sha1("|".join(o.url for o in origins).encode()).hexdigest()[:12]
-        facts = ask(name, origins[0].url if len(origins) == 1 else site, chunks,
-                    "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
-                    f"{slug}_docs_{key}", wanted)
-        requote.repair(facts, Bundle(origins), name, f"{slug}_docs_{key}")
-        got = [f for f in from_facts(facts, Bundle(origins), country) if f.data_point in gaps]
-        for f in got:
-            year_check(f, lib.report_year)
+        got = ask_documents(name, slug, origins, gaps, country, lib.report_year,
+                            where=site if len(origins) > 1 else None)
         values += got
         gaps = [g for g in gaps if g not in {f.data_point for f in got}]
     log.info("Documents: %d value(s) from %d document(s), %d Firecrawl credit(s)",
@@ -1129,7 +1168,6 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             read.append(f"{o.source} (no usable AI answer)")
             continue
         read.append(o.source)
-        seen.setdefault("origins", []).append(o)
         year = fiscal_end_year(f.fiscal_year)
         if year and report_year and year < report_year and not given:
             # Shell: an investor-roadshow deck with the previous year's outcomes; Equinor:
@@ -1137,6 +1175,7 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             log.info("Pay: %s gives FY%s pay, the report is FY%s; skipped", o.url, year,
                      report_year)
             continue
+        seen.setdefault("origins", []).append(o)
         if pay.has_pay(f):
             # the amounts of roles found in a checked pay table come from the table
             facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text())
@@ -1231,59 +1270,49 @@ def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | N
 # description (the AI quoted Brøndby IF's season review) and names a city only where it
 # was signed (its auditor's).
 ANNUAL_REPORT_ONLY = {"sub_sector", "head_office_city"}
+# A year end other than 31 December is taken from a document read for its pay only when
+# the quote calls it the financial year's: Aurskog Sparebank's report, for 2025, gave
+# 2025-09-30, the end of a bonus measuring period; Siemens' year does end on 30 September.
+FINANCIAL_YEAR = re.compile(r"fiscal|financial year|business year|geschäftsjahr|wirtschaftsjahr|"
+                            r"regnskapsår|regnskabsår|räkenskapsår|tilikau|exercice|boekjaar", re.I)
 
 
-def year_end_fits(end: str, pay_year: str | None) -> bool:
-    """A year end read from a pay document against the year its pay figures are for:
-    "2025" goes with 31 December 2025, "2025/26" with a 2026 date other than that.
-    Aurskog Sparebank's report, for 2025, gave 2025-09-30: a bonus measuring period."""
+def year_end_fits(end: Found, pay_year: str | None) -> bool:
+    """A year end read from a document the pay step read: it must close the fiscal year
+    the pay figures are for, named as year_of_report names it (2025-09-30 closes "2025",
+    2026-03-31 "2025/26"), and a date other than 31 December must be quoted as the end of
+    the financial year."""
     year = fiscal_end_year(pay_year)
-    if not year:
-        return True
-    split = bool(re.search(r"20\d{2}\s*[/-]", pay_year))
-    return end[:4] == str(year) and split != end.endswith("-12-31")
+    if year and fiscal_end_year(fiscal_year_of(str(end.value))) != year:
+        return False
+    return str(end.value).endswith("-12-31") or bool(FINANCIAL_YEAR.search(end.note))
 
 
 def from_read_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
-                        country: str | None = None, pay_year: str | None = None,
-                        pay_origin: Origin | None = None) -> list[Found]:
-    """Company data from documents this run has already read, when no annual report was
-    read (its route failed: Firecrawl out of credits, no website found). The pay step's
+                        country: str | None = None, names: tuple[str, ...] = (),
+                        pay_year: str | None = None, pay_origin: Origin | None = None) -> list[Found]:
+    """Company data from documents this run has already read, when the annual report's
+    route gave no result (Firecrawl out of credits, no website found). The pay step's
     documents, given in the input or filed with the SEC, print company facts too (Stora
     Enso's annual report: sales, total assets, employees; Brøndby IF's remuneration
-    report: legal name, CVR number, the financial year, net revenue). One AI call per
-    document, only for `gaps`; no Firecrawl. The fiscal year comes from the year end the
-    document states, else its title, else the year its pay figures are for (`pay_year`,
-    from `pay_origin`)."""
+    report: legal name, CVR number, the financial year, net revenue). Read like the
+    document fallback (ask_documents), one call per document for the gaps still open; no
+    Firecrawl. A document's year end must fit the pay year (year_end_fits) to date its
+    figures; the fiscal year comes from it, else the document's title, else the year the
+    pay figures are for (`pay_year`, from `pay_origin`, grade C)."""
     values: list[Found] = []
-    done: set[str] = set()
-    for o in origins:
-        if o.url in done:
-            continue
-        done.add(o.url)
+    report_year = fiscal_end_year(pay_year)
+    for o in {o.url: o for o in origins}.values():
         full = title_year(o.pages) is not None          # a full annual report
-        open_gaps = [g for g in gaps if g in DP_DOC_TYPES
-                     and g not in {f.data_point for f in values}
+        have = {f.data_point for f in values}
+        open_gaps = [g for g in gaps if g in DP_DOC_TYPES and g not in have
                      and (full or g not in ANNUAL_REPORT_ONLY)]
-        chunks = doc_chunks([o], open_gaps) if open_gaps else []
-        if not chunks:
-            continue
-        log.info("No annual report read: asking the AI about %d chunk(s) of %s for: %s",
-                 len(chunks), o.source, ", ".join(open_gaps))
-        key = f"{slug}_docs_{hashlib.sha1(o.url.encode()).hexdigest()[:12]}"
-        facts = ask(name, o.url, chunks, f"the company's documents: {o.source} {o.url}", key,
-                    wanted_fields(open_gaps))
-        requote.repair(facts, o, name, key)
-        got = [f for f in from_facts(facts, o, country) if f.data_point in open_gaps]
-        end = next((f.value for f in got if f.data_point == "fiscal_year_end"
-                    and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
-        if end and not full and not year_end_fits(end, pay_year):
-            log.info("%s: the year end %s does not fit the pay year %s; not used",
-                     o.source, end, pay_year)
-            got, end = [f for f in got if f.data_point != "fiscal_year_end"], None
-        with_report_period(got, end)
-        if "fiscal_year" in gaps and not any(f.data_point == "fiscal_year" for f in values):
-            got += year_of_report({"period_end_date": end, "extracted_at": o.retrieved_at}, o, got)
+        got = ask_documents(name, slug, [o], open_gaps, country, report_year, tag="readdocs",
+                            names=names, for_pay=True, pay_year=pay_year)
+        end = stated_year_end(got)
+        if "fiscal_year" in gaps and "fiscal_year" not in have:
+            got += year_of_report({"period_end_date": end.value if end else None,
+                                   "extracted_at": o.retrieved_at}, o, got)
         values += got
     if ("fiscal_year" in gaps and pay_year and pay_origin
             and not any(f.data_point == "fiscal_year" for f in values)):
@@ -1593,6 +1622,9 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
             rows.append(chosen[name])
             continue
         method = ""
+        # the cause first: "not found in: <the pay document>" alone reads as if the
+        # annual report had been searched
+        cause = clip(error, 140) if error and name not in API_ONLY else ""
         if name == "market_cap_band" and band_why and listed is not False:
             why = band_why
         elif name in API_ONLY and not any(s in ", ".join(tried) for s in apis.API_SOURCES):
@@ -1605,15 +1637,14 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
             why, method = "not applicable: no SEC filing found and not US-listed", ""
         elif listed is False and (name in LISTED_ONLY or name in LISTED_REPORTS_ONLY):
             why, method = "not applicable: the company is not listed", ""
-        elif error and name not in API_ONLY:
-            # the cause first: "not found in: <the pay document>" alone reads as if the
-            # annual report had been searched
-            why = (f"not found: the annual report was not read ({clip(error, 140)})"
+        elif cause:
+            why = (f"not found: the annual report was not read ({cause})"
                    + (f"; not in: {', '.join(tried)}" if tried else ""))
+            cause = ""                      # said already
         else:
             why = "not found in: " + ", ".join(tried) if tried else "no source reached"
-        if error and name not in API_ONLY and not why.startswith("not found: the annual report"):
-            why += f" (the annual report was not read: {clip(error, 140)})"
+        if cause:
+            why += f" (the annual report was not read: {cause})"
         rows.append(Found(name, None, method=method, note=why))
     return rows
 
@@ -1742,9 +1773,8 @@ def read_report(t: Target, result: dict, lei_record: dict | None, values: list[F
     if not result.get("period_end_date"):
         # the report step gave no period end: the fiscal year end the report states
         # dates its values (and the pay rows) instead
-        result["period_end_date"] = next(
-            (f.value for f in report_values if f.data_point == "fiscal_year_end"
-             and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
+        stated = stated_year_end(report_values)
+        result["period_end_date"] = stated.value if stated else None
     with_report_period(report_values, result.get("period_end_date"))
     if PARENT_ACCOUNTS in origin.source:
         report_values = parent_group(report_values)
@@ -1757,6 +1787,20 @@ def read_report(t: Target, result: dict, lei_record: dict | None, values: list[F
     return origin, out + report_values + year_of_report(result, origin, out + report_values)
 
 
+def fiscal_year_of(end: str) -> str:
+    """The fiscal year a year end closes: a year ending after June is named by its own
+    year (2025-12-31 and 2025-09-30 -> "2025"), an earlier one by both (2026-03-31 ->
+    "2025/26")."""
+    day = dt.date.fromisoformat(end)
+    return str(day.year) if day.month > 6 else f"{day.year - 1}/{str(day.year)[2:]}"
+
+
+def stated_year_end(values: list[Found]) -> Found | None:
+    """The fiscal year end a document states, when it is an ISO date."""
+    return next((f for f in values if f.data_point == "fiscal_year_end"
+                 and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(f.value or ""))), None)
+
+
 def year_of_report(result: dict, origin: Origin | None, have: list[Found]) -> list[Found]:
     """The fiscal year when the report step gave none (Commerzbank's report: no figures read,
     no year): from the year end the report states (2025-12-31 -> 2025; 2026-03-31 -> 2025/26),
@@ -1766,8 +1810,7 @@ def year_of_report(result: dict, origin: Origin | None, have: list[Found]) -> li
         return []
     end = str(result.get("period_end_date") or "")
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", end):
-        day = dt.date.fromisoformat(end)
-        year = str(day.year) if day.month > 6 else f"{day.year - 1}/{str(day.year)[2:]}"
+        year = fiscal_year_of(end)
         how = f"derived: the fiscal year ending {end}, the year end the report states"
     elif title := title_year(origin.pages):
         year, how = str(title), f"derived: the year in the report's title ({origin.source})"
@@ -1899,15 +1942,18 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 roles_why = ("not found in: " + ", ".join(read) if read
                              else "no remuneration report found")
 
-        # 3b. no annual report read (its route failed), but the pay step read documents:
-        # they are asked for the company-grain data points too. No Firecrawl needed.
-        if origin is None and seen.get("origins"):
+        # 3b. the annual report's route gave no result, but the pay step read documents:
+        # they are asked for the company-grain data points too. No Firecrawl needed. (Not
+        # when a result exists but its text isn't cached here: that report was read.)
+        if result is None and seen.get("origins"):
             chosen = best(values)
             gaps = [g for g in gap_list(chosen) + ["fiscal_year"]
                     if g not in chosen and selection.wants(sel, g)]
-            values += from_read_documents(c.name, c.slug, seen["origins"], gaps,
-                                          (lei_record or {}).get("country") or c.country,
-                                          seen.get("fiscal_year"), seen.get("origin"))
+            values += from_read_documents(
+                c.name, c.slug, seen["origins"], gaps,
+                (lei_record or {}).get("country") or c.country,
+                (c.name, (lei_record or {}).get("legal_name") or ""),
+                seen.get("fiscal_year"), seen.get("origin"))
 
         # 4. document fallback for the company-grain data points still missing
         chosen = best(values)
