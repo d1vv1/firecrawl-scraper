@@ -479,3 +479,44 @@ def needs_policy(facts: RemunerationFacts) -> bool:
     """Some executive role lacks a target or maximum percentage."""
     return any(r.executive and any(getattr(r, k).value is None for k in TARGETS)
                for r in facts.roles)
+
+
+def duplicate_groups(rows: list) -> list[str]:
+    """Group roles read twice: an aggregate role whose amounts are the same as an earlier
+    aggregate role's, field for field, value and unit. The remuneration report and the
+    annual report's pay note print the same table, and the AI names the row differently
+    in each ("Other EC Members" and "Other EC", dormakaba; "Other IEC members" and
+    "Übrige Mitglieder des IEC", Implenia), so the pay was counted twice. The first one,
+    from the document read first, stays. At least two amounts must be non-zero: a row of
+    zeros ("Former members|0|0|0") says nothing about who it is.
+
+    Individual roles are left alone: two executives can be paid the same (Vontobel's
+    co-CEOs), and where they aren't, it is a misread no rule can resolve.
+    `rows`: role rows as Found or as CSV rows, in output order."""
+    def get(r, k):
+        return r[k] if isinstance(r, dict) else getattr(r, k)
+
+    amounts: dict[str, dict[str, tuple[float, str]]] = {}
+    aggregate: set[str] = set()
+    for r in rows:
+        name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
+        if get(r, "grain") != "role" or value in (None, ""):
+            continue
+        if point == "role_disclosure" and value == "aggregate":
+            aggregate.add(name)
+        if point in AMOUNTS:
+            try:
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit") or "")
+            except ValueError:
+                pass
+    seen: dict[tuple, str] = {}
+    out = []
+    for name, d in amounts.items():
+        if name not in aggregate or sum(1 for v, _ in d.values() if v) < 2:
+            continue
+        key = tuple(sorted(d.items()))
+        if key in seen:
+            out.append(name)
+        else:
+            seen[key] = name
+    return out

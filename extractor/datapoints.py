@@ -1158,6 +1158,11 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
     terms = pay.company_terms(facts, origin)
     if policy:
         terms += pay.company_terms(policy, policy_origin)
+    twice = pay.duplicate_groups(roles)
+    if twice:
+        log.info("Pay: %s left out: the same figures as a group role already listed",
+                 ", ".join(twice))
+        roles = [f for f in roles if f.role_row not in twice]
     return roles, terms, read
 
 
@@ -2112,6 +2117,8 @@ def refresh(rows: list[dict]) -> list[dict]:
     or an ownership fact read without one. Rows that already have them are unchanged."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
+    twice = pay.duplicate_groups(rows)      # a group role read from two documents
+    rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in twice]
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
