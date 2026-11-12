@@ -426,3 +426,30 @@ After DACH Set 2 (102 companies, 64 Swiss and 61 German). Issue 19.
 - Most "missing" pay was fields small companies don't have: no bonus plan, or only totals published. Item 28 now marks the clear cases.
 - Genuinely missing: 9 companies with no report found. Some have none to find (Accentro postponed its 2023 and 2024 accounts; TISCON is being wound up).
 - Tracker links that don't work: Google Drive links (35 in Set 2) are private and need a sign-in, and a few links are broken (Viscom, Allgeier) or blocked (Barry Callebaut, Vincorion). These need the client to share public links.
+
+### 12 November 2026 (later): what the AI reads, and quotes that failed (scraper version 2)
+
+Measured first on the cached reports and the combined FY2025 file; no company was re-run yet.
+
+#### 31. The AI reads the whole report
+- **Before:** the report pass sent the AI short excerpts picked by keyword lists, 2,500 words per topic: a median 14% of a report (10,400 of 71,700 words, 407 reports). A value stated anywhere else stayed empty.
+- **Now:** a report of up to 200,000 words is read whole (`REPORT_WORDS`); a longer one shares that budget between the topics. Fallback documents are read whole up to 60,000 words each (`DOC_WORDS`). The AI call may take up to 10 minutes (was 3).
+- **Example:** adidas's key figures on pages 5-6 ("Number of employees 64,938", "EBITDA 3,124") were never sent.
+- **Test:** 20 reports, every field asked afresh both ways: values with a verified quote 426 -> 493. Against saved numeric values that pass every check: 71 the same (was 64), 8 not given (was 18), 12 different (was 9).
+- **Watch:** with the whole report in view the AI sometimes takes a headline revenue (Centrica's "business performance" revenue, EnQuest's "revenue and other operating income"). The prompt now names the income statement's revenue line; Balfour Beatty came right, the other two did not. Revenue normally comes from the tags or the financials step, not this pass.
+
+#### 32. A second look at quotes that are not in the text
+- **Before:** a value whose quote wasn't found word for word, or didn't print its figure, was graded C and left.
+- **Now:** such values are shown to the AI again with the part of the document where they should be, and asked for the passage as printed (`extractor/requote.py`). The new quote is used only when it is in the text and prints the figure, and not when it is a figure on its own; the value never changes. `REQUOTE=0` turns it off.
+- **Test:** on the saved answers of 30 reports, 65 quotes failed; 11 got a sound quote (8 of 15 company values, 3 of 50 pay values). A smaller gain than hoped: most of the rest are not quoting mistakes (see below).
+
+#### 33. Text shapes that hid real quotes
+- **Before:** some quotes were in the report but not matched: the PDF converter's "picture text" marks inside a sentence (in 609 of 2,768 cached texts), a full stop the font gives no character code ("45?5"), a footnote mark written "compensation4" or as a superscript, a word broken at a line end ("remain- ing").
+- **Now:** the quote matcher reads through all four (`validate.normalize`, `quote_in_text`, `sections.strip_markup`).
+- **Test:** the combined file scored again without saving: 18 quote checks fail -> pass, none pass -> fail; hard fails 1,122 -> 1,112. A first version that joined footnote marks to their word made 62 more fail and was replaced.
+
+#### Still open after this (found by the second look)
+- **Values the AI worked out:** "other members" = the table's total minus the CEO (Arbonia: 1,078 - 450 = 628); a head count from a list of names; "four members" written as a word. These need rules in code (a derived value with its formula; number words), not better quotes.
+- **A quote that runs over a page break** with the page footer in between.
+- **Saved notes keep only 160 characters of a quote**, so 96 failed quotes can't be checked again without a re-run.
+- **Zero values** shown as a dash (71 hard fails) and **LTI values without a currency** (49): rule fixes.

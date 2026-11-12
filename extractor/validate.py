@@ -64,9 +64,23 @@ _QUOTES = {ord("‘"): "'", ord("’"): "'", ord("“"): '"', ord("”"): '"'}
 _SPACES = dict.fromkeys(map(ord, "     "), " ")
 
 
+_SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
+
+
+def _footnote_marks(text: str) -> str:
+    """A footnote mark written as a superscript character stands apart, as one written
+    in markup does ("compensation⁴" and "compensation<sup>4</sup>" both read
+    "compensation 4"; "1,234²" is 1,234 with note 2, not 12,342)."""
+    return re.sub(r"[⁰¹²³⁴-⁹]+",
+                  lambda m: " " + m.group(0).translate(_SUPERSCRIPTS) + " ", text)
+
+
 def normalize(text: str) -> str:
     """Lowercase, strip markdown/table markup, unify dashes/quotes/spaces, drop
     thousand separators (1,234 / 1.234 / 1 234 -> 1234), collapse whitespace."""
+    # A font whose full stop has no character code comes out of the PDF as U+FFFD
+    # ("45�5", "www�verbio�de"); the AI reads and quotes the full stop it is.
+    text = _footnote_marks(re.sub(r"(?<=\w)�(?=\w)", ".", text))
     # Only thin/no-break spaces count as thousand separators; a normal space
     # between digits usually separates table cells ("Turnover 2 50,503"). Swiss
     # reports group with an apostrophe ("414'843").
@@ -117,12 +131,24 @@ def quote_in_text(quote: str, source: str) -> str | None:
     qc, sc = re.sub(r"\s+", "", q), re.sub(r"\s+", "", s)
     if len(qc) >= _COMPACT_MIN and qc in sc:
         return "loose"
+    # A word broken at a line end ("with the remain- ing 9,572"), which the AI quotes
+    # whole: both sides with such breaks closed.
+    qd, sd = _LINE_BREAK_HYPHEN.sub("", q), _LINE_BREAK_HYPHEN.sub("", s)
+    if qd in sd or (len(qc) >= _COMPACT_MIN and re.sub(r"\s+", "", qd) in re.sub(r"\s+", "", sd)):
+        return "loose"
     if _rows_in_order(qt, source):
+        return "loose"
+    # A footnote mark the AI joined to its word ("Other compensation4|72|32" for
+    # "compensation<sup>4</sup>"): looked for again with the mark apart.
+    apart = _JOINED_MARK.sub(r"\1 \2", q)
+    if apart != q and quote_in_text(apart, source):
         return "loose"
     return None
 
 
 _COMPACT_MIN = 40       # characters of a quote compared without spaces, at least
+_JOINED_MARK = re.compile(r"\b([^\W\d_]{3,})(\d{1,2})\b")
+_LINE_BREAK_HYPHEN = re.compile(r"(?<=[^\W\d_])- (?=[^\W\d_])")
 
 
 _ROWS_APART = 3   # lines between two pieces of a quote taken from several table rows, at most

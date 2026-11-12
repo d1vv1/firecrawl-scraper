@@ -57,6 +57,7 @@ import datetime as dt
 import hashlib
 import json
 import logging
+import os
 import re
 import shutil
 import sys
@@ -70,7 +71,7 @@ import httpx
 import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, fx, listing, llm, pay, pay_tables, sector
+from . import apis, edgar, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
@@ -138,8 +139,15 @@ CONFIDENCE_RANK = {"A": 3, "B": 2, "C": 1, "": 0}
 METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
 
 DP_DIR = OUTPUT_DIR / "datapoints"
-TOPIC_WORDS = 2_500                  # report words sent per topic (7 topics)
-DOC_TOPIC_WORDS = 1_500              # words per needed topic from each fallback document
+# A report up to this long is read whole. The keyword pick below showed the AI a median 14%
+# of a report (12 Nov 2026, 407 reports), and values stated in the rest stayed empty: of 83
+# such values in 8 reports, the whole report gave 32. Longer reports share this budget
+# between the topics. 200,000 words is about 300,000 tokens; set REPORT_WORDS=0 for a
+# model with a small context window or token quota (the keyword pick alone).
+REPORT_WORDS = int(os.getenv("REPORT_WORDS", "200000"))
+DOC_WORDS = int(os.getenv("DOC_WORDS", "60000"))     # the same for each fallback document
+TOPIC_WORDS = 2_500                  # report words sent per topic at least (7 topics)
+DOC_TOPIC_WORDS = 1_500              # words per needed topic at least, from a long fallback document
 DOC_ROUNDS = 3                       # AI calls over fallback documents, at most
 DOCS_PER_ROUND = 3                   # documents read per round
 DEFAULT_DOC_CREDITS = 10             # maps and page scrapes; PDFs are downloaded for free
@@ -637,8 +645,10 @@ def _user_prompt(name: str, url: str, chunks: list[Chunk], what: str,
     body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
     only = (f"Only these facts are needed: {', '.join(wanted)}. Set every other fact to "
             f"null (empty list / empty items).\n\n" if wanted else "")
+    # said again after the text: a whole report is 100,000 words between the two
     return (f"Company legal name: {name}\nSource: {url}\n\n{only}"
-            f"Excerpts from {what} (tables are in markdown):\n\n{body}")
+            f"Excerpts from {what} (tables are in markdown):\n\n{body}"
+            + (f"\n\n{only.strip()}" if only else ""))
 
 
 def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
@@ -663,14 +673,19 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
 
 
 def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
-    """The report's best chunks per topic: every topic, or only those of `gaps`
-    (plus the profile, for the identity check)."""
+    """What the AI reads of the report: all of it when it is no longer than REPORT_WORDS;
+    of a longer one the best chunks per topic, the topics sharing that budget: every
+    topic, or only those of `gaps` (plus the profile, for the identity check)."""
+    chunks = list(origin.chunks.values())
+    if chunks and sum(c.words for c in chunks) <= REPORT_WORDS:
+        return chunks
     topics = list(DATAPOINT_TOPICS) if gaps is None else sorted(
         {"profile"} | {FACT_TOPIC[g] for g in gaps if FACT_TOPIC.get(g) in DATAPOINT_TOPICS}
         | ({"keyfigures"} if any(FACT_TOPIC.get(g) == "financials" for g in gaps) else set()))
+    words = max(TOPIC_WORDS, REPORT_WORDS // len(topics))
     picked: dict[int, Chunk] = {}
     for topic in topics:
-        for c in select_chunks(list(origin.chunks.values()), topic, TOPIC_WORDS):
+        for c in select_chunks(chunks, topic, words):
             picked[c.id] = c
     return [picked[i] for i in sorted(picked)]
 
@@ -740,6 +755,8 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
                  "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
                  "benefits", "shareholding_requirement"):
         t: TextFact = getattr(facts, name)
+        if name == "exchange_segment" and STOCK_INDEX.search(t.value or ""):
+            continue                    # "FTSE 250": index membership is not a segment
         mic = listing.mic_for_name(t.value, country) if name == "exchange" and t.value else None
         add(name, t.value, t, extra=f"MIC {mic}" if mic else "")
     site = website_domain(facts.website.value)
@@ -792,6 +809,10 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
             add(name, _breakdown(b), b, unit=unit, extra=b.basis or "")
     return out
 
+
+# Stock indices the AI gives as an exchange segment, though the prompt rules them out.
+STOCK_INDEX = re.compile(r"\b(FTSE|M?DAX|SDAX|TecDAX|OBX|OMX\w*|SMI|SPI|CAC|AEX|STOXX|S&P|"
+                         r"index|indices)\b", re.I)
 
 # A share count that already excludes treasury shares.
 OUTSTANDING_WORDS = re.compile(r"outstanding|excluding|excl\.|net of|in circulation|utestående|"
@@ -879,17 +900,18 @@ def doc_origin(doc: Document, first_id: int) -> Origin:
 
 
 def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
-    """Only the parts relevant to the gaps: a short document whole, of a long one the
-    best chunks per needed topic."""
+    """What the AI reads of each document: all of it when it is no longer than DOC_WORDS,
+    of a longer one the best chunks per needed topic, the topics sharing that budget."""
     topics = sorted({FACT_TOPIC[g] for g in gaps})
+    words = max(DOC_TOPIC_WORDS, DOC_WORDS // max(len(topics), 1))
     picked: dict[int, Chunk] = {}
     for o in origins:
         chunks = list(o.chunks.values())
-        if sum(c.words for c in chunks) <= DOC_TOPIC_WORDS:
+        if sum(c.words for c in chunks) <= max(DOC_WORDS, DOC_TOPIC_WORDS):
             picked |= {c.id: c for c in chunks}
             continue
         for topic in topics:
-            picked |= {c.id: c for c in select_chunks(chunks, topic, DOC_TOPIC_WORDS)}
+            picked |= {c.id: c for c in select_chunks(chunks, topic, words)}
     return [picked[i] for i in sorted(picked)]
 
 
@@ -925,6 +947,7 @@ def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Librar
         facts = ask(name, origins[0].url if len(origins) == 1 else site, chunks,
                     "the company's documents: " + "; ".join(f"{o.source} {o.url}" for o in origins),
                     f"{slug}_docs_{key}", wanted)
+        requote.repair(facts, Bundle(origins), name, f"{slug}_docs_{key}")
         got = [f for f in from_facts(facts, Bundle(origins), country) if f.data_point in gaps]
         for f in got:
             year_check(f, lib.report_year)
@@ -1066,6 +1089,7 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             # the amounts of roles found in a checked pay table come from the table
             facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text())
             origin = o
+            requote.repair(facts, origin, name, f"{key}_pay")
             break
         log.info("Pay: no executive pay figures in %s", o.url)
     if facts is None:
@@ -1080,6 +1104,8 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 policy = pay.ask_pay(name, pdoc.url, chunks, "the company's remuneration policy",
                                      f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}",
                                      policy_origin.pdf, policy_origin.page_text())
+                requote.repair(policy, policy_origin, name,
+                               f"{slug}_pay_{hashlib.sha1(pdoc.url.encode()).hexdigest()[:12]}_pay")
                 read.append(policy_origin.source)
     roles = pay.role_found(facts, origin, policy, policy_origin, period_end)
     roles += _aggregates_from_report(name, facts, origin, report, report_key, period_end, read)
@@ -1110,6 +1136,7 @@ def _aggregates_from_report(name: str, facts, origin: Origin, report: Origin | N
     more = ar.model_copy(update={"roles": extra})
     if not extra or not pay.has_pay(more):
         return []
+    requote.repair(more, report, name, f"{report_key}_pay_aggregates")
     read.append(report.source)
     log.info("Pay: %d aggregate role(s) added from %s", len(extra), report.source)
     return pay.role_found(more, report, period_end=period_end)
@@ -1552,6 +1579,7 @@ def read_report(t: Target, result: dict, lei_record: dict | None, values: list[F
     facts = ask(c.name, origin.url, chunks, "the company's annual report",
                 Path(result["debug"]["markdown_file"]).stem,
                 wanted_fields(gaps + list(IDENTITY_FIELDS)))
+    requote.repair(facts, origin, c.name, Path(result["debug"]["markdown_file"]).stem)
     report_values = from_facts(facts, origin, (lei_record or {}).get("country") or c.country)
     if not result.get("period_end_date"):
         # the report step gave no period end: the fiscal year end the report states

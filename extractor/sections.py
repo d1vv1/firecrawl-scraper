@@ -208,6 +208,8 @@ class Chunk:
 
 def strip_markup(text: str) -> str:
     """Remove markdown/HTML formatting so keyword and quote matching see plain text."""
+    # the converter's own marks ("<!-- Start of picture text -->") are not the report's text
+    text = re.sub(r"<!--.*?-->", " ", text, flags=re.S)
     text = re.sub(r"<br\s*/?>", " ", text, flags=re.I)
     text = re.sub(r"</?[a-z][^>]*>", " ", text, flags=re.I)
     text = re.sub(r"^\|?\s*:?-{3,}.*$", " ", text, flags=re.M)   # table separator rows

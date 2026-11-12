@@ -19,6 +19,7 @@ from .config import PROMPTS_DIR, ConfigError, load_settings
 
 log = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
+TIMEOUT_S = 600      # a whole annual report (300,000 tokens) can take minutes to answer
 
 
 class StructuredOutputsUnsupportedError(RuntimeError):
@@ -47,7 +48,7 @@ def _client() -> tuple[OpenAI, str]:
         raise ConfigError(f"LLM_PROVIDER must be 'foundry' or 'vertex', not {s.llm_provider!r}")
     s.require("foundry_endpoint", "foundry_deployment")
     return OpenAI(base_url=s.foundry_endpoint, api_key=s.foundry_api_key or _entra_token_provider(),
-                  max_retries=0, timeout=180), s.foundry_deployment
+                  max_retries=0, timeout=TIMEOUT_S), s.foundry_deployment
 
 
 def _entra_token_provider():
@@ -95,7 +96,7 @@ def _vertex_client(s) -> tuple[OpenAI, str]:
     base = (f"https://{host}/v1/projects/{s.vertex_project}/locations/"
             f"{s.vertex_location}/endpoints/openapi")
     log.info("LLM: Vertex AI %s (%s)", s.vertex_model, s.vertex_location)
-    return OpenAI(base_url=base, api_key=token, max_retries=0, timeout=180), s.vertex_model
+    return OpenAI(base_url=base, api_key=token, max_retries=0, timeout=TIMEOUT_S), s.vertex_model
 
 
 _no_temperature: set[str] = set()   # deployments that rejected temperature=0

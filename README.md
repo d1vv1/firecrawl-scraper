@@ -198,7 +198,17 @@ Per company, cheapest and most exact first:
 2. one more AI pass over the same report for identity (legal name, register number,
    country, city, website, former names, parent), EBITDA, fiscal year end and accounting
    basis, employees, share data and year-end price, largest holders and owners, listing,
-   pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`);
+   pay terms, and revenue and staff by segment and country (`prompts/datapoints_system.md`).
+   The AI reads the whole report when it has up to 200,000 words (`REPORT_WORDS` in
+   `.env`; the median report has 72,000), and of a longer one the best parts per topic within that
+   budget. Fallback documents (step 4) are read whole up to 60,000 words each
+   (`DOC_WORDS`). `REPORT_WORDS=0` goes back to short excerpts picked by keywords, for a
+   model with a small context window or a low tokens-per-minute quota;
+   - **a second look at quotes** (`extractor/requote.py`, `REQUOTE=0` turns it off): a
+     value whose quote is not in the text word for word, or does not print its figure, is
+     shown to the AI again with the part of the document where it should be, and asked for
+     the passage as printed. The new quote is used only when it is in the text and prints
+     the figure; the value itself never changes. Also for pay and fallback documents;
 3. **executive pay**: documents supplied in the input (`remuneration_report_url`,
    `annual_report_url`), then SEC documents for SEC registrants (a 20-F's remuneration
    report exhibit, a US proxy statement; free), then the remuneration report found like the
