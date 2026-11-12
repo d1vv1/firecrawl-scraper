@@ -391,3 +391,38 @@ None went down.
 - 19 companies whose report or website the search can't find (Adidas, BKW, Bell and others).
 - Read more pay tables directly instead of through the AI: today only 25 of 194 companies use a table.
 - Size band: 112 companies lack a share price or share count.
+
+## 12 November 2026
+
+After DACH Set 2 (102 companies, 64 Swiss and 61 German). Issue 19.
+
+#### 26. Searching for the German "Geschäftsbericht" too
+- **Before:** the web search only asked for "<name> annual report 2025 pdf". Small German companies often publish only in German, so it found nothing.
+- **Now:** for a German, Swiss or Austrian company, when the English search finds nothing new, a second search asks for "<name> Geschäftsbericht 2025" (2 more credits).
+- **Example:** Albis Leasing's 2025 report and 2invest's reports page turn up only in the German search.
+
+#### 27. Small fixes to the report search
+- **Before:** "Edisun Power Europe" wasn't matched to edisunpower.com (the domain leaves out "Europe"). "TISCON AG i.A." was searched as "tiscon ia". A title split across lines ("GESCHÄFTS- BERICHT 2025") wasn't read as a report.
+- **Now:** place words (Europe, Swiss, Deutschland...) don't have to be in the domain. "i.A." / "i.L." (being wound up) are dropped from the name. Split titles are joined.
+- **Example:** Edisun's investor page now counts as its own.
+
+#### 28. "No variable pay" instead of "not found"
+- **Before:** a board member paid only a salary had 7 empty bonus fields marked "not found", which looked like a failure.
+- **Now:** when the total equals salary + benefits + pension and no bonus figure was read, those fields say "not applicable: no variable pay". Applied to saved results too, no re-run.
+- **Example:** 2invest's sole board member: 72,000 salary, total 72,000. 70 values in 9 Set 2 companies (Uniper, which can't pay bonuses under state aid; ALSO's chairman; Dottikon's board).
+
+#### 29. A failed re-run no longer overwrites good data
+- **Before:** merging a run always took the newer rows. ABB's site blocked Set 2 (error 503), so ABB's pay dropped from 118 values to 3.
+- **Now:** if a run gets under half the values already there for a company's facts or its pay, the old ones stay, and the merge says so. `--take-newer` overrides it.
+- **Example:** re-merging Set 2 kept ABB's old pay and nothing else.
+
+#### 30. Google Drive links are skipped, not misread
+- **Before:** a Drive link gives a "view this file" page, not the PDF. Edisun's was read as its "2023 annual report".
+- **Now:** links that need a sign-in (Google Drive, SharePoint, Dropbox...) are skipped, and the document is searched for instead.
+- **Example:** Edisun no longer has a fake FY2023 report.
+
+### Why Set 2 looked bad (and what wasn't really bad)
+- Overall close to earlier runs: company facts 74% filled (76% before), pay 58% (62%).
+- Most "missing" pay was fields small companies don't have: no bonus plan, or only totals published. Item 28 now marks the clear cases.
+- Genuinely missing: 9 companies with no report found. Some have none to find (Accentro postponed its 2023 and 2024 accounts; TISCON is being wound up).
+- Tracker links that don't work: Google Drive links (35 in Set 2) are private and need a sign-in, and a few links are broken (Viscom, Allgeier) or blocked (Barry Callebaut, Vincorion). These need the client to share public links.

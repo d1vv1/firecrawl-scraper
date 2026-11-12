@@ -18071,6 +18071,30 @@ a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,DER-03,n/a,not a derived num
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,DER-06,n/a,not derived
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,XF-01,n/a,not a total
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,XF-02,n/a,not a total
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-01,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-02,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-03,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-04,n/a,holds without a date
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-05,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-01,n/a,not a coded field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-02,n/a,not a classified field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-03,n/a,not an identifier
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-06,n/a,not a date field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-01,n/a,not money
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-04,n/a,no range for this field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-05,n/a,not a count
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-06,n/a,no percentage
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-07,n/a,not a holdings list
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-08,n/a,not a breakdown
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-09,n/a,not an LTI amount
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-11,n/a,not STI paid
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-12,n/a,not a pay amount
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-13,n/a,not FTE
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,DER-03,n/a,not a derived number
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,DER-06,n/a,not derived
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,XF-01,n/a,not a total
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,XF-02,n/a,not a total
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-01,pass,
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-03,n/a,API: no quote

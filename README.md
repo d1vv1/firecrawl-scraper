@@ -341,12 +341,15 @@ python -m extractor.combine output/run7_datapoints.csv output/run8_datapoints.cs
 
 Each run's companies replace theirs in the combined file (a new company is added), and
 their checks come along from `<run>_checks.csv`. A row a run did not collect ("not
-collected: this run asked only for pay") never replaces a value. The combined file is then
+collected: this run asked only for pay") never replaces a value, and a run that got under
+half the values already there for a company's facts or its pay (a site that blocked it)
+leaves that block as it was (`--take-newer` to replace it anyway). The combined file is then
 scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's CSV and its
 `_checks.csv` to whoever merges.
 
 **Finding the report when the website doesn't have it** (`report_finder.web_search_report`): after
-the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits), keeping
+the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits; for a
+German, Swiss or Austrian company also "<name> Geschäftsbericht <year>" when that finds nothing), keeping
 only the company's own documents (its site, a host carrying its name, or a PDF named for it). The
 report's own domain then becomes the website. With no website at all, the report is searched for
 by name. Report search budget: 8 credits per company (`--pipeline-credits`).

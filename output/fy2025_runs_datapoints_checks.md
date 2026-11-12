@@ -1,19 +1,19 @@
 # Output checks: fy2025_runs_datapoints.csv
 
-339 companies, 16282 filled values checked (2026-11-12, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
+339 companies, 16398 filled values checked (2026-11-12, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
 
 | Status | Values |
 |---|---|
-| Pass | 14492 (89%) |
+| Pass | 14606 (89%) |
 | Review | 596 (4%) |
 | Fail | 74 (0%) |
-| Fail (hard) | 1120 (7%) |
+| Fail (hard) | 1122 (7%) |
 
 ## By category
 
 | Category | Values | Pass | Review | Fail | Fail (hard) |
 |---|---|---|---|---|---|
-| Identity | 1909 | 1899 | 0 | 0 | 10 |
+| Identity | 1910 | 1900 | 0 | 0 | 10 |
 | Listing and market | 1568 | 1521 | 0 | 0 | 47 |
 | Sector | 563 | 551 | 0 | 0 | 12 |
 | Reporting basis | 1178 | 1173 | 0 | 0 | 5 |
@@ -22,44 +22,44 @@
 | Ownership and control | 1173 | 1100 | 0 | 0 | 73 |
 | Segment and geography | 472 | 267 | 77 | 24 | 104 |
 | Pay policy | 706 | 670 | 0 | 0 | 36 |
-| Role and disclosure | 2079 | 1914 | 3 | 49 | 113 |
-| Pay: fixed | 1932 | 1628 | 107 | 0 | 197 |
-| Pay: STI | 1257 | 1069 | 81 | 0 | 107 |
-| Pay: LTI | 1091 | 884 | 54 | 0 | 153 |
-| Pay: total | 787 | 558 | 137 | 0 | 92 |
+| Role and disclosure | 2099 | 1934 | 3 | 49 | 113 |
+| Pay: fixed | 1959 | 1655 | 107 | 0 | 197 |
+| Pay: STI | 1287 | 1097 | 81 | 0 | 109 |
+| Pay: LTI | 1120 | 913 | 54 | 0 | 153 |
+| Pay: total | 796 | 567 | 137 | 0 | 92 |
 
 ## By check
 
 | Check | What it checks | Hard | Ran | Pass | Fail | n/a | Most common failure |
 |---|---|---|---|---|---|---|---|
-| CORE-01 | Locator present (PDF links open at a page) | yes | 16282 | 16267 | 15 | 0 | no endpoint URL |
-| CORE-02 | Value can be read off its quote | yes | 6973 | 6536 | 437 | 9309 | N not in the quote |
-| CORE-03 | Quote is in the cached source, on the linked page | yes | 11180 | 10581 | 599 | 5102 | quote not in the source text |
-| CORE-04 | Period end present (dated fields only) |  | 9017 | 8500 | 517 | 7265 | no period_end |
-| CORE-05 | Type matches (number, date, breakdown) |  | 16282 | 16279 | 3 | 0 | period_end 'N-N' is not a date |
-| COD-01 | Value in its code list or closed set | yes | 5220 | 5191 | 29 | 11062 | unit '' is not a target form |
-| COD-02 | Classification scheme named |  | 283 | 283 | 0 | 15999 |  |
-| COD-03 | Identifier check digits (LEI, ISIN) | yes | 562 | 562 | 0 | 15720 |  |
-| COD-06 | Dates are valid | yes | 497 | 480 | 17 | 15785 | not a year or a date |
-| NUM-01 | Money has an ISO 4217 currency | yes | 4811 | 4758 | 53 | 11471 | unit '' is not ISO N |
-| NUM-02 | Printed figure and unit recorded |  | 4446 | 4446 | 0 | 11836 |  |
-| NUM-04 | Magnitude in a plausible range |  | 5605 | 5577 | 28 | 10677 | N outside Ne+N |
-| NUM-05 | Counts are whole numbers | yes | 599 | 596 | 3 | 15683 | not a whole number |
-| NUM-06 | Percentages in range | yes | 965 | 964 | 1 | 15317 | N % of base salary |
-| NUM-07 | Holdings add up to 100% or less | yes | 207 | 204 | 3 | 16075 | holdings add up to N% |
-| NUM-08 | Breakdown adds up to the company total (5%) |  | 467 | 353 | 114 | 15815 | adds up to N vs N (N% apart) |
-| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 644 | 644 | 0 | 15638 |  |
-| NUM-11 | STI paid not above its maximum |  | 292 | 280 | 12 | 15990 | paid N% of baseN maximum N% |
-| NUM-12 | A role's amounts share currency and period |  | 3916 | 3871 | 45 | 12366 | currency N the role's other amounts GBP |
-| NUM-13 | FTE not above headcount |  | 194 | 176 | 18 | 16088 | FTE N above headcount N |
-| DER-03 | Derived value recalculates | yes | 100 | 100 | 0 | 16182 |  |
-| DER-06 | Derived value shows its formula |  | 658 | 658 | 0 | 15624 |  |
-| XF-01 | Parts not above the stated total (2%) | yes | 672 | 637 | 35 | 15610 | parts add up to N more than the stated N |
-| XF-02 | Total equals its parts (2%) |  | 672 | 520 | 152 | 15610 | parts add up to N stated N |
+| CORE-01 | Locator present (PDF links open at a page) | yes | 16398 | 16383 | 15 | 0 | no endpoint URL |
+| CORE-02 | Value can be read off its quote | yes | 7051 | 6614 | 437 | 9347 | N not in the quote |
+| CORE-03 | Quote is in the cached source, on the linked page | yes | 11287 | 10686 | 601 | 5111 | quote not in the source text |
+| CORE-04 | Period end present (dated fields only) |  | 9122 | 8605 | 517 | 7276 | no period_end |
+| CORE-05 | Type matches (number, date, breakdown) |  | 16398 | 16395 | 3 | 0 | period_end 'N-N' is not a date |
+| COD-01 | Value in its code list or closed set | yes | 5279 | 5250 | 29 | 11119 | unit '' is not a target form |
+| COD-02 | Classification scheme named |  | 283 | 283 | 0 | 16115 |  |
+| COD-03 | Identifier check digits (LEI, ISIN) | yes | 562 | 562 | 0 | 15836 |  |
+| COD-06 | Dates are valid | yes | 497 | 480 | 17 | 15901 | not a year or a date |
+| NUM-01 | Money has an ISO 4217 currency | yes | 4866 | 4813 | 53 | 11532 | unit '' is not ISO N |
+| NUM-02 | Printed figure and unit recorded |  | 4501 | 4501 | 0 | 11897 |  |
+| NUM-04 | Magnitude in a plausible range |  | 5661 | 5633 | 28 | 10737 | N outside Ne+N |
+| NUM-05 | Counts are whole numbers | yes | 600 | 597 | 3 | 15798 | not a whole number |
+| NUM-06 | Percentages in range | yes | 1004 | 1003 | 1 | 15394 | N % of base salary |
+| NUM-07 | Holdings add up to 100% or less | yes | 207 | 204 | 3 | 16191 | holdings add up to N% |
+| NUM-08 | Breakdown adds up to the company total (5%) |  | 467 | 353 | 114 | 15931 | adds up to N vs N (N% apart) |
+| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 653 | 653 | 0 | 15745 |  |
+| NUM-11 | STI paid not above its maximum |  | 301 | 289 | 12 | 16097 | paid N% of baseN maximum N% |
+| NUM-12 | A role's amounts share currency and period |  | 3971 | 3926 | 45 | 12427 | currency N the role's other amounts GBP |
+| NUM-13 | FTE not above headcount |  | 194 | 176 | 18 | 16204 | FTE N above headcount N |
+| DER-03 | Derived value recalculates | yes | 100 | 100 | 0 | 16298 |  |
+| DER-06 | Derived value shows its formula |  | 676 | 676 | 0 | 15722 |  |
+| XF-01 | Parts not above the stated total (2%) | yes | 681 | 646 | 35 | 15717 | parts add up to N more than the stated N |
+| XF-02 | Total equals its parts (2%) |  | 681 | 529 | 152 | 15717 | parts add up to N stated N |
 
 ## Fill rate
 
-Company fields: 9136 of 13899 filled (66%). Blank values are not checked above.
+Company fields: 9137 of 13899 filled (66%). Blank values are not checked above.
 
 | Field | Filled | Of |
 |---|---|---|
@@ -90,7 +90,7 @@ Company fields: 9136 of 13899 filled (66%). Blank values are not checked above.
 | total_assets | 263 | 339 |
 | benefits | 263 | 339 |
 | ticker | 265 | 339 |
-| website | 269 | 339 |
+| website | 270 | 339 |
 | lei | 274 | 339 |
 | pension_type | 274 | 339 |
 | reporting_currency | 279 | 339 |
@@ -105,23 +105,23 @@ Company fields: 9136 of 13899 filled (66%). Blank values are not checked above.
 | fiscal_year | 319 | 339 |
 | fiscal_year_end | 320 | 339 |
 
-Pay fields, over 863 executive roles:
+Pay fields, over 872 executive roles:
 
 | Field | Filled |
 |---|---|
-| base_salary | 739 (86%) |
-| sti_paid | 610 (71%) |
-| sti_target | 225 (26%) |
-| sti_max | 422 (49%) |
-| lti_vested | 299 (35%) |
-| lti_granted | 345 (40%) |
-| lti_target | 146 (17%) |
-| lti_max | 301 (35%) |
-| benefits_value | 582 (67%) |
-| pension_contribution | 611 (71%) |
-| total_remuneration | 787 (91%) |
+| base_salary | 748 (86%) |
+| sti_paid | 620 (71%) |
+| sti_target | 235 (27%) |
+| sti_max | 432 (50%) |
+| lti_vested | 299 (34%) |
+| lti_granted | 354 (41%) |
+| lti_target | 156 (18%) |
+| lti_max | 311 (36%) |
+| benefits_value | 591 (68%) |
+| pension_contribution | 620 (71%) |
+| total_remuneration | 796 (91%) |
 
-## Failed values (1194)
+## Failed values (1196)
 
 | Company | Field | Role | Value | Status | Why |
 |---|---|---|---|---|---|
@@ -129,6 +129,8 @@ Pay fields, over 863 executive roles:
 | 2invest-ag-bf4e0781 | total_remuneration | Vorstand | 72000 | Fail (hard) | CORE-02: 72 not in the quote |
 | 4imprint-group-plc | revenue_by_segment |  | North America: 1321.5; UK & Ir | Fail (hard) | CORE-03: quote not in the source text |
 | 4imprint-group-plc | total_assets |  | 308900000 | Fail (hard) | CORE-03: quote not in the source text |
+| abb-ltd | sti_paid | Other EC members | 1500000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
+| abb-ltd | sti_target | Other EC members | 1190000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | aberdeen-group-plc | lti_vested | CEO | 497000 | Fail (hard) | CORE-02: 497 not in the quote |
 | aberdeen-group-plc | sti_paid | CEO | 1550000 | Fail (hard) | CORE-02: 1550 not in the quote |
 | aberdeen-group-plc | sti_paid | Chief Financial Officer | 258000 | Fail (hard) | CORE-02: 258 not in the quote |

@@ -1624,7 +1624,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
 
     # 1b. the report step found no report of the year, but the input names one (issue 15:
     # Tallink's report step chose an AGM board report; its annual report was in the input)
-    supplied = t.annual_report_url
+    supplied = readable(t.annual_report_url)
     if want_report and supplied and not local_file(supplied) and lacks_report(result):
         pfc = FirecrawlClient(load_settings(), max_credits=1)    # a PDF downloads for free
         found = use_as_report(t, supplied, known_website(result, c.slug), pfc,
@@ -1702,8 +1702,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
                 Path(result["debug"]["markdown_file"]).stem if origin else "",
                 (result or {}).get("period_end_date") or "",
                 (lei_record or {}).get("country") or c.country, fy,
-                tuple((u, label) for u, label in ((t.remuneration_report_url, "Remuneration report"),
-                                                  (t.annual_report_url, "Annual report")) if u),
+                tuple((u, label) for u, label in ((readable(t.remuneration_report_url), "Remuneration report"),
+                                                  (readable(t.annual_report_url), "Annual report")) if u),
                 next((int(f.value) for f in values if f.data_point == "cik" and f.value), None))
             values += terms
             tried += [r for r in read if r not in tried]
@@ -1886,7 +1886,7 @@ def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
             steps.append(("report (found before)", 0))
         else:
             steps.append(("report (failed before; --retry-failed searches again)", 0))
-        url = t.annual_report_url
+        url = readable(t.annual_report_url)
         if url and not local_file(url) and lacks_report(_saved_result(c)):
             steps.append(("annual_report_url as the report", 0 if is_pdf_url(url) else 1))
         steps.append(("report AI pass", 0))
@@ -2006,6 +2006,32 @@ def headcount_from_fte(by: dict[str, dict]) -> None:
               value=str(whole), method="DERIVED", note=f"{how}; {printed}{fte['note']}")
 
 
+VARIABLE_PAY = ("sti_paid", "sti_target", "sti_max", *pay.LTIS, "lti_target", "lti_max")
+NO_VARIABLE_PAY = "not applicable: no variable pay (the total is fixed pay only)"
+
+
+def no_variable_pay(mine: dict[str, dict]) -> None:
+    """A role paid only fixed pay (2invest's sole board member: 72,000 salary, total 72,000):
+    its total is base salary + benefits + pension, and no bonus figure was read. Then the
+    empty STI and LTI rows say so instead of "not found". `mine`: a role's rows by data point."""
+    def amount(k):
+        r = mine.get(k)
+        try:
+            return float(r["value"]) if r and r["value"] else None
+        except ValueError:
+            return None
+    base, total = amount("base_salary"), amount("total_remuneration")
+    if not base or not total or any(mine.get(k, {}).get("value") for k in VARIABLE_PAY):
+        return
+    fixed = base + (amount("benefits_value") or 0) + (amount("pension_contribution") or 0)
+    if not (base <= total and abs(total - fixed) <= 0.01 * total):
+        return
+    for k in VARIABLE_PAY:
+        r = mine.get(k)
+        if r and not r["value"] and r["note"].startswith("not found"):
+            r["note"] = NO_VARIABLE_PAY
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2029,6 +2055,8 @@ def refresh(rows: list[dict]) -> list[dict]:
             band["note"] = why
     names = [f.name for f in fields(Found)]
     for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
+        no_variable_pay({r["data_point"]: r for r in rows
+                         if r["grain"] == "role" and r["role_row"] == role})
         mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
                 and r["data_point"] in pay.TARGETS}
         have = {k: Found(**{n: r[n] for n in names if n in r}) for k, r in mine.items() if r["value"]}
@@ -2327,6 +2355,18 @@ LOGIN_HOSTS = ("drive.google.com", "docs.google.com", "sharepoint.com", "onedriv
                "1drv.ms", "dropbox.com", "box.com")
 
 
+def needs_login(url: str | None) -> bool:
+    host = urlparse(url or "").netloc.lower()
+    return bool(url) and any(host == h or host.endswith("." + h) for h in LOGIN_HOSTS)
+
+
+def readable(url: str | None) -> str | None:
+    """A supplied link, unless it needs a login: a Google Drive link gives a sign-in or
+    viewer page, never the file (DACH Set 2: Edisun's viewer page was read as its "FY2023
+    report"). The document is then searched for instead."""
+    return None if needs_login(url) else url
+
+
 def input_problems(t: Target) -> list[str]:
     """What in a company's input row will cost it: a report link the tool can't open, or no
     LEI and no ISIN (the company is then found by name only, and an official filing can't
@@ -2335,8 +2375,8 @@ def input_problems(t: Target) -> list[str]:
     for label, url in (("annual_report_url", t.annual_report_url),
                        ("remuneration_report_url", t.remuneration_report_url)):
         host = urlparse(url or "").netloc.lower()
-        if url and any(host == h or host.endswith("." + h) for h in LOGIN_HOSTS):
-            out.append(f"{label} needs a login ({host}): give a direct link to the PDF")
+        if needs_login(url):
+            out.append(f"{label} needs a login ({host}): searched for instead; give a direct link to the PDF")
     if not t.company.lei and not t.isin:
         out.append("no LEI and no ISIN: found by name only")
     return out

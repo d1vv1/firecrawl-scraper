@@ -112152,8 +112152,8 @@ abb-ltd,cik,,1091587,Pass,100,DER-06,n/a,not derived
 abb-ltd,cik,,1091587,Pass,100,XF-01,n/a,not a total
 abb-ltd,cik,,1091587,Pass,100,XF-02,n/a,not a total
 abb-ltd,isin,,CH0012221716,Pass,100,CORE-01,pass,
-abb-ltd,isin,,CH0012221716,Pass,100,CORE-02,pass,
-abb-ltd,isin,,CH0012221716,Pass,100,CORE-03,pass,
+abb-ltd,isin,,CH0012221716,Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
+abb-ltd,isin,,CH0012221716,Pass,100,CORE-03,n/a,API: no quote
 abb-ltd,isin,,CH0012221716,Pass,100,CORE-04,n/a,holds without a date
 abb-ltd,isin,,CH0012221716,Pass,100,CORE-05,pass,
 abb-ltd,isin,,CH0012221716,Pass,100,COD-01,n/a,not a coded field
@@ -112176,8 +112176,8 @@ abb-ltd,isin,,CH0012221716,Pass,100,DER-06,n/a,not derived
 abb-ltd,isin,,CH0012221716,Pass,100,XF-01,n/a,not a total
 abb-ltd,isin,,CH0012221716,Pass,100,XF-02,n/a,not a total
 abb-ltd,ticker,,ABBN,Pass,100,CORE-01,pass,
-abb-ltd,ticker,,ABBN,Pass,100,CORE-02,pass,
-abb-ltd,ticker,,ABBN,Pass,100,CORE-03,pass,
+abb-ltd,ticker,,ABBN,Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
+abb-ltd,ticker,,ABBN,Pass,100,CORE-03,n/a,API: no quote
 abb-ltd,ticker,,ABBN,Pass,100,CORE-04,n/a,holds without a date
 abb-ltd,ticker,,ABBN,Pass,100,CORE-05,pass,
 abb-ltd,ticker,,ABBN,Pass,100,COD-01,n/a,not a coded field
@@ -112199,54 +112199,78 @@ abb-ltd,ticker,,ABBN,Pass,100,DER-03,n/a,not a derived number
 abb-ltd,ticker,,ABBN,Pass,100,DER-06,n/a,not derived
 abb-ltd,ticker,,ABBN,Pass,100,XF-01,n/a,not a total
 abb-ltd,ticker,,ABBN,Pass,100,XF-02,n/a,not a total
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,CORE-01,pass,
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,CORE-02,pass,
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,CORE-03,pass,
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,CORE-05,pass,
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,COD-01,pass,XSWX
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,COD-06,n/a,not a date field
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-01,n/a,not money
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-05,n/a,not a count
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,DER-06,n/a,not derived
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,XF-01,n/a,not a total
-abb-ltd,exchange,,SIX Swiss Exchange; Nasdaq Stockholm,Pass,100,XF-02,n/a,not a total
-abb-ltd,listing_status,,listed,Fail (hard),75,CORE-01,pass,
-abb-ltd,listing_status,,listed,Fail (hard),75,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,listing_status,,listed,Fail (hard),75,CORE-03,fail,source not cached; the run itself did not find the quote
-abb-ltd,listing_status,,listed,Fail (hard),75,CORE-04,n/a,holds without a date
-abb-ltd,listing_status,,listed,Fail (hard),75,CORE-05,pass,
-abb-ltd,listing_status,,listed,Fail (hard),75,COD-01,pass,
-abb-ltd,listing_status,,listed,Fail (hard),75,COD-02,n/a,not a classified field
-abb-ltd,listing_status,,listed,Fail (hard),75,COD-03,n/a,not an identifier
-abb-ltd,listing_status,,listed,Fail (hard),75,COD-06,n/a,not a date field
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-01,n/a,not money
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-04,n/a,no range for this field
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-05,n/a,not a count
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-06,n/a,no percentage
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-07,n/a,not a holdings list
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-08,n/a,not a breakdown
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-09,n/a,not an LTI amount
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-11,n/a,not STI paid
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-12,n/a,not a pay amount
-abb-ltd,listing_status,,listed,Fail (hard),75,NUM-13,n/a,not FTE
-abb-ltd,listing_status,,listed,Fail (hard),75,DER-03,n/a,not a derived number
-abb-ltd,listing_status,,listed,Fail (hard),75,DER-06,n/a,not derived
-abb-ltd,listing_status,,listed,Fail (hard),75,XF-01,n/a,not a total
-abb-ltd,listing_status,,listed,Fail (hard),75,XF-02,n/a,not a total
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,CORE-01,pass,
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,CORE-03,n/a,API: no quote
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,CORE-05,pass,
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,COD-01,pass,XSWX
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,COD-06,n/a,not a date field
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-01,n/a,not money
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-05,n/a,not a count
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,DER-06,n/a,not derived
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,XF-01,n/a,not a total
+abb-ltd,exchange,,SIX Swiss Exchange,Pass,100,XF-02,n/a,not a total
+abb-ltd,exchange_segment,,MTF,Pass,100,CORE-01,pass,
+abb-ltd,exchange_segment,,MTF,Pass,100,CORE-02,pass,
+abb-ltd,exchange_segment,,MTF,Pass,100,CORE-03,pass,
+abb-ltd,exchange_segment,,MTF,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,exchange_segment,,MTF,Pass,100,CORE-05,pass,
+abb-ltd,exchange_segment,,MTF,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,exchange_segment,,MTF,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,exchange_segment,,MTF,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,exchange_segment,,MTF,Pass,100,COD-06,n/a,not a date field
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-01,n/a,not money
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-05,n/a,not a count
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,exchange_segment,,MTF,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,exchange_segment,,MTF,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,exchange_segment,,MTF,Pass,100,DER-06,n/a,not derived
+abb-ltd,exchange_segment,,MTF,Pass,100,XF-01,n/a,not a total
+abb-ltd,exchange_segment,,MTF,Pass,100,XF-02,n/a,not a total
+abb-ltd,listing_status,,listed,Pass,100,CORE-01,pass,
+abb-ltd,listing_status,,listed,Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
+abb-ltd,listing_status,,listed,Pass,100,CORE-03,n/a,API: no quote
+abb-ltd,listing_status,,listed,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,listing_status,,listed,Pass,100,CORE-05,pass,
+abb-ltd,listing_status,,listed,Pass,100,COD-01,pass,
+abb-ltd,listing_status,,listed,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,listing_status,,listed,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,listing_status,,listed,Pass,100,COD-06,n/a,not a date field
+abb-ltd,listing_status,,listed,Pass,100,NUM-01,n/a,not money
+abb-ltd,listing_status,,listed,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,listing_status,,listed,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,listing_status,,listed,Pass,100,NUM-05,n/a,not a count
+abb-ltd,listing_status,,listed,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,listing_status,,listed,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,listing_status,,listed,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,listing_status,,listed,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,listing_status,,listed,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,listing_status,,listed,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,listing_status,,listed,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,listing_status,,listed,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,listing_status,,listed,Pass,100,DER-06,n/a,not derived
+abb-ltd,listing_status,,listed,Pass,100,XF-01,n/a,not a total
+abb-ltd,listing_status,,listed,Pass,100,XF-02,n/a,not a total
 abb-ltd,country_code,,CH,Pass,100,CORE-01,pass,
 abb-ltd,country_code,,CH,Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
 abb-ltd,country_code,,CH,Pass,100,CORE-03,n/a,API: no quote
@@ -112319,150 +112343,150 @@ abb-ltd,website,,abb.com,Pass,100,DER-03,n/a,not a derived number
 abb-ltd,website,,abb.com,Pass,100,DER-06,n/a,not derived
 abb-ltd,website,,abb.com,Pass,100,XF-01,n/a,not a total
 abb-ltd,website,,abb.com,Pass,100,XF-02,n/a,not a total
-abb-ltd,sector_code,,NACE 28.99,Pass,100,CORE-01,pass,
-abb-ltd,sector_code,,NACE 28.99,Pass,100,CORE-02,n/a,"DERIVED: no quote, the endpoint is the source"
-abb-ltd,sector_code,,NACE 28.99,Pass,100,CORE-03,n/a,DERIVED: no quote
-abb-ltd,sector_code,,NACE 28.99,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,sector_code,,NACE 28.99,Pass,100,CORE-05,pass,
-abb-ltd,sector_code,,NACE 28.99,Pass,100,COD-01,pass,NACE Rev. 2 class
-abb-ltd,sector_code,,NACE 28.99,Pass,100,COD-02,pass,
-abb-ltd,sector_code,,NACE 28.99,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,sector_code,,NACE 28.99,Pass,100,COD-06,n/a,not a date field
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-01,n/a,not money
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-05,n/a,not a count
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,sector_code,,NACE 28.99,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,sector_code,,NACE 28.99,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,sector_code,,NACE 28.99,Pass,100,DER-06,pass,
-abb-ltd,sector_code,,NACE 28.99,Pass,100,XF-01,n/a,not a total
-abb-ltd,sector_code,,NACE 28.99,Pass,100,XF-02,n/a,not a total
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,CORE-01,pass,
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,CORE-03,pass,
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,CORE-05,pass,
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,COD-06,n/a,not a date field
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-01,n/a,not money
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-05,n/a,not a count
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,DER-06,n/a,not derived
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,XF-01,n/a,not a total
-abb-ltd,sub_sector,,Key enablers of our success are our expertise in electrification and automation.,Pass,100,XF-02,n/a,not a total
-abb-ltd,revenue,,32850000000,Review,88,CORE-01,pass,
-abb-ltd,revenue,,32850000000,Review,88,CORE-02,pass,
-abb-ltd,revenue,,32850000000,Review,88,CORE-03,pass,
-abb-ltd,revenue,,32850000000,Review,88,CORE-04,fail,no period_end
-abb-ltd,revenue,,32850000000,Review,88,CORE-05,pass,
-abb-ltd,revenue,,32850000000,Review,88,COD-01,n/a,not a coded field
-abb-ltd,revenue,,32850000000,Review,88,COD-02,n/a,not a classified field
-abb-ltd,revenue,,32850000000,Review,88,COD-03,n/a,not an identifier
-abb-ltd,revenue,,32850000000,Review,88,COD-06,n/a,not a date field
-abb-ltd,revenue,,32850000000,Review,88,NUM-01,pass,
-abb-ltd,revenue,,32850000000,Review,88,NUM-02,pass,
-abb-ltd,revenue,,32850000000,Review,88,NUM-04,pass,
-abb-ltd,revenue,,32850000000,Review,88,NUM-05,n/a,not a count
-abb-ltd,revenue,,32850000000,Review,88,NUM-06,n/a,no percentage
-abb-ltd,revenue,,32850000000,Review,88,NUM-07,n/a,not a holdings list
-abb-ltd,revenue,,32850000000,Review,88,NUM-08,n/a,not a breakdown
-abb-ltd,revenue,,32850000000,Review,88,NUM-09,n/a,not an LTI amount
-abb-ltd,revenue,,32850000000,Review,88,NUM-11,n/a,not STI paid
-abb-ltd,revenue,,32850000000,Review,88,NUM-12,n/a,not a pay amount
-abb-ltd,revenue,,32850000000,Review,88,NUM-13,n/a,not FTE
-abb-ltd,revenue,,32850000000,Review,88,DER-03,n/a,not a derived number
-abb-ltd,revenue,,32850000000,Review,88,DER-06,n/a,not derived
-abb-ltd,revenue,,32850000000,Review,88,XF-01,n/a,not a total
-abb-ltd,revenue,,32850000000,Review,88,XF-02,n/a,not a total
-abb-ltd,ebitda,,5968000000,Pass,100,CORE-01,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,CORE-02,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,CORE-03,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,CORE-04,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,CORE-05,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,ebitda,,5968000000,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,ebitda,,5968000000,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,ebitda,,5968000000,Pass,100,COD-06,n/a,not a date field
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-01,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-02,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-04,pass,
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-05,n/a,not a count
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,ebitda,,5968000000,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,ebitda,,5968000000,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,ebitda,,5968000000,Pass,100,DER-06,n/a,not derived
-abb-ltd,ebitda,,5968000000,Pass,100,XF-01,n/a,not a total
-abb-ltd,ebitda,,5968000000,Pass,100,XF-02,n/a,not a total
-abb-ltd,fiscal_year,,2024,Pass,100,CORE-01,pass,a fact about the whole report
-abb-ltd,fiscal_year,,2024,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-abb-ltd,fiscal_year,,2024,Pass,100,CORE-03,n/a,no quote (see CORE-02)
-abb-ltd,fiscal_year,,2024,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,fiscal_year,,2024,Pass,100,CORE-05,pass,
-abb-ltd,fiscal_year,,2024,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,fiscal_year,,2024,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,fiscal_year,,2024,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,fiscal_year,,2024,Pass,100,COD-06,n/a,not a date field
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-01,n/a,not money
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-05,n/a,not a count
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,fiscal_year,,2024,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,fiscal_year,,2024,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,fiscal_year,,2024,Pass,100,DER-06,n/a,not derived
-abb-ltd,fiscal_year,,2024,Pass,100,XF-01,n/a,not a total
-abb-ltd,fiscal_year,,2024,Pass,100,XF-02,n/a,not a total
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,CORE-01,pass,a fact about the whole report
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,CORE-03,pass,
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,CORE-05,pass,
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,COD-06,pass,
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-01,n/a,not money
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-05,n/a,not a count
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,DER-06,n/a,not derived
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,XF-01,n/a,not a total
-abb-ltd,fiscal_year_end,,2024-12-31,Pass,100,XF-02,n/a,not a total
+abb-ltd,sector_code,,NACE 70.10,Pass,100,CORE-01,pass,
+abb-ltd,sector_code,,NACE 70.10,Pass,100,CORE-02,n/a,"DERIVED: no quote, the endpoint is the source"
+abb-ltd,sector_code,,NACE 70.10,Pass,100,CORE-03,n/a,DERIVED: no quote
+abb-ltd,sector_code,,NACE 70.10,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,sector_code,,NACE 70.10,Pass,100,CORE-05,pass,
+abb-ltd,sector_code,,NACE 70.10,Pass,100,COD-01,pass,NACE Rev. 2 class
+abb-ltd,sector_code,,NACE 70.10,Pass,100,COD-02,pass,
+abb-ltd,sector_code,,NACE 70.10,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,sector_code,,NACE 70.10,Pass,100,COD-06,n/a,not a date field
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-01,n/a,not money
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-05,n/a,not a count
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,sector_code,,NACE 70.10,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,sector_code,,NACE 70.10,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,sector_code,,NACE 70.10,Pass,100,DER-06,pass,
+abb-ltd,sector_code,,NACE 70.10,Pass,100,XF-01,n/a,not a total
+abb-ltd,sector_code,,NACE 70.10,Pass,100,XF-02,n/a,not a total
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,CORE-01,pass,
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,CORE-03,pass,
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,CORE-05,pass,
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,COD-06,n/a,not a date field
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-01,n/a,not money
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-05,n/a,not a count
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,DER-06,n/a,not derived
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,XF-01,n/a,not a total
+abb-ltd,sub_sector,,The Company provides a range of treasury management services to the ABB Group.,Pass,100,XF-02,n/a,not a total
+abb-ltd,revenue,,184663000,Pass,100,CORE-01,pass,
+abb-ltd,revenue,,184663000,Pass,100,CORE-02,pass,
+abb-ltd,revenue,,184663000,Pass,100,CORE-03,pass,
+abb-ltd,revenue,,184663000,Pass,100,CORE-04,pass,
+abb-ltd,revenue,,184663000,Pass,100,CORE-05,pass,
+abb-ltd,revenue,,184663000,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,revenue,,184663000,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,revenue,,184663000,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,revenue,,184663000,Pass,100,COD-06,n/a,not a date field
+abb-ltd,revenue,,184663000,Pass,100,NUM-01,pass,
+abb-ltd,revenue,,184663000,Pass,100,NUM-02,pass,
+abb-ltd,revenue,,184663000,Pass,100,NUM-04,pass,
+abb-ltd,revenue,,184663000,Pass,100,NUM-05,n/a,not a count
+abb-ltd,revenue,,184663000,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,revenue,,184663000,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,revenue,,184663000,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,revenue,,184663000,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,revenue,,184663000,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,revenue,,184663000,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,revenue,,184663000,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,revenue,,184663000,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,revenue,,184663000,Pass,100,DER-06,n/a,not derived
+abb-ltd,revenue,,184663000,Pass,100,XF-01,n/a,not a total
+abb-ltd,revenue,,184663000,Pass,100,XF-02,n/a,not a total
+abb-ltd,total_assets,,5590109000,Pass,100,CORE-01,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,CORE-02,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,CORE-03,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,CORE-04,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,CORE-05,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,total_assets,,5590109000,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,total_assets,,5590109000,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,total_assets,,5590109000,Pass,100,COD-06,n/a,not a date field
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-01,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-02,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-04,pass,
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-05,n/a,not a count
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,total_assets,,5590109000,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,total_assets,,5590109000,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,total_assets,,5590109000,Pass,100,DER-06,n/a,not derived
+abb-ltd,total_assets,,5590109000,Pass,100,XF-01,n/a,not a total
+abb-ltd,total_assets,,5590109000,Pass,100,XF-02,n/a,not a total
+abb-ltd,fiscal_year,,2025,Pass,100,CORE-01,pass,a fact about the whole report
+abb-ltd,fiscal_year,,2025,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+abb-ltd,fiscal_year,,2025,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+abb-ltd,fiscal_year,,2025,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,fiscal_year,,2025,Pass,100,CORE-05,pass,
+abb-ltd,fiscal_year,,2025,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,fiscal_year,,2025,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,fiscal_year,,2025,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,fiscal_year,,2025,Pass,100,COD-06,n/a,not a date field
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-01,n/a,not money
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-05,n/a,not a count
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,fiscal_year,,2025,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,fiscal_year,,2025,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,fiscal_year,,2025,Pass,100,DER-06,n/a,not derived
+abb-ltd,fiscal_year,,2025,Pass,100,XF-01,n/a,not a total
+abb-ltd,fiscal_year,,2025,Pass,100,XF-02,n/a,not a total
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,CORE-01,pass,a fact about the whole report
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,CORE-03,n/a,no quote (see CORE-02)
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,CORE-05,pass,
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,COD-06,pass,
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-01,n/a,not money
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-05,n/a,not a count
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,DER-06,n/a,not derived
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,XF-01,n/a,not a total
+abb-ltd,fiscal_year_end,,2025-12-31,Pass,100,XF-02,n/a,not a total
 abb-ltd,reporting_currency,,USD,Pass,100,CORE-01,pass,a fact about the whole report
 abb-ltd,reporting_currency,,USD,Pass,100,CORE-02,n/a,"a fact about the whole report (its year, currency)"
 abb-ltd,reporting_currency,,USD,Pass,100,CORE-03,n/a,no quote (see CORE-02)
@@ -112487,414 +112511,198 @@ abb-ltd,reporting_currency,,USD,Pass,100,DER-03,n/a,not a derived number
 abb-ltd,reporting_currency,,USD,Pass,100,DER-06,n/a,not derived
 abb-ltd,reporting_currency,,USD,Pass,100,XF-01,n/a,not a total
 abb-ltd,reporting_currency,,USD,Pass,100,XF-02,n/a,not a total
-abb-ltd,accounting_basis,,US GAAP,Pass,100,CORE-01,pass,
-abb-ltd,accounting_basis,,US GAAP,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,accounting_basis,,US GAAP,Pass,100,CORE-03,pass,
-abb-ltd,accounting_basis,,US GAAP,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,accounting_basis,,US GAAP,Pass,100,CORE-05,pass,
-abb-ltd,accounting_basis,,US GAAP,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,accounting_basis,,US GAAP,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,accounting_basis,,US GAAP,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,accounting_basis,,US GAAP,Pass,100,COD-06,n/a,not a date field
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-01,n/a,not money
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-05,n/a,not a count
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,accounting_basis,,US GAAP,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,accounting_basis,,US GAAP,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,accounting_basis,,US GAAP,Pass,100,DER-06,n/a,not derived
-abb-ltd,accounting_basis,,US GAAP,Pass,100,XF-01,n/a,not a total
-abb-ltd,accounting_basis,,US GAAP,Pass,100,XF-02,n/a,not a total
-abb-ltd,headcount,,105000,Review,86,CORE-01,pass,
-abb-ltd,headcount,,105000,Review,86,CORE-02,pass,
-abb-ltd,headcount,,105000,Review,86,CORE-03,pass,
-abb-ltd,headcount,,105000,Review,86,CORE-04,fail,no period_end
-abb-ltd,headcount,,105000,Review,86,CORE-05,pass,
-abb-ltd,headcount,,105000,Review,86,COD-01,n/a,not a coded field
-abb-ltd,headcount,,105000,Review,86,COD-02,n/a,not a classified field
-abb-ltd,headcount,,105000,Review,86,COD-03,n/a,not an identifier
-abb-ltd,headcount,,105000,Review,86,COD-06,n/a,not a date field
-abb-ltd,headcount,,105000,Review,86,NUM-01,n/a,not money
-abb-ltd,headcount,,105000,Review,86,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,headcount,,105000,Review,86,NUM-04,pass,
-abb-ltd,headcount,,105000,Review,86,NUM-05,pass,
-abb-ltd,headcount,,105000,Review,86,NUM-06,n/a,no percentage
-abb-ltd,headcount,,105000,Review,86,NUM-07,n/a,not a holdings list
-abb-ltd,headcount,,105000,Review,86,NUM-08,n/a,not a breakdown
-abb-ltd,headcount,,105000,Review,86,NUM-09,n/a,not an LTI amount
-abb-ltd,headcount,,105000,Review,86,NUM-11,n/a,not STI paid
-abb-ltd,headcount,,105000,Review,86,NUM-12,n/a,not a pay amount
-abb-ltd,headcount,,105000,Review,86,NUM-13,n/a,not FTE
-abb-ltd,headcount,,105000,Review,86,DER-03,n/a,not a derived number
-abb-ltd,headcount,,105000,Review,86,DER-06,n/a,not derived
-abb-ltd,headcount,,105000,Review,86,XF-01,n/a,not a total
-abb-ltd,headcount,,105000,Review,86,XF-02,n/a,not a total
-abb-ltd,fte,,109900,Pass,100,CORE-01,pass,
-abb-ltd,fte,,109900,Pass,100,CORE-02,pass,
-abb-ltd,fte,,109900,Pass,100,CORE-03,pass,
-abb-ltd,fte,,109900,Pass,100,CORE-04,pass,
-abb-ltd,fte,,109900,Pass,100,CORE-05,pass,
-abb-ltd,fte,,109900,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,fte,,109900,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,fte,,109900,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,fte,,109900,Pass,100,COD-06,n/a,not a date field
-abb-ltd,fte,,109900,Pass,100,NUM-01,n/a,not money
-abb-ltd,fte,,109900,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,fte,,109900,Pass,100,NUM-04,pass,
-abb-ltd,fte,,109900,Pass,100,NUM-05,n/a,not a count
-abb-ltd,fte,,109900,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,fte,,109900,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,fte,,109900,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,fte,,109900,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,fte,,109900,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,fte,,109900,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,fte,,109900,Pass,100,NUM-13,pass,
-abb-ltd,fte,,109900,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,fte,,109900,Pass,100,DER-06,n/a,not derived
-abb-ltd,fte,,109900,Pass,100,XF-01,n/a,not a total
-abb-ltd,fte,,109900,Pass,100,XF-02,n/a,not a total
-abb-ltd,shares_outstanding,,1844000000,Pass,100,CORE-01,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,CORE-02,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,CORE-03,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,CORE-04,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,CORE-05,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,shares_outstanding,,1844000000,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,shares_outstanding,,1844000000,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,shares_outstanding,,1844000000,Pass,100,COD-06,n/a,not a date field
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-01,n/a,not money
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-04,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-05,pass,
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,shares_outstanding,,1844000000,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,shares_outstanding,,1844000000,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,shares_outstanding,,1844000000,Pass,100,DER-06,n/a,not derived
-abb-ltd,shares_outstanding,,1844000000,Pass,100,XF-01,n/a,not a total
-abb-ltd,shares_outstanding,,1844000000,Pass,100,XF-02,n/a,not a total
-abb-ltd,share_price,,49.07,Pass,100,CORE-01,pass,
-abb-ltd,share_price,,49.07,Pass,100,CORE-02,pass,
-abb-ltd,share_price,,49.07,Pass,100,CORE-03,pass,
-abb-ltd,share_price,,49.07,Pass,100,CORE-04,pass,
-abb-ltd,share_price,,49.07,Pass,100,CORE-05,pass,
-abb-ltd,share_price,,49.07,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,share_price,,49.07,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,share_price,,49.07,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,share_price,,49.07,Pass,100,COD-06,n/a,not a date field
-abb-ltd,share_price,,49.07,Pass,100,NUM-01,pass,
-abb-ltd,share_price,,49.07,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,share_price,,49.07,Pass,100,NUM-04,pass,
-abb-ltd,share_price,,49.07,Pass,100,NUM-05,n/a,not a count
-abb-ltd,share_price,,49.07,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,share_price,,49.07,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,share_price,,49.07,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,share_price,,49.07,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,share_price,,49.07,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,share_price,,49.07,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,share_price,,49.07,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,share_price,,49.07,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,share_price,,49.07,Pass,100,DER-06,n/a,not derived
-abb-ltd,share_price,,49.07,Pass,100,XF-01,n/a,not a total
-abb-ltd,share_price,,49.07,Pass,100,XF-02,n/a,not a total
-abb-ltd,market_cap_band,,large,Pass,100,CORE-01,pass,
-abb-ltd,market_cap_band,,large,Pass,100,CORE-02,n/a,"DERIVED: no quote, the endpoint is the source"
-abb-ltd,market_cap_band,,large,Pass,100,CORE-03,n/a,DERIVED: no quote
-abb-ltd,market_cap_band,,large,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,market_cap_band,,large,Pass,100,CORE-05,pass,
-abb-ltd,market_cap_band,,large,Pass,100,COD-01,pass,
-abb-ltd,market_cap_band,,large,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,market_cap_band,,large,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,market_cap_band,,large,Pass,100,COD-06,n/a,not a date field
-abb-ltd,market_cap_band,,large,Pass,100,NUM-01,n/a,not money
-abb-ltd,market_cap_band,,large,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,market_cap_band,,large,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,market_cap_band,,large,Pass,100,NUM-05,n/a,not a count
-abb-ltd,market_cap_band,,large,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,market_cap_band,,large,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,market_cap_band,,large,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,market_cap_band,,large,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,market_cap_band,,large,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,market_cap_band,,large,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,market_cap_band,,large,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,market_cap_band,,large,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,market_cap_band,,large,Pass,100,DER-06,pass,
-abb-ltd,market_cap_band,,large,Pass,100,XF-01,n/a,not a total
-abb-ltd,market_cap_band,,large,Pass,100,XF-02,n/a,not a total
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,CORE-01,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,CORE-03,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,CORE-04,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,CORE-05,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,COD-01,n/a,not a coded field
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,COD-02,n/a,not a classified field
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,COD-03,n/a,not an identifier
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,COD-06,n/a,not a date field
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-01,n/a,not money
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-05,n/a,not a count
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-06,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-07,pass,
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,NUM-13,n/a,not FTE
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,DER-03,n/a,not a derived number
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,DER-06,n/a,not derived
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,XF-01,n/a,not a total
-abb-ltd,largest_holders,,"Investor AB, Sweden 14.1%; BlackRock, Inc., U.S.A. 5.05%",Pass,100,XF-02,n/a,not a total
-abb-ltd,controlling_owner,,none,Pass,100,CORE-01,pass,
-abb-ltd,controlling_owner,,none,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,controlling_owner,,none,Pass,100,CORE-03,pass,
-abb-ltd,controlling_owner,,none,Pass,100,CORE-04,pass,
-abb-ltd,controlling_owner,,none,Pass,100,CORE-05,pass,
-abb-ltd,controlling_owner,,none,Pass,100,COD-01,pass,
-abb-ltd,controlling_owner,,none,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,controlling_owner,,none,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,controlling_owner,,none,Pass,100,COD-06,n/a,not a date field
-abb-ltd,controlling_owner,,none,Pass,100,NUM-01,n/a,not money
-abb-ltd,controlling_owner,,none,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,controlling_owner,,none,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,controlling_owner,,none,Pass,100,NUM-05,n/a,not a count
-abb-ltd,controlling_owner,,none,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,controlling_owner,,none,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,controlling_owner,,none,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,controlling_owner,,none,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,controlling_owner,,none,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,controlling_owner,,none,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,controlling_owner,,none,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,controlling_owner,,none,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,controlling_owner,,none,Pass,100,DER-06,n/a,not derived
-abb-ltd,controlling_owner,,none,Pass,100,XF-01,n/a,not a total
-abb-ltd,controlling_owner,,none,Pass,100,XF-02,n/a,not a total
-abb-ltd,ownership_type,,widely_held,Pass,100,CORE-01,pass,
-abb-ltd,ownership_type,,widely_held,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,ownership_type,,widely_held,Pass,100,CORE-03,pass,
-abb-ltd,ownership_type,,widely_held,Pass,100,CORE-04,pass,
-abb-ltd,ownership_type,,widely_held,Pass,100,CORE-05,pass,
-abb-ltd,ownership_type,,widely_held,Pass,100,COD-01,pass,
-abb-ltd,ownership_type,,widely_held,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,ownership_type,,widely_held,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,ownership_type,,widely_held,Pass,100,COD-06,n/a,not a date field
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-01,n/a,not money
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-05,n/a,not a count
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,ownership_type,,widely_held,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,ownership_type,,widely_held,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,ownership_type,,widely_held,Pass,100,DER-06,n/a,not derived
-abb-ltd,ownership_type,,widely_held,Pass,100,XF-01,n/a,not a total
-abb-ltd,ownership_type,,widely_held,Pass,100,XF-02,n/a,not a total
-abb-ltd,pe_stake_5pct,,no,Pass,100,CORE-01,pass,
-abb-ltd,pe_stake_5pct,,no,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,pe_stake_5pct,,no,Pass,100,CORE-03,pass,
-abb-ltd,pe_stake_5pct,,no,Pass,100,CORE-04,pass,
-abb-ltd,pe_stake_5pct,,no,Pass,100,CORE-05,pass,
-abb-ltd,pe_stake_5pct,,no,Pass,100,COD-01,pass,
-abb-ltd,pe_stake_5pct,,no,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,pe_stake_5pct,,no,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,pe_stake_5pct,,no,Pass,100,COD-06,n/a,not a date field
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-01,n/a,not money
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-05,n/a,not a count
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,pe_stake_5pct,,no,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,pe_stake_5pct,,no,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,pe_stake_5pct,,no,Pass,100,DER-06,n/a,not derived
-abb-ltd,pe_stake_5pct,,no,Pass,100,XF-01,n/a,not a total
-abb-ltd,pe_stake_5pct,,no,Pass,100,XF-02,n/a,not a total
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,CORE-01,pass,
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,CORE-03,pass,
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,CORE-04,pass,
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,CORE-05,pass,
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,COD-06,n/a,not a date field
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-01,n/a,not money
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-05,n/a,not a count
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-08,pass,
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,DER-06,n/a,not derived
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,XF-01,n/a,not a total
-abb-ltd,revenue_by_segment,,ELECTRIFICATION: 15448; PROCESS AUTOMATION: 6756; MOTION: 7787; ROBOTICS & DISCRETE AUTOMATION: 3213,Pass,100,XF-02,n/a,not a total
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,CORE-01,pass,
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,CORE-03,pass,
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,CORE-04,pass,
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,CORE-05,pass,
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,COD-06,n/a,not a date field
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-01,n/a,not money
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-05,n/a,not a count
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-08,pass,
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,DER-06,n/a,not derived
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,XF-01,n/a,not a total
-abb-ltd,staff_by_segment,,ELECTRIFICATION: 51700; PROCESS AUTOMATION: 22500; MOTION: 22400; ROBOTICS & DISCRETE AUTOMATION: 10800,Pass,100,XF-02,n/a,not a total
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,CORE-01,pass,
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,CORE-03,fail,source not cached; the run itself did not find the quote
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,CORE-04,fail,no period_end
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,CORE-05,pass,
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,COD-01,n/a,not a coded field
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,COD-02,n/a,not a classified field
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,COD-03,n/a,not an identifier
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,COD-06,n/a,not a date field
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-01,n/a,not money
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-04,n/a,no range for this field
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-05,n/a,not a count
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-06,n/a,no percentage
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-07,n/a,not a holdings list
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-08,pass,
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-09,n/a,not an LTI amount
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-11,n/a,not STI paid
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-12,n/a,not a pay amount
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,NUM-13,n/a,not FTE
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,DER-03,n/a,not a derived number
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,DER-06,n/a,not derived
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,XF-01,n/a,not a total
-abb-ltd,revenue_by_country,,Europe: 11.4; The Americas: 9.4; AMEA: 12.4,Fail (hard),60,XF-02,n/a,not a total
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,CORE-01,pass,
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,CORE-03,pass,
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,CORE-04,fail,no period_end
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,CORE-05,pass,
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,COD-01,n/a,not a coded field
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,COD-02,n/a,not a classified field
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,COD-03,n/a,not an identifier
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,COD-06,n/a,not a date field
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-01,n/a,not money
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-04,n/a,no range for this field
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-05,n/a,not a count
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-06,n/a,no percentage
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-07,n/a,not a holdings list
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-08,fail,"adds up to 114,292 vs 105,000 (8.8% apart)"
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-09,n/a,not an LTI amount
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-11,n/a,not STI paid
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-12,n/a,not a pay amount
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,NUM-13,n/a,not FTE
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,DER-03,n/a,not a derived number
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,DER-06,n/a,not derived
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,XF-01,n/a,not a total
-abb-ltd,staff_by_country,,"Europe: 53407; The Americas: 28055; Asia,Middle East and Africa: 32830",Fail,60,XF-02,n/a,not a total
-abb-ltd,pension_type,,pension contributions,Pass,100,CORE-01,pass,
-abb-ltd,pension_type,,pension contributions,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,pension_type,,pension contributions,Pass,100,CORE-03,pass,
-abb-ltd,pension_type,,pension contributions,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,pension_type,,pension contributions,Pass,100,CORE-05,pass,
-abb-ltd,pension_type,,pension contributions,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,pension_type,,pension contributions,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,pension_type,,pension contributions,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,pension_type,,pension contributions,Pass,100,COD-06,n/a,not a date field
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-01,n/a,not money
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-05,n/a,not a count
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,pension_type,,pension contributions,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,pension_type,,pension contributions,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,pension_type,,pension contributions,Pass,100,DER-06,n/a,not derived
-abb-ltd,pension_type,,pension contributions,Pass,100,XF-01,n/a,not a total
-abb-ltd,pension_type,,pension contributions,Pass,100,XF-02,n/a,not a total
-abb-ltd,benefits,,benefits in kind,Pass,100,CORE-01,pass,
-abb-ltd,benefits,,benefits in kind,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,benefits,,benefits in kind,Pass,100,CORE-03,pass,
-abb-ltd,benefits,,benefits in kind,Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,benefits,,benefits in kind,Pass,100,CORE-05,pass,
-abb-ltd,benefits,,benefits in kind,Pass,100,COD-01,n/a,not a coded field
-abb-ltd,benefits,,benefits in kind,Pass,100,COD-02,n/a,not a classified field
-abb-ltd,benefits,,benefits in kind,Pass,100,COD-03,n/a,not an identifier
-abb-ltd,benefits,,benefits in kind,Pass,100,COD-06,n/a,not a date field
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-01,n/a,not money
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-05,n/a,not a count
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-06,n/a,no percentage
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,benefits,,benefits in kind,Pass,100,NUM-13,n/a,not FTE
-abb-ltd,benefits,,benefits in kind,Pass,100,DER-03,n/a,not a derived number
-abb-ltd,benefits,,benefits in kind,Pass,100,DER-06,n/a,not derived
-abb-ltd,benefits,,benefits in kind,Pass,100,XF-01,n/a,not a total
-abb-ltd,benefits,,benefits in kind,Pass,100,XF-02,n/a,not a total
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,CORE-01,pass,
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,CORE-03,pass,
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,CORE-04,n/a,holds without a date
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,CORE-05,pass,
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,COD-01,n/a,not a coded field
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,COD-02,n/a,not a classified field
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,COD-03,n/a,not an identifier
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,COD-06,n/a,not a date field
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-01,n/a,not money
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-02,n/a,not a scaled figure read from a document
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-04,n/a,no range for this field
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-05,n/a,not a count
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-06,n/a,no percentage
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-07,n/a,not a holdings list
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-08,n/a,not a breakdown
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-09,n/a,not an LTI amount
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-11,n/a,not STI paid
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-12,n/a,not a pay amount
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,NUM-13,n/a,not FTE
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,DER-03,n/a,not a derived number
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,DER-06,n/a,not derived
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,XF-01,n/a,not a total
-abb-ltd,shareholding_requirement,,Individuals are required to hold ABB shares; CEO: 500% of annual salary (net of taxes); Other EC members: 400% of annual salary (net of taxes),Pass,100,XF-02,n/a,not a total
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,CORE-01,pass,
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,CORE-03,pass,
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,CORE-05,pass,
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,COD-06,n/a,not a date field
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-01,n/a,not money
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-05,n/a,not a count
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,DER-06,n/a,not derived
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,XF-01,n/a,not a total
+abb-ltd,accounting_basis,,Part 9 of Book 2 of the Civil Code of the Netherlands,Pass,100,XF-02,n/a,not a total
+abb-ltd,headcount,,21,Pass,100,CORE-01,pass,
+abb-ltd,headcount,,21,Pass,100,CORE-02,pass,
+abb-ltd,headcount,,21,Pass,100,CORE-03,pass,
+abb-ltd,headcount,,21,Pass,100,CORE-04,pass,
+abb-ltd,headcount,,21,Pass,100,CORE-05,pass,
+abb-ltd,headcount,,21,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,headcount,,21,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,headcount,,21,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,headcount,,21,Pass,100,COD-06,n/a,not a date field
+abb-ltd,headcount,,21,Pass,100,NUM-01,n/a,not money
+abb-ltd,headcount,,21,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,headcount,,21,Pass,100,NUM-04,pass,
+abb-ltd,headcount,,21,Pass,100,NUM-05,pass,
+abb-ltd,headcount,,21,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,headcount,,21,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,headcount,,21,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,headcount,,21,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,headcount,,21,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,headcount,,21,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,headcount,,21,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,headcount,,21,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,headcount,,21,Pass,100,DER-06,n/a,not derived
+abb-ltd,headcount,,21,Pass,100,XF-01,n/a,not a total
+abb-ltd,headcount,,21,Pass,100,XF-02,n/a,not a total
+abb-ltd,shares_outstanding,,20103,Pass,100,CORE-01,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,CORE-02,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,CORE-03,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,CORE-04,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,CORE-05,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,shares_outstanding,,20103,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,shares_outstanding,,20103,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,shares_outstanding,,20103,Pass,100,COD-06,n/a,not a date field
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-01,n/a,not money
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-04,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-05,pass,
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,shares_outstanding,,20103,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,shares_outstanding,,20103,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,shares_outstanding,,20103,Pass,100,DER-06,n/a,not derived
+abb-ltd,shares_outstanding,,20103,Pass,100,XF-01,n/a,not a total
+abb-ltd,shares_outstanding,,20103,Pass,100,XF-02,n/a,not a total
+abb-ltd,controlling_owner,,corporate,Pass,100,CORE-01,pass,
+abb-ltd,controlling_owner,,corporate,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,controlling_owner,,corporate,Pass,100,CORE-03,pass,
+abb-ltd,controlling_owner,,corporate,Pass,100,CORE-04,pass,
+abb-ltd,controlling_owner,,corporate,Pass,100,CORE-05,pass,
+abb-ltd,controlling_owner,,corporate,Pass,100,COD-01,pass,
+abb-ltd,controlling_owner,,corporate,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,controlling_owner,,corporate,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,controlling_owner,,corporate,Pass,100,COD-06,n/a,not a date field
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-01,n/a,not money
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-05,n/a,not a count
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,controlling_owner,,corporate,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,controlling_owner,,corporate,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,controlling_owner,,corporate,Pass,100,DER-06,n/a,not derived
+abb-ltd,controlling_owner,,corporate,Pass,100,XF-01,n/a,not a total
+abb-ltd,controlling_owner,,corporate,Pass,100,XF-02,n/a,not a total
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,CORE-01,pass,
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,CORE-02,pass,
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,CORE-03,pass,
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,CORE-04,pass,
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,CORE-05,pass,
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,COD-06,n/a,not a date field
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-01,n/a,not money
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-05,n/a,not a count
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,DER-06,n/a,not derived
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,XF-01,n/a,not a total
+abb-ltd,controlling_owner_name,,ABB Ltd,Pass,100,XF-02,n/a,not a total
+abb-ltd,ownership_type,,subsidiary,Pass,100,CORE-01,pass,
+abb-ltd,ownership_type,,subsidiary,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,ownership_type,,subsidiary,Pass,100,CORE-03,pass,
+abb-ltd,ownership_type,,subsidiary,Pass,100,CORE-04,pass,
+abb-ltd,ownership_type,,subsidiary,Pass,100,CORE-05,pass,
+abb-ltd,ownership_type,,subsidiary,Pass,100,COD-01,pass,
+abb-ltd,ownership_type,,subsidiary,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,ownership_type,,subsidiary,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,ownership_type,,subsidiary,Pass,100,COD-06,n/a,not a date field
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-01,n/a,not money
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-05,n/a,not a count
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,ownership_type,,subsidiary,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,ownership_type,,subsidiary,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,ownership_type,,subsidiary,Pass,100,DER-06,n/a,not derived
+abb-ltd,ownership_type,,subsidiary,Pass,100,XF-01,n/a,not a total
+abb-ltd,ownership_type,,subsidiary,Pass,100,XF-02,n/a,not a total
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,CORE-01,pass,
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,CORE-03,pass,
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,CORE-04,pass,
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,CORE-05,pass,
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,COD-06,n/a,not a date field
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-01,n/a,not money
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-05,n/a,not a count
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-08,pass,
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,DER-06,n/a,not derived
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,XF-01,n/a,not a total
+abb-ltd,staff_by_country,,Netherlands: 21,Pass,100,XF-02,n/a,not a total
+abb-ltd,pension_type,,defined contribution plan,Pass,100,CORE-01,pass,
+abb-ltd,pension_type,,defined contribution plan,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
+abb-ltd,pension_type,,defined contribution plan,Pass,100,CORE-03,pass,
+abb-ltd,pension_type,,defined contribution plan,Pass,100,CORE-04,n/a,holds without a date
+abb-ltd,pension_type,,defined contribution plan,Pass,100,CORE-05,pass,
+abb-ltd,pension_type,,defined contribution plan,Pass,100,COD-01,n/a,not a coded field
+abb-ltd,pension_type,,defined contribution plan,Pass,100,COD-02,n/a,not a classified field
+abb-ltd,pension_type,,defined contribution plan,Pass,100,COD-03,n/a,not an identifier
+abb-ltd,pension_type,,defined contribution plan,Pass,100,COD-06,n/a,not a date field
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-01,n/a,not money
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-04,n/a,no range for this field
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-05,n/a,not a count
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-06,n/a,no percentage
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-07,n/a,not a holdings list
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-08,n/a,not a breakdown
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-09,n/a,not an LTI amount
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-11,n/a,not STI paid
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-12,n/a,not a pay amount
+abb-ltd,pension_type,,defined contribution plan,Pass,100,NUM-13,n/a,not FTE
+abb-ltd,pension_type,,defined contribution plan,Pass,100,DER-03,n/a,not a derived number
+abb-ltd,pension_type,,defined contribution plan,Pass,100,DER-06,n/a,not derived
+abb-ltd,pension_type,,defined contribution plan,Pass,100,XF-01,n/a,not a total
+abb-ltd,pension_type,,defined contribution plan,Pass,100,XF-02,n/a,not a total
 abb-ltd,role_disclosure,Board of Directors (non-executive),aggregate,Pass,100,CORE-01,pass,
 abb-ltd,role_disclosure,Board of Directors (non-executive),aggregate,Pass,100,CORE-02,n/a,"a classification or summary, not copied from the text"
 abb-ltd,role_disclosure,Board of Directors (non-executive),aggregate,Pass,100,CORE-03,pass,
@@ -343391,6 +343199,30 @@ a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,DER-03,n/a,not a derived num
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,DER-06,n/a,not derived
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,XF-01,n/a,not a total
 a-i-s-ag-4ae0fbee,head_office_city,,Berlin,Pass,100,XF-02,n/a,not a total
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-01,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-02,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-03,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-04,n/a,holds without a date
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,CORE-05,pass,
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-01,n/a,not a coded field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-02,n/a,not a classified field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-03,n/a,not an identifier
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,COD-06,n/a,not a date field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-01,n/a,not money
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-02,n/a,not a scaled figure read from a document
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-04,n/a,no range for this field
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-05,n/a,not a count
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-06,n/a,no percentage
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-07,n/a,not a holdings list
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-08,n/a,not a breakdown
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-09,n/a,not an LTI amount
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-11,n/a,not STI paid
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-12,n/a,not a pay amount
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,NUM-13,n/a,not FTE
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,DER-03,n/a,not a derived number
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,DER-06,n/a,not derived
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,XF-01,n/a,not a total
+a-i-s-ag-4ae0fbee,website,,aisnet.org,Pass,100,XF-02,n/a,not a total
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-01,pass,
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-02,n/a,"API: no quote, the endpoint is the source"
 a-i-s-ag-4ae0fbee,ultimate_parent,,none (top of group),Pass,100,CORE-03,n/a,API: no quote

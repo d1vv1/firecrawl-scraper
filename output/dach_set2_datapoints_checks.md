@@ -1,10 +1,10 @@
 # Output checks: dach_set2_datapoints.csv
 
-125 companies, 4291 filled values checked (2026-11-12, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
+125 companies, 4292 filled values checked (2026-11-12, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
 
 | Status | Values |
 |---|---|
-| Pass | 3608 (84%) |
+| Pass | 3609 (84%) |
 | Review | 338 (8%) |
 | Fail | 45 (1%) |
 | Fail (hard) | 300 (7%) |
@@ -13,7 +13,7 @@
 
 | Category | Values | Pass | Review | Fail | Fail (hard) |
 |---|---|---|---|---|---|
-| Identity | 436 | 433 | 0 | 0 | 3 |
+| Identity | 437 | 434 | 0 | 0 | 3 |
 | Listing and market | 387 | 374 | 0 | 0 | 13 |
 | Sector | 121 | 114 | 0 | 0 | 7 |
 | Reporting basis | 332 | 330 | 0 | 0 | 2 |
@@ -32,34 +32,34 @@
 
 | Check | What it checks | Hard | Ran | Pass | Fail | n/a | Most common failure |
 |---|---|---|---|---|---|---|---|
-| CORE-01 | Locator present (PDF links open at a page) | yes | 4291 | 4287 | 4 | 0 | no endpoint URL |
-| CORE-02 | Value can be read off its quote | yes | 1905 | 1749 | 156 | 2386 | N not in the quote |
-| CORE-03 | Quote is in the cached source, on the linked page | yes | 3026 | 2909 | 117 | 1265 | quote not in the source text |
-| CORE-04 | Period end present (dated fields only) |  | 2406 | 2053 | 353 | 1885 | no period_end |
-| CORE-05 | Type matches (number, date, breakdown) |  | 4291 | 4290 | 1 | 0 | period_end 'N-N' is not a date |
-| COD-01 | Value in its code list or closed set | yes | 1381 | 1365 | 16 | 2910 | unit '' is not a target form |
-| COD-02 | Classification scheme named |  | 60 | 60 | 0 | 4231 |  |
-| COD-03 | Identifier check digits (LEI, ISIN) | yes | 138 | 138 | 0 | 4153 |  |
-| COD-06 | Dates are valid | yes | 163 | 158 | 5 | 4128 | not a year or a date |
-| NUM-01 | Money has an ISO 4217 currency | yes | 1324 | 1318 | 6 | 2967 | unit '' is not ISO N |
-| NUM-02 | Printed figure and unit recorded |  | 1294 | 1294 | 0 | 2997 |  |
-| NUM-04 | Magnitude in a plausible range |  | 1542 | 1526 | 16 | 2749 | N outside Ne+N |
-| NUM-05 | Counts are whole numbers | yes | 173 | 171 | 2 | 4118 | not a whole number |
-| NUM-06 | Percentages in range | yes | 184 | 183 | 1 | 4107 | N % of base salary |
-| NUM-07 | Holdings add up to 100% or less | yes | 44 | 43 | 1 | 4247 | holdings add up to N% |
-| NUM-08 | Breakdown adds up to the company total (5%) |  | 94 | 63 | 31 | 4197 | adds up to N vs N (N% apart) |
-| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 170 | 170 | 0 | 4121 |  |
-| NUM-11 | STI paid not above its maximum |  | 43 | 42 | 1 | 4248 | paid N% of baseN maximum N% |
-| NUM-12 | A role's amounts share currency and period |  | 1143 | 1140 | 3 | 3148 | currency N the role's other amounts CHF |
-| NUM-13 | FTE not above headcount |  | 44 | 41 | 3 | 4247 | FTE N above headcount N |
-| DER-03 | Derived value recalculates | yes | 0 | 0 | 0 | 4291 |  |
-| DER-06 | Derived value shows its formula |  | 141 | 141 | 0 | 4150 |  |
-| XF-01 | Parts not above the stated total (2%) | yes | 201 | 187 | 14 | 4090 | parts add up to N more than the stated N |
-| XF-02 | Total equals its parts (2%) |  | 201 | 152 | 49 | 4090 | parts add up to N stated N |
+| CORE-01 | Locator present (PDF links open at a page) | yes | 4292 | 4288 | 4 | 0 | no endpoint URL |
+| CORE-02 | Value can be read off its quote | yes | 1906 | 1750 | 156 | 2386 | N not in the quote |
+| CORE-03 | Quote is in the cached source, on the linked page | yes | 3027 | 2910 | 117 | 1265 | quote not in the source text |
+| CORE-04 | Period end present (dated fields only) |  | 2406 | 2053 | 353 | 1886 | no period_end |
+| CORE-05 | Type matches (number, date, breakdown) |  | 4292 | 4291 | 1 | 0 | period_end 'N-N' is not a date |
+| COD-01 | Value in its code list or closed set | yes | 1381 | 1365 | 16 | 2911 | unit '' is not a target form |
+| COD-02 | Classification scheme named |  | 60 | 60 | 0 | 4232 |  |
+| COD-03 | Identifier check digits (LEI, ISIN) | yes | 138 | 138 | 0 | 4154 |  |
+| COD-06 | Dates are valid | yes | 163 | 158 | 5 | 4129 | not a year or a date |
+| NUM-01 | Money has an ISO 4217 currency | yes | 1324 | 1318 | 6 | 2968 | unit '' is not ISO N |
+| NUM-02 | Printed figure and unit recorded |  | 1294 | 1294 | 0 | 2998 |  |
+| NUM-04 | Magnitude in a plausible range |  | 1542 | 1526 | 16 | 2750 | N outside Ne+N |
+| NUM-05 | Counts are whole numbers | yes | 173 | 171 | 2 | 4119 | not a whole number |
+| NUM-06 | Percentages in range | yes | 184 | 183 | 1 | 4108 | N % of base salary |
+| NUM-07 | Holdings add up to 100% or less | yes | 44 | 43 | 1 | 4248 | holdings add up to N% |
+| NUM-08 | Breakdown adds up to the company total (5%) |  | 94 | 63 | 31 | 4198 | adds up to N vs N (N% apart) |
+| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 170 | 170 | 0 | 4122 |  |
+| NUM-11 | STI paid not above its maximum |  | 43 | 42 | 1 | 4249 | paid N% of baseN maximum N% |
+| NUM-12 | A role's amounts share currency and period |  | 1143 | 1140 | 3 | 3149 | currency N the role's other amounts CHF |
+| NUM-13 | FTE not above headcount |  | 44 | 41 | 3 | 4248 | FTE N above headcount N |
+| DER-03 | Derived value recalculates | yes | 0 | 0 | 0 | 4292 |  |
+| DER-06 | Derived value shows its formula |  | 141 | 141 | 0 | 4151 |  |
+| XF-01 | Parts not above the stated total (2%) | yes | 201 | 187 | 14 | 4091 | parts add up to N more than the stated N |
+| XF-02 | Total equals its parts (2%) |  | 201 | 152 | 49 | 4091 | parts add up to N stated N |
 
 ## Fill rate
 
-Company fields: 2190 of 5125 filled (43%). Blank values are not checked above.
+Company fields: 2191 of 5125 filled (43%). Blank values are not checked above.
 
 | Field | Filled | Of |
 |---|---|---|
@@ -87,8 +87,8 @@ Company fields: 2190 of 5125 filled (43%). Blank values are not checked above.
 | headcount | 53 | 125 |
 | shares_outstanding | 53 | 125 |
 | reporting_currency | 58 | 125 |
-| website | 60 | 125 |
 | sector_code | 60 | 125 |
+| website | 61 | 125 |
 | sub_sector | 61 | 125 |
 | ultimate_parent | 61 | 125 |
 | ticker | 63 | 125 |

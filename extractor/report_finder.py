@@ -429,6 +429,15 @@ _GENERIC_NAME_WORDS = {"group", "holding", "holdings", "industries", "industry",
                        "du", "la", "le", "des", "der", "die", "das", "tech", "technologies",
                        "technology", "global", "services", "solutions", "systems", "na", "on",
                        "o", "n", "se", "sa", "nv", "plc", "ag", "ab", "asa", "as", "oyj", "inc"}
+# Place words a company's domain often leaves out ("Edisun Power Europe AG" ->
+# edisunpower.com): dropped from the name's words unless nothing else is left ("Swiss Re")
+_PLACE_NAME_WORDS = {"europe", "european", "euro", "swiss", "schweiz", "suisse", "svizzera",
+                     "deutschland", "germany", "german", "austria", "osterreich", "switzerland"}
+# A company being wound up: "TISCON AG i.A." (in Abwicklung), "... i.L." (in Liquidation)
+_WINDING_UP = re.compile(r"\s+(?:i\.\s*a\.?|i\.\s*l\.?|in\s+(?:abwicklung|liquidation))\s*$", re.I)
+# The report's name by language, for the web search (DACH reports are often German only)
+_REPORT_QUERY = {"en": "annual report {year} pdf", "de": "Geschäftsbericht {year}"}
+_GERMAN_COUNTRIES = {"DE", "AT", "CH", "LI"}
 # Sites that collect other companies' reports: never the company's own copy
 _REPORT_AGGREGATORS = ("annualreports.com", "sustainabilityreports.com", "companiesmarketcap.com",
                        "scribd.com", "publicnow.com", "quartr.com", "marketscreener.com",
@@ -440,15 +449,23 @@ _DOWNLOAD_HINTS = ("dumpfile", "/download/", "download=", "getfile", "file=", "/
 def search_name(company_name: str | None) -> str:
     """The name a search knows the company by: no listing line ("ADIDAS AG NA O.N.",
     "Porsche AG VZO"), no legal form, no dangling "and" ("Henkel AG & Co. KGaA")."""
-    name = clean_name(without_share_class(company_name or ""))
+    name = clean_name(without_share_class(_WINDING_UP.sub("", company_name or "")))
     return re.sub(r"(?:\s+and)+$", "", name).strip()
 
 
 def name_tokens(company_name: str | None) -> set[str]:
     """The words that identify a company in a host or file name ("Bell Food Group AG" ->
-    {bell, food}; "BKW AG" -> {bkw})."""
+    {bell, food}; "BKW AG" -> {bkw}; "Edisun Power Europe AG" -> {edisun, power})."""
     words = re.findall(r"[a-z0-9]+", fold(search_name(company_name)))
-    return {w for w in words if len(w) >= 3 and w not in _GENERIC_NAME_WORDS}
+    tokens = {w for w in words if len(w) >= 3 and w not in _GENERIC_NAME_WORDS}
+    return (tokens - _PLACE_NAME_WORDS) or tokens
+
+
+def search_languages(*countries: str | None) -> list[str]:
+    """The languages to search for the report in: English, then German for a company in
+    Germany, Austria, Switzerland or Liechtenstein."""
+    german = any((c or "").upper() in _GERMAN_COUNTRIES for c in countries)
+    return ["en", "de"] if german else ["en"]
 
 
 def host_names_company(url: str, company_name: str | None) -> bool:
@@ -501,6 +518,7 @@ def titled_candidate(url: str, title: str, allowed: frozenset[str]) -> ReportCan
         by_url.is_pdf = by_url.is_pdf or is_pdf
         return by_url
     if title:
+        title = re.sub(r"(\w)-\s+(\w)", r"\1\2", title)     # "GESCHÄFTS- BERICHT 2025"
         slug = re.sub(r"[^\w]+", "-", title).strip("-")
         c = classify(f"https://{urlparse(url).netloc}/{slug}{'.pdf' if is_pdf else ''}", allowed)
         if c.kept:
@@ -543,14 +561,16 @@ def downloads_page(results: list[dict], cands: list[ReportCandidate]) -> str | N
 
 
 def web_search_report(fc: FirecrawlClient, company_name: str, website_url: str | None,
-                      allowed: frozenset[str], year: int | None = None
+                      allowed: frozenset[str], year: int | None = None, language: str = "en"
                       ) -> tuple[list[ReportCandidate], list[dict]]:
     """Search the web for the company's annual report of `year` (last year by default):
     finds reports on investor sites and microsites that a map of the main website never
     reaches (adidas.com vs report.adidas-group.com; Arbonia's old domain afg.ch). Only the
-    company's own documents (own_document). Returns (candidates, own results). 2 credits."""
+    company's own documents (own_document). `language` "de" searches for the
+    "Geschäftsbericht" (Albis Leasing's is found only so). Returns (candidates, own
+    results). 2 credits."""
     year = year or dt.date.today().year - 1
-    query = f"{search_name(company_name)} annual report {year} pdf"
+    query = f"{search_name(company_name)} {_REPORT_QUERY[language].format(year=year)}"
     log.info("Web search for the report: %r", query)
     own = [r for r in fc.search(query, limit=WEB_SEARCH_LIMIT)
            if r.get("url") and own_document(r["url"], company_name, website_url)]
@@ -577,11 +597,12 @@ def find_report(website_url: str | None, fc: FirecrawlClient, country: str | Non
         all_cands.extend(cands)
         return pick_best(all_cands)
 
-    def scrape_page(page_url: str) -> ReportCandidate | None:
+    def scrape_page(page_url: str, reserve: bool = True) -> ReportCandidate | None:
+        if reserve:
+            _reserve_left(fc, 1)        # raised before it counts as scraped
         scraped.add(page_url)
         log.info("Scraping %s for report links", page_url)
         try:
-            _reserve_left(fc, 1)
             page = fc.scrape(page_url, formats=["markdown", "links"])
         except FirecrawlError as e:          # e.g. "all scraping engines failed"
             log.warning("Could not scrape %s: %s", page_url, str(e)[:150])
@@ -604,22 +625,30 @@ def find_report(website_url: str | None, fc: FirecrawlClient, country: str | Non
         return scrape_page(ir_page)
 
     def web_search() -> ReportCandidate | None:
-        """No recent report on the site: search the web for it (2 credits), then scrape the
-        page most likely to link its PDF (an online report's downloads page)."""
+        """No recent report on the site: search the web for it (2 credits), in German too for
+        a DACH company (2 more), then scrape the page most likely to link its PDF (an online
+        report's downloads page)."""
         if not company_name:
             return scrape_ir_page() if website_url else pick_best(all_cands)
-        try:
-            _reserve_left(fc, 2)
-        except CreditBudgetExceeded as e:     # the cheaper map searches still go on
-            log.info("No web search for the report: %s", e)
+        results, cands = [], []
+        for language in search_languages(country, *other_countries):
+            try:
+                _reserve_left(fc, 2)
+            except CreditBudgetExceeded as e:     # the cheaper map searches still go on
+                log.info("No web search for the report (%s): %s", language, e)
+                break
+            found, own = web_search_report(fc, company_name, website_url, allowed,
+                                           language=language)
+            _log_candidates(found, f"web search ({language})")
+            cands += found
+            results += own
+            all_cands.extend(found)
+            all_urls.extend(c.url for c in found)
+            if is_fresh(pick_best(all_cands)):
+                return pick_best(all_cands)
+        if not results:
             return scrape_ir_page() if website_url else pick_best(all_cands)
-        cands, results = web_search_report(fc, company_name, website_url, allowed)
-        _log_candidates(cands, "web search")
-        all_cands.extend(cands)
-        all_urls.extend(c.url for c in cands)
         best = pick_best(all_cands)
-        if is_fresh(best):
-            return best
         page = downloads_page(results, cands)
         if page and page not in scraped:
             return scrape_page(page)
@@ -652,6 +681,16 @@ def find_report(website_url: str | None, fc: FirecrawlClient, country: str | Non
         log.warning("%s; choosing from what was found so far", e)
 
     best = pick_best(all_cands)
+    if best and not best.is_pdf and not _looks_like_report_page(best.url) and best.url not in scraped:
+        # the best is the annual-reports listing page (Edisun's /investors/annual-reports):
+        # the fetch reserve opens it, as a PDF linked there downloads for free
+        cap, meter = getattr(fc, "max_credits", None), getattr(fc, "credits", None)
+        if cap is None or meter is None or meter.total + 1 <= cap:
+            try:
+                scrape_page(best.url, reserve=False)
+            except CreditBudgetExceeded:
+                pass
+            best = pick_best(all_cands)
     if not best:
         raise ReportNotFoundError(
             f"No annual report found on {website_url} "
