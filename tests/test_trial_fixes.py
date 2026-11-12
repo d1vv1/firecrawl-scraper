@@ -58,3 +58,52 @@ def test_a_revenue_and_an_ebitda_of_the_same_figure():
     assert kept[0].confidence == "C" and dp.SAME_AS_PROFIT in kept[0].note
     kept = dp.not_a_profit_line(_found(1e9, 2e8), "Revenue 1,000")
     assert [f.data_point for f in kept] == ["revenue", "ebitda"]
+
+
+def _roles(*specs):
+    """CSV-style role rows: (role, aggregate?, {field: value}) in output order."""
+    rows = []
+    for role, agg, amounts in specs:
+        rows.append({"grain": "role", "role_row": role, "data_point": "role_disclosure",
+                     "value": "aggregate" if agg else "individual", "unit": ""})
+        rows += [{"grain": "role", "role_row": role, "data_point": k, "value": str(v), "unit": "CHF"}
+                 for k, v in amounts.items()]
+    return rows
+
+
+def test_a_group_role_read_from_two_documents_is_kept_once():
+    from extractor import pay
+    other = {"base_salary": 2015000, "sti_paid": 1888000, "total_remuneration": 6706000}
+    former = {"base_salary": 537000, "total_remuneration": 1746000}
+    rows = _roles(("CEO", False, {"base_salary": 1000000, "total_remuneration": 3574000}),
+                  ("Other EC Members", True, other), ("Former EC Members", True, former),
+                  ("Other EC", True, other), ("Former EC", True, former))
+    assert pay.duplicate_groups(rows) == ["Other EC", "Former EC"]
+    left = dp.refresh([dict(r, company_id="dk", company_name="D", segment="", country="CH", lei="",
+                            period_end="", source="", endpoint="", method="PARSE", retrieved_at="",
+                            confidence="B", note="") for r in rows])
+    assert {r["role_row"] for r in left} == {"CEO", "Other EC Members", "Former EC Members"}
+    # two people paid the same are two people; a row of zeros says nothing about who it is
+    same = {"base_salary": 800000, "total_remuneration": 2000000}
+    assert pay.duplicate_groups(_roles(("Co-CEO (A)", False, same), ("Co-CEO (B)", False, same))) == []
+    zeros = {"base_salary": 0, "total_remuneration": 0}
+    assert pay.duplicate_groups(_roles(("Former members", True, zeros), ("Former", True, zeros))) == []
+    # one field apart: not the same row
+    assert pay.duplicate_groups(_roles(("Other EC", True, other),
+                                       ("Other", True, {**other, "sti_paid": 1})) ) == []
+
+
+def test_an_accounting_line_is_not_a_person():
+    from extractor import pay
+
+    def role(name, quote, amounts):
+        rows = [{"grain": "role", "role_row": name, "data_point": "role_disclosure",
+                 "value": "individual", "unit": "", "note": f'PDF page 37: "{quote}"'}]
+        return rows + [{"grain": "role", "role_row": name, "data_point": k, "value": str(v),
+                        "unit": "USD", "note": ""} for k, v in amounts.items()]
+    rows = (role("Subsidiary employee", "Option and share program<br>expenses (note 17)<br>-|-|-|(49)|",
+                 {"lti_granted": 0, "total_remuneration": 0})
+            + role("CEO", "Der Vorstandsvorsitzende Hui Wang", {"base_salary": 0, "total_remuneration": 0})
+            + role("CFO", "CFO expenses 105", {"base_salary": 68000, "total_remuneration": 105000}))
+    # a person paid nothing stays; so does a paid role whatever its quote says
+    assert pay.accounting_lines(rows) == ["Subsidiary employee"]
