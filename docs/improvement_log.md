@@ -452,4 +452,30 @@ Measured first on the cached reports and the combined FY2025 file; no company wa
 - **Values the AI worked out:** "other members" = the table's total minus the CEO (Arbonia: 1,078 - 450 = 628); a head count from a list of names; "four members" written as a word. These need rules in code (a derived value with its formula; number words), not better quotes.
 - **A quote that runs over a page break** with the page footer in between.
 - **Saved notes keep only 160 characters of a quote**, so 96 failed quotes can't be checked again without a re-run.
-- **Zero values** shown as a dash (71 hard fails) and **LTI values without a currency** (49): rule fixes.
+- **Zero values** shown as a dash (71 hard fails) and **LTI values without a currency** (49): rule fixes. (Done in 34-36 below; the zeros turned out to be stated in words, not dashes.)
+
+#### 34. Values in their quote that the check could not read
+- **Before:** the "value in the quote" check (CORE-02) failed 437 values. Most were right:
+  - a nil stated in words: "No bonuses were paid", "keine Mitarbeiter", "ikke foretatt tildeling" (71);
+  - a count in words: "three employees", "zwei Prozent";
+  - a decimal comma: "€ 2,14", "42,3";
+  - a Swiss separator: "1′905′326", "98‘064";
+  - cells grouped with spaces: "154 000 | 28 000";
+  - "other members" worked out as the group total less the CEO, both in the quote.
+- **Now:** the check reads all of these. A total less the CEO must match within 0.1%, not 0.5%: in a long row some pair of figures comes close by chance (Bachem's 435 - 173 = 262 is not 261).
+- **Before:** when the AI gave the full amount and also the table's unit ("180000", thousands, for "£000 180"), the value was kept right but the note said "printed 180000 thousands". The check then looked for 180,000 in "£000 180", and the run graded these values C.
+- **Now:** the printed figure is worked out (`extract.printed_figure`), at collection and when reading saved notes.
+- **Test:** the combined file scored again without saving: CORE-02 fails 437 -> 205, hard fails 1,112 -> 902, none newly failing. Of 234 checks that turned to pass, 40 per kind were read by hand.
+- **Not this check's job, seen on the way:**
+  - two "EBITDA" values quote operating profit before tax (Holand og Setskog) and EBIT (Müller - Die lila Logistik);
+  - two share prices are today's quote, not the year-end price (BayWa, Readcrest).
+
+#### 35. Nothing paid needs no currency; a percentage is not an amount
+- **Before:** a zero amount with no currency failed "unit is ISO 4217" and "same currency as the role's other amounts". "LTIP award of 200% of salary" was stored as an LTI granted of 200 with no currency.
+- **Now:**
+  - A zero amount needs no currency.
+  - A pay amount printed only as a percentage is not stored; the note says it was stated only as a percentage. This applies from the next run.
+
+#### 36. Quotes are kept whole
+- **Before:** a note kept 160 characters of the quote. A longer quote could not be looked up again (96 failed checks).
+- **Now:** up to 1,000 characters (`datapoints.QUOTE_CHARS`), from the next run.
