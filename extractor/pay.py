@@ -425,6 +425,21 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
     return out
 
 
+SUM_TOLERANCE = 0.01        # a total line's parts: within 1%,
+ROUNDED_TOLERANCE = 0.05    # or within their printed rounding, up to 5%
+_PRINTED = re.compile(r"printed (-?\d+(?:\.(\d+))?)(?: (thousands|millions|billions|units))?")
+_SCALE = {"thousands": 1e3, "millions": 1e6, "billions": 1e9, "units": 1}
+
+
+def _rounding(note: str) -> float:
+    """Half the last printed digit of an amount, in full units, from its note: "printed
+    2.4 millions" -> 50,000. 0 when the note doesn't say."""
+    m = _PRINTED.search(note or "")
+    if not m:
+        return 0.0
+    return 0.5 * 10 ** -len(m.group(2) or "") * _SCALE.get(m.group(3) or "units", 1)
+
+
 def total_roles(rows: list) -> list[str]:
     """The role rows that are a pay table's "Total" line: an aggregate role whose amounts
     are the sums of the roles listed next to it (Brøndby IF: "Total" = CEO + CFO; Stora
@@ -433,15 +448,18 @@ def total_roles(rows: list) -> list[str]:
     people ("Other members of the Group Leadership Team") is no sum of other rows.
     `rows`: role rows as Found or as CSV rows, in output order.
 
-    The roles next to it: two or more with amounts, directly before or after it. Fields
-    are compared where every one of them states the field in the total's unit. The total
-    remuneration must add up (within 1%, for rounding), or two other fields. One field
-    that doesn't is no objection: Aurskog Sparebank's total line has the base salaries
-    and pensions of its seven executives to the krone, and a benefits figure misread."""
+    The roles next to it: two or more with amounts, directly before it, after it, or on
+    both sides (CEO, Total, Other members). Fields are compared where every one of them
+    states the field in the total's unit. A field adds up within 1%, or within the
+    rounding of the printed figures up to 5% (CEO 1.4 + CFO 0.9 against a Total of 2.4,
+    in EUR m). The total remuneration within 1% is enough; otherwise two fields must add
+    up: a lone figure in whole millions is matched by too many mixes of roles (BMW's
+    "Board of Management 23 million"). One field that doesn't is no objection: Aurskog Sparebank's total line has the base salaries and pensions of
+    its seven executives to the krone, and a benefits figure misread."""
     def get(r, k):
-        return r[k] if isinstance(r, dict) else getattr(r, k)
+        return r.get(k) if isinstance(r, dict) else getattr(r, k, None)
 
-    amounts: dict[str, dict[str, tuple[float, str]]] = {}
+    amounts: dict[str, dict[str, tuple[float, str, float]]] = {}
     aggregate: set[str] = set()
     for r in rows:
         name, point, value = get(r, "role_row"), get(r, "data_point"), get(r, "value")
@@ -451,19 +469,25 @@ def total_roles(rows: list) -> list[str]:
             aggregate.add(name)
         if point in AMOUNTS:
             try:
-                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit"))
+                amounts.setdefault(name, {})[point] = (float(value), get(r, "unit") or "",
+                                                       _rounding(get(r, "note")))
             except ValueError:
                 pass
     order = list(amounts)
 
     def is_sum(total: dict, parts: list[dict]) -> bool:
-        good = []
-        for point, (value, unit) in total.items():
-            if not value or not all(p.get(point, (0, None))[1] == unit for p in parts):
+        exact, good = [], []
+        for point, (value, unit, step) in total.items():
+            if not value or not all(point in p and p[point][1] == unit for p in parts):
                 continue
-            if abs(sum(p[point][0] for p in parts) - value) <= 0.01 * abs(value):
+            off = abs(sum(p[point][0] for p in parts) - value)
+            rounding = step + sum(p[point][2] for p in parts)
+            if off <= SUM_TOLERANCE * abs(value):
+                exact.append(point)
                 good.append(point)
-        return "total_remuneration" in good or len(good) >= 2
+            elif off <= rounding and off <= ROUNDED_TOLERANCE * abs(value):
+                good.append(point)
+        return "total_remuneration" in exact or len(good) >= 2
 
     found: list[str] = []
     for i, name in enumerate(order):
@@ -471,8 +495,8 @@ def total_roles(rows: list) -> list[str]:
             continue
         before = [n for n in order[:i] if n not in found]
         after = [n for n in order[i + 1:] if n not in found]
-        runs = [before[-k:] for k in range(2, len(before) + 1)]
-        runs += [after[:k] for k in range(2, len(after) + 1)]
+        runs = [before[len(before) - b:] + after[:a]
+                for b in range(len(before) + 1) for a in range(len(after) + 1) if a + b >= 2]
         if any(is_sum(amounts[name], [amounts[n] for n in run]) for run in runs):
             found.append(name)
     return found

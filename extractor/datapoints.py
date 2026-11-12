@@ -1832,6 +1832,10 @@ def save_rows(t: Target, rows: list[dict]) -> list[dict]:
     path = dp_path(t.company)
     if t.fields is not None:
         old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        # a "Total" role saved before: found while all its fields are there, since the
+        # run's own copy of it is gone (refresh) and merge would keep the fields not run
+        totals = pay.total_roles(old)
+        old = [r for r in old if r["grain"] != "role" or r["role_row"] not in totals]
         rows = selection.merge(old, rows, t.fields)
     DP_DIR.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -2013,14 +2017,18 @@ def headcount_from_fte(by: dict[str, dict]) -> None:
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
-    or an ownership fact read without one. Rows that already have them are unchanged."""
+    or an ownership fact read without one. A role that is a pay table's "Total" line
+    (pay.total_roles) is removed. Other rows that already have their values are unchanged."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
     iso_codes(rows)
     fiscal_year_from_its_end(rows)
     totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
-    rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
-    by ={r["data_point"]: r for r in rows if r["grain"] == "company"}
+    if totals:
+        log.info("Pay: %s left out of the saved rows: the sum of roles already listed",
+                 ", ".join(totals))
+        rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
+    by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
