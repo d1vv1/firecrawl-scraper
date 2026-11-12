@@ -541,6 +541,70 @@ def test_a_supplied_document_is_read_first_and_skips_the_year_check(monkeypatch)
     assert any(r.data_point == "base_salary" and r.value == 1_142_000 for r in roles)
 
 
+def test_company_data_comes_from_the_pay_documents_when_no_annual_report_was_read(monkeypatch):
+    """Brøndby IF: no website found, so no annual report; its remuneration report, given in
+    the input, prints the legal name, the financial year and the net revenue."""
+    q = "Net sales|3|2,326.2|1,827.3"
+    text = {"value": None, "quote": q, "chunk_id": 0}
+    asked = []
+
+    def fake_ask(name, url, chunks, what, key, wanted=None):
+        asked.append(wanted)
+        return _facts(legal_name=text | {"value": "X A/S"},
+                      fiscal_year_end=text | {"value": "2026-06-30"},
+                      sub_sector=text | {"value": "The season was marked by"},
+                      revenue={"value": 2326.2, "unit": "millions", "currency": "DKK",
+                               "period_end": None, "quote": q, "chunk_id": 0})
+    monkeypatch.setattr(dp, "ask", fake_ask)
+    rem = _origin()
+    rem.source = "Remuneration report (PDF)"
+    gaps = ["legal_name", "sub_sector", "revenue", "fiscal_year_end", "fiscal_year"]
+    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem, rem], gaps, "DK",
+                                                          "2025/26", rem)}
+    assert len(asked) == 1 and "sub_sector" not in asked[0]     # one call per document
+    assert by["legal_name"].value == "X A/S" and by["legal_name"].source == rem.source
+    assert by["revenue"].value == 2_326_200_000 and by["revenue"].period_end == "2026-06-30"
+    assert by["fiscal_year"].value == "2025/26" and by["fiscal_year"].period_end == "2026-06-30"
+    assert "sub_sector" not in by            # no business description in a remuneration report
+
+    # Aurskog Sparebank: "2025" pay, but the year end read is a bonus period's: not used;
+    # the fiscal year is the pay year
+    by = {f.data_point: f for f in dp.from_read_documents("X", "x", [rem], gaps, "NO", "2025", rem)}
+    assert "fiscal_year_end" not in by and by["revenue"].period_end == ""
+    assert by["fiscal_year"].value == "2025" and by["fiscal_year"].confidence == "C"
+    assert dp.year_end_fits("2025-12-31", "2025") and dp.year_end_fits("2026-03-31", "2025/26")
+    assert not dp.year_end_fits("2025-09-30", "2025") and not dp.year_end_fits("2025-06-30", "2025/26")
+    assert dp.year_end_fits("2025-09-30", None)
+
+
+def test_collect_reads_the_pay_documents_only_without_an_annual_report(monkeypatch, tmp_path):
+    from extractor import pay
+    q = "Net sales|3|2,326.2"
+    rem = _origin()
+    facts = _pay([_role("CEO", base_salary=_amount(1218, quote=q))])
+    monkeypatch.setattr(pay, "ask_pay", lambda *a, **k: facts)
+    monkeypatch.setattr(dp, "supplied_doc", lambda *a: type("Doc", (), {"url": rem.url})())
+    monkeypatch.setattr(dp, "doc_origin", lambda doc, first: rem)
+    monkeypatch.setattr(dp, "identify_lei", lambda *a, **k: {"record": None})
+    calls = []
+    monkeypatch.setattr(dp, "from_read_documents", lambda name, slug, origins, gaps, *a: calls.append(
+        (origins, gaps)) or [Found("legal_name", "X A/S", source=rem.source, method="PARSE",
+                                   confidence="B")])
+    from extractor import batch
+    monkeypatch.setattr(batch, "OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(dp.sector, "from_description", lambda chosen, name: None)
+    c = Company("x-1", "X", "DK")
+    t = dp.Target(c, remuneration_report_url="https://x.com/rem.pdf")
+    why = "WebsiteNotFoundError: no website"
+    by = {f.data_point: f for f in dp.collect(t, docs=False, error=why, use_apis=False)
+          if f.grain == "company"}
+    assert calls and calls[0][0] == [rem] and {"legal_name", "revenue", "fiscal_year"} <= set(calls[0][1])
+    assert by["legal_name"].value == "X A/S"
+    # the note of a field still empty leads with the real reason
+    assert by["revenue"].note == ("not found: the annual report was not read (WebsiteNotFoundError: "
+                                  "no website); not in: Annual report (PDF)")
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"
