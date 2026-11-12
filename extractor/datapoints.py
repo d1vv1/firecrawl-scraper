@@ -78,7 +78,7 @@ from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, pro
 from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
 from .documents import (DP_DOC_TYPES, Candidate, DocType, Document, Library, _stem as doc_stem,
                         title_year)
-from .extract import full_value, full_value_quoted
+from .extract import full_value, full_value_quoted, printed_figure
 from .firecrawl_client import CreditBudgetExceeded, FirecrawlClient
 from .pipeline import find_official_website, identify_lei, run as run_report
 from .report_finder import extract_year, is_pdf_url
@@ -309,6 +309,11 @@ def fmt_number(v: float | int | None) -> str:
     return f"{v:.6f}".rstrip("0").rstrip(".")
 
 
+# A quote is kept whole in the note, up to this length: a clipped quote can't be looked
+# up again in the source text (96 failed quote checks in the FY2025 file were clipped).
+QUOTE_CHARS = 1000
+
+
 def clip(text: str | None, n: int = 160) -> str:
     text = re.sub(r"\s+", " ", (text or "")).strip()
     return text if len(text) <= n else text[:n - 1] + "…"
@@ -381,7 +386,7 @@ def repair_quotes(rows: list[dict], pages_of) -> None:
             where, r["endpoint"] = f"PDF page {key}", f"{base}#page={key}"
         else:
             where, r["endpoint"] = m.group(1), text_fragment(base, row)
-        note = r["note"].replace(m.group(0), f'{where}: "{clip(row)}"{tail}')
+        note = r["note"].replace(m.group(0), f'{where}: "{clip(row, QUOTE_CHARS)}"{tail}')
         r["note"] = re.sub(r"; the figure \S+ is not in the quote", "", note)
         if r["confidence"] == "C":
             r["confidence"] = "B"
@@ -469,7 +474,7 @@ class Origin:
                     quote, ok = fixed[0], True
                     url = (self.page_urls or {}).get(fixed[1], url)
             return (text_fragment(url, quote) if ok else url, "B" if ok else "C",
-                    f'web page: "{clip(quote)}"' + (fixed[2] if fixed else "" if ok
+                    f'web page: "{clip(quote, QUOTE_CHARS)}"' + (fixed[2] if fixed else "" if ok
                                                     else " (quote not found verbatim)"), quote)
         loc = locate(quote, chunk_id, self.chunks, self.pages)
         fixed = None
@@ -482,11 +487,11 @@ class Origin:
         if self.kind == "pdf":
             page = loc.page
             return (f"{self.url}#page={page}" if page else self.url, conf,
-                    f'PDF page {page}: "{clip(quote)}"{tail}' if page else f'"{clip(quote)}"{tail}',
+                    f'PDF page {page}: "{clip(quote, QUOTE_CHARS)}"{tail}' if page else f'"{clip(quote, QUOTE_CHARS)}"{tail}',
                     quote)
         # Filed XHTML / HTML report text has no fixed pages: link to the quote itself.
         return (text_fragment(self.url, quote) if loc.verified else self.url, conf,
-                f'report text: "{clip(quote)}"{tail}', quote)
+                f'report text: "{clip(quote, QUOTE_CHARS)}"{tail}', quote)
 
 
 @dataclass
@@ -569,7 +574,7 @@ def _money_found(name: str, m: dict, result: dict, origin: Origin | None) -> Fou
     if origin is None:
         return Found(name, value, unit=m.get("currency") or "", period_end=period,
                      source="Annual report", endpoint=result.get("report_url") or "", method="PARSE",
-                     confidence="C", note=f'"{clip(m.get("quote"))}"', retrieved_at=at)
+                     confidence="C", note=f'"{clip(m.get("quote"), QUOTE_CHARS)}"', retrieved_at=at)
     endpoint, conf, where, _ = origin.where(m.get("quote"), m.get("chunk_id"),
                                             m["value"] if isinstance(m["value"], (int, float)) else None)
     printed = f"printed {fmt_number(m['value'])} {m.get('unit')} ({m.get('label_in_report')})"
@@ -718,21 +723,24 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
     for name in ("revenue", "total_assets"):
         n: NumberFact = getattr(facts, name)
         if n.value is not None and n.unit:
+            shown = printed_figure(n.value, n.unit, n.quote)
             add(name, full_value_quoted(n.value, n.unit, n.quote), n, unit=n.currency or "",
-                period=n.period_end, figure=n.value,
-                extra=f"printed {fmt_number(n.value)} {n.unit}")
+                period=n.period_end, figure=shown,
+                extra=f"printed {fmt_number(shown)} {n.unit}")
     e = facts.ebitda
     if e.value is not None and e.unit and e.measure:
         what = e.measure.replace("_", " ") + (" (company-defined)" if e.company_defined else "")
+        shown = printed_figure(e.value, e.unit, e.quote)
         add("ebitda", full_value_quoted(e.value, e.unit, e.quote), e, unit=e.currency or "",
-            figure=e.value, extra=f"{what}; printed {fmt_number(e.value)} {e.unit}"
+            figure=shown, extra=f"{what}; printed {fmt_number(shown)} {e.unit}"
                   + (f" ({e.label_in_report})" if e.label_in_report else ""))
     for name in ("fte", "headcount"):
         n = getattr(facts, name)
         # "Average employees [A] Thousand ... 88" (Shell): scaled like any printed unit
         scaled = n.unit not in (None, "units")
+        shown = printed_figure(n.value, n.unit or "units", n.quote)
         add(name, full_value_quoted(n.value, n.unit or "units", n.quote), n, unit="employees",
-            period=n.period_end, figure=n.value, extra=f"printed {fmt_number(n.value)} {n.unit}" if scaled else "")
+            period=n.period_end, figure=shown, extra=f"printed {fmt_number(shown)} {n.unit}" if scaled else "")
     n, t = facts.shares_outstanding, facts.treasury_shares
     if n.value is not None:
         shares = full_value_quoted(n.value, n.unit or "units", n.quote)
