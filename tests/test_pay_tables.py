@@ -54,6 +54,7 @@ def _role(title, name=None, base=None, benefits=None, executive=True):
                    aggregate_headcount=RoleHeadcount(value=None, excludes=None, quote=None,
                                                      chunk_id=None),
                    base_salary=_amount(base, "q" if base else None), sti_paid=_amount(),
+                   sti_deferred=_amount(),
                    lti_vested=_lti(), lti_granted=_lti(5), benefits=_amount(benefits, "q"),
                    pension=_amount(), pension_allowance=_amount(), total=_amount(),
                    sti_target=_target(), sti_max=_target(), lti_target=_target(),
@@ -146,6 +147,29 @@ def test_apply_replaces_the_matched_roles_amounts():
     assert ceo.role_title == "President and CEO"                           # the AI's title stays
     assert evp.base_salary.value == 479
     assert board == facts.roles[2]
+
+
+def test_the_ais_deferred_bonus_is_dropped_only_when_the_table_adds_two_bonus_columns():
+    deferred = _amount(300, "q")
+
+    def applied(**mapping):
+        rows = pt.table_rows(pt.Grid(15, EQUINOR), _map(**mapping))
+        role = _role("CEO", name="Anders Opedal").model_copy(update={"sti_deferred": deferred})
+        return pt.apply(_facts(role), rows, "thousands", "USD", [], set()).roles[0]
+    # one bonus column: it may be the cash part, so the AI's deferred part stays
+    one = applied()
+    assert one.sti_paid.value == 292 and one.sti_deferred == deferred
+    # two bonus columns added up by the table: the deferred part is in the sum already
+    two = applied(sti_paid=[5, 6], lti_granted=[7])
+    assert two.sti_paid.value == 598 and two.sti_deferred.value is None
+    # the deferred bonus column (306) mapped as an LTI: the AI's reading of the role stays
+    deferred = _amount(306, "q")
+    kept = applied()
+    assert kept.sti_paid.value is None and kept.sti_deferred == deferred
+    assert kept.lti_granted.value == 5
+    # another figure than the LTI cell (306), however close: the row is used
+    deferred = _amount(306.4, "q")
+    assert applied().sti_paid.value == 292
 
 
 def test_a_role_matched_by_an_earlier_table_is_left_alone():

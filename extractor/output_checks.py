@@ -603,6 +603,8 @@ def der_03(r: Row, ctx: Ctx):
     m = re.search(r"pension ([\d.]+) \+ salary addition in lieu of pension ([\d.]+)", n)
     if m:
         want = float(m.group(1)) + float(m.group(2))
+    elif m := re.search(r"annual bonus in cash (-?[\d.]+) \+ deferred bonus (-?[\d.]+)", n):
+        want = float(m.group(1)) + float(m.group(2))
     elif m := re.search(r"derived: ([\d.]+)% of the maximum of ([\d.]+)% of base", n):
         want = float(m.group(1)) * float(m.group(2)) / 100
     elif m := re.search(r"stated as ([\d.]+) months of salary", n):

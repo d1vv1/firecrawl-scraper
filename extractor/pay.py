@@ -33,8 +33,8 @@ from pathlib import Path
 from . import llm
 from .apis import Found
 from .config import CACHE_DIR
-from .extract import full_value_quoted, printed_figure
-from .validate import figure_in_quote, normalize
+from .extract import _QUOTE_NUMBER, _quote_numbers, full_value_quoted, printed_figure
+from .validate import ISO_4217, figure_in_quote, iso_currency, normalize
 from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
 
@@ -245,6 +245,86 @@ def months_as_pct(f: Found) -> Found:
                     "note": f"derived: stated as {_num(f.value)} months of salary; {f.note}"})
 
 
+def _second_source(note: str) -> str:
+    """A second figure's note, worded so that it is not taken for the row's own source:
+    datapoints.repair_quotes reads one `PDF page N: "quote" (quote not found verbatim)`
+    per note and would run from the first figure's quote into this one's marker."""
+    note = re.sub(r'(PDF page \d+|report text|web page): "', r'\1, quote "', note)
+    note = note.replace("is not in the quote", "is not in that quote")
+    return note.replace("(quote not found verbatim)", "(this quote was not found verbatim)")
+
+
+# A second figure's source that could not be checked: the row stays at confidence C.
+SECOND_SOURCE_UNSURE = re.compile("this quote was not found verbatim|is not in that quote")
+
+
+def same_cell(r: RolePay) -> bool:
+    """sti_deferred is no figure of its own: the bonus figure given a second time (same
+    quote, same amount, and the quote prints it once; twice is a bonus split in two
+    equal columns), or the role's LTI figure (a deferred share award read as both)."""
+    paid, d = r.sti_paid, r.sti_deferred
+    amount = _amount(d)
+    if amount in (_amount(r.lti_vested), _amount(r.lti_granted)):
+        return True
+    if paid.value is None or _amount(paid) != amount or paid.quote != d.quote:
+        return False
+    figure = printed_figure(d.value, d.unit, d.quote)
+    return sum(figure in _quote_numbers(t) for t in _QUOTE_NUMBER.findall(d.quote or "")) < 2
+
+
+def other_currency(a: str | None, b: str | None) -> bool:
+    """Two currencies known to differ: both ISO codes once normalised ("US$" is "USD").
+    A spelling that is not recognised ("kr", "pounds") is not taken as another currency."""
+    a, b = iso_currency(a or ""), iso_currency(b or "")
+    return a in ISO_4217 and b in ISO_4217 and a != b
+
+
+def with_deferred(cash: Found | None, deferred: Found, how: str | None = None) -> Found:
+    """The year's bonus = the part paid in cash + the part deferred, which the pay table
+    gives in two columns (Big Yellow: "Annual bonus – cash" 29,689 and "Annual bonus –
+    deferred" 300,494, in shares). `how`: the form of the deferred part, for the note."""
+    form = f" ({how})" if how else ""
+    if cash is None or not isinstance(cash.value, (int, float)):
+        return Found(**{**deferred.__dict__, "method": "DERIVED",
+                        "note": f"derived: the annual bonus = the part deferred{form} (no cash "
+                                f"part given); {deferred.note}"})
+    return Found(**{**cash.__dict__, "value": cash.value + deferred.value, "method": "DERIVED",
+                    "unit": cash.unit or deferred.unit,
+                    "confidence": max(cash.confidence or "C", deferred.confidence or "C",
+                                      key="ABC".index),
+                    # .15g: whole amounts as 29,689, a table in millions as 0.4 (DER-03
+                    # adds the two up again from this note)
+                    "note": f"derived: annual bonus in cash {cash.value:,.15g} + deferred bonus "
+                            f"{deferred.value:,.15g}{form}; {cash.note}; the deferred part: "
+                            f"{_second_source(deferred.note)}"})
+
+
+def _lti_options(r: RolePay) -> list[tuple[str, float]]:
+    """The LTI figures a stated total can include: the vested one, the granted one or
+    none. A number of instruments is no amount."""
+    ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
+    return [(k, v) for k, v in ltis if v is not None and not (
+        k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
+
+
+def deferred_on_top(r: RolePay) -> bool:
+    """Whether sti_deferred comes on top of sti_paid (two columns, cash and deferred) and
+    is not a part of a sti_paid that is already the whole bonus ("Annual bonus 330,183,
+    of which deferred 300,494"). A deferred part above sti_paid can't be a part of it.
+    Otherwise the stated total decides: not on top only when the total fits the parts
+    without it, and fits them better than with it. With no total to go by it is on top,
+    which is what the prompt asks for (it tells the AI to leave an "of which" null)."""
+    cash, deferred, total = _amount(r.sti_paid), _amount(r.sti_deferred), _amount(r.total)
+    if cash is None or deferred is None or not total or deferred > cash:
+        return True
+    rest = sum(_amount(getattr(r, p)) for p in PARTS
+               if p != "sti_paid" and getattr(r, p).value is not None)
+
+    def off(bonus: float) -> float:
+        return min(abs(rest + bonus + lti - total) for _, lti in _lti_options(r))
+    return not (off(cash) <= TOTAL_TOLERANCE * abs(total) and off(cash) < off(cash + deferred))
+
+
 def with_allowance(pension: Found | None, allowance: Found) -> Found:
     """Pension = pension cost + a salary addition paid instead of pension (the golden
     definition for Norway: Equinor's EVP pension 123 = addition 93 + pension 30)."""
@@ -416,6 +496,37 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 if d:
                     rows[tgt] = d
         misread_targets(rows)
+        deferred, added = r.sti_deferred, False     # added: the deferred bonus is in sti_paid
+        cash = rows.get("sti_paid")
+        if cash is not None and not isinstance(cash.value, (int, float)):
+            cash = None                             # stated only as a percentage: no amount
+        if (deferred.value and deferred.quote       # a deferred part of 0 or "–" is none
+                # an amount of money: not "50% of the bonus is deferred into shares", and
+                # not a number of shares, which comes with no currency and no unit
+                and (deferred.currency or deferred.unit)
+                and not percent_only(deferred.value, deferred.quote)):
+            amount = _amount(deferred)
+            if same_cell(r):
+                if cash:                            # the bonus or LTI figure given twice
+                    cash.note += (f"; a deferred part of {amount:,.15g} is the bonus or LTI "
+                                  f"figure given a second time and is not added")
+            elif not cash and r.sti_paid.value is not None:
+                pass        # a cash part that is no amount (a percentage, no quote): the
+                #             deferred part alone would pass for the whole bonus
+            elif cash and other_currency(deferred.currency, cash.unit):
+                cash.note += (f"; a deferred part of {amount:,.0f} {deferred.currency} is "
+                              f"stated in another currency and is not added")
+            elif cash and not deferred_on_top(r):
+                cash.note += (f"; includes the deferred part of {amount:,.0f} (the stated "
+                              f"total fits the parts only without adding it)")
+            else:
+                figure = printed_figure(deferred.value, deferred.unit, deferred.quote)
+                rows["sti_paid"] = with_deferred(
+                    cash, placed("sti_paid", row, amount, deferred, origin,
+                                 unit=deferred.currency or "", figure=figure,
+                                 extra=f"printed {_num(figure)} {deferred.unit or ''}".strip()),
+                    deferred.includes)
+                added = True
         allowance = r.pension_allowance
         if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
                 and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):
@@ -430,7 +541,7 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                     "pension_contribution", row, _amount(allowance), allowance, origin,
                     unit=allowance.currency or "", extra=f"printed {_num(allowance.value)} "
                                                          f"{allowance.unit or ''}".strip()))
-        check_total(r, rows)
+        check_total(r, rows, added)
         for name in ROLE_POINTS[1:]:
             if name in rows:
                 out.append(rows[name])
@@ -518,16 +629,19 @@ def total_roles(rows: list) -> list[str]:
     return found
 
 
-def check_total(r: RolePay, rows: dict[str, Found]) -> None:
+def check_total(r: RolePay, rows: dict[str, Found], deferred_added: bool = False) -> None:
     """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
-    LTI figure the total includes is the one that fits: vested, granted or none."""
+    LTI figure the total includes is the one that fits: vested, granted or none.
+    `deferred_added`: role_found added the deferred bonus to sti_paid; the STI part is
+    then the sti_paid row as written out."""
     total = rows.get("total_remuneration")
     if not total or not isinstance(total.value, (int, float)) or not total.value:
         return
-    parts = [_amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None]
-    ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
-    ltis = [(k, v) for k, v in ltis if v is not None and not (
-        k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
+    amounts = {p: _amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None}
+    if deferred_added:
+        amounts["sti_paid"] = rows["sti_paid"].value
+    parts = list(amounts.values())
+    ltis = _lti_options(r)
     if len(parts) < 2:
         return
     kind, lti = min(ltis, key=lambda kv: abs(sum(parts) + kv[1] - total.value))

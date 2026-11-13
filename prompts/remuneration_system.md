@@ -47,7 +47,22 @@ during the year (e.g. "Former CEO (until April 2025)").
     to benefits or pension, or nowhere. Only if the table gives no
     separate base figure, give the combined one and name what it
     includes in `includes`.
-  - sti_paid: the short-term incentive / annual bonus for the year.
+  - sti_paid: the short-term incentive / annual bonus for the year, as
+    the table gives it in one figure, whether it is paid in cash or
+    deferred into shares. Where the table gives the year's bonus in two
+    columns, a cash part and a deferred part ("Annual bonus – cash",
+    "Annual bonus – deferred"), sti_paid is the cash column and
+    sti_deferred the deferred one. Never add them yourself.
+  - sti_deferred: the part of the year's annual bonus that is deferred
+    (into shares, or cash paid later), only when the table shows it as
+    its own column next to the cash part, as an amount of money; say in
+    `includes` how it is deferred ("deferred into shares for two
+    years"). Null when the bonus is one figure, also when a note or an
+    "of which deferred" column says how much of that one figure is
+    deferred: that amount is already in sti_paid. Null when the deferred
+    part is stated only as a percentage of the bonus or as a number of
+    shares. Not a long-term incentive, and not an earlier year's
+    deferred bonus vesting this year.
   - lti_vested: the long-term incentive that vested, was paid out or was
     exercised for the year (the value realised). lti_granted: the
     long-term incentive granted (awarded) in the year, at its grant

@@ -388,7 +388,7 @@ def repair_quotes(rows: list[dict], pages_of) -> None:
             where, r["endpoint"] = m.group(1), text_fragment(base, row)
         note = r["note"].replace(m.group(0), f'{where}: "{clip(row, QUOTE_CHARS)}"{tail}')
         r["note"] = re.sub(r"; the figure \S+ is not in the quote", "", note)
-        if r["confidence"] == "C":
+        if r["confidence"] == "C" and not pay.SECOND_SOURCE_UNSURE.search(note):
             r["confidence"] = "B"
 
 

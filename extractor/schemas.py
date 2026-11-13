@@ -237,6 +237,7 @@ class RolePay(BaseModel):
     aggregate_headcount: RoleHeadcount
     base_salary: PayAmount
     sti_paid: PayAmount             # short-term incentive / bonus for the year
+    sti_deferred: PayAmount         # the part of that bonus deferred, when in its own column
     lti_vested: LtiAmount           # vested, paid out or exercised for the year
     lti_granted: LtiAmount          # granted (awarded) in the year
     benefits: PayAmount
