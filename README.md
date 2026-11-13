@@ -168,7 +168,9 @@ older version.
 - **Role grain** (`grain` = `role`): executive pay (protocol R01-R11), one set of 14 rows per
   disclosed executive role, `role_row` holding the role as stated ("CEO", "Other members of
   group management"; the name is added only when two roles share a title). Non-executive
-  board members get one `role_disclosure` row. Read from the remuneration report, else the
+  board members get one `role_disclosure` row. A pay table's "Total" line, the sum of the
+  roles listed next to it, is not a role and is left out (those people are already in the
+  output); a group row that is the only record of its people stays. Read from the remuneration report, else the
   annual report's remuneration section; target and maximum percentages missing there come
   from the remuneration policy. Pay amounts are in full units like all money; the printed
   figure, bundled components and the LTI form are in `note`, and a stated total that
@@ -215,7 +217,16 @@ Per company, cheapest and most exact first:
    `annual_report_url`), then SEC documents for SEC registrants (a 20-F's remuneration
    report exhibit, a US proxy statement; free), then the remuneration report found like the
    fallback documents below (including PDFs behind a site's download buttons), and, if
-   needed, the remuneration policy, read with `prompts/remuneration_system.md`;
+   needed, the remuneration policy, read with `prompts/remuneration_system.md`.
+   When the annual report's route gave no result (Firecrawl out of credits, no website
+   found), the documents this step read are also asked for the company data points still
+   empty, one AI call per document and no Firecrawl (`datapoints.from_read_documents`, read
+   like the fallback documents: `ask_documents`, with its year check, and the identity
+   check of the annual report). From a document that is no annual report, the business
+   description and head-office city are not taken, and a year end that does not fit the pay
+   year, or is not 31 December without being called the financial year's, is not used; the
+   fiscal year is then the pay year (grade C). A field still empty says so first: "not
+   found: the annual report was not read (<why>); not in: <documents read>";
 4. **document fallback** (`extractor/documents.py`): the data points still empty are
    looked for in the company's other documents: remuneration report, AGM notice,
    corporate-governance and sustainability reports, "The share" and shareholder pages,

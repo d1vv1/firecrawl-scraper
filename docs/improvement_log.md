@@ -513,3 +513,59 @@ Kesko's version 1 values came from its FY2023 report; version 2 read FY2025.
 - **Before:** S&D Standard's pay table has a section heading "Subsidiary employee:" over a line "Option and share program expenses (note 17)", with dashes for 2025. It was stored as an executive role paid 0.
 - **Now:** an individual role is left out when every amount is zero and its quoted line names an expense, cost, provision or note, not a person. A person paid nothing stays: the combined file has 13 of them (Wild Bunch's CEO, Sino-German's board, United Eco Solutions' Vorstand).
 - **Effect on the combined file:** S&D Standard only.
+
+### 12 November 2026 (night): Revanth's PRs, reviewed and fixed
+
+Both pull requests were run through a code review (`/code-review high`), the findings fixed on their branches, reviewed again, and merged into `main`.
+
+#### 41. A pay table's "Total" line is not a role (PR #2, AXAC-379)
+- **Before:** Brøndby IF's "Total" (CEO + CFO) and Stora Enso's "GLT Total" were stored as one more role, so the same pay was counted twice.
+- **Now:** a group role whose amounts add up to two or more roles next to it is left out, on a new run and from saved rows.
+  - It matches within 1%, or within the rounding of figures printed in millions up to 5% (CEO 1.4 + CFO 0.9 against a Total of 2.4).
+  - Total pay alone counts only within 1%, otherwise two fields must add up. A lone figure in whole millions was matched by chance (BMW's "Board of Management 23 million").
+  - A Total printed between its parts is found (Inficon: 606 + 365 = 971).
+  - A run of only some pay fields no longer keeps part of an old Total role.
+  - The pay prompt now says to leave out a total line of people listed one by one.
+- **Effect on the combined file:** 41 companies lose a Total role. Checked by hand: Tekna, S&D Standard, dormakaba, Straumann, Sentia, Bilfinger.
+
+#### 42. Company data from the documents the pay step read (PR #3, AXAC-379)
+- **Before:** when the annual report could not be found (no website, or Firecrawl out of credits), every company field stayed empty, even when the run had downloaded a PDF that prints them (Stora Enso, Brøndby IF). The note "not found in: Annual report (PDF)" read as if that PDF had been searched.
+- **Now:** the documents the pay step read are asked for the company fields still empty, one AI call per document and no Firecrawl.
+  - They are read like the document fallback (`ask_documents`, now shared by both): yearly figures are year-checked, and an AI answer that runs too long skips the document instead of failing the company.
+  - The legal name and country are checked, as for the annual report: a parent company's report is graded C.
+  - A year end dates the figures only if it closes the pay year. A date other than 31 December must be quoted as the year end ("fiscal year", "for the year ended 31 March 2026"); Aurskog Sparebank's bonus-period end is not used.
+  - This also runs when Firecrawl runs out during the pay step. A value it can only grade C is looked for again by the document fallback.
+  - A field still empty says why first: "not found: the annual report was not read (...)".
+- **Review:** the first review found 10 issues. Most came from the PR copying the document fallback without its rules, so the copy was replaced by the shared function rather than patched. A second review found 10 more, two of them mistakes in the first round of fixes (refusing "year ended" wording; a crash on an impossible date like 2025-06-31). All fixed.
+
+#### 43. The SEB stall and the duplicate group roles, seen on the PRs
+- Items 37 (a page Firecrawl cannot get) and 39-40 (duplicate group roles; an accounting line as a person) came out of checking these PRs. They are on `main` too.
+
+### 13 November 2026: what the dashboard's "42% not found" is
+
+The dashboard (built 12 November, 16:26, from `output/fy2025_runs_datapoints.csv`: 564 companies, nearly all collected by version 1) shows 42% of values not found and 56% found. Of all values:
+
+| Cause | Share | What it is |
+|---|---|---|
+| Not found in the documents read | 22.9% | Real gaps, or fields the company doesn't disclose |
+| **Not collected** | **16.2%** | The tracker's `run_required` asked only for the company's Pay Data or only its Company Data. These were never asked for, but the dashboard counts them as not found. |
+| No annual report found | 1.7% | Real gaps |
+| Missing inputs, no credits, API-only | 0.8% | |
+
+Counting only the fields that were asked for, **30% are not found and about 67% found**.
+
+Where the real gaps are:
+- **Pay targets and maxima** (`sti_target`, `sti_max`, `lti_target`, `lti_max`): 35% of the gaps. Many companies, Nordic and DACH ones especially, don't state them as percentages.
+- **LTI vested and granted:** 17% of the gaps.
+  - 103 companies have no LTI figure for any executive, and 60 no STI figure: about 1,600 gaps.
+  - Many of these companies may have no such plan, but a gap is only marked "not applicable" when the report clearly says so (item 28).
+
+**Next steps:**
+- **Free:**
+  - the dashboard counts "not collected" as out of scope;
+  - re-score the combined file with the current checks;
+  - splice in the 29 trial companies.
+- **Paid:**
+  - the version 2 re-run of all companies;
+  - asking the AI, with a quote, whether a company has an LTI or STI plan at all.
+- **Later:** a share-price feed for share price and size band, missing for half the companies.
