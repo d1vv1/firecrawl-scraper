@@ -31,6 +31,7 @@ from pathlib import Path
 
 from . import llm
 from .config import CACHE_DIR
+from .extract import printed_figure
 from .schemas import ColumnMap, LtiAmount, PayAmount, RemunerationFacts, RolePay
 from .sections import Chunk
 from .validate import quote_in_text
@@ -308,6 +309,19 @@ def row_quote(label: str, cells: list[str], page_text: str) -> str:
     return " | ".join([label] + cells)
 
 
+def deferred_elsewhere(role: RolePay, row: TableRow) -> bool:
+    """The AI read a deferred part of the bonus, and the table has that figure under
+    another field than sti_paid: the column mapper took the "Annual bonus – deferred"
+    column for an LTI or a benefit. (Under sti_paid, with the cash column, it is right.)"""
+    d = role.sti_deferred
+    if not d.value or len(row.cells.get("sti_paid", [])) > 1:
+        return False
+    figures = {d.value, printed_figure(d.value, d.unit, d.quote)}
+    cells = [parse_figure(c) for field, cs in row.cells.items()
+             if field not in ("sti_paid", "total") for c in cs]
+    return any(abs(c - f) < 0.5 for c in cells if c is not None for f in figures)
+
+
 def chunk_of(page: int, chunks: list[Chunk]) -> int | None:
     return next((c.id for c in chunks if page in c.pages), None)
 
@@ -324,6 +338,13 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
             roles.append(role)
             continue
         used.add(id(row))
+        if deferred_elsewhere(role, row):
+            # taking the row would report the deferred bonus under that other field and
+            # leave it out of the bonus: this role keeps the AI's reading
+            log.info("Pay tables: page %d row %s not used: the deferred bonus is mapped to "
+                     "another field", row.page, row.label[:40])
+            roles.append(role)
+            continue
         done.add(i)
         cid = chunk_of(row.page, chunks)
         page_text = "\n".join(c.text for c in chunks if row.page in c.pages)

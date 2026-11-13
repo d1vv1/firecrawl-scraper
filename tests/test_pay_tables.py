@@ -162,6 +162,11 @@ def test_the_ais_deferred_bonus_is_dropped_only_when_the_table_adds_two_bonus_co
     # two bonus columns added up by the table: the deferred part is in the sum already
     two = applied(sti_paid=[5, 6], lti_granted=[7])
     assert two.sti_paid.value == 598 and two.sti_deferred.value is None
+    # the deferred bonus column (306) mapped as an LTI: the AI's reading of the role stays
+    deferred = _amount(306, "q")
+    kept = applied()
+    assert kept.sti_paid.value is None and kept.sti_deferred == deferred
+    assert kept.lti_granted.value == 5
 
 
 def test_a_role_matched_by_an_earlier_table_is_left_alone():

@@ -780,6 +780,34 @@ def test_a_deferred_part_already_in_the_bonus_figure_is_not_added_again():
     assert "the parts found add up to 1,073,802" in by["total_remuneration"].note
 
 
+def test_the_better_fit_of_the_total_decides_a_small_deferred_part():
+    """Base 4,600,000, bonus 300,000 "of which deferred 90,000", total 4,900,000: adding
+    the 90,000 is within the 2% tolerance too, but the total fits better without it."""
+    q = "Net sales|3|2,326.2"
+    by = _sti(base_salary=_amount(4_600_000, "units", "GBP", q),
+              sti_paid=_amount(300_000, "units", "GBP", q),
+              sti_deferred=_amount(90_000, "units", "GBP", q),
+              total=_amount(4_900_000, "units", "GBP", q))
+    assert by["sti_paid"].value == 300_000
+    # two columns, cash 300,000 and deferred 90,000, in a total of 4,990,000: added
+    by = _sti(base_salary=_amount(4_600_000, "units", "GBP", q),
+              sti_paid=_amount(300_000, "units", "GBP", q),
+              sti_deferred=_amount(90_000, "units", "GBP", q),
+              total=_amount(4_990_000, "units", "GBP", q))
+    assert by["sti_paid"].value == 390_000
+
+
+def test_the_summed_bonus_note_holds_one_repairable_source():
+    """datapoints.repair_quotes reads one "quote not found" source per note: the cash
+    part's. The deferred part's is worded differently."""
+    from extractor import datapoints as dp
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", "Net sales|3|2,326.2"),
+               sti_deferred=_amount(100, "thousands", "GBP", "nowhere in the text"))["sti_paid"]
+    assert sti.value == 500_000 and "the deferred part: printed 100 thousands" in sti.note
+    assert "this quote was not found verbatim" in sti.note
+    assert not dp._NOT_FOUND.search(sti.note)
+
+
 def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
     q = "Net sales|3|2,326.2"
     # "50% of the bonus is deferred": a share of the bonus, not money
@@ -791,6 +819,23 @@ def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
     sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q),
                sti_deferred=_amount(100, "thousands", "USD", q))["sti_paid"]
     assert sti.value == 400_000 and "another currency" in sti.note
+    # the same currency written two ways is one currency
+    sti = _sti(sti_paid=_amount(400, "thousands", "USD", q),
+               sti_deferred=_amount(100, "thousands", "US$", q))["sti_paid"]
+    assert sti.value == 500_000
+    # a number of shares: no currency and no unit
+    shares = {"value": 12500, "unit": None, "currency": None, "includes": None,
+              "quote": "Deferred bonus shares | 12,500", "chunk_id": 0}
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q), sti_deferred=shares)["sti_paid"]
+    assert sti.value == 400_000
+    # the bonus only as a percentage, the deferred part as an amount: the total's parts
+    # are the rows written out (600,000 + 200,000), not the 60
+    pct_paid = {"value": 60, "unit": "thousands", "currency": None, "includes": None,
+                "quote": "Bonus achieved 60%", "chunk_id": 0}
+    by = _sti(base_salary=_amount(600, "thousands", "GBP", q), sti_paid=pct_paid,
+              sti_deferred=_amount(200, "thousands", "GBP", q),
+              total=_amount(800, "thousands", "GBP", q))
+    assert by["sti_paid"].value == 200_000 and "add up" not in by["total_remuneration"].note
     # a deferred figure with no quote is in neither the bonus nor the total's parts
     by = _sti(base_salary=_amount(600, "thousands", "GBP", q),
               sti_paid=_amount(400, "thousands", "GBP", q),
