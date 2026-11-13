@@ -33,7 +33,7 @@ from pathlib import Path
 from . import llm
 from .apis import Found
 from .config import CACHE_DIR
-from .extract import full_value_quoted, printed_figure
+from .extract import _QUOTE_NUMBER, _quote_numbers, full_value_quoted, printed_figure
 from .validate import ISO_4217, figure_in_quote, iso_currency, normalize
 from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
@@ -256,6 +256,20 @@ def _second_source(note: str) -> str:
 
 # A second figure's source that could not be checked: the row stays at confidence C.
 SECOND_SOURCE_UNSURE = re.compile("this quote was not found verbatim|is not in that quote")
+
+
+def same_cell(r: RolePay) -> bool:
+    """sti_deferred is no figure of its own: the bonus figure given a second time (same
+    quote, same amount, and the quote prints it once; twice is a bonus split in two
+    equal columns), or the role's LTI figure (a deferred share award read as both)."""
+    paid, d = r.sti_paid, r.sti_deferred
+    amount = _amount(d)
+    if amount in (_amount(r.lti_vested), _amount(r.lti_granted)):
+        return True
+    if paid.value is None or _amount(paid) != amount or paid.quote != d.quote:
+        return False
+    figure = printed_figure(d.value, d.unit, d.quote)
+    return sum(figure in _quote_numbers(t) for t in _QUOTE_NUMBER.findall(d.quote or "")) < 2
 
 
 def other_currency(a: str | None, b: str | None) -> bool:
@@ -492,8 +506,11 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 and (deferred.currency or deferred.unit)
                 and not percent_only(deferred.value, deferred.quote)):
             amount = _amount(deferred)
-            if cash and amount == cash.value and deferred.quote == r.sti_paid.quote:
-                pass                                # the one bonus figure given twice
+            if same_cell(r):
+                pass                                # the bonus or LTI figure given twice
+            elif not cash and r.sti_paid.value is not None:
+                pass        # a cash part that is no amount (a percentage, no quote): the
+                #             deferred part alone would pass for the whole bonus
             elif cash and other_currency(deferred.currency, cash.unit):
                 cash.note += (f"; a deferred part of {amount:,.0f} {deferred.currency} is "
                               f"stated in another currency and is not added")

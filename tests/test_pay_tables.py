@@ -167,6 +167,9 @@ def test_the_ais_deferred_bonus_is_dropped_only_when_the_table_adds_two_bonus_co
     kept = applied()
     assert kept.sti_paid.value is None and kept.sti_deferred == deferred
     assert kept.lti_granted.value == 5
+    # another figure than the LTI cell (306), however close: the row is used
+    deferred = _amount(306.4, "q")
+    assert applied().sti_paid.value == 292
 
 
 def test_a_role_matched_by_an_earlier_table_is_left_alone():

@@ -835,6 +835,16 @@ def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
     for same in (_amount(0, "thousands", "GBP", q), _amount(400, "thousands", "GBP", q)):
         sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q), sti_deferred=same)["sti_paid"]
         assert sti.value == 400_000 and sti.method != "DERIVED"
+    # a bonus split in two equal columns: the row prints the figure twice
+    row = "CEO | 500,000 | 150,000 | 150,000 | 800,000"
+    sti = _sti(sti_paid=_amount(150_000, "units", "GBP", row),
+               sti_deferred=_amount(150_000, "units", "GBP", row))["sti_paid"]
+    assert sti.value == 300_000
+    # a deferred share award read as the LTI and as the deferred bonus: it is the LTI
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q),
+               sti_deferred=_amount(306, "thousands", "GBP", q),
+               lti_granted=_amount(306, "thousands", "GBP", q) | {"form": "shares"})["sti_paid"]
+    assert sti.value == 400_000
     # amounts in millions with decimals: the note keeps them for DER-03
     sti = _sti(sti_paid=_amount(0.4, "units", "EUR", q),
                sti_deferred=_amount(0.3, "units", "EUR", q))["sti_paid"]
@@ -851,7 +861,7 @@ def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
     by = _sti(base_salary=_amount(600, "thousands", "GBP", q), sti_paid=pct_paid,
               sti_deferred=_amount(200, "thousands", "GBP", q),
               total=_amount(800, "thousands", "GBP", q))
-    assert by["sti_paid"].value == 200_000 and "add up" not in by["total_remuneration"].note
+    assert by["sti_paid"].value is None and "stated only as 60%" in by["sti_paid"].note
     # a deferred figure with no quote is in neither the bonus nor the total's parts
     by = _sti(base_salary=_amount(600, "thousands", "GBP", q),
               sti_paid=_amount(400, "thousands", "GBP", q),

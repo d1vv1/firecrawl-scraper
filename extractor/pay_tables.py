@@ -316,10 +316,13 @@ def deferred_elsewhere(role: RolePay, row: TableRow) -> bool:
     d = role.sti_deferred
     if not d.value or not d.quote or len(row.cells.get("sti_paid", [])) > 1:
         return False
+    if d.value in (role.lti_vested.value, role.lti_granted.value):
+        return False        # the AI has it as an LTI as well: no sign the mapping is wrong
     figures = {d.value, printed_figure(d.value, d.unit, d.quote)}
     cells = [parse_figure(c) for field, cs in row.cells.items()
              if field.startswith("lti_") for c in cs]
-    return any(abs(c - f) < 0.5 for c in cells if c is not None for f in figures)
+    # the same printed figure: a table in millions has 0.3 next to 0.6
+    return any(abs(c - f) <= 1e-6 * abs(f) for c in cells if c is not None for f in figures)
 
 
 def chunk_of(page: int, chunks: list[Chunk]) -> int | None:
