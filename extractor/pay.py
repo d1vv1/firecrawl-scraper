@@ -507,7 +507,9 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 and not percent_only(deferred.value, deferred.quote)):
             amount = _amount(deferred)
             if same_cell(r):
-                pass                                # the bonus or LTI figure given twice
+                if cash:                            # the bonus or LTI figure given twice
+                    cash.note += (f"; a deferred part of {amount:,.15g} is the bonus or LTI "
+                                  f"figure given a second time and is not added")
             elif not cash and r.sti_paid.value is not None:
                 pass        # a cash part that is no amount (a percentage, no quote): the
                 #             deferred part alone would pass for the whole bonus
