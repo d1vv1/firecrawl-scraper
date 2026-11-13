@@ -176,7 +176,10 @@ older version.
   figure, bundled components and the LTI form are in `note`, and a stated total that
   differs from the sum of its parts by more than 2% is flagged there. `sti_paid` is the
   whole bonus for the year: where the table splits it into a cash column and a deferred
-  column, code adds the two (method `DERIVED`, both figures and the form in `note`). LTI is two fields,
+  column, code adds the two. Read by the AI, the sum has method `DERIVED` with both figures
+  and the form in `note`; read from the pay table, it keeps the table's method with the two
+  column headers in `note`. A deferred part that the stated total shows to be already in
+  the bonus figure is not added (`pay.deferred_on_top`). LTI is two fields,
   `lti_vested` and `lti_granted`; targets and maximums keep the form the report states
   (`unit`: % of base salary, % of maximum, months of salary, a currency, shares). One not
   stated stays empty: nothing is filled in from the other (`pay.misread_targets` only undoes

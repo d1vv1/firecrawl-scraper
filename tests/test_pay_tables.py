@@ -149,6 +149,21 @@ def test_apply_replaces_the_matched_roles_amounts():
     assert board == facts.roles[2]
 
 
+def test_the_ais_deferred_bonus_is_dropped_only_when_the_table_adds_two_bonus_columns():
+    deferred = _amount(300, "q")
+
+    def applied(**mapping):
+        rows = pt.table_rows(pt.Grid(15, EQUINOR), _map(**mapping))
+        role = _role("CEO", name="Anders Opedal").model_copy(update={"sti_deferred": deferred})
+        return pt.apply(_facts(role), rows, "thousands", "USD", [], set()).roles[0]
+    # one bonus column: it may be the cash part, so the AI's deferred part stays
+    one = applied()
+    assert one.sti_paid.value == 292 and one.sti_deferred == deferred
+    # two bonus columns added up by the table: the deferred part is in the sum already
+    two = applied(sti_paid=[5, 6], lti_granted=[7])
+    assert two.sti_paid.value == 598 and two.sti_deferred.value is None
+
+
 def test_a_role_matched_by_an_earlier_table_is_left_alone():
     rows = pt.table_rows(pt.Grid(15, EQUINOR), _map())
     facts = _facts(_role("CEO", name="Anders Opedal", benefits=1))

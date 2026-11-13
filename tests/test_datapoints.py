@@ -746,10 +746,75 @@ def test_a_bonus_split_into_cash_and_deferred_is_one_bonus():
     assert sti.note.startswith("derived: annual bonus in cash 29,689 + deferred bonus 300,494 "
                                "(deferred into shares); printed 29689 units")
     assert "add up" not in by["total_remuneration"].note        # 443,125 + 330,183
+    assert "the deferred part: printed 300494 units" in sti.note     # its own source is kept
     # only a deferred column: it is the bonus
     only = _role("CEO", sti_deferred=_amount(500, "thousands", "GBP", q))
     sti = {f.data_point: f for f in pay.role_found(_pay([only]), _origin())}["sti_paid"]
     assert sti.value == 500_000 and "no cash part given" in sti.note
+
+
+def _sti(**pay_fields):
+    from extractor import pay
+    return {f.data_point: f for f in pay.role_found(_pay([_role("CEO", **pay_fields)]), _origin())}
+
+
+def test_a_deferred_part_already_in_the_bonus_figure_is_not_added_again():
+    """"Annual bonus 330,183", "of which deferred 300,494": the total fits without it."""
+    q = "Net sales|3|2,326.2"
+    by = _sti(base_salary=_amount(443125, "units", "GBP", q),
+              sti_paid=_amount(330183, "units", "GBP", q),
+              sti_deferred=_amount(300494, "units", "GBP", q),
+              total=_amount(773308, "units", "GBP", q))
+    sti = by["sti_paid"]
+    assert sti.value == 330183 and sti.method != "DERIVED"
+    assert "includes the deferred part of 300,494" in sti.note
+    assert "add up" not in by["total_remuneration"].note
+    # no total to go by, or a total that fits neither reading: added, as the prompt asks
+    assert _sti(sti_paid=_amount(330183, "units", "GBP", q),
+                sti_deferred=_amount(300494, "units", "GBP", q))["sti_paid"].value == 630677
+    by = _sti(base_salary=_amount(443125, "units", "GBP", q),
+              sti_paid=_amount(330183, "units", "GBP", q),
+              sti_deferred=_amount(300494, "units", "GBP", q),
+              total=_amount(2_000_000, "units", "GBP", q))
+    assert by["sti_paid"].value == 630677
+    assert "the parts found add up to 1,073,802" in by["total_remuneration"].note
+
+
+def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
+    q = "Net sales|3|2,326.2"
+    # "50% of the bonus is deferred": a share of the bonus, not money
+    pct = {"value": 50, "unit": None, "currency": None, "includes": None,
+           "quote": "50% of the bonus is deferred into shares", "chunk_id": 0}
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q), sti_deferred=pct)["sti_paid"]
+    assert sti.value == 400_000 and sti.method != "DERIVED"
+    # another currency than the cash part
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q),
+               sti_deferred=_amount(100, "thousands", "USD", q))["sti_paid"]
+    assert sti.value == 400_000 and "another currency" in sti.note
+    # a deferred figure with no quote is in neither the bonus nor the total's parts
+    by = _sti(base_salary=_amount(600, "thousands", "GBP", q),
+              sti_paid=_amount(400, "thousands", "GBP", q),
+              sti_deferred=_amount(100, "thousands", "GBP"),
+              total=_amount(1000, "thousands", "GBP", q))
+    assert by["sti_paid"].value == 400_000 and "add up" not in by["total_remuneration"].note
+
+
+def test_the_total_note_counts_the_deferred_bonus_as_part_of_the_sti():
+    q = "Net sales|3|2,326.2"
+    full = dict(base_salary=_amount(500, quote=q), benefits=_amount(10, quote=q),
+                pension=_amount(50, quote=q), pension_allowance=_amount(20, quote=q),
+                total=_amount(5000, quote=q))
+    # all five parts stated, the bonus in two columns: nothing is missing
+    note = _sti(**full, sti_paid=_amount(100, quote=q),
+                sti_deferred=_amount(200, quote=q))["total_remuneration"].note
+    assert "add up to 880,000" in note and "some parts missing" not in note
+    # the bonus only as a deferred column: still all five parts
+    note = _sti(**full, sti_deferred=_amount(200, quote=q))["total_remuneration"].note
+    assert "add up to 780,000" in note and "some parts missing" not in note
+    # the pension missing: said so
+    note = _sti(**{**full, "pension": _amount()}, sti_paid=_amount(100, quote=q),
+                sti_deferred=_amount(200, quote=q))["total_remuneration"].note
+    assert "some parts missing" in note
 
 
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():

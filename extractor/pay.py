@@ -255,10 +255,39 @@ def with_deferred(cash: Found | None, deferred: Found, how: str | None = None) -
                         "note": f"derived: the annual bonus = the part deferred{form} (no cash "
                                 f"part given); {deferred.note}"})
     return Found(**{**cash.__dict__, "value": cash.value + deferred.value, "method": "DERIVED",
+                    "unit": cash.unit or deferred.unit,
                     "confidence": max(cash.confidence or "C", deferred.confidence or "C",
                                       key="ABC".index),
                     "note": f"derived: annual bonus in cash {cash.value:,.0f} + deferred bonus "
-                            f"{deferred.value:,.0f}{form}; {cash.note}"})
+                            f"{deferred.value:,.0f}{form}; {cash.note}; the deferred part: "
+                            f"{deferred.note}"})
+
+
+def _lti_options(r: RolePay) -> list[tuple[str, float]]:
+    """The LTI figures a stated total can include: the vested one, the granted one or
+    none. A number of instruments is no amount."""
+    ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
+    return [(k, v) for k, v in ltis if v is not None and not (
+        k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
+
+
+def deferred_on_top(r: RolePay) -> bool:
+    """Whether sti_deferred comes on top of sti_paid (two columns, cash and deferred) and
+    is not a part of a sti_paid that is already the whole bonus ("Annual bonus 330,183,
+    of which deferred 300,494"). A deferred part above sti_paid can't be a part of it.
+    Otherwise the stated total decides: not on top only when the total fits the parts
+    without it and doesn't fit with it. With no total to go by it is on top, which is
+    what the prompt asks for."""
+    cash, deferred, total = _amount(r.sti_paid), _amount(r.sti_deferred), _amount(r.total)
+    if cash is None or deferred is None or not total or deferred > cash:
+        return True
+    rest = sum(_amount(getattr(r, p)) for p in PARTS
+               if p != "sti_paid" and getattr(r, p).value is not None)
+
+    def fits(bonus: float) -> bool:
+        return any(abs(rest + bonus + lti - total) <= TOTAL_TOLERANCE * abs(total)
+                   for _, lti in _lti_options(r))
+    return fits(cash + deferred) or not fits(cash)
 
 
 def with_allowance(pension: Found | None, allowance: Found) -> Found:
@@ -432,14 +461,28 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 if d:
                     rows[tgt] = d
         misread_targets(rows)
-        deferred = r.sti_deferred
-        if deferred.value is not None and deferred.quote:
-            rows["sti_paid"] = with_deferred(
-                rows.get("sti_paid"), placed(
-                    "sti_paid", row, _amount(deferred), deferred, origin,
-                    unit=deferred.currency or "", figure=deferred.value,
-                    extra=f"printed {_num(deferred.value)} {deferred.unit or ''}".strip()),
-                deferred.includes)
+        deferred, added = r.sti_deferred, None      # added: the deferred bonus put into sti_paid
+        cash = rows.get("sti_paid")
+        if cash is not None and not isinstance(cash.value, (int, float)):
+            cash = None                             # stated only as a percentage: no amount
+        if (deferred.value is not None and deferred.quote
+                # "50% of the bonus is deferred into shares": a share, not an amount
+                and (deferred.currency or not percent_only(deferred.value, deferred.quote))):
+            amount = _amount(deferred)
+            if cash and cash.unit and deferred.currency and deferred.currency != cash.unit:
+                cash.note += (f"; a deferred part of {amount:,.0f} {deferred.currency} is "
+                              f"stated in another currency and is not added")
+            elif cash and not deferred_on_top(r):
+                cash.note += (f"; includes the deferred part of {amount:,.0f} (the stated "
+                              f"total fits the parts only without adding it)")
+            else:
+                figure = printed_figure(deferred.value, deferred.unit, deferred.quote)
+                rows["sti_paid"] = with_deferred(
+                    cash, placed("sti_paid", row, amount, deferred, origin,
+                                 unit=deferred.currency or "", figure=figure,
+                                 extra=f"printed {_num(figure)} {deferred.unit or ''}".strip()),
+                    deferred.includes)
+                added = amount
         allowance = r.pension_allowance
         if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
                 and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):
@@ -454,7 +497,7 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                     "pension_contribution", row, _amount(allowance), allowance, origin,
                     unit=allowance.currency or "", extra=f"printed {_num(allowance.value)} "
                                                          f"{allowance.unit or ''}".strip()))
-        check_total(r, rows)
+        check_total(r, rows, added)
         for name in ROLE_POINTS[1:]:
             if name in rows:
                 out.append(rows[name])
@@ -542,19 +585,18 @@ def total_roles(rows: list) -> list[str]:
     return found
 
 
-def check_total(r: RolePay, rows: dict[str, Found]) -> None:
+def check_total(r: RolePay, rows: dict[str, Found], deferred: float | None = None) -> None:
     """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
-    LTI figure the total includes is the one that fits: vested, granted or none."""
+    LTI figure the total includes is the one that fits: vested, granted or none.
+    `deferred`: the deferred bonus added to sti_paid (role_found), part of the STI."""
     total = rows.get("total_remuneration")
     if not total or not isinstance(total.value, (int, float)) or not total.value:
         return
-    parts = [_amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None]
-    if r.sti_deferred.value is not None:
-        # the deferred part of the bonus: one part with the cash part, or the bonus itself
-        parts = parts + [_amount(r.sti_deferred)] if r.sti_paid.value is None else             [sum(parts) + _amount(r.sti_deferred)] + [0.0] * (len(parts) - 1)
-    ltis = [("vested", _amount(r.lti_vested)), ("granted", _amount(r.lti_granted)), ("no", 0)]
-    ltis = [(k, v) for k, v in ltis if v is not None and not (
-        k != "no" and getattr(r, f"lti_{k}").form == "number_of_instruments")]
+    amounts = {p: _amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None}
+    if deferred is not None:
+        amounts["sti_paid"] = amounts.get("sti_paid", 0) + deferred
+    parts = list(amounts.values())
+    ltis = _lti_options(r)
     if len(parts) < 2:
         return
     kind, lti = min(ltis, key=lambda kv: abs(sum(parts) + kv[1] - total.value))
