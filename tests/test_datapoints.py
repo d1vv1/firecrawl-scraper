@@ -800,12 +800,12 @@ def test_the_better_fit_of_the_total_decides_a_small_deferred_part():
 def test_the_summed_bonus_note_holds_one_repairable_source():
     """datapoints.repair_quotes reads one "quote not found" source per note: the cash
     part's. The deferred part's is worded differently."""
-    from extractor import datapoints as dp
+    from extractor import datapoints as dp, pay
     sti = _sti(sti_paid=_amount(400, "thousands", "GBP", "Net sales|3|2,326.2"),
                sti_deferred=_amount(100, "thousands", "GBP", "nowhere in the text"))["sti_paid"]
     assert sti.value == 500_000 and "the deferred part: printed 100 thousands" in sti.note
     assert "this quote was not found verbatim" in sti.note
-    assert not dp._NOT_FOUND.search(sti.note)
+    assert not dp._NOT_FOUND.search(sti.note) and pay.SECOND_SOURCE_UNSURE.search(sti.note)
 
 
 def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
@@ -823,6 +823,22 @@ def test_a_deferred_part_that_is_no_amount_in_the_bonus_currency_is_not_added():
     sti = _sti(sti_paid=_amount(400, "thousands", "USD", q),
                sti_deferred=_amount(100, "thousands", "US$", q))["sti_paid"]
     assert sti.value == 500_000
+    # a spelling that is no known currency is not "another currency"
+    sti = _sti(sti_paid=_amount(400, "thousands", "NOK", q),
+               sti_deferred=_amount(100, "thousands", "kr", q))["sti_paid"]
+    assert sti.value == 500_000
+    # a percentage with a currency is still a percentage
+    sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q), sti_deferred=pct | {
+        "currency": "GBP", "unit": "units"})["sti_paid"]
+    assert sti.value == 400_000
+    # no deferred part: 0. And the one bonus figure given in both fields is one bonus
+    for same in (_amount(0, "thousands", "GBP", q), _amount(400, "thousands", "GBP", q)):
+        sti = _sti(sti_paid=_amount(400, "thousands", "GBP", q), sti_deferred=same)["sti_paid"]
+        assert sti.value == 400_000 and sti.method != "DERIVED"
+    # amounts in millions with decimals: the note keeps them for DER-03
+    sti = _sti(sti_paid=_amount(0.4, "units", "EUR", q),
+               sti_deferred=_amount(0.3, "units", "EUR", q))["sti_paid"]
+    assert "annual bonus in cash 0.4 + deferred bonus 0.3" in sti.note
     # a number of shares: no currency and no unit
     shares = {"value": 12500, "unit": None, "currency": None, "includes": None,
               "quote": "Deferred bonus shares | 12,500", "chunk_id": 0}

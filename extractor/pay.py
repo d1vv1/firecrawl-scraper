@@ -34,7 +34,7 @@ from . import llm
 from .apis import Found
 from .config import CACHE_DIR
 from .extract import full_value_quoted, printed_figure
-from .validate import figure_in_quote, iso_currency, normalize
+from .validate import ISO_4217, figure_in_quote, iso_currency, normalize
 from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
 from .sections import Chunk
 
@@ -250,7 +250,19 @@ def _second_source(note: str) -> str:
     datapoints.repair_quotes reads one `PDF page N: "quote" (quote not found verbatim)`
     per note and would run from the first figure's quote into this one's marker."""
     note = re.sub(r'(PDF page \d+|report text|web page): "', r'\1, quote "', note)
+    note = note.replace("is not in the quote", "is not in that quote")
     return note.replace("(quote not found verbatim)", "(this quote was not found verbatim)")
+
+
+# A second figure's source that could not be checked: the row stays at confidence C.
+SECOND_SOURCE_UNSURE = re.compile("this quote was not found verbatim|is not in that quote")
+
+
+def other_currency(a: str | None, b: str | None) -> bool:
+    """Two currencies known to differ: both ISO codes once normalised ("US$" is "USD").
+    A spelling that is not recognised ("kr", "pounds") is not taken as another currency."""
+    a, b = iso_currency(a or ""), iso_currency(b or "")
+    return a in ISO_4217 and b in ISO_4217 and a != b
 
 
 def with_deferred(cash: Found | None, deferred: Found, how: str | None = None) -> Found:
@@ -266,8 +278,10 @@ def with_deferred(cash: Found | None, deferred: Found, how: str | None = None) -
                     "unit": cash.unit or deferred.unit,
                     "confidence": max(cash.confidence or "C", deferred.confidence or "C",
                                       key="ABC".index),
-                    "note": f"derived: annual bonus in cash {cash.value:,.0f} + deferred bonus "
-                            f"{deferred.value:,.0f}{form}; {cash.note}; the deferred part: "
+                    # .15g: whole amounts as 29,689, a table in millions as 0.4 (DER-03
+                    # adds the two up again from this note)
+                    "note": f"derived: annual bonus in cash {cash.value:,.15g} + deferred bonus "
+                            f"{deferred.value:,.15g}{form}; {cash.note}; the deferred part: "
                             f"{_second_source(deferred.note)}"})
 
 
@@ -468,18 +482,19 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 if d:
                     rows[tgt] = d
         misread_targets(rows)
-        deferred, added = r.sti_deferred, None      # added: the deferred bonus put into sti_paid
+        deferred, added = r.sti_deferred, False     # added: the deferred bonus is in sti_paid
         cash = rows.get("sti_paid")
         if cash is not None and not isinstance(cash.value, (int, float)):
             cash = None                             # stated only as a percentage: no amount
-        if (deferred.value is not None and deferred.quote
+        if (deferred.value and deferred.quote       # a deferred part of 0 or "–" is none
                 # an amount of money: not "50% of the bonus is deferred into shares", and
                 # not a number of shares, which comes with no currency and no unit
-                and (deferred.currency or (deferred.unit and not percent_only(
-                    deferred.value, deferred.quote)))):
+                and (deferred.currency or deferred.unit)
+                and not percent_only(deferred.value, deferred.quote)):
             amount = _amount(deferred)
-            if (cash and cash.unit and deferred.currency
-                    and iso_currency(deferred.currency) != iso_currency(cash.unit)):
+            if cash and amount == cash.value and deferred.quote == r.sti_paid.quote:
+                pass                                # the one bonus figure given twice
+            elif cash and other_currency(deferred.currency, cash.unit):
                 cash.note += (f"; a deferred part of {amount:,.0f} {deferred.currency} is "
                               f"stated in another currency and is not added")
             elif cash and not deferred_on_top(r):
@@ -492,7 +507,7 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                                  unit=deferred.currency or "", figure=figure,
                                  extra=f"printed {_num(figure)} {deferred.unit or ''}".strip()),
                     deferred.includes)
-                added = amount
+                added = True
         allowance = r.pension_allowance
         if (allowance.value is not None and allowance.quote and "pension_contribution" not in rows
                 and not IN_LIEU.search(f"{allowance.quote} {allowance.includes or ''}")):
@@ -595,16 +610,16 @@ def total_roles(rows: list) -> list[str]:
     return found
 
 
-def check_total(r: RolePay, rows: dict[str, Found], deferred: float | None = None) -> None:
+def check_total(r: RolePay, rows: dict[str, Found], deferred_added: bool = False) -> None:
     """Protocol R11: the stated total against base + STI + LTI + benefits + pension. The
     LTI figure the total includes is the one that fits: vested, granted or none.
-    `deferred`: the deferred bonus added to sti_paid (role_found); the STI part is then
-    the sti_paid row as written out."""
+    `deferred_added`: role_found added the deferred bonus to sti_paid; the STI part is
+    then the sti_paid row as written out."""
     total = rows.get("total_remuneration")
     if not total or not isinstance(total.value, (int, float)) or not total.value:
         return
     amounts = {p: _amount(getattr(r, p)) for p in PARTS if getattr(r, p).value is not None}
-    if deferred is not None:
+    if deferred_added:
         amounts["sti_paid"] = rows["sti_paid"].value
     parts = list(amounts.values())
     ltis = _lti_options(r)
