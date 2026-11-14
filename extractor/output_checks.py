@@ -327,12 +327,16 @@ def core_02(r: Row, ctx: Ctx):
     if not q:
         return bad("CORE-02", "no quote in the note")
     if r.data_point in NUMERIC:
-        printed, _ = r.printed
+        printed, mult = r.printed
         if printed is None:
             return bad("CORE-02", "value is not a number")
         # the figure as printed; with no "printed" note, also as a table "(000s)" or "m" prints it
         if figure_in_quote(printed, q, scaled="printed " not in r.note):
             return ok("CORE-02")
+        # the AI named a unit the text doesn't use ("printed 350 thousands" for "£350,000"):
+        # the value kept is the full amount, printed as it is
+        if mult > 1 and r.number is not None and figure_in_quote(r.number, q, scaled=False):
+            return ok("CORE-02", "the full amount is in the quote")
         if printed == 0 and states_none(q):
             return ok("CORE-02", "none, stated in words")
         if OTHERS.search(r.role_row) and _a_difference(printed, q):

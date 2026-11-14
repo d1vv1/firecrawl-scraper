@@ -49,6 +49,14 @@ def test_core_02_value_in_quote():
     assert oc.core_02(wrong, ctx).outcome == "fail"
     dash = _row(data_point="lti_vested", value="0", note='printed 0 units; PDF page 7: "Long-term incentive|—"')
     assert oc.core_02(dash, ctx).outcome == "pass"
+    # the AI named "thousands" but the text prints the full amount (Ceres Power)
+    full = _row(data_point="base_salary", value="350000",
+                note='printed 350 thousands; report text: "Stuart Paynter (CFO) £350,000"')
+    assert oc.core_02(full, ctx).outcome == "pass"
+    # ... and a full amount that is not there still fails (Computacenter: £390,000 read as 130)
+    other = _row(data_point="base_salary", value="130000",
+                 note='printed 130 thousands; report text: "CFO: £390,000 (from 1 September 2025)"')
+    assert oc.core_02(other, ctx).outcome == "fail"
 
 
 def test_core_02_dates_names_and_what_it_skips():
