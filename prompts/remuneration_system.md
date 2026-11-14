@@ -101,6 +101,14 @@ Company level, from the policy or report:
 - shareholding_requirement: the rule that executives must hold company
   shares, e.g. "CEO: shares worth 200% of base salary within 5 years".
   Null if there is no such rule.
+- sti_plan, lti_plan: whether the executives have a short-term incentive
+  (an annual bonus) and a long-term incentive (share, option or
+  performance-share awards over several years). exists: true when the text
+  describes such a plan for them; false ONLY when it says there is none
+  ("The Company does not operate a long-term incentive plan", "Der
+  Vorstand erhält keine variable Vergütung"), with that sentence as the
+  quote; null when the text doesn't say. A plan with no award or payout
+  this year still exists (true).
 
 fiscal_year: the year the pay figures are for, e.g. "2025" or "2024/25".
 

@@ -267,7 +267,9 @@ XBRL, then report, then web). A different value from another source is mentioned
   `#:~:text=` fragment that Chrome, Edge and Safari scroll to.
 - `note` repeats the page and quote (`PDF page 45: "Net sales|3|2,326.2|1,827.3"`), the
   XBRL tag, or why there is no value (`not found in: …`, `not applicable: the company is
-  not listed`, `not collected: market data … is bought`).
+  not listed`, `not applicable: no long-term incentive plan ("<the report's words>")`,
+  `not collected: market data … is bought`). An STI or LTI field is marked "no plan" only
+  when the report says in words that there is none, and that sentence is kept.
 - `method`: `API` (register field), `XBRL` (tagged figure), `PARSE` (read from a filed
   document), `SCRAPE` (read from a web page), `BUY` (market data: not collected).
 - `confidence`: `A` exact (register field or XBRL tag);

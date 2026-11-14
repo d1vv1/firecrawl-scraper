@@ -1323,3 +1323,26 @@ def test_a_c_graded_value_from_the_pay_documents_is_looked_for_again(monkeypatch
                       method="PARSE", confidence="B")], ["Year-end report"]
     by = _no_report_collect(monkeypatch, tmp_path, pay, lambda *a: [undated], fallback)
     assert "revenue" in asked[0] and by["revenue"].value == 6e8
+
+
+def test_a_plan_the_company_says_it_has_not_is_not_applicable():
+    from extractor import pay
+    from extractor.schemas import PlanFact
+    q = "Net sales|3|2,326.2"
+    facts = _pay([_role("CEO", base_salary=_amount(400, quote=q), sti_paid=_amount(50, quote=q))])
+    facts.lti_plan = PlanFact(exists=False, quote="The Company does not operate a long-term incentive plan.",
+                              chunk_id=0)
+    rows = {r.data_point: r for r in pay.role_found(facts, _origin())}
+    for k in pay.LTI_POINTS:
+        assert rows[k].note.startswith("not applicable: no long-term incentive plan")
+        assert "does not operate" in rows[k].note
+    assert rows["sti_paid"].value == 50_000                       # the bonus stays
+    assert rows["sti_target"].note.startswith("not found")        # an STI plan exists: not found
+    # a policy that describes a plan outweighs a report that says there is none
+    policy = facts.model_copy(update={"lti_plan": PlanFact(exists=True, quote="LTIP awards", chunk_id=0)})
+    assert pay.plans_absent(facts, policy) == {}
+    assert pay.plans_absent(facts) == {"lti": "The Company does not operate a long-term incentive plan."}
+    # no word either way, or "false" with no quote: nothing is concluded
+    assert pay.plans_absent(_pay([])) == {}
+    facts.lti_plan = PlanFact(exists=False, quote=None, chunk_id=None)
+    assert pay.plans_absent(facts) == {}

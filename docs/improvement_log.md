@@ -569,3 +569,44 @@ Where the real gaps are:
   - the version 2 re-run of all companies;
   - asking the AI, with a quote, whether a company has an LTI or STI plan at all.
 - **Later:** a share-price feed for share price and size band, missing for half the companies.
+
+### 14 November 2026: the version 3 re-run
+
+All three free steps above are done, and the plan question was added (item 44). Version 3 then re-ran every company whose results are on this machine: **289 of the 564**, in 9 hours, using **401 Firecrawl credits**. The other 278, mostly DACH sets 1 and 3, have their caches on other machines and are still on version 1.
+
+#### 44. The AI is asked whether the executives have an STI or LTI plan
+- The pay questions now also ask whether the company has a short-term and a long-term incentive plan for its executives.
+- A plan is marked absent only when the report says so in words, and that sentence is kept as the quote, for example AEP Plantations: "No long-term incentive of the Company applies." The plan's fields are then `not applicable: no long-term incentive plan ("…")`, not "not found".
+- When the report says nothing, the fields stay "not found". FastPartner, for one, was not marked.
+- In this run, 498 fields at 40 companies were marked as having no plan.
+
+#### 45. The dashboard leaves out fields that were not asked for
+- Values noted `not collected` are fields the tracker's `run_required` never asked for (company data only, or pay only). The dashboard now counts them as not applicable, not as not found.
+
+#### 46. A full amount in the quote passes CORE-02
+- Sometimes the AI says a figure is in thousands when the text prints the full amount: Ceres Power's "£350,000" came back as 350 thousands. The stored value, 350,000, was right, but CORE-02 looked only for 350.
+- CORE-02 now also passes when the stored full amount is in the quote. A different amount still fails: Computacenter's "£390,000" read as 130 thousands.
+
+#### Results
+
+| | Before (12 Nov) | After (14 Nov) |
+|---|---|---|
+| Found, all 564 companies | 56.0% | **70.4%** |
+| Found, the 289 re-run | 59.8% | **71.9%** |
+| Found, the 278 not re-run (scope fix only) | 52.3% | 68.8% |
+| Checks passing | 98.0% | 98.3% |
+| Failed checks | 2,959 | 2,515 |
+| CORE-03 fails (quote not in the source) | 941 | 842 |
+| CORE-02 fails (value not read off its quote) | 337 | 343 |
+
+- **Most of the gain is the scope fix.** The 278 companies that were not re-run went from 52.3% to 68.8% with no new data.
+- **What version 3 added, at the 289 re-run companies:**
+  - 523 more values found;
+  - 417 fewer partial values (12,906 → 13,429 found, 642 → 225 partial);
+  - company-data gaps down from 4,105 to 2,124, and pay gaps from 3,941 to 2,909.
+- **CORE-02 changed by six.** 163 new fails and 125 old ones gone. The new fails sampled are mostly real misreads the check now catches, such as a percentage read as an amount, or a sum of parts that doesn't match the stated total.
+- **Ten companies kept their old pay rows,** because the new run found under half as many values: ABB, Addex, Alkemy, Basler Kantonalbank, Calida, Chesnara, Contango, Ostasiatiske, Pittler and Sino-German United. They are worth a look.
+
+**Next:**
+- re-run the other 278 on the machines that hold their caches, then merge them in with `python -m extractor.combine`;
+- a share-price feed.
