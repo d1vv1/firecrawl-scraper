@@ -356,13 +356,16 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
 
 
 def from_tables(name: str, facts: RemunerationFacts, pdf: Path | None, chunks: list[Chunk],
-                page_text: dict[int, str]) -> RemunerationFacts:
+                page_text: dict[int, str], pages_from: list[Chunk] | None = None
+                ) -> RemunerationFacts:
     """The pay AI call's facts with the amounts of every role found in a checked table
-    row replaced by the table's figures. Unchanged without a PDF or a usable table."""
+    row replaced by the table's figures. Unchanged without a PDF or a usable table.
+    `pages_from`: the chunks whose pages are looked at for pay tables (the remuneration
+    pick, when `chunks` is a whole annual report); default: `chunks`."""
     from .pay import table_pages
     if not ENABLED or not pdf or not Path(pdf).exists():
         return facts
-    pages = table_pages(chunks, page_text, MAX_TABLE_PAGES)
+    pages = table_pages(pages_from or chunks, page_text, MAX_TABLE_PAGES)
     if not pages:
         return facts
     from .datapoints import fiscal_end_year

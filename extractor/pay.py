@@ -35,7 +35,8 @@ from .apis import Found
 from .config import CACHE_DIR
 from .extract import full_value_quoted, printed_figure
 from .validate import figure_in_quote, normalize
-from .schemas import LtiAmount, PayAmount, PayTarget, RemunerationFacts, RolePay
+from .schemas import (LtiAmount, Opportunities, PayAmount, PayTarget, RemunerationFacts,
+                      RolePay)
 from .sections import Chunk
 
 log = logging.getLogger(__name__)
@@ -74,7 +75,13 @@ TARGET_UNIT = {"pct_of_base": "% of base salary", "pct_of_max": "% of maximum",
                "months_of_salary": "months of salary", "number_of_shares": "shares", "other": ""}
 PARTS = ("base_salary", "sti_paid", "benefits", "pension", "pension_allowance")  # + one LTI
 TOTAL_TOLERANCE = 0.02                       # protocol: a difference over 2% is noted
-PAY_WORDS = 12_000                           # words of a pay document sent to the AI
+# What the AI reads of a pay document: all of it up to PAY_WORDS (a remuneration report,
+# or the annual report whose section it is). Until version 4 it read a keyword pick of
+# PAY_PICK_WORDS: on 40 companies with pay gaps the whole document gave 443 amounts with a
+# verified quote against 394. The pick still chooses the pay-table pages, and is what the
+# AI reads when its answer about the whole document runs out of length.
+PAY_WORDS = int(os.getenv("PAY_WORDS", "150000"))
+PAY_PICK_WORDS = 12_000
 MAX_IMAGE_PAGES = 4                          # pay-table pages shown as images, at most
 # Off by default: on Equinor's table alone the image gave 5 of 5 fully right answers, but
 # in full runs of the 10-company set the golden pay match moved 119 -> 121 -> 119 -> 109
@@ -154,6 +161,70 @@ def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
                                 "model": llm.model_name(), "facts": facts.model_dump()},
                                ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
+
+
+def ask_opportunities(name: str, url: str, chunks: list[Chunk], roles: list[str], what: str,
+                      cache_key: str) -> Opportunities:
+    """The second, narrow question about a pay document: only the STI and LTI targets and
+    maximums, for the roles the first answer found, and whether the plans exist. Asked on
+    its own, the AI finds about twice the targets it finds among the fifteen fields per
+    role of the main question (40 companies: 140 against 71, 136 of them quoted exactly).
+    Cached by the document's chunks, the roles and the prompt."""
+    path = CACHE_DIR / f"{cache_key}_opportunity_llm.json"
+    ids = [c.id for c in chunks]
+    prompt = llm.load_prompt("opportunity_system")
+    if path.exists():
+        saved = json.loads(path.read_text(encoding="utf-8"))
+        if (saved.get("chunk_ids") == ids and saved.get("prompt") == prompt
+                and saved.get("roles") == roles):
+            return Opportunities.model_validate(saved["facts"])
+    body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
+    user = (f"Company legal name: {name}\nSource: {url}\n\nExecutive roles disclosed: "
+            f"{'; '.join(roles)}\n\nExcerpts from {what} (tables are in markdown):\n\n{body}")
+    facts = llm.call_llm(prompt, user, Opportunities)
+    CACHE_DIR.mkdir(exist_ok=True)
+    path.write_text(json.dumps({"chunk_ids": ids, "prompt": prompt, "roles": roles,
+                                "model": llm.model_name(), "facts": facts.model_dump()},
+                               ensure_ascii=False, indent=1), encoding="utf-8")
+    return facts
+
+
+ALL_EXECUTIVES = "all executives"
+# A role that is someone's past office ("Former Board of Management member", Volkswagen's
+# pensioners): today's rule for all executives is not theirs.
+FORMER_ROLE = re.compile(r"\b(former|ex|ehemalig\w*|früher\w*|tidigare|tidligere|entinen|"
+                         r"anciens?|anciennes?)\b", re.I)
+
+
+def executive_titles(facts: RemunerationFacts) -> list[str]:
+    """The executive roles of an answer as the output names them (role_names)."""
+    roles = [r for r in facts.roles if r.role_title]
+    return [n for r, n in zip(roles, role_names(roles)) if r.executive]
+
+
+def apply_opportunities(facts: RemunerationFacts, opp: Opportunities) -> int:
+    """Fill the targets and maximums the main answer left empty from the narrow one: the
+    entry for the role itself, else the rule stated for all executives (not for a former
+    executive). A figure the main answer has stays. Of the two plan answers, one that says a plan exists wins; else the
+    one that says anything. Returns the number of fields filled."""
+    by = {_norm_title(o.applies_to): o for o in opp.items}
+    general = by.get(_norm_title(ALL_EXECUTIVES))
+    roles = [r for r in facts.roles if r.role_title]
+    n = 0
+    for r, title in zip(roles, role_names(roles)):
+        if not r.executive:
+            continue
+        for src in (by.get(_norm_title(title)), None if FORMER_ROLE.search(title) else general):
+            for k in TARGETS:
+                t = getattr(src, k) if src else None
+                if t and t.value is not None and t.quote and getattr(r, k).value is None:
+                    setattr(r, k, t)
+                    n += 1
+    for kind in ("sti_plan", "lti_plan"):
+        mine, other = getattr(facts, kind), getattr(opp, kind)
+        if not mine.exists and (other.exists or (mine.exists is None and other.exists is not None)):
+            setattr(facts, kind, other)
+    return n
 
 
 def _num(v: float) -> str:
@@ -326,12 +397,18 @@ LTI_POINTS = ("lti_vested", "lti_granted", "lti_target", "lti_max")
 def plans_absent(*answers: RemunerationFacts | None) -> dict[str, str]:
     """{"sti" / "lti": the quote} for an incentive plan the documents say the executives
     don't have. Only on the text's own word ("does not operate a long-term incentive
-    plan"), and not when any document read describes such a plan."""
+    plan"), and not when any document read describes such a plan, or gives an executive
+    an amount, a target or a maximum of that kind (Wasgau: "the system sets no target
+    remuneration" is not "no bonus")."""
     out = {}
-    for kind in ("sti", "lti"):
+    for kind, points in (("sti", ("sti_paid", "sti_target", "sti_max")),
+                         ("lti", ("lti_vested", "lti_granted", "lti_target", "lti_max"))):
         plans = [getattr(a, f"{kind}_plan") for a in answers if a is not None]
         if any(p.exists for p in plans):
             continue
+        if any(getattr(r, k).value for a in answers if a is not None
+               for r in a.roles if r.executive for k in points):
+            continue        # a bonus paid or a target stated: whatever the sentence says
         quote = next((p.quote for p in plans if p.exists is False and p.quote), None)
         if quote:
             out[kind] = quote

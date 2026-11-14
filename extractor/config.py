@@ -25,7 +25,10 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 # 3: 13 Nov 2026, the AI is asked whether the executives have an STI or LTI plan; a pay
 #    table's "Total" line and a group role read twice are left out; company data from the
 #    pay documents when no annual report was read.
-SCRAPER_VERSION = 3
+# 4: 14 Nov 2026, the AI reads the whole pay document (not a 12,000-word pick of it), and
+#    is asked a second, narrow question about the STI and LTI targets and maximums only
+#    (pay.PAY_WORDS, pay.ask_opportunities).
+SCRAPER_VERSION = 4
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000

@@ -296,6 +296,22 @@ class RemunerationFacts(BaseModel):
     lti_plan: PlanFact = NO_PLAN
 
 
+class Opportunity(BaseModel):
+    """The STI and LTI opportunity of one role, or of all executives (pay.ask_opportunities)."""
+    applies_to: str                 # a role title from the list given, or "all executives"
+    sti_target: PayTarget
+    sti_max: PayTarget
+    lti_target: PayTarget
+    lti_max: PayTarget
+
+
+class Opportunities(BaseModel):
+    """A pay document's answer to the one question of targets and maximums."""
+    items: list[Opportunity]
+    sti_plan: PlanFact
+    lti_plan: PlanFact
+
+
 class SectorPick(BaseModel):
     """The industry class for a business description (sector.py)."""
     code: Optional[str]             # a code from the list given; null if the text is too vague

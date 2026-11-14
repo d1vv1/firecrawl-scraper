@@ -130,3 +130,28 @@ def test_the_annual_reports_listing_page_is_opened_with_the_fetch_reserve():
     fc = Capped(maps=[[listing]] * 5, scrape_links=[pdf])
     r = rf.find_report("https://www.edisunpower.com", fc, country="SE", company_name="Edisun Power Europe AG")
     assert r.url == pdf and fc.calls[-1] == f"scrape:{listing}"
+
+
+def test_no_controlling_owner_means_no_owner_to_name():
+    missing = "not found in: GLEIF, Annual report (PDF)"
+    rows = [_row("a", "controlling_owner", "none", note="no shareholder with 20% of the votes"),
+            _row("a", "controlling_owner_name", "", note=missing)]
+    dp.refresh(rows)
+    assert rows[1]["note"] == dp.NO_CONTROLLING_OWNER
+    # an owner of some kind, or none read: the name is still missing
+    for owner in ("family", ""):
+        rows = [_row("a", "controlling_owner", owner, note="" if owner else missing),
+                _row("a", "controlling_owner_name", "", note=missing)]
+        dp.refresh(rows)
+        assert rows[1]["note"] == missing
+
+
+def test_combine_puts_every_company_under_the_current_rules(tmp_path):
+    into = tmp_path / "all.csv"
+    _write(into, [_row("a", "controlling_owner", "none"),
+                  _row("a", "controlling_owner_name", "", note="not found in: GLEIF"),
+                  _row("b", "revenue", "7")], dp.COLUMNS)
+    combine.combine([], into)                   # no run: only the rules
+    rows = _read(into)
+    assert [r["company_id"] for r in rows] == ["a", "a", "b"]
+    assert rows[1]["note"] == dp.NO_CONTROLLING_OWNER
