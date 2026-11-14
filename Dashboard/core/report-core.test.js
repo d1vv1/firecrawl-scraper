@@ -155,4 +155,17 @@ if (data.delivery && data.delivery.companies) test("delivery from report.json: f
   assert.strictEqual(x.discovery.rows.length, data.delivery.discovery.length);
 });
 
+test("version filter: one version, older than current, none recorded", () => {
+  const rec = (sv, s) => ({s: s || "T", c: "SE", o: "A", ck: "A", id: "a", g: "company", r: "", p: 0, k: "x", m: "x", f: "C01", d: "x", v: "1", u: "", st: "found", sv: sv});
+  const M = C.createModel(Object.assign({}, data, {meta: Object.assign({}, data.meta, {scraperVersion: "2", versions: ["0", "1", "2", ""]}),
+    values: [rec("2"), rec("1"), rec("0"), rec(""), rec(undefined, "I")]}));
+  const f = (version) => C.filterValues(M.recs, Object.assign({}, C.EMPTY_FILTERS, {version}), C.currentVersion(M)).map((v) => v.sv);
+  assert.deepStrictEqual(f("1"), ["1"]);
+  assert.deepStrictEqual(f("old"), ["1", "0", ""]);            // imported values are never "to re-run"
+  assert.deepStrictEqual(f("none"), ["", undefined]);
+  assert.strictEqual(f("").length, 5);
+  assert.deepStrictEqual(C.versionOptions(M).map((o) => o[0]), ["", "old", "2", "1", "0", "none"]);
+  assert.ok(C.anyFilter(Object.assign({}, C.EMPTY_FILTERS, {version: "2"})));
+  assert.ok(C.filterText(Object.assign({}, C.EMPTY_FILTERS, {version: "old"}), M).includes("older than v2"));
+});
 console.log(`\n${n} tests passed`);

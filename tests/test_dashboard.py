@@ -101,3 +101,28 @@ def test_several_runs_show_as_one_with_their_saved_checks(tmp_path, monkeypatch)
     assert m["checksPct"] == first["meta"]["checksPct"]   # same values, same saved outcomes
     by = {(v["id"], v["d"]): v for v in data["values"]}
     assert by[("T2", "headcount")]["sc"] == "H" and by[("T1", "headcount")]["sc"] == "H"
+
+
+def test_scraper_version_on_each_value(tmp_path, monkeypatch):
+    rows = [dict(r, scraper_version=v) for r, v in zip(ROWS, ["2", "1", "1", "0", "2"])]
+    monkeypatch.setitem(globals(), "COLUMNS", COLUMNS + ["scraper_version"])
+    data, _ = _build(tmp_path, monkeypatch, rows)
+    assert [v["sv"] for v in data["values"]] == ["2", "1", "1", "0", "2"]
+    assert data["meta"]["versions"] == ["0", "1", "2"]
+    assert data["meta"]["scraperVersion"] == str(dashboard.SCRAPER_VERSION)
+
+
+def test_rerender_fills_versions_from_the_run_csv(tmp_path, monkeypatch):
+    data, _ = _build(tmp_path, monkeypatch)                 # CSV without scraper_version
+    for v in data["values"]:
+        v.pop("sv", None)
+    rows = [dict(r, scraper_version="1") for r in ROWS]
+    monkeypatch.setitem(globals(), "COLUMNS", COLUMNS + ["scraper_version"])
+    _csv(tmp_path / "run_datapoints.csv", rows)
+    dashboard.backfill_versions(data, tmp_path)
+    assert {v["sv"] for v in data["values"]} == {"1"} and data["meta"]["versions"] == ["1"]
+    data["values"][0]["id"] = "other"
+    for v in data["values"]:
+        v.pop("sv")
+    dashboard.backfill_versions(data, tmp_path)             # rows no longer line up: left alone
+    assert all("sv" not in v for v in data["values"])

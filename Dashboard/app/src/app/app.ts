@@ -79,7 +79,7 @@ export class App implements AfterViewInit {
     this.r.version();
     return this.r.loaded() ? this.r.model.recs.filter((v) => v.s === 'I').length : 0;
   }
-  on(key: 'country' | 'source' | 'dtype' | 'cat' | 'company' | 'status' | 'fill', ev: Event) {
+  on(key: 'country' | 'source' | 'dtype' | 'cat' | 'company' | 'status' | 'fill' | 'version', ev: Event) {
     this.r.setFilter(key, (ev.target as HTMLSelectElement).value);
   }
 }

@@ -3,12 +3,15 @@ export interface Value {
   s: 'T' | 'I'; c: string; o: string; ck: string; id: string; g: string; r: string; p: 0 | 1;
   k: string; m: string; f: string; d: string; v: string; u: string; st: string;
   pe?: string; me?: string; so?: string; ep?: string; nt?: string; sc?: string; sp?: number; gr?: [number, string, number][];
+  /** scraper version that extracted it ("0" before versioning, "" when not recorded) */
+  sv?: string;
 }
 export interface ReportData {
   meta: { tracker: string; asOf: string; built: string; rows: number; filled: number; dataPoints: number;
           companyIds: number; companies: number; duplicates: { lei: string; ids: string[] }[];
           thresholds: { pass: number; review: number }; target: number;
-          countries?: string[]; checksPct?: number; foundPct?: number };
+          countries?: string[]; checksPct?: number; foundPct?: number;
+          scraperVersion?: string; versions?: string[] };
   gates: Record<string, [string, string]>; gateIds: string[]; reasons: string[]; values: Value[];
   baseline: { checksPct: number; foundPct: number; label: string };
   fieldList?: FieldListItem[];
@@ -19,7 +22,7 @@ export interface FieldListItem { sheet: string; n: number; d: string; f: string;
   req?: string; sev?: string; fill50?: number; milestone?: string; why?: string }
 export interface HistPoint { label: string; checks: number; found: number; fileFound?: number; n: number | null; groups: Record<string, number> | null }
 export interface Model { data: ReportData; recs: Value[]; hist: HistPoint[]; histBase: number; impCount: number; fidToDp: Record<string, string[]>; dpMeta: Record<string, any> }
-export interface Filters { country: string; source: string; dtype: string; cat: string; company: string; status: string; fill: string }
+export interface Filters { country: string; source: string; dtype: string; cat: string; company: string; status: string; fill: string; version: string }
 export interface Kpi { key: string; v: string | number; l: string; cls: string; d: string }
 
 export const PAL: string[];
@@ -38,7 +41,7 @@ export function num(s: any): number | null;
 export function companyKey(v: Value): string;
 export function createModel(data: ReportData): Model;
 export function resetModel(model: Model): void;
-export function filterValues(recs: Value[], f: Filters): Value[];
+export function filterValues(recs: Value[], f: Filters, cur?: number): Value[];
 export function filterOptions(model: Model): { countries: string[]; categories: string[]; companies: { key: string; label: string }[]; statuses: { key: string; label: string }[] };
 export function anyFilter(f: Filters): boolean;
 export function statusCounts(vs: Value[]): Record<string, number>;
@@ -76,6 +79,10 @@ export function toCSV(header: string[], rows: any[][], bom?: boolean): string;
 export function rangesCSV(res: any): string;
 export function metricsCSV(ms: any[]): string;
 export const FILL_OPTIONS: [string, string][];
+/** Version filter options: all, older than the current scraper version, each version, none recorded. */
+export function versionOptions(model: Model): [string, string][];
+/** meta.scraperVersion as a number (0 when absent). */
+export function currentVersion(model: Model): number;
 export const SRC_GROUPS: [string, string][];
 export const EXPORT_DEFAULTS: { summary: boolean; sources: boolean; coverage: boolean; notFound: boolean; values: string; compact: boolean; notes: boolean; maxValues: number };
 export function sourceGroup(so: string | undefined): '' | 'annual' | 'rem' | 'other';

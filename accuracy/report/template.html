@@ -81,6 +81,7 @@
   <div class="slicer"><h4>Company</h4><select id="fCompany"></select></div>
   <div class="slicer"><h4>Score status</h4><select id="fStatus"></select></div>
   <div class="slicer"><h4>Values</h4><select id="fFill"></select></div>
+  <div class="slicer"><h4>Version</h4><select id="fVersion"></select></div>
   <div><button class="linkbtn" id="fClear">Clear filters</button></div>
 </aside>
 <main>
@@ -429,7 +430,7 @@
   var pending = null;
   var esc = G.esc, fmt = C.fmt;
   function $(id){ return document.getElementById(id); }
-  function view(){ return C.filterValues(M.recs, F); }
+  function view(){ return C.filterValues(M.recs, F, C.currentVersion(M)); }
   function rows(html, cols, empty){ return html.join("") || '<tr><td colspan="'+cols+'">'+(empty||"No data for this selection.")+'</td></tr>'; }
   function chip(sc, name){ return '<span class="chip '+(sc||(name==="Empty"?"E":"X"))+'">'+esc(name)+'</span>'; }
   function dataUrl(text){ return "data:text/csv;charset=utf-8," + encodeURIComponent(text); }
@@ -862,6 +863,7 @@
     fillSelect($("fCompany"), [["","All companies"]].concat(o.companies.map(function(c){ return [c.key,c.label]; })), F.company);
     fillSelect($("fStatus"), [["","All statuses"]].concat(o.statuses.map(function(s){ return [s.key,s.label]; })), F.status);
     fillSelect($("fFill"), C.FILL_OPTIONS, F.fill);
+    fillSelect($("fVersion"), C.versionOptions(M), F.version);
     $("fSource").value = F.source; $("fType").value = F.dtype;
   }
   // ---- Delivery (SPEC 6.4): stand-up, throughput, discovery queue, exceptions, pipeline health ----
@@ -1033,7 +1035,7 @@
   function setFilter(k, v){ F[k] = v; refresh(); }
 
   document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", function(){ show(t.getAttribute("data-p")); }); });
-  [["fCountry","country"],["fSource","source"],["fType","dtype"],["fCat","cat"],["fCompany","company"],["fStatus","status"],["fFill","fill"]].forEach(function(x){
+  [["fCountry","country"],["fSource","source"],["fType","dtype"],["fCat","cat"],["fCompany","company"],["fStatus","status"],["fFill","fill"],["fVersion","version"]].forEach(function(x){
     $(x[0]).addEventListener("change", function(){ setFilter(x[1], this.value); });
   });
   $("fClear").addEventListener("click", function(){ F = Object.assign({}, C.EMPTY_FILTERS); fillFilters(); refresh(); });
