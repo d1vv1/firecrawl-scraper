@@ -129,6 +129,42 @@ def test_fields_top_up_only_companies_missing_them(tmp_path, monkeypatch, capsys
     assert "c C AB: fields all" in capsys.readouterr().out
 
 
+def test_input_fields_column_limits_each_company(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(dp, "DP_DIR", tmp_path / "dp")
+    monkeypatch.setattr(Company, "result_path", property(lambda self: tmp_path / f"{self.company_id}.json"))
+    monkeypatch.setattr(Company, "error_path", property(lambda self: tmp_path / f"{self.company_id}.err"))
+    (tmp_path / "dp").mkdir()
+    (tmp_path / "dp" / "a.json").write_text(json.dumps([_row("headcount", ""), _row("revenue", "1")]))
+    (tmp_path / "dp" / "b.json").write_text(json.dumps([_row("revenue", "1")]))
+    (tmp_path / "dp" / "d.json").write_text(json.dumps([_row("headcount", "")]))
+    csv = tmp_path / "in.csv"
+    # a: two rows add up; b: has its field (not due); c: headcount is outside Pay Data;
+    # e: never run, "all" within its run_required
+    csv.write_text("""company_id,company_name,country,run_required,fields
+a,A AB,SE,Company and Pay Data,headcount
+a,A AB,SE,Company and Pay Data,revenue
+b,B AB,SE,Company and Pay Data,revenue
+c,C AB,SE,Pay Data,headcount
+d,D AB,SE,Company and Pay Data,pay
+e,E AB,SE,Company Data,all
+""", encoding="utf-8")
+    t = {x.company.company_id: x for x in dp.read_targets(csv)}
+    assert t["a"].input_fields == {"headcount", "revenue"}
+    assert t["e"].input_fields_given and t["e"].input_fields is None
+    assert dp.main([str(csv), "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    assert "a A AB: fields headcount, revenue" in out
+    assert "B AB" not in out.split("Dry run")[-1]
+    assert "1 companies skipped" in out                     # c: headcount is not pay
+    assert "d D AB: fields pay" in out
+    assert "e E AB: fields company" in out                  # all, within run_required
+    bad = tmp_path / "bad.csv"
+    bad.write_text("""company_id,company_name,fields
+x,X,revnue
+""", encoding="utf-8")
+    assert dp.main([str(bad), "--dry-run"]) == 1
+
+
 def test_save_rows_merges_into_the_saved_file(tmp_path, monkeypatch):
     monkeypatch.setattr(dp, "DP_DIR", tmp_path)
     t = dp.Target(Company("x", "X AB", "SE"))
