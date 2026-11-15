@@ -28,7 +28,9 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 # 4: 14 Nov 2026, the AI reads the whole pay document (not a 12,000-word pick of it), and
 #    is asked a second, narrow question about the STI and LTI targets and maximums only
 #    (pay.PAY_WORDS, pay.ask_opportunities).
-SCRAPER_VERSION = 4
+# 5: 15 Nov 2026, a deferred part of the annual bonus is read with the bonus (PR #4, merged
+#    without a version: of the saved results, only the remaining-UK run has it).
+SCRAPER_VERSION = 5
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000

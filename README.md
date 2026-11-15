@@ -421,6 +421,18 @@ rebuilt from the run (`--no-dashboard` turns this off). You get:
 The dashboard compares each run with the one before it. To rebuild it for any CSV:
 `python -m extractor.dashboard output/nordic_uk_10_datapoints.csv`. More in `Dashboard/README.md`.
 
+**A sheet for checking a run by hand** (`extractor/spot_check.py`):
+
+```bash
+python -m extractor.spot_check output/uk_remaining_datapoints.csv [--share 0.1] [--seed 1] [--skip sti,lti]
+```
+
+It writes `<run>_spot_check.csv`: 10% of the run's companies, drawn from every country in
+turn, a third of them from the companies with the least pay data. Each line is one value
+with its unit, year end, role, the link that opens the source at the page, the quote and
+the checks' status; the reviewer fills in `result` (Correct / Wrong / Missing / Not in
+source). Fields that do not apply or were not asked for are left out.
+
 **Merging runs into one file** (several people, several machines):
 
 ```bash
@@ -436,7 +448,8 @@ scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's
 `_checks.csv` to whoever merges.
 
 The rules applied to saved rows (`datapoints.refresh`: a pay table's Total line, a group
-role read twice, no variable pay, no controlling owner) are applied to every company in
+role read twice, no variable pay, no controlling owner, a pay amount over 50 times the
+role's total because the AI named the wrong unit) are applied to every company in
 the combined file, also those not in the runs. With no run named,
 `python -m extractor.combine --into output/fy2025_runs_datapoints.csv` only does that and
 scores again.

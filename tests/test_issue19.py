@@ -155,3 +155,26 @@ def test_combine_puts_every_company_under_the_current_rules(tmp_path):
     rows = _read(into)
     assert [r["company_id"] for r in rows] == ["a", "a", "b"]
     assert rows[1]["note"] == dp.NO_CONTROLLING_OWNER
+
+
+def test_an_amount_over_50_times_the_roles_total_is_its_printed_figure():
+    def role(sti_note, sti="336000000", total="1327000"):
+        rows = [_row("a", k, v, note=n) for k, v, n in (
+            ("base_salary", "640000", "printed 640 thousands"), ("benefits_value", "30000", "printed 30 thousands"),
+            ("sti_paid", sti, sti_note), ("total_remuneration", total, "printed 1327 thousands"))]
+        for r in rows:
+            r.update(grain="role", role_row="CEO", unit="GBP")
+        return rows
+    rows = role('printed 336000 thousands; report text: "Short-term incentives 2 336"')
+    dp.refresh(rows)
+    assert rows[2]["value"] == "336000" and "printed 336000 units (the AI named thousands" in rows[2]["note"]
+    again = [dict(r) for r in rows]
+    dp.refresh(again)
+    assert again == rows                                    # once only
+    # the figure as printed does not fit the total either, or the total has no two parts under it
+    rows = role('printed 90000000 thousands', sti="90000000000")
+    dp.refresh(rows)
+    assert rows[2]["value"] == "90000000000"
+    rows = role('printed 336000 thousands', total="9000")
+    dp.refresh(rows)
+    assert rows[2]["value"] == "336000000"

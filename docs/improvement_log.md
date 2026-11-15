@@ -669,3 +669,49 @@ Two-thirds of the gaps left after version 3 were pay fields (6,503 of 9,781), an
 - a guard for an amount 1,000 times too large (Caledonia, APG SGA);
 - re-run the other 278 on the machines that hold their caches;
 - a share-price feed.
+
+### 15 November 2026 (evening): the targeted re-runs branch joined to version 4, and the remaining UK companies
+
+The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, failure codes, reports from the CDP bucket, the dashboard's Version filter) was started before versions 3 and 4, so it still ran as version 2. It is now merged with `main` on the branch `reconcile-targeted-reruns`.
+
+#### 54. The two branches are one
+- The code conflicts were two places where both sides added a line (`extractor/dashboard.py`, `tests/test_dashboard.py`); both are kept. 530 tests pass.
+- The combined FY2025 file was not merged as text: git would have mixed two copies line by line. `main`'s file was kept, and the PO's run of the 324 remaining UK companies was added with `python -m extractor.combine`.
+
+#### 55. A pay amount 1,000 times too large is put right
+- **Before:** the AI sometimes named the table's unit for a figure printed in full, or scaled a figure twice. Oxford Biomedica's "£1,029,600" was stored as 1,029,600 thousands, and Caledonia's bonus of 336 (£000) as £336 million.
+- **Now:** when an amount is over 50 times the role's stated total, at least two of the role's other amounts fit under that total, and the figure as printed fits too, the value is the printed figure. The note says "the AI named thousands". It is a saved-row rule, so it reaches every company without a re-run.
+- **Effect:** 13 values at 5 companies (Caledonia Investments, IAG, Oxford Biomedica, RHI Magnesita, Severfield), all read by hand.
+- **Not covered:** an amount that is wrong where the role has no usable total (SED Energy, Lindt's chair), and APG SGA's benefits. They still fail CORE-02 and are graded C.
+
+#### 56. Scraper version 5: the deferred bonus
+- The deferred-bonus change (PR #4) reached `main` on 13 November without a new version, so `--outdated` did not see it. Of the saved results only the remaining-UK run was made with it.
+- `SCRAPER_VERSION` is now 5. The confirmation re-runs from 16 November carry the whole pay document, the targets question and the deferred bonus together.
+
+#### 57. A spot-check sheet for each run
+- `python -m extractor.spot_check output/<run>_datapoints.csv` writes `<run>_spot_check.csv`: 10% of the run's companies, drawn from every country in turn, a third of them from the companies with the least pay data.
+- Each line is one value with its unit, year end, role, the link that opens the source at the page, the quote, and the checks' status. The reviewer fills in Correct / Wrong / Missing / Not in source. `--skip sti,lti` leaves fields out.
+- **Example:** the remaining-UK run gives 33 of 324 companies and 1,592 lines.
+
+#### 58. The exceptions list has started
+- `python -m extractor.failures output/fy2025_runs_datapoints.csv` gives every empty value a reason (`output/fy2025_runs_failures.md` and `.csv`): 13,089 missing values.
+- The two large groups:
+  - **5,754 at 612 companies: a pay field where only the annual report was read.** The fix is a remuneration report link, from the CDP bucket or the tracker, and a re-run of the pay fields. This is the main target for the targeted re-runs.
+  - **6,395 at 613 companies: not stated in the documents read.**
+- Smaller groups with a clear fix: no annual report found (23 companies), values from an older report (30), Firecrawl credits ran out (10).
+
+#### The combined file now
+
+| | 564 companies (before) | 888 companies (after) |
+|---|---|---|
+| Found | 71.8% | **72.9%** |
+| Found, the 324 UK companies added | | 75.5% |
+| Found, leaving out the STI and LTI fields | 80.4% | 82.0% |
+| Checks passing | 98.2% | 98.5% |
+
+- The STI and LTI fields are 6 of the 7 fields most often missing. The PO's spot-check guide says pay data "only goes up to compensation, so no LTI/STI values are expected"; whether those fields are in scope for delivery is to be agreed with the client. The line above shows what the number is without them; the dashboard still counts them.
+
+**Next:**
+- targeted re-runs of the pay fields where only the annual report was read;
+- the draft run of Benelux and Southern Europe and the confirmation re-run of the rest of UK and DACH, both as version 5;
+- agree the list of required fields.

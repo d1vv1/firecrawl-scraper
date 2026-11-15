@@ -2397,6 +2397,38 @@ def no_variable_pay(mine: dict[str, dict]) -> None:
             r["note"] = NO_VARIABLE_PAY
 
 
+_NAMED_UNIT = re.compile(r"printed (-?[\d.]+) (thousands|millions|billions)")
+WRONG_UNIT = "units (the AI named {unit}: over 50 times the role's total pay)"
+
+
+def unit_named_wrongly(mine: dict[str, dict]) -> None:
+    """A pay amount 1,000 times too large: the AI named the table's unit ("thousands") for a
+    figure printed in full (Oxford Biomedica's "£1,029,600" as 1,029,600 thousands), or
+    scaled a figure it had already scaled (Caledonia's £000 "336" as 336,000 thousands).
+    Only when the role's stated total says so: the amount is over 50 times the total, at
+    least two other amounts fit under the total, and the printed figure fits too. Then the
+    value is the printed figure. `mine`: a role's rows by data point."""
+    def amount(r):
+        try:
+            return float(r["value"]) if r and r["value"] and re.fullmatch(r"[A-Z]{3}", r["unit"]) else None
+        except ValueError:
+            return None
+    total = amount(mine.get("total_remuneration"))
+    parts = {k: amount(mine.get(k)) for k in pay.AMOUNTS if k != "total_remuneration"}
+    if not total or total <= 0 or sum(1 for v in parts.values() if v and 0 < v <= 1.5 * total) < 2:
+        return
+    scale = {"thousands": 1e3, "millions": 1e6, "billions": 1e9}
+    for k, v in parts.items():
+        m = _NAMED_UNIT.search(mine[k]["note"]) if v and v > 50 * total else None
+        if not m:
+            continue
+        printed = float(m.group(1))
+        if abs(printed * scale[m.group(2)] - v) <= 1e-6 * v and 0 < printed <= 5 * total:
+            mine[k]["value"] = pay._num(printed)
+            mine[k]["note"] = mine[k]["note"].replace(
+                m.group(0), f"printed {m.group(1)} {WRONG_UNIT.format(unit=m.group(2))}", 1)
+
+
 NO_CONTROLLING_OWNER = "not applicable: no controlling owner"
 
 
@@ -2443,8 +2475,9 @@ def refresh(rows: list[dict]) -> list[dict]:
             band["note"] = why
     names = [f.name for f in fields(Found)]
     for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
-        no_variable_pay({r["data_point"]: r for r in rows
-                         if r["grain"] == "role" and r["role_row"] == role})
+        whole = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role}
+        unit_named_wrongly(whole)
+        no_variable_pay(whole)
         mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
                 and r["data_point"] in pay.TARGETS}
         have = {k: Found(**{n: r[n] for n in names if n in r}) for k, r in mine.items() if r["value"]}
