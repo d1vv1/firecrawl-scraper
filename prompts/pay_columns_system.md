@@ -36,6 +36,8 @@ each row. A column goes into ONE field at most. Empty list if no column.
 - sti_paid: the short-term incentive / annual bonus / annual variable pay
   for the year ("AVP", "STI", "Annual cash bonus", "Bonus"). When the table
   has both a bonus paid and a bonus expensed or accrued, take the paid one.
+  When the year's bonus is split into a cash column and a deferred column
+  ("Annual bonus – cash", "Annual bonus – deferred"), give both.
 - lti_vested: long-term incentive vested, paid out, released or realised in
   the year. lti_granted: long-term incentive granted or awarded in the
   year, at grant value. A column labelled only "LTI" or "LTIP" goes to

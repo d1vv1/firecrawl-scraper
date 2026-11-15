@@ -31,6 +31,7 @@ from pathlib import Path
 
 from . import llm
 from .config import CACHE_DIR
+from .extract import printed_figure
 from .schemas import ColumnMap, LtiAmount, PayAmount, RemunerationFacts, RolePay
 from .sections import Chunk
 from .validate import quote_in_text
@@ -308,6 +309,22 @@ def row_quote(label: str, cells: list[str], page_text: str) -> str:
     return " | ".join([label] + cells)
 
 
+def deferred_elsewhere(role: RolePay, row: TableRow) -> bool:
+    """The AI read a deferred part of the bonus, and the table has that figure as an LTI:
+    the column mapper took the "Annual bonus – deferred" column, in shares, for a
+    long-term incentive. (Under sti_paid, with the cash column, it is right.)"""
+    d = role.sti_deferred
+    if not d.value or not d.quote or len(row.cells.get("sti_paid", [])) > 1:
+        return False
+    if d.value in (role.lti_vested.value, role.lti_granted.value):
+        return False        # the AI has it as an LTI as well: no sign the mapping is wrong
+    figures = {d.value, printed_figure(d.value, d.unit, d.quote)}
+    cells = [parse_figure(c) for field, cs in row.cells.items()
+             if field.startswith("lti_") for c in cs]
+    # the same printed figure: a table in millions has 0.3 next to 0.6
+    return any(abs(c - f) <= 1e-6 * abs(f) for c in cells if c is not None for f in figures)
+
+
 def chunk_of(page: int, chunks: list[Chunk]) -> int | None:
     return next((c.id for c in chunks if page in c.pages), None)
 
@@ -324,6 +341,13 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
             roles.append(role)
             continue
         used.add(id(row))
+        if deferred_elsewhere(role, row):
+            # taking the row would report the deferred bonus as an LTI and leave it out
+            # of the bonus: this role keeps the AI's reading
+            log.info("Pay tables: page %d row %s not used: the deferred bonus is mapped as "
+                     "an LTI", row.page, row.label[:40])
+            roles.append(role)
+            continue
         done.add(i)
         cid = chunk_of(row.page, chunks)
         page_text = "\n".join(c.text for c in chunks if row.page in c.pages)
@@ -348,6 +372,12 @@ def apply(facts: RemunerationFacts, rows: list[TableRow], unit, currency: str | 
                 if f not in update:
                     update[f] = LtiAmount(value=None, unit=None, currency=None, form=None,
                                           includes=None, quote=None, chunk_id=None)
+        if "sti_paid" in update and len(row.cells["sti_paid"]) > 1:
+            # the table's bonus columns, cash and deferred, are added up in sti_paid. One
+            # bonus column alone may be the cash part: the AI's deferred part is then kept
+            # (pay.deferred_on_top tells whether it is on top of that column or part of it)
+            update["sti_deferred"] = PayAmount(value=None, unit=None, currency=None,
+                                               includes=None, quote=None, chunk_id=None)
         if "pension" in update and "pension_allowance" not in update:
             update["pension_allowance"] = PayAmount(value=None, unit=None, currency=None,
                                                     includes=None, quote=None, chunk_id=None)
