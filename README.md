@@ -375,6 +375,17 @@ legal words (the kit's slug rules, `extractor/cdp_slug.py`); the file is the one
 folder's `coverage` names for fy2025 (a PDF over an ESEF `.xhtml`). Nothing is written
 to the bucket.
 
+`--bucket-only` runs without Firecrawl: only the companies with a `gs://` link in the
+input run (the others are skipped and listed), from the bucket's files and the official
+APIs. A company with no annual report in the bucket is not searched for one; its pay comes
+from the bucket's remuneration report alone. The website is not searched, so values the
+reports don't state are left empty with the code `WEBSITE_NOT_SEARCHED` (re-run them
+without the flag to search the site). The dry run shows 0 credits.
+
+```bash
+python -m extractor.datapoints data/rerun_nordics_run_companies.csv --bucket-only --dry-run
+```
+
 ### What a run could not find, and why
 
 At the end of every run, each empty value of the companies it processed gets a failure
@@ -390,6 +401,7 @@ company). The console prints the counts. For any CSV:
 | `NO_IDENTIFIER` | only a register gives it, and there is no LEI / register number | add `lei` or `business_id` |
 | `WRONG_YEAR_REPORT` | the report read is older than last year | supply the FY report, `--redo` |
 | `CREDITS_EXHAUSTED`, `DOCUMENT_UNREADABLE`, `NETWORK_ERROR` | the run stopped short | re-run |
+| `WEBSITE_NOT_SEARCHED` | a `--bucket-only` run read only the bucket's reports | re-run without the flag, or add the report to the bucket |
 | `DERIVATION_INPUT_MISSING`, `FX_RATE_MISSING` | a calculated field lacks an input | fix the input field |
 | `STATED_IN_OTHER_FORM` | stated, but e.g. as a % where an amount is asked | review |
 | `REMUNERATION_REPORT_NOT_READ` | a pay field, and only the annual report was read | supply the remuneration report |

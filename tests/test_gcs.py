@@ -59,3 +59,33 @@ def test_gs_link_in_the_input_is_read_like_a_file(tmp_path, monkeypatch):
     monkeypatch.setattr(gcs, "ensure", lambda sources: ["boom"])
     dp.fetch_bucket_files(t)
     assert t.annual_report_url is None and t.company.report_url is None
+
+
+def test_bucket_only_runs_bucket_companies_without_firecrawl(tmp_path, monkeypatch, capsys):
+    from extractor.batch import Company
+    monkeypatch.setattr(gcs, "CACHE", tmp_path / "gcs")
+    monkeypatch.setattr(dp, "DP_DIR", tmp_path / "dp")
+    monkeypatch.setattr(Company, "result_path", property(lambda self: tmp_path / f"{self.company_id}.json"))
+    monkeypatch.setattr(Company, "error_path", property(lambda self: tmp_path / f"{self.company_id}.err"))
+    ar = "gs://b/uploads/nordics/se/listed/a--a/fy2025/Annual Report 2025.pdf"
+    rem = "gs://b/uploads/nordics/se/listed/b--b/fy2025/Remuneration Report 2025.pdf"
+    csv = tmp_path / "in.csv"
+    csv.write_text("company_id,company_name,annual_report_url,remuneration_report_url\n"
+                   f"a,A AB,{ar},\nb,B AB,,{rem}\nc,C AB,,\n", encoding="utf-8")
+    assert dp.main([str(csv), "--dry-run", "--bucket-only"]) == 0
+    out = capsys.readouterr().out
+    assert "1 companies skipped: no report of theirs in the bucket (c)" in out
+    assert "a A AB" in out and "b B AB" in out and "C AB" not in out.split("skipped")[-1]
+    assert "report (no annual report in the bucket: not searched)" in out    # b
+    assert "company documents" not in out and "at most 0 Firecrawl credits" in out
+
+
+def test_bucket_only_gaps_say_the_website_was_not_searched():
+    from extractor.failures import Failure, classify
+    note = "not found in: GLEIF, Annual report (PDF), company website (not searched: bucket only)"
+    row = {"grain": "company", "data_point": "listing_date", "value": "", "note": note}
+    assert classify(row) is Failure.WEBSITE_NOT_SEARCHED
+    row["note"] = "remuneration report not searched: bucket only"
+    assert classify({**row, "grain": "role"}) is Failure.WEBSITE_NOT_SEARCHED
+    row["note"] = "not derived: no share price"
+    assert classify(row) is Failure.DERIVATION_INPUT_MISSING

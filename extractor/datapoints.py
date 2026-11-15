@@ -1736,6 +1736,9 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
 # --- one company ------------------------------------------------------------------------------
 
 NO_CREDITS = "Firecrawl is out of credits"
+# --bucket-only: the reports come from the CDP bucket and Firecrawl is not used, so the
+# company's website is not searched (failures.py reads this as WEBSITE_NOT_SEARCHED)
+BUCKET_ONLY = "not searched: bucket only"
 
 
 def from_apis(t: Target, result: dict | None, lei_record: dict | None
@@ -1884,8 +1887,11 @@ def year_of_report(result: dict, origin: Origin | None, have: list[Found]) -> li
 
 def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS,
             error: str | None = None, flags: set | None = None,
-            meter: dict | None = None, use_apis: bool = True) -> list[Found]:
+            meter: dict | None = None, use_apis: bool = True,
+            bucket_only: bool = False) -> list[Found]:
     """`error`: why the annual-report pipeline has no result (if not in its error file).
+    `bucket_only`: no Firecrawl at all (the documents are the bucket's and the input's
+    local files); the gaps say the website was not searched.
     `flags` gets "no_credits" when Firecrawl refused for lack of credits; `meter`
     gets "credits", the Firecrawl credits spent here. Only the data points of
     `t.fields` are looked for (None: all); the rows of the others are not for saving."""
@@ -1914,7 +1920,8 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     # 1b. the report step found no report of the year, but the input names one (issue 15:
     # Tallink's report step chose an AGM board report; its annual report was in the input)
     supplied = readable(t.annual_report_url)
-    if want_report and supplied and not local_file(supplied) and lacks_report(result):
+    if want_report and supplied and not local_file(supplied) and lacks_report(result) \
+            and not bucket_only:
         pfc = FirecrawlClient(load_settings(), max_credits=1)    # a PDF downloads for free
         found = use_as_report(t, supplied, known_website(result, c.slug), pfc,
                               "annual_report_url in the input")
@@ -1938,6 +1945,10 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     if result and want_report:
         report_label = origin.source if origin else "annual report"
         tried.append(report_label)
+    if bucket_only:
+        docs = False
+        if selection.needs_documents(sel):
+            tried.append(f"company website ({BUCKET_ONLY})")
 
     fc = lib = site = None
     roles: list[Found] = []
@@ -2019,6 +2030,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
             tried += [r for r in read if r not in tried]
             if not roles:
                 roles_why = ("not found in: " + ", ".join(read) if read
+                             else f"remuneration report {BUCKET_ONLY}" if bucket_only
                              else "no remuneration report found")
 
         # 3b. the annual report's route gave no result: the pay step's documents
@@ -2118,8 +2130,15 @@ def process(t: Target, opts: dict) -> dict:
     if t.gcs:
         fetch_bucket_files(t)
     resolve_lei(t)
-    if selection.needs_report(t.fields) and needs_pipeline(c, opts):
-        res = process_company(c, False, opts["pipeline_credits"], qualitative=False)
+    bucket_only = bool(opts.get("bucket_only"))
+    if selection.needs_report(t.fields) and needs_pipeline(c, opts) and bucket_only \
+            and not report_on_disk(t):
+        # no annual report in the bucket: not searched for (that costs credits)
+        error = f"annual report {BUCKET_ONLY}"
+    elif selection.needs_report(t.fields) and needs_pipeline(c, opts):
+        # a report on disk needs no credits; bucket only, a cap of 0 makes sure of it
+        res = process_company(c, False, 0 if bucket_only else opts["pipeline_credits"],
+                              qualitative=False)
         meter["pipeline"] = res.get("credits", 0)
         if res["kind"] == "fatal" and "PaymentRequired" in res.get("error", ""):
             # The free routes (filings, registers, APIs) still work: carry on without
@@ -2134,7 +2153,7 @@ def process(t: Target, opts: dict) -> dict:
     try:
         found = collect(t, docs=opts["docs"] and "no_credits" not in flags,
                         doc_credits=opts["doc_credits"], error=error, flags=flags, meter=meter,
-                        use_apis=opts.get("apis", True))
+                        use_apis=opts.get("apis", True), bucket_only=bucket_only)
     except FATAL as e:
         return {"kind": "fatal", "error": f"{type(e).__name__}: {e}", "credits": spent(meter)}
     except Exception as e:  # noqa: BLE001 - record and continue with the next company
@@ -2218,23 +2237,35 @@ def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
         if needs_pipeline(c, opts):
             # a report supplied on disk needs no search: the report step spends nothing
             # (a bucket file counts: it is downloaded before the report step)
-            local = bool(c.report_url and (local_file(c.report_url) or c.report_url in t.gcs))
-            steps.append(("report step (file given)" if local else "report search",
-                          0 if local else opts["pipeline_credits"]))
+            local = report_on_disk(t)
+            if local:
+                steps.append(("report step (file given)", 0))
+            elif opts.get("bucket_only"):
+                steps.append(("report (no annual report in the bucket: not searched)", 0))
+            else:
+                steps.append(("report search", opts["pipeline_credits"]))
         elif c.result_path.exists():
             steps.append(("report (found before)", 0))
         else:
             steps.append(("report (failed before; --retry-failed searches again)", 0))
         url = readable(t.annual_report_url)
-        if url and not local_file(url) and url not in t.gcs and lacks_report(_saved_result(c)):
+        if url and not local_file(url) and url not in t.gcs and lacks_report(_saved_result(c)) \
+                and not opts.get("bucket_only"):
             steps.append(("annual_report_url as the report", 0 if is_pdf_url(url) else 1))
         steps.append(("report AI pass", 0))
-    docs = opts["docs"] and selection.needs_documents(sel)
+    docs = opts["docs"] and not opts.get("bucket_only") and selection.needs_documents(sel)
     if selection.needs_pay(sel):
         steps.append(("executive pay", 0))
     if docs:
         steps.append(("company documents (pay, fallback)", opts["doc_credits"]))
     return steps
+
+
+def report_on_disk(t: Target) -> bool:
+    """The company's report link is a local file or a bucket file (downloaded before the
+    report step), so the report step needs no search."""
+    url = t.company.report_url
+    return bool(url and (local_file(url) or url in t.gcs))
 
 
 def _saved_result(c: Company) -> dict | None:
@@ -2544,6 +2575,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--ignore-run-required", action="store_true",
                    help="Collect every data point whatever the input's run_required says "
                         "('Pay Data': the pay fields only; 'Company Data': the company fields only)")
+    p.add_argument("--bucket-only", action="store_true",
+                   help="No Firecrawl: only companies with a report in the CDP bucket (a gs:// "
+                        "link in the input) run, from the bucket's files plus the official "
+                        "APIs; their website is not searched (WEBSITE_NOT_SEARCHED)")
     p.add_argument("--dry-run", action="store_true",
                    help="Show each company's steps and worst-case Firecrawl credits; run nothing")
     args = p.parse_args(argv)
@@ -2575,6 +2610,13 @@ def main(argv: list[str] | None = None) -> int:
               f"column) ask for nothing their run_required needs ({', '.join(t.company.company_id for t in nothing[:5])}"
               f"{', ...' if len(nothing) > 5 else ''})")
         targets = [t for t in targets if t not in nothing]
+    if args.bucket_only:
+        outside = [t for t in targets if not t.gcs]
+        if outside:
+            print(f"--bucket-only: {len(outside)} companies skipped: no report of theirs in "
+                  f"the bucket ({', '.join(t.company.company_id for t in outside[:5])}"
+                  f"{', ...' if len(outside) > 5 else ''})")
+            targets = [t for t in targets if t.gcs]
 
     def due(t: Target) -> bool:
         c = t.company
@@ -2591,7 +2633,8 @@ def main(argv: list[str] | None = None) -> int:
           + (f" with scraper version {SCRAPER_VERSION}" if args.outdated else "")
           + (f" with {selection.label(cli_fields)}" if cli_fields is not None else ""))
     opts = {"docs": not args.no_docs, "doc_credits": args.doc_credits, "apis": not args.no_apis,
-            "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed}
+            "pipeline_credits": args.pipeline_credits, "retry_failed": args.retry_failed,
+            "bucket_only": args.bucket_only}
     problems = {t.company.company_id: input_problems(t) for t in todo}
     if args.dry_run:
         dry_run(todo, opts, problems)

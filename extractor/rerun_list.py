@@ -187,15 +187,99 @@ def build(batch: str, queue: Path, out: Path, tracker_path: Path = TRACKER,
     return out_rows
 
 
+# A missing value a re-run can't change: the report states it in another form.
+NOT_RERUN = {"STATED_IN_OTHER_FORM"}
+
+
+def from_region_list(workbook: Path, out: Path, bucket: bool = True) -> list[dict]:
+    """Targeted re-run input for the companies of a region list that have been run: per
+    company, the fields its newest run did not find (region_status), under its run id so
+    the new values merge onto the old ones. A company whose run read an older report than
+    last year's gets "all" (a full re-run, --redo for one saved on this machine)."""
+    from . import failures as fl
+    from . import region_status as rs
+    companies = rs.read_workbook(workbook)
+    runs = rs.load_runs()
+    rmatch = rs.RunMatcher(runs)
+    req = rs.requirements()
+    match = None
+    if bucket:
+        gcs.sync()
+        match = gcs.Matcher(gcs.records())
+    out_rows, seen = [], set()
+    for c in companies:
+        run_id, _ = rmatch(c)
+        if not run_id or run_id in seen:
+            continue
+        seen.add(run_id)
+        rows, _ = runs[run_id]
+        miss = rs.missing_values(rows, req)
+        codes = {m["failure_code"] for m in miss}
+        # the old-report flag sits on fiscal_year, which has a value: not a field to re-run
+        names = sorted({m["data_point"] for m in miss
+                        if m["failure_code"] not in NOT_RERUN | {"WRONG_YEAR_REPORT"}})
+        wrong_year = "WRONG_YEAR_REPORT" in codes
+        if not names and not wrong_year:
+            continue
+        fields = "all" if wrong_year else ",".join(names)
+        selection.parse(fields)
+        value = {r["data_point"]: r["value"] for r in rows if r.get("grain") == "company" and r.get("value")}
+        cid = c["id"].split("\n")[0]
+        rec, how = (match(company_id=cid, name=c["name"], country=c["country_code"], lei=c["lei"])
+                    if match else (None, "bucket not used"))
+        docs = gcs.documents(rec) if rec else {"annual": None, "remuneration": None}
+        website = value.get("website", "")
+        out_rows.append({
+            "company_id": run_id, "company_name": rows[0].get("company_name") or c["name"],
+            "country": c["country_code"],
+            "lei": value.get("lei") or rows[0].get("lei") or c["lei"],
+            "isin": (value.get("isin") or "").split(";")[0].split(",")[0].strip(),
+            "website": website if not website or website.startswith("http") else f"https://{website}",
+            "annual_report_url": docs["annual"] or "", "remuneration_report_url": docs["remuneration"] or "",
+            "run_required": "", "fields": fields,
+            "field_count": "" if fields == "all" else len(fields.split(",")),
+            "buckets": "; ".join(sorted(codes - {"WRONG_YEAR_REPORT"})),
+            "before_run": "run read an older report than FY2025: full re-run (--redo if saved here)"
+                          if wrong_year else "",
+            "tracker_id": cid, "bucket_company_id": rec["company_id"] if rec else "",
+            "bucket_match": (how + ": " + ", ".join(k for k, v in docs.items() if v)) if rec else how,
+        })
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", encoding="utf-8-sig", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS)
+        w.writeheader()
+        w.writerows(out_rows)
+    return out_rows
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m extractor.rerun_list",
-                                description="Targeted re-run input for one batch of the re-run queue")
-    p.add_argument("batch", help="Batch (region) in the queue: Nordics, UK, DACH, Benelux, ...")
+                                description="Targeted re-run input for one batch of the re-run queue, "
+                                            "or for the run companies of a region list")
+    p.add_argument("batch", nargs="?", help="Batch (region) in the queue: Nordics, UK, DACH, Benelux, ...")
+    p.add_argument("--region-list", type=Path,
+                   help="A region's company workbook (Nordics_Companies_Reports_FY2025.xlsx): re-run "
+                        "the fields its run companies did not find")
     p.add_argument("--queue", type=Path, default=QUEUE)
     p.add_argument("--out", type=Path)
     p.add_argument("--tracker", type=Path, default=TRACKER)
     p.add_argument("--no-bucket", action="store_true", help="Don't take report links from the CDP bucket")
     args = p.parse_args(argv)
+    if args.region_list:
+        region = args.region_list.stem.split("_")[0].lower()
+        out = args.out or PROJECT_ROOT / "data" / f"rerun_{region}_run_companies.csv"
+        try:
+            rows = from_region_list(args.region_list, out, bucket=not args.no_bucket)
+        except (OSError, ValueError, KeyError, gcs.GcsError) as e:
+            print(f"ERROR: {e}", file=sys.stderr)
+            return 1
+        full = sum(r["fields"] == "all" for r in rows)
+        print(f"{len(rows)} run companies with fields to re-run: {full} full (older report), "
+              f"{len(rows) - full} targeted; bucket report links for "
+              f"{sum(1 for r in rows if r['annual_report_url'])} -> {out}")
+        return 0
+    if not args.batch:
+        p.error("give a batch or --region-list")
     out = args.out or PROJECT_ROOT / "data" / f"rerun_{slug(args.batch).replace('-', '_')}.csv"
     try:
         rows = build(args.batch, args.queue, out, args.tracker, bucket=not args.no_bucket)

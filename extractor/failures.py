@@ -48,6 +48,7 @@ class Failure(str, Enum):
     WRONG_YEAR_REPORT = "WRONG_YEAR_REPORT"
     # --- the run stopped short -----------------------------------------------------
     CREDITS_EXHAUSTED = "CREDITS_EXHAUSTED"
+    WEBSITE_NOT_SEARCHED = "WEBSITE_NOT_SEARCHED"
     DOCUMENT_UNREADABLE = "DOCUMENT_UNREADABLE"
     NETWORK_ERROR = "NETWORK_ERROR"
     # --- read, but the value could not be made ---------------------------------------
@@ -89,6 +90,10 @@ INFO: dict[Failure, _Info] = {
     Failure.CREDITS_EXHAUSTED: _Info(
         "Firecrawl credits ran out",
         "Top up credits (or raise --max-run-credits / --doc-credits) and re-run", retry=True),
+    Failure.WEBSITE_NOT_SEARCHED: _Info(
+        "Bucket-only run: only the bucket's reports were read, the website was not searched",
+        "Re-run the field without --bucket-only (costs Firecrawl credits), or add the "
+        "missing report to the bucket", retry=True),
     Failure.DOCUMENT_UNREADABLE: _Info(
         "Document could not be read",
         "Scanned or broken file: supply a text PDF, or check the download", retry=True),
@@ -171,6 +176,9 @@ def classify(row: dict) -> Failure | None:
         return Failure.NOT_APPLICABLE
     if "out of credits" in low or "creditbudgetexceeded" in low:
         return Failure.CREDITS_EXHAUSTED
+    if "not searched: bucket only" in low and not low.startswith(("not derived", "stated only as")) \
+            and "only an official api gives it" not in low:
+        return Failure.WEBSITE_NOT_SEARCHED
     if low.startswith("stated only as"):
         return Failure.STATED_IN_OTHER_FORM
     if low.startswith("not derived"):

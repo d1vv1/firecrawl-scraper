@@ -149,13 +149,24 @@ def merge(old: list[dict], new: list[dict], sel: frozenset[str] | None) -> list[
                     "method": "", "retrieved_at": "", "confidence": "", "note": why}
 
     old_co = {r["data_point"]: r for r in old if r["grain"] == "company"}
+    # a value found before is kept when this run found none for it: a top-up run (the
+    # Nordics bucket-only run read fewer sources than the run before it) never empties one
+    old_role = {(r["role_row"], r["data_point"]): r for r in old
+                if r["grain"] == "role" and (r.get("value") or "").strip()}
+
+    def keep_found(r: dict, before: dict | None) -> dict:
+        if before and (before.get("value") or "").strip() and not (r.get("value") or "").strip():
+            return before
+        return r
+
     out = []
     for r in (r for r in new if r["grain"] == "company"):
         name = r["data_point"]
-        out.append(r if name in sel else old_co.get(name) or blank(r))
+        out.append(keep_found(r, old_co.get(name)) if name in sel else old_co.get(name) or blank(r))
     role_sel = sel & set(ROLE_POINTS)
     old_roles = [r for r in old if r["grain"] == "role"]
     new_roles = [r for r in new if r["grain"] == "role"]
+    new_roles = [keep_found(r, old_role.get((r["role_row"], r["data_point"]))) for r in new_roles]
     if role_sel == set(ROLE_POINTS):
         roles = new_roles
     elif not role_sel:
@@ -163,6 +174,11 @@ def merge(old: list[dict], new: list[dict], sel: frozenset[str] | None) -> list[
     else:
         kept = [r for r in old_roles if r["data_point"] not in role_sel]
         added = [r for r in new_roles if r["data_point"] in role_sel and r["role_row"]]
+        # a role this run did not find (another document names it differently) keeps the
+        # selected values found for it before
+        new_names = {r["role_row"] for r in added}
+        added += [r for r in old_roles if r["data_point"] in role_sel and r["role_row"]
+                  and r["role_row"] not in new_names and (r.get("value") or "").strip()]
         order = list(dict.fromkeys(r["role_row"] for r in kept + added))
         rank = {n: i for i, n in enumerate(ROLE_POINTS)}
         roles = sorted(kept + added, key=lambda r: (order.index(r["role_row"]),

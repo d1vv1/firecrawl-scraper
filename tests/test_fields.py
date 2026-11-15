@@ -173,3 +173,29 @@ def test_save_rows_merges_into_the_saved_file(tmp_path, monkeypatch):
     dp.save_rows(t, [_row("revenue", ""), _row("headcount", "60")])
     saved = {r["data_point"]: r["value"] for r in json.loads(dp.dp_path(t.company).read_text())}
     assert saved == {"revenue": "100", "headcount": "60"}
+
+
+def test_a_top_up_run_never_empties_a_value_found_before():
+    old = [_row("revenue", "100", version="3"), _row("other_names", "Old AB", version="3"),
+           _row("lti_max", "200", "role", "CEO", "3"), _row("sti_max", "", "role", "CEO", "3")]
+    new = [_row("revenue", "", version="4", note="not found in: x"),
+           _row("other_names", "New AB", version="4"),
+           _row("lti_max", "", "role", "CEO", "4", "not found in: x"),
+           _row("sti_max", "150", "role", "CEO", "4")]
+    rows = sel.merge(old, new, sel.parse("revenue,other_names,lti_max,sti_max"))
+    got = {(r["role_row"], r["data_point"]): (r["value"], r["scraper_version"]) for r in rows}
+    assert got[("", "revenue")] == ("100", "3")                 # kept: found before, not now
+    assert got[("", "other_names")] == ("New AB", "4")         # a new value replaces
+    assert got[("CEO", "lti_max")] == ("200", "3")
+    assert got[("CEO", "sti_max")] == ("150", "4")
+
+
+def test_a_role_not_found_again_keeps_its_values():
+    old = [_row("role_disclosure", "individual", "role", "CEO (until June)"),
+           _row("sti_max", "175", "role", "CEO (until June)"), _row("lti_max", "", "role", "CEO (until June)")]
+    new = [_row("role_disclosure", "individual", "role", "CEO"), _row("sti_max", "", "role", "CEO")]
+    rows = sel.merge(old, new, sel.parse("sti_max,lti_max"))
+    got = {(r["role_row"], r["data_point"]): r["value"] for r in rows}
+    assert got[("CEO (until June)", "sti_max")] == "175"
+    assert ("CEO (until June)", "lti_max") not in got            # empty: nothing to keep
+    assert ("CEO", "sti_max") in got
