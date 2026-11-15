@@ -57,6 +57,13 @@ def test_core_02_value_in_quote():
     other = _row(data_point="base_salary", value="130000",
                  note='printed 130 thousands; report text: "CFO: £390,000 (from 1 September 2025)"')
     assert oc.core_02(other, ctx).outcome == "fail"
+    # the AI gave the full amount where the table prints thousands (Computacenter, a £000 table)
+    scaled = _row(data_point="sti_paid", value="972800", unit="GBP",
+                  note='printed 972800 units; report text: "Mike Norris 726.0 15.0 31.6 772.6 972.8 – 972.8 1,745.4"')
+    assert oc.core_02(scaled, ctx).outcome == "pass"
+    shares = _row(data_point="lti_granted", value="380200", unit="instruments",
+                  note='printed 380200 units; PDF page 153: "granted 164,060 performance shares and 380.2"')
+    assert oc.core_02(shares, ctx).outcome == "fail"
 
 
 def test_core_02_dates_names_and_what_it_skips():

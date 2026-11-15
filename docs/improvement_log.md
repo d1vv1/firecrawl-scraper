@@ -610,3 +610,62 @@ All three free steps above are done, and the plan question was added (item 44). 
 **Next:**
 - re-run the other 278 on the machines that hold their caches, then merge them in with `python -m extractor.combine`;
 - a share-price feed.
+
+### 15 November 2026: version 4, the whole pay document and a targets question
+
+Two-thirds of the gaps left after version 3 were pay fields (6,503 of 9,781), and the worst were the STI and LTI targets and maximums. Version 4 changes how the pay documents are read, and re-ran the same 289 companies in 15 hours, using **150 Firecrawl credits**.
+
+#### 47. The AI reads the whole pay document
+- The pay question saw only a keyword pick of the document: 12,000 words of a remuneration report, 8,000 of an annual report. In 301 of 448 pay reads the document was cut.
+- It now reads the whole document up to 150,000 words (`PAY_WORDS`). When the answer runs out of length, the question is asked again about the old pick.
+
+#### 48. A second question about the targets only
+- Targets and maximums were one of about fifteen fields per role in one question, and were often left empty when the policy states them.
+- A second, narrow question (`prompts/opportunity_system.md`) asks only for the STI and LTI target and maximum, per role or as a rule for all executives, and whether the plans exist. It fills empty fields only; a figure from the main answer stays.
+- A rule for all executives is not given to a former executive (Volkswagen's former board members, in the trial).
+- On 40 companies with pay gaps, before the run: targets and maximums found went from 71 to 140 of 380, 136 with the quote in the text.
+
+#### 49. "No plan" is not believed against a bonus paid or a target stated
+- A sentence such as "the system sets no target remuneration" was read as "no plan" at Wasgau, where a bonus was paid. A plan is now marked absent only when no executive has a paid, target or maximum figure for it.
+
+#### 50. No controlling owner: the owner's name does not apply
+- 79 companies state that they have no controlling owner, and the owner's name counted as not found. It is now `not applicable: no controlling owner`.
+
+#### 51. `combine` applies the saved-row rules to every company
+- Rules added after a run (a pay table's Total line, a group role read twice, no variable pay, no controlling owner) reached only the companies whose results are on this machine. `python -m extractor.combine` now applies them to every company in the combined file, and with no run named it only does that and scores again.
+- At the 278 companies not re-run this removed 504 rows that were Total lines or a role read twice (271 of them counted as found), and marked 183 fields not applicable.
+
+#### 52. An amount given in full passes CORE-02 when the table prints thousands
+- Reading the whole document, the AI more often gives the full amount with unit "units" where the table prints thousands: Computacenter's 972.8 (£000) came back as 972,800. The value is right; CORE-02 looked for 972800 in the quote.
+- CORE-02 now passes a money amount whose figure is in the quote in thousands or millions. 99 fails were of this kind.
+
+#### 53. Tests cannot call the AI
+- Two tests reached the AI for real through the second look at quotes. `tests/conftest.py` now refuses every AI call in tests.
+
+#### Results
+
+| | Before (14 Nov) | After (15 Nov) |
+|---|---|---|
+| Found, all 564 companies | 70.4% | **71.8%** |
+| Found, the 289 re-run | 71.9% | **73.2%** |
+| Found, pay fields at the 289 | 66.0% | **68.5%** |
+| Found, company fields at the 289 | 77.1% | 77.5% |
+| Found, the 278 not re-run (rules only) | 68.8% | 70.0% |
+| Checks passing | 98.3% | 98.2% |
+| Failed checks | 2,515 | 2,628 |
+| CORE-03 fails (quote not in the source) | 842 | 894 |
+| CORE-02 fails (value not read off its quote) | 343 | 416 |
+
+- **The gain is smaller than the trials suggested.** The trials were on companies picked for their pay gaps. Across the 289, 493 more pay values were found (5,778 → 6,271), 372 of them targets and maximums.
+- **Most of what is still missing is not in the documents.** At the 219 companies where the targets question was asked about the whole document, 1,222 target and maximum fields are still empty; 53 are empty at companies where it was not asked. A UK report typically states the maximum and no target; a small company states neither.
+- **CORE-02 fails rose by 73.** Sampled, the new ones are real and the check is right to flag them:
+  - a target worked out, not printed (Derwent London's 58.75% of salary from "22.5% of the performance share awards vest");
+  - several lines added up by the AI (Cranswick's two LTIP awards);
+  - a wrong unit: Caledonia Investments' "259" (£000) came back as 259,000 thousands, and APG SGA's benefits as CHF 437 million. These values are wrong by a factor of 1,000 and are graded C.
+- **Eight companies kept their old pay rows,** because the new run found under half as many values: ABB, Addex, Basler Kantonalbank, C Capital, Contango, Ostasiatiske, Pittler and Sino-German United.
+
+**Next:**
+- decide whether a field is "not disclosed" (out of the found %) when the whole document was read and the question about it found nothing; this is 1,222 target fields at the 289 companies alone;
+- a guard for an amount 1,000 times too large (Caledonia, APG SGA);
+- re-run the other 278 on the machines that hold their caches;
+- a share-price feed.

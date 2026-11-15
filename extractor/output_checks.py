@@ -337,6 +337,11 @@ def core_02(r: Row, ctx: Ctx):
         # the value kept is the full amount, printed as it is
         if mult > 1 and r.number is not None and figure_in_quote(r.number, q, scaled=False):
             return ok("CORE-02", "the full amount is in the quote")
+        # the AI gave a money amount in full where the table prints thousands or millions
+        # ("printed 972800 units" for "972.8" in a £000 table)
+        if (mult == 1 and "printed " in r.note and abs(printed) >= 1000 and re.fullmatch(r"[A-Z]{3}", r.unit or "")
+                and any(figure_in_quote(printed / d, q, scaled=False) for d in (1e3, 1e6))):
+            return ok("CORE-02", "the amount is in the quote, in thousands or millions")
         if printed == 0 and states_none(q):
             return ok("CORE-02", "none, stated in words")
         if OTHERS.search(r.role_row) and _a_difference(printed, q):
