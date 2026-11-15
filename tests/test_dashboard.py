@@ -101,3 +101,13 @@ def test_several_runs_show_as_one_with_their_saved_checks(tmp_path, monkeypatch)
     assert m["checksPct"] == first["meta"]["checksPct"]   # same values, same saved outcomes
     by = {(v["id"], v["d"]): v for v in data["values"]}
     assert by[("T2", "headcount")]["sc"] == "H" and by[("T1", "headcount")]["sc"] == "H"
+
+
+def test_a_field_the_tracker_did_not_ask_for_is_not_counted_as_not_found():
+    from extractor import dashboard
+    from extractor import output_checks as oc
+    f = {"field_id": "", "category": "Financials"}
+    skipped = oc.Row({"value": "", "note": "not collected: this run asked only for pay"})
+    missing = oc.Row({"value": "", "note": "not found in: Annual report (PDF)"})
+    assert dashboard.value_status(skipped, f) == "not_applicable"
+    assert dashboard.value_status(missing, f) == "not_found"

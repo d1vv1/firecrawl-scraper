@@ -22,7 +22,10 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 # 1: 10 Nov 2026, the first versioned extraction (after Wave 1).
 # 2: 12 Nov 2026, the AI reads the whole report (not a keyword pick of it), and looks
 #    again at a quote that is not in the text (datapoints.REPORT_WORDS, requote.py).
-SCRAPER_VERSION = 2
+# 3: 13 Nov 2026, the AI is asked whether the executives have an STI or LTI plan; a pay
+#    table's "Total" line and a group role read twice are left out; company data from the
+#    pay documents when no annual report was read.
+SCRAPER_VERSION = 3
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000

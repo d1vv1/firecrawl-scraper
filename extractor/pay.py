@@ -399,12 +399,36 @@ def misread_targets(rows: dict[str, Found]) -> None:
             del rows[tgt]
 
 
+STI_POINTS = ("sti_paid", "sti_target", "sti_max")
+LTI_POINTS = ("lti_vested", "lti_granted", "lti_target", "lti_max")
+
+
+def plans_absent(*answers: RemunerationFacts | None) -> dict[str, str]:
+    """{"sti" / "lti": the quote} for an incentive plan the documents say the executives
+    don't have. Only on the text's own word ("does not operate a long-term incentive
+    plan"), and not when any document read describes such a plan."""
+    out = {}
+    for kind in ("sti", "lti"):
+        plans = [getattr(a, f"{kind}_plan") for a in answers if a is not None]
+        if any(p.exists for p in plans):
+            continue
+        quote = next((p.quote for p in plans if p.exists is False and p.quote), None)
+        if quote:
+            out[kind] = quote
+    return out
+
+
 def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | None = None,
                policy_origin=None, period_end: str = "") -> list[Found]:
     """The role rows: every ROLE_POINTS field for each executive role (missing ones with
     a reason), only role_disclosure for non-executive board members."""
     roles = merge_board([r for r in facts.roles if r.role_title])
     names = role_names(roles)
+    absent = plans_absent(facts, policy if policy_origin else None)
+    no_plan = {k: f'not applicable: no {"short" if kind == "sti" else "long"}-term incentive plan '
+                  f'("{absent[kind][:160]}")'
+               for kind, points in (("sti", STI_POINTS), ("lti", LTI_POINTS)) if kind in absent
+               for k in points}
     from_policy = merge_policy(roles, policy.roles) if policy and policy_origin else {}
     out: list[Found] = []
 
@@ -547,6 +571,8 @@ def role_found(facts: RemunerationFacts, origin, policy: RemunerationFacts | Non
                 out.append(rows[name])
             elif name == "aggregate_headcount" and not r.is_aggregate:
                 out.append(missing(name, row, "not applicable: one person"))
+            elif name in no_plan:
+                out.append(missing(name, row, no_plan[name]))
             else:
                 out.append(missing(name, row))
     return out

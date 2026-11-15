@@ -274,6 +274,16 @@ class ColumnMap(BaseModel):
     total: Optional[int]            # the table's own total column
 
 
+class PlanFact(BaseModel):
+    """Whether the executives have an incentive plan of a kind, as the text says."""
+    exists: Optional[bool]          # false only when the text says there is none
+    quote: Optional[str]
+    chunk_id: Optional[int]
+
+
+NO_PLAN = PlanFact(exists=None, quote=None, chunk_id=None)
+
+
 class RemunerationFacts(BaseModel):
     """A remuneration report or policy: pay per executive role, plus company-level terms."""
     fiscal_year: Optional[str]
@@ -282,6 +292,9 @@ class RemunerationFacts(BaseModel):
     pension_type: TextFact
     benefits: TextFact
     shareholding_requirement: TextFact
+    # added in scraper version 2: answers cached before have none
+    sti_plan: PlanFact = NO_PLAN
+    lti_plan: PlanFact = NO_PLAN
 
 
 class SectorPick(BaseModel):

@@ -28,6 +28,7 @@ from pathlib import Path
 from . import delivery
 from . import output_checks as oc
 from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT
+from .fields import NOT_COLLECTED
 
 log = logging.getLogger(__name__)
 
@@ -65,8 +66,12 @@ def field_meta(dp: str, grain: str, reg: dict) -> dict:
 
 def value_status(r: oc.Row, f: dict) -> str:
     if not r.value:
-        # "not applicable: one person" (a group headcount on an individual's row), no SEC filing
-        return "not_applicable" if r.note.startswith("not applicable") else "not_found"
+        # "not applicable: one person" (a group headcount on an individual's row), no SEC
+        # filing; and a field the tracker didn't ask for ("not collected: this run asked
+        # only for pay": run_required "Pay Data"), 16% of all values in the FY2025 file,
+        # which counted as not found
+        return ("not_applicable" if r.note.startswith(("not applicable", NOT_COLLECTED))
+                else "not_found")
     if (f["field_id"] in NUMERIC_FIELD_IDS and r.number is not None and not r.unit) or \
             (f["category"] not in STATIC_CATEGORIES and not r.period_end):
         return "partial"
