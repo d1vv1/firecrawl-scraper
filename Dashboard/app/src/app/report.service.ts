@@ -19,7 +19,7 @@ export class ReportService {
 
   readonly view = computed<Value[]>(() => {
     this.version();
-    return this.loaded() ? Core.filterValues(this.model.recs, this.filters()) : [];
+    return this.loaded() ? Core.filterValues(this.model.recs, this.filters(), Core.currentVersion(this.model)) : [];
   });
   readonly kpis = computed(() => (this.loaded() ? Core.kpis(this.model, this.view()) : []));
   readonly titles = computed(() => (this.loaded() ? Core.titles(this.model, this.view()) : ({} as Record<string, string>)));

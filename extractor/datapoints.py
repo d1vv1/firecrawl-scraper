@@ -7,7 +7,8 @@ each value came from.
 
 --fields collects only those data points and replaces only them in the saved rows; the
 input's run_required ("Pay Data", "Company Data") limits a company the same way unless
---ignore-run-required (fields.py, issue 16).
+--ignore-run-required (fields.py, issue 16). A `fields` column in the input does the same
+per company (a targeted re-run: each company gets only its own missing fields).
 
 Input: any CSV with company_id, company_name and (optional) segment, country, lei,
 business_id, isin, annual_report_url, remuneration_report_url. Several rows per company
@@ -73,6 +74,7 @@ from firecrawl import PaymentRequiredError
 
 from . import apis, edgar, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
+from . import gcs
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
@@ -183,6 +185,13 @@ class Target:
     run_required: str | None = None
     # The data points this run collects (fields.py); None: all of them
     fields: frozenset[str] | None = None
+    # The input's own `fields` column for this company (a targeted re-run list):
+    # None with input_fields_given = all of them; not given = no limit from the input
+    input_fields: frozenset[str] | None = None
+    input_fields_given: bool = False
+    # Report links in the CDP bucket (gs://): the local file: URI they are read from ->
+    # the gs:// link; downloaded when the company starts (gcs.ensure)
+    gcs: dict[str, str] = field(default_factory=dict)
 
 
 FILINGS_SEARCH = re.compile(
@@ -238,6 +247,7 @@ def read_targets(path: Path) -> list[Target]:
     c_extra_type, c_extra = col("additional files_1"), col("link3")
     c_isin, c_req = col("isin"), col("run_required", "run required")
     c_site = col("website", "company url", "company_url")
+    c_fields = col("fields", "rerun_fields")
     if not c_name or not (c_id or c_isin):
         raise ValueError(f"{path} needs company_id (or ISIN) and company_name columns")
     ids = known_ids() if not c_id else {}
@@ -280,6 +290,17 @@ def read_targets(path: Path) -> list[Target]:
         required = (r.get(c_req) or "").strip() if c_req else ""
         if required and not t.run_required:
             t.run_required = required
+        wanted = (r.get(c_fields) or "").strip() if c_fields else ""
+        if wanted:
+            # several rows of a company add up; "all" on any of them means every field
+            try:
+                sel = selection.parse(wanted)
+            except ValueError as e:
+                raise ValueError(f"{path}: company {cid}: {e}") from None
+            if not t.input_fields_given:
+                t.input_fields, t.input_fields_given = sel, True
+            elif t.input_fields is not None:
+                t.input_fields = None if sel is None else t.input_fields | sel
         for attr, column in (("remuneration_report_url", c_rem), ("annual_report_url", c_ar)):
             url = (r.get(column) or "").strip() if column else ""
             searched = FILINGS_SEARCH.search(url)
@@ -289,6 +310,11 @@ def read_targets(path: Path) -> list[Target]:
                 if not t.company.lei:
                     t.company.lei = searched.group(1).upper()
                 continue
+            if gcs.is_gs(url) and not getattr(t, attr):
+                # a report already in the CDP bucket: read like one on disk
+                local = gcs.local_uri(url)
+                t.gcs[local] = url
+                url = local
             if url.startswith(("http", "file:")) and not getattr(t, attr):
                 setattr(t, attr, url)
         # a report supplied on disk is the one the report step reads (from_reports.py)
@@ -2093,6 +2119,20 @@ def no_credits_path(c: Company) -> Path:
     return DP_DIR / f"{c.slug}.nocredits"
 
 
+def fetch_bucket_files(t: Target) -> None:
+    """Download the company's reports from the CDP bucket (gcs.py). A link whose download
+    fails is dropped, so that report is searched for as if none had been given."""
+    for problem in gcs.ensure(t.gcs):
+        log.warning("%s: bucket file not downloaded, searching instead: %s",
+                    t.company.company_id, problem)
+    for attr in ("annual_report_url", "remuneration_report_url"):
+        url = getattr(t, attr)
+        if url in t.gcs and not gcs.local_path(t.gcs[url]).is_file():
+            setattr(t, attr, None)
+            if t.company.report_url == url:
+                t.company.report_url = None
+
+
 def process(t: Target, opts: dict) -> dict:
     """Runs in a worker process. The pipeline first (unless done before), then the data
     points. Returns {"kind": "done"|"fatal"|"error", ...}."""
@@ -2101,6 +2141,8 @@ def process(t: Target, opts: dict) -> dict:
     flags: set = set()
     meter = {"credits": 0}
     error = None
+    if t.gcs:
+        fetch_bucket_files(t)
     resolve_lei(t)
     if selection.needs_report(t.fields) and needs_pipeline(c, opts):
         res = process_company(c, False, opts["pipeline_credits"], qualitative=False)
@@ -2201,7 +2243,8 @@ def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
     if selection.needs_report(sel):
         if needs_pipeline(c, opts):
             # a report supplied on disk needs no search: the report step spends nothing
-            local = bool(c.report_url and local_file(c.report_url))
+            # (a bucket file counts: it is downloaded before the report step)
+            local = bool(c.report_url and (local_file(c.report_url) or c.report_url in t.gcs))
             steps.append(("report step (file given)" if local else "report search",
                           0 if local else opts["pipeline_credits"]))
         elif c.result_path.exists():
@@ -2209,7 +2252,7 @@ def plan(t: Target, opts: dict) -> list[tuple[str, int]]:
         else:
             steps.append(("report (failed before; --retry-failed searches again)", 0))
         url = readable(t.annual_report_url)
-        if url and not local_file(url) and lacks_report(_saved_result(c)):
+        if url and not local_file(url) and url not in t.gcs and lacks_report(_saved_result(c)):
             steps.append(("annual_report_url as the report", 0 if is_pdf_url(url) else 1))
         steps.append(("report AI pass", 0))
     docs = opts["docs"] and selection.needs_documents(sel)
@@ -2563,11 +2606,13 @@ def main(argv: list[str] | None = None) -> int:
     for t in targets:
         required = None if args.ignore_run_required else selection.from_run_required(t.run_required)
         t.fields = selection.combine(cli_fields, required)
+        if t.input_fields_given:
+            t.fields = selection.combine(t.input_fields, t.fields) if t.fields is not None                 else t.input_fields
         if t.fields is not None and not t.fields:
             nothing.append(t)
     if nothing:
-        print(f"{len(nothing)} companies skipped: --fields asks for nothing their run_required "
-              f"needs ({', '.join(t.company.company_id for t in nothing[:5])}"
+        print(f"{len(nothing)} companies skipped: their fields (--fields or the input's fields "
+              f"column) ask for nothing their run_required needs ({', '.join(t.company.company_id for t in nothing[:5])}"
               f"{', ...' if len(nothing) > 5 else ''})")
         targets = [t for t in targets if t not in nothing]
 
@@ -2576,8 +2621,10 @@ def main(argv: list[str] | None = None) -> int:
         if (args.redo or not dp_path(c).exists() or no_credits_path(c).exists()
                 or (args.outdated and saved_version(c) < SCRAPER_VERSION)):
             return True
-        # --fields tops up: a company runs again when a field asked for has no value
-        return cli_fields is not None and bool(selection.missing(
+        # --fields (or the input's fields column) tops up: a company runs again when a
+        # field asked for has no value
+        limited = cli_fields is not None or (t.input_fields_given and t.input_fields is not None)
+        return limited and t.fields is not None and bool(selection.missing(
             json.loads(dp_path(c).read_text(encoding="utf-8")), t.fields))
     todo = [t for t in targets if due(t)]
     print(f"{len(targets)} companies from {args.csv}; {len(targets) - len(todo)} done before"
@@ -2645,6 +2692,18 @@ def main(argv: list[str] | None = None) -> int:
           + (f" of the run's {budget.cap}" if budget.cap is not None else ""))
     if budget.skipped:
         print(f"{budget.skipped} companies not started: they could exceed --max-run-credits")
+    if todo:
+        # what this run could not find, and why (failures.Failure), for its companies
+        from . import failures
+        try:
+            with open(args.out, encoding="utf-8-sig", newline="") as fh:
+                run_rows = list(csv.DictReader(fh))
+            f_csv, f_md, fails = failures.write(run_rows, args.out,
+                                                {t.company.company_id for t in todo})
+            print("\n" + "\n".join(failures.summary_lines(fails)))
+            print(f"Failure report: {f_csv} and {f_md.name}")
+        except Exception as e:  # noqa: BLE001 - a report problem must not hide the run's result
+            log.warning("Could not write the failure report: %s", e)
     filled = write_golden_filled(args.csv, everyone, OUTPUT_DIR / "golden_test_filled.csv")
     if filled:
         print(f"Golden sample with build_value: {filled}")

@@ -66,10 +66,25 @@
   }
 
   // ---------------------------------------------------------------- filters
-  var EMPTY_FILTERS = {country: "", source: "all", dtype: "all", cat: "", company: "", status: "", fill: ""};
+  var EMPTY_FILTERS = {country: "", source: "all", dtype: "all", cat: "", company: "", status: "", fill: "", version: ""};
+  // Version filter (SPEC 4): the scraper version that extracted each value (values[].sv). "old" = below the
+  // current version (meta.scraperVersion), what `--outdated` re-runs; a run value without a version counts as old.
+  function currentVersion(model) { return Number(((model && model.data && model.data.meta) || {}).scraperVersion) || 0; }
+  function isOldVersion(v, cur) { return v.s !== "I" && (!v.sv || Number(v.sv) < cur); }
+  function versionOptions(model) {
+    var cur = currentVersion(model), seen = {};
+    var vs = (model.data.meta.versions || []).slice();
+    if (!vs.length) model.recs.forEach(function (v) { if (v.s !== "I" && !seen[v.sv || ""]) { seen[v.sv || ""] = 1; vs.push(v.sv || ""); } });
+    var named = vs.filter(function (x) { return x !== ""; }).sort(function (a, b) { return Number(b) - Number(a); });
+    var out = [["", "All versions"]];
+    if (cur) out.push(["old", "Older than v" + cur + " (to re-run)"]);
+    named.forEach(function (x) { out.push([x, "v" + x + (Number(x) === cur ? " (current)" : x === "0" ? " (before versioning)" : "")]); });
+    if (vs.indexOf("") >= 0) out.push(["none", "No version recorded"]);
+    return out;
+  }
   // Value filter: filled = found or partial, empty = not found (not-applicable values are in neither).
   var FILL_OPTIONS = [["", "All values"], ["filled", "Filled (found or partial)"], ["empty", "Empty (not found)"]];
-  function filterValues(recs, f) {
+  function filterValues(recs, f, cur) {  // cur: currentVersion(model), for the "old" version filter
     f = f || EMPTY_FILTERS;
     return recs.filter(function (v) {
       if (f.country && v.c !== f.country) return false;
@@ -80,6 +95,11 @@
       if (f.company && companyKey(v) !== f.company) return false;
       if (f.fill === "filled" && v.st !== "found" && v.st !== "partial") return false;
       if (f.fill === "empty" && v.st !== "not_found") return false;
+      if (f.version) {
+        if (f.version === "old") { if (!isOldVersion(v, cur || 0)) return false; }
+        else if (f.version === "none") { if (v.sv) return false; }
+        else if (v.sv !== f.version) return false;
+      }
       if (f.status) {
         if (f.status === "not_scored") { if (v.sc || v.st === "not_found") return false; }
         else if (f.status === "empty") { if (v.st !== "not_found") return false; }
@@ -101,7 +121,7 @@
     };
   }
   function anyFilter(f) {
-    return !!(f.country || (f.source && f.source !== "all") || (f.dtype && f.dtype !== "all") || f.cat || f.company || f.status || f.fill);
+    return !!(f.country || (f.source && f.source !== "all") || (f.dtype && f.dtype !== "all") || f.cat || f.company || f.status || f.fill || f.version);
   }
 
   // ---------------------------------------------------------------- counts
@@ -676,6 +696,8 @@
     if (f.company) parts.push("company " + ((model.companyNames[f.company] || {}).name || f.company));
     if (f.status) parts.push("score status " + (SNAME[f.status] || f.status));
     if (f.fill) parts.push(f.fill === "filled" ? "filled values only" : "empty values only");
+    if (f.version) parts.push(f.version === "old" ? "scraper version older than v" + currentVersion(model) :
+      f.version === "none" ? "no scraper version recorded" : "scraper version v" + f.version);
     return parts.length ? parts.join(", ") : "none (all values)";
   }
   function csvBlock(title, intro, csv) {
@@ -1145,7 +1167,7 @@
 
   return {
     PAL: PAL, VSTAT: VSTAT, SSTAT: SSTAT, SNAME: SNAME, COUNTRIES: COUNTRIES, GROUPS: GROUPS, RANGE_FIELDS: RANGE_FIELDS,
-    EMPTY_FILTERS: EMPTY_FILTERS, RANGE_DEFAULTS: RANGE_DEFAULTS, FILL_OPTIONS: FILL_OPTIONS, SRC_GROUPS: SRC_GROUPS, EXPORT_DEFAULTS: EXPORT_DEFAULTS,
+    EMPTY_FILTERS: EMPTY_FILTERS, RANGE_DEFAULTS: RANGE_DEFAULTS, FILL_OPTIONS: FILL_OPTIONS, versionOptions: versionOptions, currentVersion: currentVersion, SRC_GROUPS: SRC_GROUPS, EXPORT_DEFAULTS: EXPORT_DEFAULTS,
     sourceGroup: sourceGroup, sources: sources, notFoundMatrix: notFoundMatrix, notFoundValues: notFoundValues, fieldRanks: fieldRanks,
     fieldList: fieldList, fieldCoverage: fieldCoverage, claudeExport: claudeExport, valuesCSV: valuesCSV, exportValues: exportValues, filterText: filterText,
     SEVERITIES: SEVERITIES, REQ_CLASSES: REQ_CLASSES, reqClass: reqClass, dataPage: dataPage, dataPageCSV: dataPageCSV,

@@ -310,6 +310,13 @@ Re-runs skip companies already done (`output/datapoints/<id>.json`; `--redo` to 
   both ask for (none: skipped).
 - `--dry-run` lists each company's fields, steps and worst-case Firecrawl credits, and
   runs nothing.
+- **Per company:** a `fields` column in the input does the same for each company on its
+  own (names or groups, `all` for everything in its `run_required`); several rows of a
+  company add up. A company done before runs again when one of its fields has no value.
+  `python -m extractor.rerun_list Nordics` writes such a file (`data/rerun_nordics.csv`)
+  from the FY2025 re-run queue: per company only the fields still missing, its id from
+  the earlier runs (so `combine` merges the new values onto the old ones), links from
+  the tracker, and a `before_run` note for what needs doing by hand first.
 
 When the input is the golden sample, `output/golden_test_filled.csv` is the same file with
 `build_value` filled in, in the golden unit (millions), for the reviewers.
@@ -358,6 +365,47 @@ report (no search) and a remuneration report for pay. `--collect` runs
 `python -m extractor.datapoints` on the list straight away (other options, such as
 `--max-run-credits`, are passed on); a company collected before is redone with the
 given files.
+
+### Reports already in the CDP bucket
+
+`annual_report_url` and `remuneration_report_url` may be `gs://` links into the CDP bucket
+(`gs://allshares-data-ingest-cdp-pipeline/uploads/`, layout in the GCS storage kit). The
+file is downloaded once to `cache/gcs/objects/` when the company starts and read like a
+report on disk: no report search, no credits. A failed download drops the link and the
+report is searched for instead. `extractor/gcs.py` (via the `gcloud` CLI; sign in with
+`gcloud auth login` as a user with read access, the .env service account has none):
+
+```bash
+python -m extractor.gcs sync                          # mirror the metadata.json files (daily)
+python -m extractor.gcs find "SEB C" --country SE     # a company's FY2025 reports in the bucket
+```
+
+`python -m extractor.rerun_list` fills these links itself: a company is matched to its
+bucket folder by CDP id, the id without its 8-hex suffix, ISIN/LEI, then its name without
+legal words (the kit's slug rules, `extractor/cdp_slug.py`); the file is the one the
+folder's `coverage` names for fy2025 (a PDF over an ESEF `.xhtml`). Nothing is written
+to the bucket.
+
+### What a run could not find, and why
+
+At the end of every run, each empty value of the companies it processed gets a failure
+code (`extractor/failures.py`, enum `Failure`) read from its note, and two files are
+written next to the run's CSV: `<run>_failures.csv` (company, field, code, the note,
+the sources checked, what to do) and `<run>_failures.md` (counts per code, field and
+company). The console prints the counts. For any CSV:
+`python -m extractor.failures output/<run>_datapoints.csv`.
+
+| Code | Means | Fix |
+|---|---|---|
+| `WEBSITE_NOT_FOUND`, `REPORT_NOT_FOUND`, `REMUNERATION_REPORT_NOT_FOUND`, `DOCUMENTS_NOT_FOUND` | the source was never reached | supply the link |
+| `NO_IDENTIFIER` | only a register gives it, and there is no LEI / register number | add `lei` or `business_id` |
+| `WRONG_YEAR_REPORT` | the report read is older than last year | supply the FY report, `--redo` |
+| `CREDITS_EXHAUSTED`, `DOCUMENT_UNREADABLE`, `NETWORK_ERROR` | the run stopped short | re-run |
+| `DERIVATION_INPUT_MISSING`, `FX_RATE_MISSING` | a calculated field lacks an input | fix the input field |
+| `STATED_IN_OTHER_FORM` | stated, but e.g. as a % where an amount is asked | review |
+| `REMUNERATION_REPORT_NOT_READ` | a pay field, and only the annual report was read | supply the remuneration report |
+| `NOT_DISCLOSED` | the documents were read and do not state it | review |
+| `NOT_APPLICABLE`, `NOT_COLLECTED` | not failures | - |
 
 ### Checks and dashboard
 

@@ -37,6 +37,41 @@ def slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
 
 
+LEGAL_WORDS = re.compile(
+    r"-(ag|se|plc|sa|s-a|nv|n-v|ab|asa|as|a-s|oyj|holding|holdings|group|ltd|limited|inc|gmbh|co|kgaa|"
+    r"publ|the|na|o-n|vink|spa|s-p-a)(?=-|$)")
+
+
+def name_key(name: str) -> str:
+    """The company name without legal-form words, to match a run to the tracker."""
+    return LEGAL_WORDS.sub("", "-" + slug(name)).strip("-")
+
+
+class IdMap:
+    """Run company ID -> tracker ID (SPEC 6.4): the ID itself, the ID without a trailing hash
+    ("-1a2b3c4d"), then the name without legal-form words when one tracker company has it."""
+
+    def __init__(self, tracker: list[dict]):
+        self.ids = {c["id"] for c in tracker}
+        names = defaultdict(set)
+        for c in tracker:
+            names[name_key(c["name"])].add(c["id"])
+        self.names = {k: next(iter(v)) for k, v in names.items() if k and len(v) == 1}
+        self.seen = {}
+
+    def __call__(self, cid: str, name: str = "") -> str:
+        if cid in self.ids or not cid:
+            return cid
+        if cid in self.seen:
+            return self.seen[cid]
+        bare = re.sub(r"-[0-9a-f]{8}$", "", cid)
+        out = bare if bare in self.ids else self.names.get(name_key(name)) if name else None
+        if out is None:
+            return cid          # not known yet: a later row with the name may still map it
+        self.seen[cid] = out
+        return out
+
+
 def day(s) -> str:
     m = re.match(r"(\d{4}-\d{2}-\d{2})", str(s or ""))
     return m.group(1) if m else ""
@@ -98,13 +133,14 @@ def build(config: Path = CONFIG) -> dict:
     plan, fy = cfg["plan"], str(cfg.get("fiscal_year", "2025"))
     pass_line = plan["pass_line"]
     by_id = {c["id"]: c for c in tracker}
+    tid = IdMap(tracker)
     inputs = PROJECT_ROOT / src["inputs_dir"]
 
     # extracted values: which data points have a value, and when each company was extracted
     present, extracted = defaultdict(set), {}
     for f in files(src["datapoints_globs"]):
         for r in read_csv(f):
-            cid = r.get("company_id", "")
+            cid = tid(r.get("company_id", ""), r.get("company_name", ""))
             if r.get("value"):
                 present[cid].add(r.get("data_point", ""))
             d = day(r.get("retrieved_at"))
@@ -117,7 +153,7 @@ def build(config: Path = CONFIG) -> dict:
     vstatus, fails, examples = {}, defaultdict(Counter), defaultdict(dict)
     for f in files(src["checks_globs"]):
         for r in read_csv(f):
-            cid = r.get("company_id", "")
+            cid = tid(r.get("company_id", ""))
             vstatus[(cid, r.get("data_point"), r.get("role_row", ""), r.get("value", ""))] = r.get("status", "")
             if r.get("outcome") == "fail":
                 cat = fmap.get(r.get("check", "")) or ("Wrong currency" if cur.search(r.get("reason", ""))
@@ -144,7 +180,8 @@ def build(config: Path = CONFIG) -> dict:
             credits = float(d.get("firecrawl_credits_used") or 0)
         except (TypeError, ValueError):
             credits = 0.0
-        run = {"id": d["company_id"], "name": d.get("input_name") or d.get("company_name") or d["company_id"],
+        name = d.get("input_name") or d.get("company_name") or d["company_id"]
+        run = {"id": tid(d["company_id"], name), "name": name,
                "date": day(d.get("extracted_at") or d.get("at")),
                "status": "failed" if failed else (d.get("status") or "unknown"),
                "error": f'{d.get("error_type", "")}: {str(d.get("error", ""))[:160]}' if failed else "",
@@ -163,7 +200,7 @@ def build(config: Path = CONFIG) -> dict:
     spot_co = defaultdict(lambda: {"n": 0, "pass": 0, "last": ""})
     spot_batch = defaultdict(lambda: {"n": 0, "pass": 0, "last": ""})
     for r in read_csv(inputs / "spot_checks.csv"):
-        cid = slug(r.get("company_id", ""))
+        cid = tid(slug(r.get("company_id", "")))
         if not cid:
             continue
         b = r.get("batch") or by_id.get(cid, {}).get("batch", "Unknown")
@@ -200,7 +237,7 @@ def build(config: Path = CONFIG) -> dict:
             cleared, cleared_on = sc["pass"] == sc["n"], sc["last"]
         else:
             cleared, cleared_on = c["batch"] in cleared_batch, cleared_batch.get(c["batch"], "")
-        flags = [True, c["find_required"] == "NA", is_ex, is_ex and not missing,
+        flags = [True, c["find_required"] == "NA" or is_ex, is_ex, is_ex and not missing,
                  is_ex and v["n"] > 0 and v["fail"] == 0 and not wrong, cleared, cleared]
         stage = 0
         while stage + 1 < len(flags) and flags[stage + 1]:
@@ -210,7 +247,7 @@ def build(config: Path = CONFIG) -> dict:
                           "done": max(extracted.get(cid, ""), cleared_on) if stage == len(STAGES) - 1 else "",
                           "v": v, "spot": dict(sc) if sc else None, "fc": cats, "fx": ex})
 
-    disc_over = {slug(r.get("company_id", "")): r for r in read_csv(inputs / "discovery.csv") if r.get("company_id")}
+    disc_over = {tid(slug(r.get("company_id", ""))): r for r in read_csv(inputs / "discovery.csv") if r.get("company_id")}
     discovery = []
     for c in tracker:
         if c["find_required"] == "NA":
@@ -247,7 +284,7 @@ def build(config: Path = CONFIG) -> dict:
             add(d["id"], by_id[d["id"]], "No FY2025 report", d["note"] or "Discovery: document not available",
                 "Discovery queue")
     for r in read_csv(inputs / "exceptions.csv"):
-        cid = slug(r.get("company_id", ""))
+        cid = tid(slug(r.get("company_id", "")))
         if not cid:
             continue
         cat = r.get("category") or "Other"

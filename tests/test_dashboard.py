@@ -111,3 +111,28 @@ def test_a_field_the_tracker_did_not_ask_for_is_not_counted_as_not_found():
     missing = oc.Row({"value": "", "note": "not found in: Annual report (PDF)"})
     assert dashboard.value_status(skipped, f) == "not_applicable"
     assert dashboard.value_status(missing, f) == "not_found"
+
+
+def test_scraper_version_on_each_value(tmp_path, monkeypatch):
+    rows = [dict(r, scraper_version=v) for r, v in zip(ROWS, ["2", "1", "1", "0", "2"])]
+    monkeypatch.setitem(globals(), "COLUMNS", COLUMNS + ["scraper_version"])
+    data, _ = _build(tmp_path, monkeypatch, rows)
+    assert [v["sv"] for v in data["values"]] == ["2", "1", "1", "0", "2"]
+    assert data["meta"]["versions"] == ["0", "1", "2"]
+    assert data["meta"]["scraperVersion"] == str(dashboard.SCRAPER_VERSION)
+
+
+def test_rerender_fills_versions_from_the_run_csv(tmp_path, monkeypatch):
+    data, _ = _build(tmp_path, monkeypatch)                 # CSV without scraper_version
+    for v in data["values"]:
+        v.pop("sv", None)
+    rows = [dict(r, scraper_version="1") for r in ROWS]
+    monkeypatch.setitem(globals(), "COLUMNS", COLUMNS + ["scraper_version"])
+    _csv(tmp_path / "run_datapoints.csv", rows)
+    dashboard.backfill_versions(data, tmp_path)
+    assert {v["sv"] for v in data["values"]} == {"1"} and data["meta"]["versions"] == ["1"]
+    data["values"][0]["id"] = "other"
+    for v in data["values"]:
+        v.pop("sv")
+    dashboard.backfill_versions(data, tmp_path)             # rows no longer line up: left alone
+    assert all("sv" not in v for v in data["values"])

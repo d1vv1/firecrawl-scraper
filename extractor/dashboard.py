@@ -27,7 +27,7 @@ from pathlib import Path
 
 from . import delivery
 from . import output_checks as oc
-from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT
+from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT, SCRAPER_VERSION
 from .fields import NOT_COLLECTED
 
 log = logging.getLogger(__name__)
@@ -109,7 +109,7 @@ def report_data(scored: list[oc.Scored], rows: list[oc.Row], name: str,
         rec = {"s": "T", "c": r.country, "o": r.company_name, "g": r.grain, "p": 1 if f["pay"] else 0,
                "k": f["category"], "m": f["module"], "f": f["field_id"], "d": r.data_point,
                "st": value_status(r, f), "ck": key_by_id[r.company_id], "id": r.company_id,
-               "r": r.role_row, "v": r.value, "u": r.unit}
+               "r": r.role_row, "v": r.value, "u": r.unit, "sv": r.scraper_version}
         s = by_row.get(id(r))
         if s:
             rec.update({"pe": r.period_end, "me": r.method, "so": r.source, "ep": r.endpoint,
@@ -139,7 +139,7 @@ def report_data(scored: list[oc.Scored], rows: list[oc.Row], name: str,
                  "companyIds": len(key_by_id), "companies": len(set(key_by_id.values())),
                  "countries": sorted({r.country for r in rows if r.country}),
                  "duplicates": dupes, "thresholds": {"pass": oc.PASS, "review": oc.REVIEW},
-                 "target": TARGET, "checksPct": checks_pct, "foundPct": found_pct},
+                 "target": TARGET, "checksPct": checks_pct, "foundPct": found_pct, **version_meta(values)},
         "gates": {oc.CHECK_ID[fn]: [title, "Hard" if hard else "Soft"] for fn, hard, title in oc.CHECKS},
         "gateIds": gate_ids,
         "reasons": reasons,
@@ -256,12 +256,44 @@ def build(csv_path: Path | list[Path], cache: Path = CACHE_DIR, results: Path = 
     return html
 
 
+def version_meta(values: list[dict]) -> dict:
+    """meta.scraperVersion and meta.versions (SPEC 5): the current version and the ones in the run."""
+    return {"scraperVersion": str(SCRAPER_VERSION),
+            "versions": sorted({v.get("sv", "") for v in values},
+                               key=lambda x: (x == "", int(x) if x.isdigit() else 0))}
+
+
+def backfill_versions(data: dict, results: Path = OUTPUT_DIR) -> None:
+    """Give a report.json built before the Version filter each value's scraper version, read from the
+    run's CSVs (meta.tracker) in row order, when the rows still line up with the values."""
+    vals = data["values"]
+    if all("sv" in v for v in vals if v.get("s") == "T"):
+        data["meta"].update(version_meta(vals))
+        return
+    rows = []
+    for name in data["meta"].get("tracker", "").split(" + "):
+        try:
+            with open(results / name, encoding="utf-8-sig", newline="") as f:
+                rows += list(csv.DictReader(f))
+        except OSError:
+            return
+    run = [v for v in vals if v.get("s") == "T"]
+    if len(rows) != len(run) or any(r.get("company_id") != v["id"] or r.get("data_point") != v["d"]
+                                    for r, v in zip(rows, run)):
+        log.warning("Version filter: %s no longer matches report.json; rebuild to add versions", results)
+        return
+    for r, v in zip(rows, run):
+        v["sv"] = r.get("scraper_version", "") or ""
+    data["meta"].update(version_meta(vals))
+
+
 def rerender(out: Path = DASHBOARD) -> Path:
     """Rewrite the single-file HTML (and refresh the field list and the Delivery data) from the
     report.json already built, without scoring again: for changes to the dashboard's code, the field
     list, the tracker or the delivery inputs."""
     data = json.loads((out / "report.json").read_text(encoding="utf-8"))
     data["fieldList"] = fields_list()
+    backfill_versions(data)
     data["delivery"] = delivery.build()   # SPEC 6.4: refreshed from the tracker and run outputs
     (out / "report.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     js = schema_module(json.loads(SCHEMA.read_text(encoding="utf-8")))

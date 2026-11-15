@@ -1,6 +1,7 @@
 # Allshares Part 1 accuracy dashboard: specification
 
-Version 1.3, 9 Nov 2026: the Delivery pages (stand-up, throughput, discovery queue, exceptions, pipeline
+Version 1.4, 14 Nov 2026: the Version filter (scraper version of each value), and Delivery joins runs to
+tracker companies that a run saved under another ID. 1.3, 9 Nov 2026: the Delivery pages (stand-up, throughput, discovery queue, exceptions, pipeline
 health) for the FY2025 gap-fill (section 6.4). 1.2, 9 Nov 2026: Reports & sources, Field coverage and Export for Claude pages, the not-found matrix
 on Pay vs company, the Values filter, sortable tables and the notes bar (1.1, 5 Nov 2026; 1.0, 4 Nov 2026,
 scored the client's tracker with its own engine). Scope: extraction accuracy only (Part 1). Cross-source verification is out of scope.
@@ -114,13 +115,15 @@ field-list changes only.
 
 ```
 meta:     tracker (the run's CSV name), asOf, built, rows, filled, dataPoints, companyIds, companies, countries[],
-          duplicates[], thresholds, target, checksPct, foundPct
+          duplicates[], thresholds, target, checksPct, foundPct, scraperVersion (the current
+          config.SCRAPER_VERSION), versions[] (scraper versions present, "" when a CSV had none)
 gates:    { "CORE-01": [name, "Hard"|"Soft"], ... }
 gateIds:  [ ...gate ids, index used in values[].gr ]
 reasons:  [ ...distinct reason texts, index used in values[].gr ]
 values[]: s source (T the run, I import), c country, o company name, ck company key (LEI, else ID), id company ID,
           g grain, r role row, p 1 if pay data, k category, m module, f field ID, d data point,
-          v value, u unit, st value status,
+          v value, u unit, st value status, sv scraper version that extracted it ("0" before versioning,
+          "" when the CSV has no scraper_version column),
           filled only: pe period end, me method, so source, ep locator URL, nt note (first 300 chars),
           sc score status (P R F H I), sp score, gr [[gateIndex, "P"|"F"|"N", reasonIndex|-1], ...]
 baseline: checksPct, foundPct, label (the previous run, or "This run")
@@ -146,7 +149,9 @@ Company data = everything else.
   chosen, on a click elsewhere or on Escape; arrow keys move through it (`report-ui.js` navMenus).
 - Filters (sticky, top, apply to every page): Country, Source (all / this run / imported), Data type
   (all / company / pay), Field group (category), Company, Score status, Values (all / filled = found or
-  partial / empty = not found).
+  partial / empty = not found), Version (all / one scraper version / older than the current version, i.e.
+  the values `python -m extractor.datapoints ... --outdated` would re-run; values without a version count
+  as older).
 - Every table sorts by a click on a column header, again to reverse (numbers largest first, text A to Z,
   blanks last). The sort stays when the rows change. Tables with group rows sort within each group; the
   not-found matrix sorts each level of its tree.
@@ -274,11 +279,14 @@ balance) and:
 | `accuracy/inputs/delivery/scheduled_runs.csv` | run_id, batch, scheduled_for, started_at, finished_at, status, companies, credits_used, note |
 | `accuracy/inputs/delivery/exceptions.csv` | company_id, category, reason, accepted (yes / no / pending), note |
 
-Companies join on the slug of the company name (`company_id`). Only the Country filter applies to these pages
+Companies join on the slug of the company name (`company_id`). A run ID that is not a tracker ID is mapped
+to one: first the ID without a trailing 8-hex-digit hash (`-1a2b3c4d`), then the run's company name with
+legal-form words dropped (AG, SE, plc, S.A., N.V., AB, ASA, A/S, Oyj, Ltd, GmbH, Holding, Group ...) when
+exactly one tracker company has that name; otherwise the run ID is kept. Only the Country filter applies to these pages
 (their data is per company, not per value).
 
 Stages (each company counts at the furthest stage reached in order): Required (Pipeline Run = required) →
-Document found (Find Required = NA) → Extracted (values in a run, or a run status ok / needs_review) →
+Document found (Find Required = NA, or the company is extracted: the tracker can lag a run) → Extracted (values in a run, or a run status ok / needs_review) →
 Required fields 100% (every field in `required_fields` for its run type has a value) → Rules passed (no value
 with status Fail or Fail (hard), and no report of an earlier fiscal year) → Spot-checked (its own sampled
 values all pass, or, not sampled, its batch sample is at or above the pass line) → Done. Done date = the later

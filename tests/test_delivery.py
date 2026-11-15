@@ -98,3 +98,25 @@ def test_missing_tracker_does_not_raise(tmp_path, monkeypatch):
     monkeypatch.setattr(delivery, "PROJECT_ROOT", tmp_path)
     (tmp_path / "delivery.json").write_text(json.dumps({"sources": {"tracker": "nope.xlsx"}}), encoding="utf-8")
     assert "error" in delivery.build(tmp_path / "delivery.json")
+
+
+def test_run_ids_join_the_tracker():
+    tracker = [{"id": "baywa-ag", "name": "BayWa AG"}, {"id": "ab-inbev", "name": "AB INBEV"},
+               {"id": "nordea-bank-abp", "name": "Nordea Bank Abp"},
+               {"id": "acme-ab", "name": "Acme AB"}, {"id": "acme-plc", "name": "Acme plc"}]
+    m = delivery.IdMap(tracker)
+    assert m("baywa-ag") == "baywa-ag"                                        # same ID
+    assert m("ab-inbev-1a2b3c4d") == "ab-inbev"                               # trailing hash dropped
+    assert m("baywa-ag-na-o-n", "BayWa AG Na O.N.") == "baywa-ag"             # name without legal words
+    assert m("baywa-ag-na-o-n") == "baywa-ag"                                 # remembered for the checks CSV
+    assert m("acme-x", "Acme Group") == "acme-x"                              # two tracker matches: kept
+    assert m("unknown-co", "Unknown Co") == "unknown-co"
+
+
+def test_extracted_company_passes_document_found(tmp_path, monkeypatch):
+    d = _setup(tmp_path, monkeypatch)
+    _csv(tmp_path / "out" / "late_datapoints.csv", ["company_id", "company_name", "data_point", "value", "retrieved_at"],
+         [["gamma-ab-0f0f0f0f", "Gamma AB", "revenue", "5", "2026-11-12T08:00:00"]])
+    d = delivery.build(tmp_path / "delivery.json")
+    gamma = next(c for c in d["companies"] if c["id"] == "gamma-ab")
+    assert gamma["ex"] == "2026-11-12" and gamma["stage"] == 3                 # tracker still says "to find"
