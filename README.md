@@ -221,6 +221,12 @@ Per company, cheapest and most exact first:
    report exhibit, a US proxy statement; free), then the remuneration report found like the
    fallback documents below (including PDFs behind a site's download buttons), and, if
    needed, the remuneration policy, read with `prompts/remuneration_system.md`.
+   The AI reads the whole pay document up to 150,000 words (`PAY_WORDS` in `.env`); when
+   its answer runs out of length, it is asked again about a 12,000-word pick (8,000 of an
+   annual report). A second, narrow question then asks only for the STI and LTI targets
+   and maximums still empty, per role or as a rule for all executives, and whether the
+   plans exist (`prompts/opportunity_system.md`, `pay.ask_opportunities`). It fills empty
+   fields only, and a rule for all executives is not given to a former executive.
    When the annual report's route gave no result (Firecrawl out of credits, no website
    found), the documents this step read are also asked for the company data points still
    empty, one AI call per document and no Firecrawl (`datapoints.from_read_documents`, read
@@ -269,7 +275,10 @@ XBRL, then report, then web). A different value from another source is mentioned
   XBRL tag, or why there is no value (`not found in: …`, `not applicable: the company is
   not listed`, `not applicable: no long-term incentive plan ("<the report's words>")`,
   `not collected: market data … is bought`). An STI or LTI field is marked "no plan" only
-  when the report says in words that there is none, and that sentence is kept.
+  when the report says in words that there is none, and that sentence is kept; not when
+  a bonus was paid or a target is stated for any executive. A company whose
+  `controlling_owner` is "none" has `controlling_owner_name` as `not applicable: no
+  controlling owner`.
 - `method`: `API` (register field), `XBRL` (tagged figure), `PARSE` (read from a filed
   document), `SCRAPE` (read from a web page), `BUY` (market data: not collected).
 - `confidence`: `A` exact (register field or XBRL tag);
@@ -377,6 +386,12 @@ half the values already there for a company's facts or its pay (a site that bloc
 leaves that block as it was (`--take-newer` to replace it anyway). The combined file is then
 scored again with `rescore` (below) and the dashboard rebuilt. Send both a run's CSV and its
 `_checks.csv` to whoever merges.
+
+The rules applied to saved rows (`datapoints.refresh`: a pay table's Total line, a group
+role read twice, no variable pay, no controlling owner) are applied to every company in
+the combined file, also those not in the runs. With no run named,
+`python -m extractor.combine --into output/fy2025_runs_datapoints.csv` only does that and
+scores again.
 
 **Finding the report when the website doesn't have it** (`report_finder.web_search_report`): after
 the first map of the site, a web search for "<name> annual report <year> pdf" (2 credits; for a

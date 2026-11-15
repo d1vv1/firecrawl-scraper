@@ -1046,7 +1046,7 @@ def from_documents(name: str, slug: str, site: str, gaps: list[str], lib: Librar
 
 # --- 4. executive pay, role grain -------------------------------------------------------------
 
-AR_PAY_WORDS = 8_000             # words of the annual report's remuneration section
+AR_PAY_WORDS = 8_000             # the pick of an annual report's remuneration section (see pay.PAY_WORDS)
 
 
 def _pay_chunks(origin: Origin, words: int) -> list[Chunk]:
@@ -1139,7 +1139,7 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 log.warning("Pay: the supplied %s %s could not be read", label.lower(), url)
                 continue
             o = doc_origin(doc, 0)
-            yield (o, _pay_chunks(o, pay.PAY_WORDS), f"the company's {label.lower()}",
+            yield (o, pay.PAY_PICK_WORDS, f"the company's {label.lower()}",
                    f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}", True)
         if cik:
             # SEC filings: free, no bot checks (a 20-F attaches the home-country report)
@@ -1152,9 +1152,9 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
                 doc = sec_doc(slug, url, label, report_year)
                 if doc:
                     o = doc_origin(doc, 0)
-                    yield (o, _pay_chunks(o, pay.PAY_WORDS), f"the company's {label}",
+                    yield (o, pay.PAY_PICK_WORDS, f"the company's {label}",
                            f"{slug}_pay_{hashlib.sha1(url.encode()).hexdigest()[:12]}", False)
-        ar = ((report, _pay_chunks(report, AR_PAY_WORDS),
+        ar = ((report, AR_PAY_WORDS,
                "the remuneration section of the company's annual report", report_key, False)
               if report else None)
         if ar and country in AR_PAY_FIRST:
@@ -1168,22 +1168,31 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
             if doc is None:
                 continue
             o = doc_origin(doc, 0)
-            yield (o, _pay_chunks(o, pay.PAY_WORDS), "the company's remuneration report",
+            yield (o, pay.PAY_PICK_WORDS, "the company's remuneration report",
                    f"{slug}_pay_{hashlib.sha1(doc.url.encode()).hexdigest()[:12]}", False)
         if ar and country not in AR_PAY_FIRST:
             yield ar
 
     facts = origin = None
-    for o, chunks, what, key, given in sources():
-        if not chunks:
+    for o, pick_words, what, key, given in sources():
+        # the AI reads the whole document; the pick names the pay-table pages, and is
+        # what the AI reads when its answer about the whole document runs out of length
+        whole, pick = _pay_chunks(o, pay.PAY_WORDS), _pay_chunks(o, pick_words)
+        if not whole:
             continue
-        log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
-        try:
-            f = pay.ask_pay(name, o.url, chunks, what, key, o.pdf, o.page_text())
-        except openai.LengthFinishReasonError:
-            # the model's reasoning ran to the output limit (TWMA's parent accounts, which
-            # have no executive pay table): this source gives no answer, the run goes on
-            log.warning("Pay: the AI's answer about %s ran out of length; skipped", o.url)
+        f = None
+        for chunks in (whole, pick) if len(pick) < len(whole) else (whole,):
+            log.info("Pay: asking the AI about %d chunk(s) of %s", len(chunks), o.source)
+            try:
+                f = pay.ask_pay(name, o.url, chunks, what, key, o.pdf, o.page_text())
+                break
+            except openai.LengthFinishReasonError:
+                # the model's reasoning ran to the output limit (TWMA's parent accounts,
+                # which have no executive pay table)
+                log.warning("Pay: the AI's answer about %d chunk(s) of %s ran out of length",
+                            len(chunks), o.url)
+        if f is None:
+            # this source gives no answer, the run goes on
             read.append(f"{o.source} (no usable AI answer)")
             continue
         read.append(o.source)
@@ -1197,9 +1206,10 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         seen.origins.append(o)
         if pay.has_pay(f):
             # the amounts of roles found in a checked pay table come from the table
-            facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text())
+            facts = pay_tables.from_tables(name, f, o.pdf, chunks, o.page_text(), pages_from=pick)
             origin = o
             requote.repair(facts, origin, name, f"{key}_pay")
+            _opportunities(name, facts, o, whole, what, key)
             seen.year, seen.origin = normal_year(f.fiscal_year), o
             break
         log.info("Pay: no executive pay figures in %s", o.url)
@@ -1240,6 +1250,22 @@ def from_pay(name: str, slug: str, lib: Library | None, report: Origin | None,
         log.info("Pay: %s left out: an accounting line of the table, not a person", ", ".join(items))
     roles = [f for f in roles if f.role_row not in twice + items]
     return roles, terms, read
+
+
+def _opportunities(name: str, facts, origin: Origin, chunks: list[Chunk], what: str, key: str) -> None:
+    """The targets and maximums the main pay answer left empty, from the second, narrow
+    question about the same document (pay.ask_opportunities). A failed call costs nothing:
+    the main answer stays as it is."""
+    titles = pay.executive_titles(facts)
+    if not titles or not pay.needs_policy(facts):
+        return
+    try:
+        opp = pay.ask_opportunities(name, origin.url, chunks, titles, what, key)
+    except (openai.OpenAIError, llm.LLMRefusalError, llm.StructuredOutputsUnsupportedError) as e:
+        log.warning("Pay: the targets question about %s failed: %s", origin.url, str(e)[:150])
+        return
+    n = pay.apply_opportunities(facts, opp)
+    log.info("Pay: %d target(s) and maximum(s) from the targets question", n)
 
 
 def pay_period_end(facts, report_end: str) -> str:
@@ -2328,6 +2354,19 @@ def no_variable_pay(mine: dict[str, dict]) -> None:
             r["note"] = NO_VARIABLE_PAY
 
 
+NO_CONTROLLING_OWNER = "not applicable: no controlling owner"
+
+
+def no_controlling_owner(by: dict[str, dict]) -> None:
+    """A company whose controlling owner is "none" has no owner to name: the empty
+    controlling_owner_name says so instead of "not found". `by`: a company's rows by data
+    point."""
+    owner, name = by.get("controlling_owner"), by.get("controlling_owner_name")
+    if (owner and name and owner["value"] == "none" and not name["value"]
+            and name["note"].startswith("not found")):
+        name["note"] = NO_CONTROLLING_OWNER
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2347,6 +2386,7 @@ def refresh(rows: list[dict]) -> list[dict]:
         rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
+    no_controlling_owner(by)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
         names = [f.name for f in fields(Found)]

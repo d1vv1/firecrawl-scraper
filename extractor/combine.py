@@ -14,6 +14,11 @@ block as it was, unless --take-newer.
 Then the combined file is scored again (output_checks.rescore): every value under the
 current rules, but a check whose source text is not cached on this machine keeps the result
 saved in the checks file, so a run merged here from another machine keeps its quote checks.
+
+Every company's rows are also put under the current rules for saved rows
+(datapoints.refresh: a "Total" line taken for a role, an owner's name where there is no
+controlling owner, ...), so a rule added after a run reaches the companies whose caches
+are on another machine. With no run given, only that and the scoring are done.
 """
 
 import argparse
@@ -24,7 +29,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from .datapoints import COLUMNS
+from .datapoints import COLUMNS, refresh
 from .fields import NOT_COLLECTED
 
 log = logging.getLogger(__name__)
@@ -177,15 +182,26 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True) -> dict:
             corder = list(dict.fromkeys(c["company_id"] for c in checks))
             checks = splice(cgroups, corder, merged_checks)
         log.info("Merged %s: %d companies replaced, %d added", run.name, stats["replaced"], stats["added"])
+    rows = refreshed(rows)
     write(into, rows, cols)
     if ccols:
         write(checks_path, checks, ccols)
     return stats
 
 
+def refreshed(rows: list[dict]) -> list[dict]:
+    """Every company's rows under the current rules for saved rows, in the same order."""
+    groups: dict[str, list[dict]] = defaultdict(list)
+    for r in rows:
+        groups[r["company_id"]].append(r)
+    return [r for block in groups.values() for r in refresh(block)]
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="python -m extractor.combine", description=__doc__.split("\n\n")[0])
-    p.add_argument("runs", nargs="+", type=Path, help="Run CSVs (<name>_datapoints.csv), merged in order")
+    p.add_argument("runs", nargs="*", type=Path,
+                   help="Run CSVs (<name>_datapoints.csv), merged in order; none: only apply the "
+                        "current rules to the combined file and score it again")
     p.add_argument("--into", type=Path, required=True, help="The combined CSV (created if missing)")
     p.add_argument("--no-dashboard", action="store_true",
                    help="Don't score the combined file again or rebuild the dashboard")
