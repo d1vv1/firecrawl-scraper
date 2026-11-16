@@ -1326,12 +1326,16 @@ FINANCIAL_YEAR = re.compile(r"fiscal|financial year|business year|\byear end(ed|
 def year_end_fits(end: Found, pay_year: str | None) -> bool:
     """A year end read from a document the pay step read: it must close the fiscal year
     the pay figures are for, named as year_of_report names it (2025-09-30 closes "2025",
-    2026-03-31 "2025/26"), and a date other than 31 December must be quoted as the end of
-    the financial year."""
+    2026-03-31 "2025/26"). A date other than 31 December must also be the financial year's
+    by the document's own words: the quote calls it that, or the pay figures are for a
+    year named across two calendar years (Brøndby IF: pay for "2025/26", year end quoted
+    as "perioden 1. juli 2025 til 30. juni 2026")."""
     year = fiscal_end_year(pay_year)
     if year and fiscal_end_year(fiscal_year_of(str(end.value))) != year:
         return False
-    return str(end.value).endswith("-12-31") or bool(FINANCIAL_YEAR.search(end.note))
+    split = bool(re.search(r"20\d{2}\s*[/-]\s*\d{2}", pay_year or ""))
+    return (str(end.value).endswith("-12-31") or split
+            or bool(FINANCIAL_YEAR.search(end.note)))
 
 
 def from_read_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
