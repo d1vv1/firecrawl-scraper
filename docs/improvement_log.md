@@ -741,3 +741,4 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - `documents_to_find.csv`: 115 companies held back until their FY2025 documents are found or a wrong-year report is replaced (76 Southern Europe, 29 DACH, 9 UK, 1 Benelux).
 - The 318 UK first runs in the queue are left out: they are already in the combined file.
 - Each person runs their list on `main` and pushes the run's CSV to their own branch; the results are spliced in with `combine`.
+- Update: the 76 Southern Europe companies held back for documents were added to the three lists, about 25 each (the collector searches for a report when there is no link). The lists are now `divi.csv` 284, `praveen.csv` 188, `revanth_j.csv` 360; 39 companies are left in `documents_to_find.csv` (29 DACH and 9 UK with a wrong-year report or no website, 1 Benelux).
