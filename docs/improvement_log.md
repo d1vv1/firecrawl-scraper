@@ -715,3 +715,22 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - targeted re-runs of the pay fields where only the annual report was read;
 - the draft run of Benelux and Southern Europe and the confirmation re-run of the rest of UK and DACH, both as version 5;
 - agree the list of required fields.
+
+---
+
+### 16 November 2026: run lists for the week, from the re-run queue
+
+#### 59. The re-run queue and the tracker are on this machine; four run lists built
+- The queue (`FY2025_rerun_queue_2026-11-14.csv`, 1,259 companies) is in the project root and the tracker in `../Excel_Documents/`. Neither is in git.
+- `python -m extractor.rerun_list <batch> --no-bucket` wrote the lists in `data/`:
+
+| List | Companies | Full runs | Pay only | Named fields | Annual report link | Remuneration report link | To do by hand first |
+|---|---|---|---|---|---|---|---|
+| `rerun_benelux.csv` | 182 | 182 | 0 | 0 | 180 | 0 | 1 |
+| `rerun_southern_europe.csv` | 387 | 387 | 0 | 0 | 315 | 336 | 76 |
+| `rerun_uk.csv` | 398 | 321 | 2 | 75 | 396 | 0 | 9 |
+| `rerun_dach.csv` | 216 | 28 | 24 | 164 | 152 | 112 | 29 |
+
+- **The lists have no CDP bucket links yet:** the gcloud login on this machine has expired. Benelux and the UK have no remuneration report link without the bucket, so their pay fields would be read from the annual report only (the largest group in the exceptions list, item 58). Build the lists again after `gcloud auth login`.
+- **The UK list is out of date:** the queue was made on 14 November, before the remaining-UK run. 318 of its 321 full runs are already in the combined file.
+- 76 Southern Europe companies have no documents in the tracker ("find documents first"); they cannot be run until someone finds them.
