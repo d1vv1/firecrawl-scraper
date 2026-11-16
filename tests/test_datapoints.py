@@ -590,6 +590,9 @@ def test_a_pay_documents_year_end_must_be_the_financial_years():
     # Aurskog Sparebank: a bonus measuring period's end, in the pay year
     assert not dp.year_end_fits(end("2025-09-30", "opptjeningsperioden 1.10.2024-30.09.2025"), "2025")
     assert not dp.year_end_fits(end("2025-06-30", "financial year ended 30 June 2025"), "2025/26")
+    # Brøndby IF: no "financial year" in the quote, but the pay is for 2025/26
+    assert dp.year_end_fits(end("2026-06-30", "perioden 1. juli 2025 til 30. juni 2026"), "2025/26")
+    assert not dp.year_end_fits(end("2026-06-30", "perioden 1. juli 2025 til 30. juni 2026"), "2026")
     assert dp.fiscal_year_of("2025-09-30") == "2025" and dp.fiscal_year_of("2026-03-31") == "2025/26"
 
 
