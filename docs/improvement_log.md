@@ -734,3 +734,10 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - **The lists have no CDP bucket links yet:** the gcloud login on this machine has expired. Benelux and the UK have no remuneration report link without the bucket, so their pay fields would be read from the annual report only (the largest group in the exceptions list, item 58). Build the lists again after `gcloud auth login`.
 - **The UK list is out of date:** the queue was made on 14 November, before the remaining-UK run. 318 of its 321 full runs are already in the combined file.
 - 76 Southern Europe companies have no documents in the tracker ("find documents first"); they cannot be run until someone finds them.
+
+#### 60. Today's runs split three ways
+- The service account in `.env` cannot read the CDP bucket (403, no `storage.objects.get`), so the lists still have no bucket links. Bucket links need a user login (`gcloud auth login`) or the client granting the service account read access.
+- `data/runs_16nov/` (committed): `divi.csv` 258 companies (Benelux, and the UK companies still missing fields), `praveen.csv` 163 (Italy, Portugal), `revanth_j.csv` 335 (Spain, Greece, and the DACH companies still missing fields).
+- `documents_to_find.csv`: 115 companies held back until their FY2025 documents are found or a wrong-year report is replaced (76 Southern Europe, 29 DACH, 9 UK, 1 Benelux).
+- The 318 UK first runs in the queue are left out: they are already in the combined file.
+- Each person runs their list on `main` and pushes the run's CSV to their own branch; the results are spliced in with `combine`.
