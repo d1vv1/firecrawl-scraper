@@ -29,6 +29,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from . import fields
 from .datapoints import COLUMNS, refresh
 from .fields import NOT_COLLECTED
 
@@ -72,6 +73,23 @@ def filled(rows: list[dict]) -> int:
     return sum(1 for r in rows if r.get("value", "").strip())
 
 
+def pay_fields_asked(old: list[dict], new: list[dict]) -> set[str] | None:
+    """The pay fields a run for some pay fields asked for, or None when it asked for all
+    pay (or none). Read from its "not collected: this run asked only for benefits_value,
+    pension_contribution" rows: such a run writes pay rows for those fields only."""
+    labels = {r["note"][len(NOT_COLLECTED):] for r in new if r["note"].startswith(NOT_COLLECTED)}
+    if len(labels) != 1:
+        return None
+    try:
+        asked = fields.parse(labels.pop())
+    except ValueError:
+        return None
+    pay = set(fields.GROUPS["pay"])
+    if asked is None or pay <= asked:
+        return None
+    return set(asked & pay) or None
+
+
 def worse_blocks(old: list[dict], new: list[dict]) -> set[str]:
     """The grains ("company", "role") where the run has clearly fewer values than before.
     Company facts: compared on the fields the run collected (a pay-only run's "not
@@ -79,11 +97,14 @@ def worse_blocks(old: list[dict], new: list[dict]) -> set[str]:
     between runs: "CEO", "Vorstand")."""
     out = set()
     collected = {key(r) for r in new if r["grain"] == "company" and not r["note"].startswith(NOT_COLLECTED)}
+    asked = pay_fields_asked(old, new)
     for grain in ("company", "role"):
         if grain == "company":
             o = filled([r for r in old if r["grain"] == grain and key(r) in collected])
         else:
-            o = filled([r for r in old if r["grain"] == grain])
+            # a run for some pay fields is compared on those fields only
+            o = filled([r for r in old if r["grain"] == grain
+                        and (asked is None or r["data_point"] in asked)])
         n = filled([r for r in new if r["grain"] == grain])
         if o >= WORSE_MIN_VALUES and n < WORSE_SHARE * o:
             out.add(grain)
@@ -108,6 +129,14 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
     out = []
     new_roles = [r for r in new if r["grain"] == "role"]
     roles_skipped = bool(new_roles) and all(r["note"].startswith(NOT_COLLECTED) for r in new_roles)
+    old_roles = [r for r in old if r["grain"] == "role"]
+    if ("role" not in kept_worse_grains(kept_worse) and old_roles and not roles_skipped
+            and pay_fields_asked(old, new) is not None):
+        # a run for some pay fields: the old pay rows stay, and the run fills their empty fields
+        roles, filled_keys = fill_roles(old_roles, new_roles)
+        rest, kept_rest = merge_company([r for r in old if r["grain"] != "role"],
+                                        [r for r in new if r["grain"] != "role"], keep_better)
+        return rest + roles, kept_rest | ({key(r) for r in old_roles} - filled_keys)
     for r in new:
         if key(r) in kept_worse:
             out.append(r)
@@ -121,10 +150,38 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         else:
             out.append(r)
     if roles_skipped:
-        old_roles = [r for r in old if r["grain"] == "role"]
         out += old_roles or new_roles
         kept |= {key(r) for r in old_roles}
     return out, kept
+
+
+def kept_worse_grains(kept_worse: set[Key]) -> set[str]:
+    return {k[0] for k in kept_worse}
+
+
+def fill_roles(old_roles: list[dict], new_roles: list[dict]) -> tuple[list[dict], set[Key]]:
+    """The old pay rows, with the run's values for the fields it collected where the old row
+    is empty. A role the old rows don't have is left out (role names change between runs:
+    "CEO", "Chief Executive Officer"), as is a value the old row already has. Returns
+    (rows, keys filled from the run)."""
+    have = {r["role_row"] for r in old_roles}
+    fill = {key(r): r for r in new_roles
+            if r.get("value", "").strip() and not r["note"].startswith(NOT_COLLECTED)
+            and r["role_row"] in have}
+    out, done = [], set()
+    for r in old_roles:
+        n = fill.get(key(r))
+        if n and not r.get("value", "").strip():
+            out.append(n)
+            done.add(key(r))
+        else:
+            out.append(r)
+    added = [n for k, n in fill.items() if k not in done and k not in {key(r) for r in old_roles}]
+    for n in added:                       # a field the old role had no row for: next to its role
+        at = max(i for i, r in enumerate(out) if r["role_row"] == n["role_row"]) + 1
+        out.insert(at, n)
+        done.add(key(n))
+    return out, done
 
 
 def splice(groups: dict[str, list[dict]], order: list[str], incoming: dict[str, list[dict]]) -> list[dict]:

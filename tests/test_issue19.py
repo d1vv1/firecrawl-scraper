@@ -178,3 +178,28 @@ def test_an_amount_over_50_times_the_roles_total_is_its_printed_figure():
     rows = role('printed 336000 thousands', total="9000")
     dp.refresh(rows)
     assert rows[2]["value"] == "336000000"
+
+
+def test_a_run_for_some_pay_fields_fills_the_old_pay_rows():
+    from extractor.fields import NOT_COLLECTED
+    nc = NOT_COLLECTED + "benefits_value, pension_contribution"
+    old = [_row("a", "revenue", "100"),
+           *[_row("a", f"p{i}", str(i + 1), "role", "CEO") for i in range(8)],
+           _row("a", "pension_contribution", "", "role", "CEO"),
+           _row("a", "p0", "5", "role", "Vorstand")]
+    # a run for one pay field writes rows for that field only (Kardex, 16 Nov)
+    new = [_row("a", "revenue", "", note=nc),
+           _row("a", "pension_contribution", "138400", "role", "CEO"),
+           _row("a", "pension_contribution", "7", "role", "Chief Executive Officer")]
+    assert combine.pay_fields_asked(old, new) == {"benefits_value", "pension_contribution"}
+    # a run of all pay is not one
+    assert combine.pay_fields_asked(old, [_row("a", "revenue", note=NOT_COLLECTED + "pay")]) is None
+    assert combine.worse_blocks(old, new) == set()
+    rows, kept = combine.merge_company(old, new)
+    pay = [(r["role_row"], r["data_point"], r["value"]) for r in rows if r["grain"] == "role"]
+    assert ("CEO", "pension_contribution", "138400") in pay
+    assert ("Vorstand", "p0", "5") in pay                        # an old role the run didn't name
+    assert [v for _, k, v in pay if k.startswith("p") and k != "pension_contribution"].count("") == 0
+    assert all(role != "Chief Executive Officer" for role, _, _ in pay)   # a role not in the file
+    assert [r["value"] for r in rows if r["data_point"] == "revenue"] == ["100"]
+    assert ("role", "CEO", "pension_contribution") not in kept

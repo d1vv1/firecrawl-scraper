@@ -743,3 +743,30 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - Each person runs their list on `main` and pushes the run's CSV to their own branch; the results are spliced in with `combine`.
 - Update: the 76 Southern Europe companies held back for documents were added to the three lists, about 25 each (the collector searches for a report when there is no link). The lists are now `divi.csv` 284, `praveen.csv` 188, `revanth_j.csv` 360; 39 companies are left in `documents_to_find.csv` (29 DACH and 9 UK with a wrong-year report or no website, 1 Benelux).
 - Update: the three lists rebalanced so each person has the same work: `divi.csv` 278, `praveen.csv` 277, `revanth_j.csv` 277, each about 190 full runs and 87 runs for missing fields, mixing every region. `documents_to_find.csv` (39) is unchanged.
+
+---
+
+### 17 November 2026: the first of today's three runs spliced in
+
+#### 61. Divi's list run (278 companies)
+- `output/runs_16nov_divi.csv`: all 278 companies, 73.0% of the values asked for found. Paused twice (a laptop restart); the resume ran only the companies not done, not the missing-field companies done hours before (the collector re-runs those while a field is still empty).
+- Retried 8 that failed on a timeout or a cut-off AI answer: 7 now have values (Agfa-Gevaert, Gestamp, Iberdrola, Logista, Merlin, Reig Jofre, Domiki Kritis).
+- 15 need a report link before another run: no FY2025 report found (Nyrstar, DIGI Spain, Kordellos, Danieli, Generalfinance, Glintt), only old reports (Grifols, Pescanova, Logismos, q.beyond), website not confidently found (Athens Airport, Inmobiliaria del Sur, Highlight Event, Swiss National Bank), report download refused (Leclanché, Romande Energie).
+
+#### 62. `combine` no longer throws away a missing-field pay run
+- **Problem:** a run for one or two pay fields (the input's `fields` column) writes pay rows for those fields only, so it always had "under half the values before" and the whole pay block was kept from before. The first splice of item 61 dropped 24 new pay values at 11 companies (Kardex CEO pension CHF 138,400; Forbo, Logitech benefits).
+- **Fix:** the fields a run asked for are read from its "not collected: this run asked only for ..." notes. For such a run the old pay rows stay and the run fills their empty fields; it is compared with the old rows on those fields only. A role the file doesn't have is not added (role names change between runs). A run of all pay, including a failed one, is handled as before. Test added; 531 pass.
+- With the fix: 788 of the run's pay values placed; 15 left out (roles not in the file, e.g. Bloomsbury's CFO who left in the year); 5 full pay re-runs that got fewer values kept the old rows (SAP, C&C Group, Braemar, C Capital, Pittler).
+
+#### The combined file now
+
+| | Before (891 companies) | After (1,082 companies) |
+|---|---|---|
+| Found | 74.3% | 74.3% |
+| Found, the 87 re-run companies | 70.3% | 73.7% |
+| Found, the 191 new companies | | 73.3% |
+| Found, leaving out the STI and LTI fields | 83.4% | 83.2% |
+
+- Exceptions list (`output/fy2025_runs_failures.md`): 15,958 values missing at 1,070 companies; not stated in the documents read 8,070; pay where only the annual report was read 6,726; annual report not found 500.
+- Spot-check sheet for Oggy: `output/runs_16nov_divi_spot_check.csv`, 28 companies from 10 countries, 1,075 lines with each value's check status.
+- `output/fy2025_runs_datapoints_checks.csv` is now 119 MB, over GitHub's 100 MB limit, so it is not committed.
