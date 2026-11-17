@@ -239,7 +239,9 @@ def read_targets(path: Path) -> list[Target]:
         return next((h for h, l in low.items() if l in names), None)
     c_id = col("company_id", "id")
     c_name = col("company_name", "name", "legal_name", "company name")
-    c_country, c_seg = col("country", "country_code"), col("segment", "tier")
+    # Both columns, country first: a row with country empty takes its country_code.
+    c_countries = [h for h in (col("country"), col("country_code")) if h]
+    c_seg = col("segment", "tier")
     c_lei, c_bid = col("lei"), col("business_id", "registration_id", "org_number")
     tracker = col("remuneration files") is not None
     c_rem = col("remuneration_report_url") or (col("link") if tracker else None)
@@ -270,7 +272,8 @@ def read_targets(path: Path) -> list[Target]:
         cid = (r.get(c_id) or "").strip()
         if not cid:
             continue
-        country = (r.get(c_country) or "").strip().upper() if c_country else ""
+        country = next((v for v in ((r.get(h) or "").strip().upper() for h in c_countries)
+                        if re.fullmatch(r"[A-Z]{2}", v)), "")
         lei = (r.get(c_lei) or "").strip().upper() if c_lei else ""
         bid = (r.get(c_bid) or "").strip() if c_bid else ""
         t = out.get(cid)

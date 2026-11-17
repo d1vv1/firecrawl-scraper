@@ -524,6 +524,20 @@ def test_supplied_report_urls_are_read_from_the_input(tmp_path):
     assert t.annual_report_url.startswith("https://cdn.example.com/") and t.remuneration_report_url is None
 
 
+def test_an_empty_country_falls_back_to_country_code(tmp_path):
+    # data/fy2025_v2_trial.csv had Tallink Grupp with country empty and country_code FI; the run
+    # wrote no country, and the splice blanked FI in the combined file.
+    p = tmp_path / "in.csv"
+    p.write_text("company_id,company_name,country,segment,country_code\n"
+                 "tallink,Tallink Grupp,,nordic_listed,FI\n"
+                 "equinor,Equinor ASA,NO,nordic_listed,\n"
+                 "both,Both Oy,SE,nordic_listed,FI\n"
+                 "none,Unknown AB,(none),nordic_listed,\n",
+                 encoding="utf-8")
+    got = {t.company.company_id: t.company.country for t in dp.read_targets(p)}
+    assert got == {"tallink": "FI", "equinor": "NO", "both": "SE", "none": None}
+
+
 def test_a_supplied_document_is_read_first_and_skips_the_year_check(monkeypatch):
     from extractor import pay
     q = "Net sales|3|2,326.2"
