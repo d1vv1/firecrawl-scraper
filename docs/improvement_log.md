@@ -770,3 +770,26 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - Exceptions list (`output/fy2025_runs_failures.md`): 15,958 values missing at 1,070 companies; not stated in the documents read 8,070; pay where only the annual report was read 6,726; annual report not found 500.
 - Spot-check sheet for Oggy: `output/runs_16nov_divi_spot_check.csv`, 28 companies from 10 countries, 1,075 lines with each value's check status.
 - `output/fy2025_runs_datapoints_checks.csv` is now 119 MB, over GitHub's 100 MB limit, so it is not committed.
+
+---
+
+### 18 November 2026: Praveen's run spliced in
+
+#### 63. Praveen's list run (277 companies)
+- Praveen could not push, so he sent the run's files; they are in `output/` as `runs_16nov_praveen.csv`, `_checks.csv`, `_checks.md`, `_failures.csv` and `_failures.md`. All 277 companies of `data/runs_16nov/praveen.csv` are there, with the same columns as Divi's run.
+- **190 new companies:** 73.1% of the values asked for found (Divi's new companies: 73.3%).
+- **87 missing-field re-runs:** 88 of the 432 missing fields filled (20%); 27 companies gained at least one. Most filled: market cap band 9 of 36, share price 8 of 33, pension 5 of 41, benefits 4 of 46. 29 of them found nothing new and kept their values.
+- Why the rest stayed empty (his run's failure report, 76 companies): not stated in the documents read 244, pay where only the annual report was read 123, report not found, wrong year or unreadable 65, market cap band without share price or share count 29. Re-running without a new source does not fill these; the remuneration reports in the CDP bucket would (access asked from the client: the `.env` service account gets a 403, and so does Divi's own login).
+- `combine`: 87 companies replaced, 190 added, 3,341 values kept that the run did not ask for. 15 companies re-run for company fields only (Lonza, Experian, SGS, AstraZeneca, ...) kept their pay rows; the "under half the values" warning for them is harmless, since those runs asked for no pay.
+- One company's unit is "USD CENTS": the ECB rate lookup rejects it (400), so its market cap band is not worked out. To fix after the runs.
+
+#### The combined file now
+
+| | Before (1,082 companies) | After (1,272 companies) |
+|---|---|---|
+| Found (dashboard) | 73.0% | 73.2% |
+| Values passing the checks | 92% | 93% |
+| Values failing a hard check | 2,379 (5%) | 2,672 (5%) |
+
+- Exceptions list (`output/fy2025_runs_failures.md`): 18,472 values missing at 1,259 companies; not stated in the documents read 9,398; pay where only the annual report was read 7,777; annual report not found 504; a calculated field missing an input 404.
+- Backup of the files before the splice: the session scratchpad, `before_praveen/`.
