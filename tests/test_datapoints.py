@@ -953,6 +953,26 @@ def test_another_companys_report_is_set_aside_and_the_inputs_report_read(monkeyp
         "check: the report is by 'BRØNDBYERNES I.F. FODBOLD A/S', not Brondbyernes IF: " + dp.OTHER_COMPANY)], "s") is None
 
 
+def test_company_values_of_the_report_year_get_its_year_end():
+    """AXAC-380: a bare year, or a document dated the report's year, takes the year end;
+    an undated web page and a register's count stay undated."""
+    def row(point, value, period="", note=""):
+        return {"grain": "company", "data_point": point, "value": value, "period_end": period, "note": note}
+    rows = [row("fiscal_year_end", "2026-03-31"),
+            row("headcount", "1816", "2026"),
+            row("fte", "35", "2024"),                                     # another year: left
+            row("staff_by_segment", "Stores: 396", note="PDF page 3; document dated 2025"),
+            row("ebitda", "528", note="PDF page 3; document dated 2023"),   # older: left
+            row("headcount", "3500", note="web page; this document is undated"),
+            row("legal_name", "X plc", note="document dated 2025")]          # not dated data
+    dp.dates_of_the_report_year(rows, "2026-03-31")
+    assert [r["period_end"] for r in rows] == ["2026-03-31", "2026-03-31", "2024", "2026-03-31", "", "", ""]
+    assert "stated as the year 2026" in rows[1]["note"] and "document dated 2025" in rows[3]["note"]
+    again = [dict(r) for r in rows]
+    dp.dates_of_the_report_year(again, "2026-03-31")
+    assert again == rows                                                  # a second pass changes nothing
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"

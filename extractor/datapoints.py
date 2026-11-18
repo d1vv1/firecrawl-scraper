@@ -2495,6 +2495,39 @@ def no_controlling_owner(by: dict[str, dict]) -> None:
         name["note"] = NO_CONTROLLING_OWNER
 
 
+DOCUMENT_YEAR = re.compile(r"document dated ((?:19|20)\d{2})")
+
+
+def dates_of_the_report_year(rows: list[dict], report_end: str) -> None:
+    """AXAC-380: a dated company value without a full date gets the report's year end when
+    its own year is the report's: a bare year the AI gave ("2025": Bakkafrost's headcount,
+    SEB's revenue), or none from a document dated that year (Stora Enso's EBITDA, Big
+    Yellow's staff by segment). The year end itself is dated by its own value (SED
+    Energy, Brøndby IF). A value whose year is not known (an undated web page, a register's
+    current count) stays undated: the day it was read is no period end."""
+    if not iso_date(report_end):
+        report_end = ""
+    years = set()
+    if report_end:
+        end = dt.date.fromisoformat(report_end)
+        years = {str(end.year)} | ({str(end.year - 1)} if end.month <= 6 else set())
+    for r in rows:
+        if r["grain"] != "company" or not r["value"]:
+            continue
+        if r["data_point"] == "fiscal_year_end":
+            if not r["period_end"] and iso_date(r["value"]):
+                r["period_end"] = r["value"]
+            continue
+        if r["data_point"] not in PERIODIC or not report_end:
+            continue
+        if re.fullmatch(r"(19|20)\d{2}", r["period_end"]) and r["period_end"] in years:
+            r["note"] += f"; period end: the report's (stated as the year {r['period_end']})"
+            r["period_end"] = report_end
+        elif not r["period_end"] and (m := DOCUMENT_YEAR.search(r["note"])) and m.group(1) in years:
+            r["period_end"] = report_end
+            r["note"] += f"; period end: the report's (document dated {m.group(1)})"
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2550,6 +2583,7 @@ def refresh(rows: list[dict]) -> list[dict]:
                          note="dropped: a target read from its maximum's quote, or above the maximum")
     pay_end = next((r["period_end"] for r in rows if r["grain"] == "role" and r["period_end"]), "")
     report_end = (by.get("fiscal_year_end") or {}).get("value") or ""
+    dates_of_the_report_year(rows, report_end)
     for r in rows:
         if r["grain"] != "company" or not r["value"] or r["period_end"]:
             continue
