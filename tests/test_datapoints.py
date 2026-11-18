@@ -973,6 +973,22 @@ def test_company_values_of_the_report_year_get_its_year_end():
     assert again == rows                                                  # a second pass changes nothing
 
 
+def test_other_documents_give_no_operating_profit_for_ebitda_nor_an_approximate_count():
+    """AXAC-404: Stora Enso's sustainability report gave "adjusted EBIT of EUR 528 million"
+    and "approximately 19,000 employees"."""
+    sus = "Sustainability report (PDF)"
+    got = [Found("ebitda", 528e6, source=sus, note='operating profit; printed 528 millions (adjusted EBIT)'),
+           Found("headcount", 19000, source=sus, confidence="B",
+                 note='PDF page 3: "approximately 19,000 employees at the end of 2025"'),
+           Found("headcount", 8664, source="Annual report (PDF)", confidence="B",
+                 note='PDF page 140: "about 8,664 people"'),
+           Found("ebitda", 1144e6, source=sus, note="adjusted ebitda; printed 1144 millions")]
+    dp.fallback_guards(got)
+    assert [f.value for f in got] == [19000, 8664, 1144e6]
+    assert got[0].confidence == "C" and got[0].note.endswith("an approximate figure")
+    assert got[1].confidence == "B"                       # the annual report's own: left
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"

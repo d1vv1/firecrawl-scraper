@@ -990,6 +990,32 @@ def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
     return [picked[i] for i in sorted(picked)]
 
 
+# AXAC-404: an approximate count is not the count ("approximately 19,000 employees" where
+# the annual report gives 18,550): graded C, so an exact one wins.
+APPROXIMATE = re.compile(r"\b(approximately|approx\.?|about|around|circa|some|nearly|almost|"
+                         r"more than|over|roughly|ca\.|c\.|rund|etwa|cirka|omkring|noin|"
+                         r"environ|ungefär|ungefähr)\s+\d", re.I)
+REPORT_LIKE = ("Annual report", "ESEF filing", "SEC EDGAR filing")
+
+
+def fallback_guards(got: list[Found]) -> None:
+    """Values from a document that is not the annual report: an operating profit is no
+    EBITDA (the prompt allows it only when the company reports no EBITDA, which only its
+    annual report can tell: Stora Enso's sustainability report gave "adjusted EBIT of EUR
+    528 million", its annual report an adjusted EBITDA of 1,144); a count stated as about
+    so many is graded C."""
+    for f in list(got):
+        if f.source.startswith(REPORT_LIKE):
+            continue
+        if f.data_point == "ebitda" and f.note.startswith("operating profit"):
+            log.info("Documents: %s from %s is an operating profit, not EBITDA; not used",
+                     f.value, f.source)
+            got.remove(f)
+        elif f.data_point in ("headcount", "fte") and APPROXIMATE.search(f.note):
+            f.confidence = "C"
+            f.note += "; an approximate figure"
+
+
 def ask_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
                   country: str | None = None, report_year: int | None = None,
                   where: str | None = None, tag: str = "docs", names: tuple[str, ...] = (),
@@ -1037,6 +1063,7 @@ def ask_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
             got.remove(end)
             end = None
         with_report_period(got, end.value if end else None)
+    fallback_guards(got)
     for f in got:
         year_check(f, report_year)
     return got
@@ -2031,14 +2058,23 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         the pay step (they are read already). Not when a result exists whose text isn't
         cached here: that report was read."""
         nonlocal pay_docs_read
-        if result is not None or not seen.origins or pay_docs_read:
+        origins = seen.origins
+        if result is not None:
+            # AXAC-404: a report was read (Stora Enso's tagged filing), but the pay step read
+            # the full annual report of that year too: it is asked for what is still open
+            # before the other documents are
+            year = report_year(result)
+            read_url = (origin.url if origin else str(result.get("report_url") or "")).split("#")[0]
+            origins = [o for o in seen.origins if o.url.split("#")[0] != read_url
+                       and (ty := title_year(o.pages)) and (year is None or ty == year)]
+        if not origins or pay_docs_read:
             return []
         pay_docs_read = True
         chosen = best(values)
         gaps = [g for g in gap_list(chosen) + ["fiscal_year"]
                 if g not in chosen and selection.wants(sel, g)]
         from_pay_docs.extend(from_read_documents(
-            c.name, c.slug, seen.origins, gaps, (lei_record or {}).get("country") or c.country,
+            c.name, c.slug, origins, gaps, (lei_record or {}).get("country") or c.country,
             (c.name, (lei_record or {}).get("legal_name") or ""), seen.year, seen.origin))
         return from_pay_docs
     try:
