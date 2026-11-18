@@ -301,6 +301,12 @@ def test_ampersand_spellings(name, domain, title):
 
 def test_ampersand_does_not_match_unrelated_domains():
     assert score_candidate(clean_name("1&1 AG"), "example1.com", "Some page") < 0.2
+    # AXAC-406: a three-letter brand that is the name's first word; a regulator is no website
+    k2a = clean_name("K2A Knaust & Andersson")
+    assert score_candidate(k2a, "k2a.se", "K2A for investors") >= 0.5
+    assert score_candidate(clean_name("SEB C"), "seb.se", "SEB") >= 0.5
+    assert score_candidate(k2a, "abc.se", "Some page") < 0.3                # another 3 letters
+    assert is_blocked("www.fi.se") and is_blocked("finanstilsynet.no")
     assert score_candidate(clean_name("1&1 AG"), "1und1.ag", "x") > score_candidate(
         clean_name("1&1 AG"), "1and1.com", "x") - 0.01   # both spellings are equally fine
 
