@@ -1460,6 +1460,34 @@ def name_core(name: str | None) -> frozenset[str]:
 
 
 OTHER_COMPANY = "possibly another company's report"
+OTHER_COUNTRY = "the report says the company is in"
+OTHER_NAME = "the report is by"
+
+
+def other_companys_report(values: list[Found], source: str) -> str | None:
+    """Why the report read is another company's, when both signals of the identity check
+    say so: another country and another name (Canal+: the Panama Canal Authority's annual
+    report, "PA" and "Autoridad del Canal de Panamá"). A name alone is no proof:
+    "BRØNDBYERNES I.F. FODBOLD A/S" is Brøndby IF's own name, a word longer."""
+    note = next((f.note for f in values if f.source == source and OTHER_COMPANY in f.note), "")
+    if OTHER_COUNTRY in note and OTHER_NAME in note:
+        return note[note.index("check: "):]
+    return None
+
+
+def set_aside_report(c: Company, result: dict, why: str) -> str | None:
+    """The report step's result is another company's report: kept beside as
+    <slug>.rejected.json for review, its error file says why, and the search cache that
+    chose it is dropped so the next run searches again. Returns the website the search
+    had before it took the report's host for it (pancanal.com for canalplus.com)."""
+    rejected = c.result_path.with_name(f"{c.slug}.rejected.json")
+    rejected.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    c.result_path.unlink(missing_ok=True)
+    c.error_path.write_text(json.dumps({"error_type": "OtherCompanysReport", "error": why},
+                                       ensure_ascii=False), encoding="utf-8")
+    (CACHE_DIR / f"{c.slug}_discovery.json").unlink(missing_ok=True)
+    was = re.search(r"\(was (https?://[^)\s]+)\)", str(result.get("website_source") or ""))
+    return was.group(1) if was else None
 
 
 def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
@@ -1966,6 +1994,24 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     # 2. the report: its figures, then the AI pass for what the APIs and tags left open
     origin, from_report = (read_report(t, result, lei_record, values, sel)
                            if result and want_report else (None, []))
+    site_before = None
+    why = other_companys_report(from_report, origin.source) if origin else None
+    if why and result.get("report_source") != "annual_report_url in the input":
+        # the report found is another company's (Canal+ got the Panama Canal Authority's):
+        # none of its values, and its "unlisted" would also switch off the pay step
+        url = result.get("report_url")
+        log.warning("Annual report %s is another company's (%s); not used", url, why)
+        site_before = set_aside_report(c, result, why)
+        result, origin, from_report = None, None, []
+        error = f"OtherCompanysReport: the report found ({url}) is another company's ({why})"
+        if want_report and supplied and not local_file(supplied) and supplied != url:
+            pfc = FirecrawlClient(load_settings(), max_credits=1)
+            found = use_as_report(t, supplied, site_before, pfc, "annual_report_url in the input")
+            meter["pipeline"] = meter.get("pipeline", 0) + pfc.credits.total
+            if found:
+                result, error = found, None
+                lei_record = result.get("lei_record") or lei_record
+                origin, from_report = read_report(t, result, lei_record, values, sel)
     values += from_report
     report_label = None
     if result and want_report:
@@ -1998,7 +2044,7 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     try:
         if docs and selection.needs_documents(sel):
             fc = FirecrawlClient(load_settings(), max_credits=doc_credits)
-            site = website_for(t, result, lei_record, fc)
+            site = site_before or website_for(t, result, lei_record, fc)
             if site:
                 year = str((result or {}).get("fiscal_year") or "")
                 lib = Library(c.slug, site, int(year) if year.isdigit() else None, fc,

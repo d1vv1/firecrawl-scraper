@@ -905,6 +905,54 @@ def test_the_total_note_counts_the_deferred_bonus_as_part_of_the_sti():
     assert "some parts missing" in note
 
 
+def test_another_companys_report_is_set_aside_and_the_inputs_report_read(monkeypatch, tmp_path):
+    """AXAC-402: Canal+ got the Panama Canal Authority's annual report from a web search.
+    Another country and another name: the report is not used, its "unlisted" does not
+    switch off the pay step, and the input's annual_report_url is read instead."""
+    import json
+    from extractor import batch
+    monkeypatch.setattr(batch, "OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(dp, "CACHE_DIR", tmp_path)
+    monkeypatch.setattr(dp.sector, "from_description", lambda chosen, name: None)
+    monkeypatch.setattr(dp, "load_settings", lambda: None)
+    monkeypatch.setattr(dp, "FirecrawlClient", lambda *a, **k: type(
+        "FC", (), {"credits": type("C", (), {"total": 0})()})())
+    c = Company("canal-s-a", "Canal+ S.A", "FR")
+    panama = {"fiscal_year": "2025", "report_url": "https://pancanal.com/Informe-2025Eng.pdf",
+              "website": "https://www.pancanal.com", "report_source": "map",
+              "website_source": "the report's site (was https://canalplus.com)"}
+    c.result_path.write_text(json.dumps(panama), encoding="utf-8")
+    (tmp_path / "canal-s-a_discovery.json").write_text("{}", encoding="utf-8")
+    own = {"fiscal_year": "2025", "report_url": "https://www.canalplusgroup.com/ar.pdf",
+           "report_source": "annual_report_url in the input",
+           "debug": {"markdown_file": "canal-s-a_own.md"}}
+    why = ("check: the report says the company is in PA, the company list says FR and the "
+           "report is by 'Autoridad del Canal de Panamá', not Canal+ S.A: " + dp.OTHER_COMPANY)
+    rem = _origin()
+
+    def fake_read(t, result, lei, values, sel=None):
+        if result["report_url"] == panama["report_url"]:
+            return rem, [Found("listing_status", "unlisted", source=rem.source, note=why),
+                         Found("legal_name", "Autoridad del Canal de Panamá", source=rem.source, note=why)]
+        return rem, [Found("legal_name", "CANAL+ SA", source=rem.source, method="PARSE", confidence="B")]
+    monkeypatch.setattr(dp, "read_report", fake_read)
+    used = []
+    monkeypatch.setattr(dp, "use_as_report", lambda t, url, site, fc, how: used.append((url, site)) or own)
+    monkeypatch.setattr(dp, "identify_lei", lambda *a, **k: {"record": None})
+    pay_asked = []
+    monkeypatch.setattr(dp, "from_pay", lambda *a, **k: pay_asked.append(1) or ([], [], []))
+    t = dp.Target(c, annual_report_url="https://www.canalplusgroup.com/ar.pdf")
+    by = {f.data_point: f for f in dp.collect(t, docs=False, use_apis=False) if f.grain == "company"}
+    assert used == [("https://www.canalplusgroup.com/ar.pdf", "https://canalplus.com")]
+    assert by["legal_name"].value == "CANAL+ SA" and pay_asked          # pay step not switched off
+    assert by["listing_status"].value is None
+    assert (tmp_path / "canal-s-a.rejected.json").exists()
+    assert not (tmp_path / "canal-s-a_discovery.json").exists()        # the next run searches again
+    # a name alone (Brøndby IF's own report, a word longer) is no reason to set it aside
+    assert dp.other_companys_report([Found("legal_name", "x", source="s", note=
+        "check: the report is by 'BRØNDBYERNES I.F. FODBOLD A/S', not Brondbyernes IF: " + dp.OTHER_COMPANY)], "s") is None
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"

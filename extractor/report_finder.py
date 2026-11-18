@@ -468,12 +468,20 @@ def search_languages(*countries: str | None) -> list[str]:
     return ["en", "de"] if german else ["en"]
 
 
+def _names(text: str, tokens: set[str]) -> bool:
+    """`text` (a host or a file name) carries every word of the name, and one of them
+    starts one of its words ("bellfoodgroup", "adidas-group", "essentra-ar2025"). Not a
+    name inside another word: pancanal.com, the Panama Canal Authority's, is not Canal+'s."""
+    words = re.findall(r"[a-z0-9]+", fold(text.lower()))
+    flat = "".join(words)
+    return (bool(tokens) and all(t in flat for t in tokens)
+            and any(w.startswith(t) for w in words for t in tokens))
+
+
 def host_names_company(url: str, company_name: str | None) -> bool:
     """The host carries every word of the company's name (report.adidas-group.com for
     adidas; not a file server)."""
-    tokens = name_tokens(company_name)
-    flat_host = re.sub(r"[^a-z0-9]", "", fold(urlparse(url).netloc.lower()))
-    return bool(tokens) and all(t in flat_host for t in tokens)
+    return _names(urlparse(url).netloc, name_tokens(company_name))
 
 
 def own_document(url: str, company_name: str | None, website_url: str | None) -> bool:
@@ -490,11 +498,9 @@ def own_document(url: str, company_name: str | None, website_url: str | None) ->
     tokens = name_tokens(company_name)
     if not tokens:
         return False
-    flat_host = re.sub(r"[^a-z0-9]", "", fold(host))
-    if all(t in flat_host for t in tokens):
+    if _names(host, tokens):
         return True
-    name = re.sub(r"[^a-z0-9]", "", fold(unquote(urlparse(url).path.rsplit("/", 1)[-1])))
-    return is_pdf_url(url) and all(t in name for t in tokens)
+    return is_pdf_url(url) and _names(unquote(urlparse(url).path.rsplit("/", 1)[-1]), tokens)
 
 
 def _download_link(url: str) -> bool:
