@@ -202,3 +202,14 @@ def test_sector_code_must_be_in_the_taxonomy():
     assert oc.cod_01(_row(data_point="sector_code", value="NACE 47.91"), ctx).outcome == "pass"
     assert oc.cod_01(_row(data_point="sector_code", value="NACE 47.98"), ctx).outcome == "fail"
     assert oc.cod_01(_row(data_point="sector_code", value="SIC (UK) 70100"), ctx).outcome == "pass"
+
+
+def test_a_listing_date_may_be_a_year_and_month():
+    """AXAC-407: Big Yellow "flotation in May 2000" -> 2000-05."""
+    from types import SimpleNamespace
+    row = lambda v: SimpleNamespace(data_point="listing_date", value=v)   # noqa: E731
+    assert oc.cod_06(row("2000-05"), None).outcome == "pass"
+    assert oc.cod_06(row("2000"), None).outcome == "pass"
+    assert oc.cod_06(row("2000-05-12"), None).outcome == "pass"
+    assert oc.cod_06(row("2000-13"), None).outcome == "fail"
+    assert oc.cod_06(row("May 2000"), None).outcome == "fail"

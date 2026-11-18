@@ -475,8 +475,9 @@ def cod_06(r: Row, ctx: Ctx):
     if r.data_point == "fiscal_year_end":
         return ok("COD-06") if is_date(r.value) else bad("COD-06", "not a valid date")
     if r.data_point == "listing_date":
-        good = is_date(r.value) or re.fullmatch(r"(19|20)\d{2}", r.value)
-        return ok("COD-06") if good else bad("COD-06", "not a year or a date")
+        good = (is_date(r.value) or re.fullmatch(r"(19|20)\d{2}", r.value)
+                or re.fullmatch(r"(19|20)\d{2}-(0[1-9]|1[0-2])", r.value))   # year and month
+        return ok("COD-06") if good else bad("COD-06", "not a year, a year and month, or a date")
     return na("COD-06", "not a date field")
 
 
