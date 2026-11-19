@@ -250,14 +250,16 @@ Each item: a rule in code, a test, a note on the value saying how it was obtaine
 
 ### Phase D: re-run and close out (about 3 run days split across 3 people, plus 2 days of review)
 
-1. **D1, re-run list:** build it with `python -m extractor.rerun_list`, with a `fields` column of only the missing priority fields. Order:
+*(The steps are numbered 1–4, not D1–D4: D1–D6 are the decisions in section 6.)*
+
+1. **Re-run list:** build it with `python -m extractor.rerun_list`, with a `fields` column of only the missing priority fields. Order:
    1. companies whose values date from v0–v2;
    2. REMUNERATION_REPORT_NOT_READ companies, with remuneration report links;
    3. REPORT_NOT_FOUND and WRONG_YEAR_REPORT companies, with links found by hand;
    4. the rest.
-2. **D2, documents by hand:** find the roughly 18 missing annual reports and the remaining `data/runs_16nov/documents_to_find.csv` companies.
-3. **D3, review queue:** whatever is still blank goes through a review queue (improvement 3.1). Every remaining blank must carry a specific, true reason.
-4. **D4, splice and refresh:** `combine`, then the checks and failures reports, dashboard, spot-check sheet and `docs/improvement_log.md`.
+2. **Documents by hand:** find the roughly 18 missing annual reports and the remaining `data/runs_16nov/documents_to_find.csv` companies.
+3. **Review queue:** whatever is still blank goes through a review queue (improvement 3.1). Every remaining blank must carry a specific, true reason.
+4. **Splice and refresh:** `combine`, then the checks and failures reports, dashboard, spot-check sheet and `docs/improvement_log.md`.
 
 ### Guardrails (so the number isn't gamed)
 
@@ -308,6 +310,19 @@ These are estimates from the bucket analysis in section 1, not measurements. The
 | D4 | How should a pension or benefit that is combined with another item (Italy, Switzerland) count? It is neither 0 nor missing. Proposal: STATED_IN_OTHER_FORM, shown separately and not counted as not found. | Client |
 | D5 | May we store private individuals' names from the major-holding registers (GDPR)? Are the regulators' terms acceptable for automated reuse? | Legal / data governance |
 | D6 | Read access to the CDP bucket for the service account in `.env` (currently 403). The pay targets depend on it. | Client |
+
+### D1 in detail: four values that fill a blank the source doesn't print
+
+Each of these turns "not found" into an answer, so each moves the dashboard a lot. But each is our reading of a rule or a register code, not a figure we can quote. If the client later disagreed, the values would count as wrong, which is worse than blank. So none goes live before the client agrees (see "Guardrails" in section 4).
+
+| # | Value | Why it needs agreement | Effect on missing | Status |
+|---|---|---|---|---|
+| 1 | `ultimate_parent` = "none (no consolidating parent)" when GLEIF gives the reporting exception `NON_CONSOLIDATING` (no parent includes the company in its consolidated accounts; about 182 of the 205 blanks) | "No company consolidates it" is close to "no parent", but not the same: a PE fund, a foundation or the state can control a company without consolidating it. So it fills `ultimate_parent` only, never `controlling_owner` or `ownership_type`. | ultimate_parent 25.2% → 2.7% (measured) | A1, built, off until signed off (`gleif_non_consolidating`) |
+| 2 | benefits_value or pension_contribution = 0 when the role's stated total equals its other amounts (a CEO's total 800,000 = base + bonus + LTI 800,000), within 0.5% | The field list says "record 0, not blank" for benefits, but a 0 we work out is not a 0 the report prints. The note shows the sum: "derived: 0, the stated total 800,000 = …". It never fires where a pension is folded into another column (that is D4): the total would not equal the other parts. | benefits_value 32.0% → 19.2%, pension_contribution 37.7% → 19.4% (measured) | A3, built, off until signed off (`zero_from_total`) |
+| 3 | `ebitda` = operating profit when the report has no EBITDA, the note naming the measure | The field list says "EBITDA, else operating profit", but the two differ by depreciation and amortisation. The client should confirm they want operating profit under `ebitda` rather than a blank. | ebitda 11.3% → about 4% (estimate) | B3, not built |
+| 4 | `shareholding_requirement` = "None" when no requirement is stated | The field list says "record 'None' if absent"; our prompt says null. "None" is true only when a remuneration policy or full remuneration report was actually read and states none, so the rule would apply only then. | shareholding_requirement 37.4% → about 8% (estimate) | B2, not built |
+
+Once agreed: `SIGNED_OFF_RULES=gleif_non_consolidating,zero_from_total` in `.env`, then `python -m extractor.combine --into output/fy2025_runs_datapoints.csv --gleif` (items 1 and 2); items 3 and 4 go into the Phase B prompt changes.
 
 ---
 
