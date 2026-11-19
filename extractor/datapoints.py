@@ -990,6 +990,32 @@ def doc_chunks(origins: list[Origin], gaps: list[str]) -> list[Chunk]:
     return [picked[i] for i in sorted(picked)]
 
 
+# AXAC-404: an approximate count is not the count ("approximately 19,000 employees" where
+# the annual report gives 18,550): graded C, so an exact one wins.
+APPROXIMATE = re.compile(r"\b(approximately|approx\.?|about|around|circa|some|nearly|almost|"
+                         r"more than|over|roughly|ca\.|c\.|rund|etwa|cirka|omkring|noin|"
+                         r"environ|ungefär|ungefähr)\s+\d", re.I)
+REPORT_LIKE = ("Annual report", "ESEF filing", "SEC EDGAR filing")
+
+
+def fallback_guards(got: list[Found]) -> None:
+    """Values from a document that is not the annual report: an operating profit is no
+    EBITDA (the prompt allows it only when the company reports no EBITDA, which only its
+    annual report can tell: Stora Enso's sustainability report gave "adjusted EBIT of EUR
+    528 million", its annual report an adjusted EBITDA of 1,144); a count stated as about
+    so many is graded C."""
+    for f in list(got):
+        if f.source.startswith(REPORT_LIKE):
+            continue
+        if f.data_point == "ebitda" and f.note.startswith("operating profit"):
+            log.info("Documents: %s from %s is an operating profit, not EBITDA; not used",
+                     f.value, f.source)
+            got.remove(f)
+        elif f.data_point in ("headcount", "fte") and APPROXIMATE.search(f.note):
+            f.confidence = "C"
+            f.note += "; an approximate figure"
+
+
 def ask_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
                   country: str | None = None, report_year: int | None = None,
                   where: str | None = None, tag: str = "docs", names: tuple[str, ...] = (),
@@ -1037,6 +1063,7 @@ def ask_documents(name: str, slug: str, origins: list[Origin], gaps: list[str],
             got.remove(end)
             end = None
         with_report_period(got, end.value if end else None)
+    fallback_guards(got)
     for f in got:
         year_check(f, report_year)
     return got
@@ -1460,6 +1487,34 @@ def name_core(name: str | None) -> frozenset[str]:
 
 
 OTHER_COMPANY = "possibly another company's report"
+OTHER_COUNTRY = "the report says the company is in"
+OTHER_NAME = "the report is by"
+
+
+def other_companys_report(values: list[Found], source: str) -> str | None:
+    """Why the report read is another company's, when both signals of the identity check
+    say so: another country and another name (Canal+: the Panama Canal Authority's annual
+    report, "PA" and "Autoridad del Canal de Panamá"). A name alone is no proof:
+    "BRØNDBYERNES I.F. FODBOLD A/S" is Brøndby IF's own name, a word longer."""
+    note = next((f.note for f in values if f.source == source and OTHER_COMPANY in f.note), "")
+    if OTHER_COUNTRY in note and OTHER_NAME in note:
+        return note[note.index("check: "):]
+    return None
+
+
+def set_aside_report(c: Company, result: dict, why: str) -> str | None:
+    """The report step's result is another company's report: kept beside as
+    <slug>.rejected.json for review, its error file says why, and the search cache that
+    chose it is dropped so the next run searches again. Returns the website the search
+    had before it took the report's host for it (pancanal.com for canalplus.com)."""
+    rejected = c.result_path.with_name(f"{c.slug}.rejected.json")
+    rejected.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    c.result_path.unlink(missing_ok=True)
+    c.error_path.write_text(json.dumps({"error_type": "OtherCompanysReport", "error": why},
+                                       ensure_ascii=False), encoding="utf-8")
+    (CACHE_DIR / f"{c.slug}_discovery.json").unlink(missing_ok=True)
+    was = re.search(r"\(was (https?://[^)\s]+)\)", str(result.get("website_source") or ""))
+    return was.group(1) if was else None
 
 
 def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
@@ -1966,6 +2021,24 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
     # 2. the report: its figures, then the AI pass for what the APIs and tags left open
     origin, from_report = (read_report(t, result, lei_record, values, sel)
                            if result and want_report else (None, []))
+    site_before = None
+    why = other_companys_report(from_report, origin.source) if origin else None
+    if why and result.get("report_source") != "annual_report_url in the input":
+        # the report found is another company's (Canal+ got the Panama Canal Authority's):
+        # none of its values, and its "unlisted" would also switch off the pay step
+        url = result.get("report_url")
+        log.warning("Annual report %s is another company's (%s); not used", url, why)
+        site_before = set_aside_report(c, result, why)
+        result, origin, from_report = None, None, []
+        error = f"OtherCompanysReport: the report found ({url}) is another company's ({why})"
+        if want_report and supplied and not local_file(supplied) and supplied != url:
+            pfc = FirecrawlClient(load_settings(), max_credits=1)
+            found = use_as_report(t, supplied, site_before, pfc, "annual_report_url in the input")
+            meter["pipeline"] = meter.get("pipeline", 0) + pfc.credits.total
+            if found:
+                result, error = found, None
+                lei_record = result.get("lei_record") or lei_record
+                origin, from_report = read_report(t, result, lei_record, values, sel)
     values += from_report
     report_label = None
     if result and want_report:
@@ -1985,20 +2058,29 @@ def collect(t: Target, docs: bool = True, doc_credits: int = DEFAULT_DOC_CREDITS
         the pay step (they are read already). Not when a result exists whose text isn't
         cached here: that report was read."""
         nonlocal pay_docs_read
-        if result is not None or not seen.origins or pay_docs_read:
+        origins = seen.origins
+        if result is not None:
+            # AXAC-404: a report was read (Stora Enso's tagged filing), but the pay step read
+            # the full annual report of that year too: it is asked for what is still open
+            # before the other documents are
+            year = report_year(result)
+            read_url = (origin.url if origin else str(result.get("report_url") or "")).split("#")[0]
+            origins = [o for o in seen.origins if o.url.split("#")[0] != read_url
+                       and (ty := title_year(o.pages)) and (year is None or ty == year)]
+        if not origins or pay_docs_read:
             return []
         pay_docs_read = True
         chosen = best(values)
         gaps = [g for g in gap_list(chosen) + ["fiscal_year"]
                 if g not in chosen and selection.wants(sel, g)]
         from_pay_docs.extend(from_read_documents(
-            c.name, c.slug, seen.origins, gaps, (lei_record or {}).get("country") or c.country,
+            c.name, c.slug, origins, gaps, (lei_record or {}).get("country") or c.country,
             (c.name, (lei_record or {}).get("legal_name") or ""), seen.year, seen.origin))
         return from_pay_docs
     try:
         if docs and selection.needs_documents(sel):
             fc = FirecrawlClient(load_settings(), max_credits=doc_credits)
-            site = website_for(t, result, lei_record, fc)
+            site = site_before or website_for(t, result, lei_record, fc)
             if site:
                 year = str((result or {}).get("fiscal_year") or "")
                 lib = Library(c.slug, site, int(year) if year.isdigit() else None, fc,
@@ -2449,6 +2531,39 @@ def no_controlling_owner(by: dict[str, dict]) -> None:
         name["note"] = NO_CONTROLLING_OWNER
 
 
+DOCUMENT_YEAR = re.compile(r"document dated ((?:19|20)\d{2})")
+
+
+def dates_of_the_report_year(rows: list[dict], report_end: str) -> None:
+    """AXAC-380: a dated company value without a full date gets the report's year end when
+    its own year is the report's: a bare year the AI gave ("2025": Bakkafrost's headcount,
+    SEB's revenue), or none from a document dated that year (Stora Enso's EBITDA, Big
+    Yellow's staff by segment). The year end itself is dated by its own value (SED
+    Energy, Brøndby IF). A value whose year is not known (an undated web page, a register's
+    current count) stays undated: the day it was read is no period end."""
+    if not iso_date(report_end):
+        report_end = ""
+    years = set()
+    if report_end:
+        end = dt.date.fromisoformat(report_end)
+        years = {str(end.year)} | ({str(end.year - 1)} if end.month <= 6 else set())
+    for r in rows:
+        if r["grain"] != "company" or not r["value"]:
+            continue
+        if r["data_point"] == "fiscal_year_end":
+            if not r["period_end"] and iso_date(r["value"]):
+                r["period_end"] = r["value"]
+            continue
+        if r["data_point"] not in PERIODIC or not report_end:
+            continue
+        if re.fullmatch(r"(19|20)\d{2}", r["period_end"]) and r["period_end"] in years:
+            r["note"] += f"; period end: the report's (stated as the year {r['period_end']})"
+            r["period_end"] = report_end
+        elif not r["period_end"] and (m := DOCUMENT_YEAR.search(r["note"])) and m.group(1) in years:
+            r["period_end"] = report_end
+            r["note"] += f"; period end: the report's (document dated {m.group(1)})"
+
+
 def refresh(rows: list[dict]) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2504,6 +2619,7 @@ def refresh(rows: list[dict]) -> list[dict]:
                          note="dropped: a target read from its maximum's quote, or above the maximum")
     pay_end = next((r["period_end"] for r in rows if r["grain"] == "role" and r["period_end"]), "")
     report_end = (by.get("fiscal_year_end") or {}).get("value") or ""
+    dates_of_the_report_year(rows, report_end)
     for r in rows:
         if r["grain"] != "company" or not r["value"] or r["period_end"]:
             continue

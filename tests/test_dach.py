@@ -21,6 +21,11 @@ def test_only_the_companys_own_documents_count():
     assert not own("https://companiesmarketcap.com/bkw-ag/annual-reports/", "BKW AG", "https://www.bkw.ch")
     assert not own("https://investor.asml.com/annual-reports/2025/downloads", "ASMALLWORLD AG", "http://www.asmallworld.com")
     assert not own("https://www.advantech.com/en-us/investor/annual-report", "Adval Tech Holding AG", "https://www.advaltech.com")
+    # AXAC-402: a name inside another word is not the company's (pancanal.com is the Panama
+    # Canal Authority's); Canal+'s own group site still counts
+    assert not own("https://pancanal.com/wp-content/uploads/2026/02/Informe-2025Eng.pdf", "Canal+ S.A", None)
+    assert not rf.host_names_company("https://pancanal.com/en/annual-report/", "Canal+ S.A")
+    assert own("https://www.canalplusgroup.com/uploads/Canal_Annual_Report_2025.pdf", "Canal+ S.A", None)
 
 
 def test_search_results_are_judged_by_title_when_the_url_misleads():

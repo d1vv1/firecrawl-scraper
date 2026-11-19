@@ -144,6 +144,9 @@ def test_choose_website_rank_and_country():
     ("Equinor", "EQUINOR ASA", "exact"),                 # no form given: compatible
     ("Hennes & Mauritz AB", "H & M Hennes & Mauritz AB", "partial"),
     ("Volvo AB", "Volvo Car AB", None),                  # extra words after = other company
+    # AXAC-406: a word after it that only says what kind of company it is
+    ("K2A Knaust & Andersson", "K2A Knaust & Andersson Fastigheter AB (publ)", "partial"),
+    ("Volvo AB", "Volvo Car Holding AB", None),
     ("Equinor ASA", "EQUINOR ASSET MANAGEMENT AS", None),  # ASA vs AS
     ("Unilever PLC", "UNILEVER N.V.", None),
 ])

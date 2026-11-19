@@ -53,6 +53,12 @@ _FORM_TOKENS = {"oyj": "plc", "abp": "plc", "plc": "plc", "ltd": "ltd", "inc": "
 # Oyj", "Otello Corp ASA"): they never make two forms incompatible.
 _WEAK_FORMS = {"corp", "co"}
 _IGNORED = {"publ", "the"}
+# Words a registered name can carry after the name a list uses, saying only what kind of
+# company it is: "K2A Knaust & Andersson Fastigheter AB (publ)" for "K2A Knaust &
+# Andersson" (AXAC-406). Other trailing words still mean another company ("Volvo Car").
+_TRAILING_DESCRIPTORS = {"fastigheter", "fastighets", "eiendom", "eiendommer", "ejendomme",
+                         "kiinteistot", "properties", "property", "holding", "holdings",
+                         "group", "gruppen", "koncernen", "konsern", "konsernet"}
 
 
 @dataclass
@@ -135,6 +141,10 @@ def match_level(listed: str, gleif_name: str) -> str | None:
     if a.base == b.base:
         return "exact"
     if _contains(b.base, a.base):
+        return "partial"
+    n = len(a.base)
+    if (n < len(b.base) and b.base[:n] == a.base
+            and all(w in _TRAILING_DESCRIPTORS for w in b.base[n:])):
         return "partial"
     return None
 

@@ -905,6 +905,90 @@ def test_the_total_note_counts_the_deferred_bonus_as_part_of_the_sti():
     assert "some parts missing" in note
 
 
+def test_another_companys_report_is_set_aside_and_the_inputs_report_read(monkeypatch, tmp_path):
+    """AXAC-402: Canal+ got the Panama Canal Authority's annual report from a web search.
+    Another country and another name: the report is not used, its "unlisted" does not
+    switch off the pay step, and the input's annual_report_url is read instead."""
+    import json
+    from extractor import batch
+    monkeypatch.setattr(batch, "OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(dp, "CACHE_DIR", tmp_path)
+    monkeypatch.setattr(dp.sector, "from_description", lambda chosen, name: None)
+    monkeypatch.setattr(dp, "load_settings", lambda: None)
+    monkeypatch.setattr(dp, "FirecrawlClient", lambda *a, **k: type(
+        "FC", (), {"credits": type("C", (), {"total": 0})()})())
+    c = Company("canal-s-a", "Canal+ S.A", "FR")
+    panama = {"fiscal_year": "2025", "report_url": "https://pancanal.com/Informe-2025Eng.pdf",
+              "website": "https://www.pancanal.com", "report_source": "map",
+              "website_source": "the report's site (was https://canalplus.com)"}
+    c.result_path.write_text(json.dumps(panama), encoding="utf-8")
+    (tmp_path / "canal-s-a_discovery.json").write_text("{}", encoding="utf-8")
+    own = {"fiscal_year": "2025", "report_url": "https://www.canalplusgroup.com/ar.pdf",
+           "report_source": "annual_report_url in the input",
+           "debug": {"markdown_file": "canal-s-a_own.md"}}
+    why = ("check: the report says the company is in PA, the company list says FR and the "
+           "report is by 'Autoridad del Canal de Panamá', not Canal+ S.A: " + dp.OTHER_COMPANY)
+    rem = _origin()
+
+    def fake_read(t, result, lei, values, sel=None):
+        if result["report_url"] == panama["report_url"]:
+            return rem, [Found("listing_status", "unlisted", source=rem.source, note=why),
+                         Found("legal_name", "Autoridad del Canal de Panamá", source=rem.source, note=why)]
+        return rem, [Found("legal_name", "CANAL+ SA", source=rem.source, method="PARSE", confidence="B")]
+    monkeypatch.setattr(dp, "read_report", fake_read)
+    used = []
+    monkeypatch.setattr(dp, "use_as_report", lambda t, url, site, fc, how: used.append((url, site)) or own)
+    monkeypatch.setattr(dp, "identify_lei", lambda *a, **k: {"record": None})
+    pay_asked = []
+    monkeypatch.setattr(dp, "from_pay", lambda *a, **k: pay_asked.append(1) or ([], [], []))
+    t = dp.Target(c, annual_report_url="https://www.canalplusgroup.com/ar.pdf")
+    by = {f.data_point: f for f in dp.collect(t, docs=False, use_apis=False) if f.grain == "company"}
+    assert used == [("https://www.canalplusgroup.com/ar.pdf", "https://canalplus.com")]
+    assert by["legal_name"].value == "CANAL+ SA" and pay_asked          # pay step not switched off
+    assert by["listing_status"].value is None
+    assert (tmp_path / "canal-s-a.rejected.json").exists()
+    assert not (tmp_path / "canal-s-a_discovery.json").exists()        # the next run searches again
+    # a name alone (Brøndby IF's own report, a word longer) is no reason to set it aside
+    assert dp.other_companys_report([Found("legal_name", "x", source="s", note=
+        "check: the report is by 'BRØNDBYERNES I.F. FODBOLD A/S', not Brondbyernes IF: " + dp.OTHER_COMPANY)], "s") is None
+
+
+def test_company_values_of_the_report_year_get_its_year_end():
+    """AXAC-380: a bare year, or a document dated the report's year, takes the year end;
+    an undated web page and a register's count stay undated."""
+    def row(point, value, period="", note=""):
+        return {"grain": "company", "data_point": point, "value": value, "period_end": period, "note": note}
+    rows = [row("fiscal_year_end", "2026-03-31"),
+            row("headcount", "1816", "2026"),
+            row("fte", "35", "2024"),                                     # another year: left
+            row("staff_by_segment", "Stores: 396", note="PDF page 3; document dated 2025"),
+            row("ebitda", "528", note="PDF page 3; document dated 2023"),   # older: left
+            row("headcount", "3500", note="web page; this document is undated"),
+            row("legal_name", "X plc", note="document dated 2025")]          # not dated data
+    dp.dates_of_the_report_year(rows, "2026-03-31")
+    assert [r["period_end"] for r in rows] == ["2026-03-31", "2026-03-31", "2024", "2026-03-31", "", "", ""]
+    assert "stated as the year 2026" in rows[1]["note"] and "document dated 2025" in rows[3]["note"]
+    again = [dict(r) for r in rows]
+    dp.dates_of_the_report_year(again, "2026-03-31")
+    assert again == rows                                                  # a second pass changes nothing
+
+
+def test_other_documents_give_no_operating_profit_for_ebitda_nor_an_approximate_count():
+    """AXAC-404: Stora Enso's sustainability report gave "adjusted EBIT of EUR 528 million"
+    and "approximately 19,000 employees"."""
+    sus = "Sustainability report (PDF)"
+    got = [Found("ebitda", 528e6, source=sus, note='operating profit; printed 528 millions (adjusted EBIT)'),
+           Found("headcount", 19000, source=sus, confidence="B",
+                 note='PDF page 3: "approximately 19,000 employees at the end of 2025"'),
+           Found("headcount", 8664, source="Annual report (PDF)", confidence="B",
+                 note='PDF page 140: "about 8,664 people"'),
+           Found("ebitda", 1144e6, source=sus, note="adjusted ebitda; printed 1144 millions")]
+    dp.fallback_guards(got)
+    assert [f.value for f in got] == [19000, 8664, 1144e6]
+    assert got[0].confidence == "C" and got[0].note.endswith("an approximate figure")
+    assert got[1].confidence == "B"                       # the annual report's own: left
+
+
 def test_a_salary_addition_in_lieu_of_pension_counts_as_pension():
     from extractor import pay
     q = "Net sales|3|2,326.2"

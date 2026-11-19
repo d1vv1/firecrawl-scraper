@@ -34,6 +34,11 @@ BLOCKED_DOMAINS = [
     # LEI / registry aggregators
     "lei.net", "lei-registrar.com", "lei-lookup.com", "leilex.com", "gleif.org",
     "northdata.com", "northdata.de", "quartr.com",
+    # financial regulators: their registers file companies' prospectuses and reports
+    # (K2A's search scored a prospectus on fi.se above k2a.se)
+    "fi.se", "finanstilsynet.no", "finanstilsynet.dk", "finanssivalvonta.fi",
+    "bafin.de", "fma.gv.at", "finma.ch", "amf-france.org", "esma.europa.eu",
+    "fca.org.uk", "centralbank.ie", "consob.it", "cnmv.es", "afm.nl", "fsma.be",
 ]
 
 COUNTRY_BONUS = 0.1   # domain's country TLD matches the LEI country (minus if it's another country's)
@@ -108,6 +113,10 @@ def _score_one(clean: str, label: str, title_l: str, title_compact: str,
     if label == compact:
         domain_score = 1.0
     elif len(label) >= 4 and (compact.startswith(label) or label.startswith(compact)):
+        domain_score = 0.8
+    elif len(label) == 3 and clean.split()[0] == label:
+        # a three-letter brand that is the name's first word: k2a.se for "K2A Knaust &
+        # Andersson" (the name's other words are not in the domain)
         domain_score = 0.8
     elif compact in label:
         domain_score = 0.7

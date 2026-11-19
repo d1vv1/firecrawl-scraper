@@ -55,8 +55,9 @@ Facts:
   value if the text says the market is a multilateral trading facility;
   never a stock index such as OBX, FTSE 250, DAX or OMXS30: index
   membership is not a segment),
-  listing_date (YYYY-MM-DD, or the year): only for the company's own
-  shares.
+  listing_date (YYYY-MM-DD; YYYY-MM when the text gives only the month and
+  year, e.g. "flotation in May 2000" -> "2000-05"; or the year when it
+  gives only the year): only for the company's own shares.
 - is_listed: "listed" if the text says the company's shares trade on a
   stock exchange, "unlisted" if it says they do not or that the company is
   privately held / wholly owned by another company. Otherwise null.
@@ -64,7 +65,11 @@ Facts:
   company does (e.g. "develops and sells hardware security keys"): what it
   makes, sells or provides, preferably from "about us", "our business" or
   "at a glance". Not a sentence about a market, a strategy, one product
-  category or one event. The industry code is classified from it.
+  category or one event. The industry code is classified from it. Prefer
+  the plain statement of the activity ("the principal activity of the
+  Group is the provision of self storage and related services") to a
+  slogan or a claim about the company's standing ("the UK's leading self
+  storage brand").
 - fiscal_year_end: the last day of the fiscal year, YYYY-MM-DD.
 - reporting_currency: ISO code of the presentation currency.
 - accounting_basis: the accounting framework the group statements follow,
@@ -95,7 +100,9 @@ Facts:
   gives only shares in percent ("69 percent work in R&D"), leave the
   items empty. The same holds for the segment breakdowns.
   basis says how it is split (e.g. "by customer location", "average
-  FTE"). Empty items if not given.
+  FTE"). Empty items if not given. If the text says all of it arises in
+  one country ("These all arise in the United Kingdom"), give that one
+  country with the total, quoting that sentence.
 - revenue_by_segment, staff_by_segment: the breakdown by reportable
   segment (IFRS 8 segment note or key figures), one item per segment,
   leaving out totals and eliminations. basis says which figure (e.g.
