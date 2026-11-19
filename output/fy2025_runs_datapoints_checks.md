@@ -1,128 +1,128 @@
 # Output checks: fy2025_runs_datapoints.csv
 
-1462 companies, 61724 filled values checked (2026-11-19, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
+1510 companies, 62823 filled values checked (2026-11-19, `python -m extractor.output_checks`). A check that doesn't apply is n/a and doesn't count; quotes are looked up again in the cached source documents.
 
 | Status | Values |
 |---|---|
-| Pass | 57282 (93%) |
-| Review | 1364 (2%) |
-| Fail | 94 (0%) |
-| Fail (hard) | 2984 (5%) |
+| Pass | 58334 (93%) |
+| Review | 1385 (2%) |
+| Fail | 91 (0%) |
+| Fail (hard) | 3013 (5%) |
 
 ## By category
 
 | Category | Values | Pass | Review | Fail | Fail (hard) |
 |---|---|---|---|---|---|
-| Identity | 6460 | 6439 | 0 | 0 | 21 |
-| Listing and market | 5562 | 5445 | 0 | 0 | 117 |
-| Sector | 1904 | 1877 | 0 | 0 | 27 |
-| Reporting basis | 4701 | 4682 | 0 | 0 | 19 |
-| Financials | 4135 | 3745 | 204 | 1 | 185 |
-| Workforce | 1518 | 1278 | 130 | 4 | 106 |
-| Ownership and control | 4669 | 4458 | 0 | 0 | 211 |
-| Segment and geography | 1797 | 1221 | 330 | 54 | 192 |
-| Pay policy | 2735 | 2595 | 0 | 0 | 140 |
-| Role and disclosure | 7854 | 7585 | 6 | 35 | 228 |
-| Pay: fixed | 7190 | 6641 | 62 | 0 | 487 |
-| Pay: STI | 5350 | 4793 | 122 | 0 | 435 |
-| Pay: LTI | 4798 | 4220 | 72 | 0 | 506 |
-| Pay: total | 3021 | 2276 | 438 | 0 | 307 |
+| Identity | 6531 | 6510 | 0 | 0 | 21 |
+| Listing and market | 5651 | 5534 | 0 | 0 | 117 |
+| Sector | 1966 | 1938 | 0 | 0 | 28 |
+| Reporting basis | 4760 | 4741 | 0 | 0 | 19 |
+| Financials | 4234 | 3840 | 205 | 1 | 188 |
+| Workforce | 1545 | 1306 | 131 | 4 | 104 |
+| Ownership and control | 4735 | 4522 | 0 | 0 | 213 |
+| Segment and geography | 1816 | 1235 | 336 | 51 | 194 |
+| Pay policy | 2769 | 2630 | 0 | 0 | 139 |
+| Role and disclosure | 8029 | 7759 | 6 | 35 | 229 |
+| Pay: fixed | 7376 | 6817 | 64 | 0 | 495 |
+| Pay: STI | 5439 | 4874 | 123 | 0 | 442 |
+| Pay: LTI | 4846 | 4265 | 72 | 0 | 509 |
+| Pay: total | 3096 | 2336 | 448 | 0 | 312 |
 | Other | 30 | 27 | 0 | 0 | 3 |
 
 ## By check
 
 | Check | What it checks | Hard | Ran | Pass | Fail | n/a | Most common failure |
 |---|---|---|---|---|---|---|---|
-| CORE-01 | Locator present (PDF links open at a page) | yes | 61724 | 61671 | 53 | 0 | no endpoint URL |
-| CORE-02 | Value can be read off its quote | yes | 26977 | 26131 | 846 | 34747 | N not in the quote |
-| CORE-03 | Quote is in the cached source, on the linked page | yes | 42962 | 41155 | 1807 | 18762 | source not cached; the run itself did not find the quote |
-| CORE-04 | Period end present (dated fields only) |  | 35290 | 34695 | 595 | 26434 | no period_end |
-| CORE-05 | Type matches (number, date, breakdown) |  | 61724 | 61711 | 13 | 0 | period_end 'N-N' is not a date |
-| COD-01 | Value in its code list or closed set | yes | 20822 | 20672 | 150 | 40902 | unit '' is not a target form |
-| COD-02 | Classification scheme named |  | 946 | 946 | 0 | 60778 |  |
-| COD-03 | Identifier check digits (LEI, ISIN) | yes | 1958 | 1958 | 0 | 59766 |  |
-| COD-06 | Dates are valid | yes | 2199 | 2170 | 29 | 59525 | not a yearN a year and monthN or a date |
-| NUM-01 | Money has an ISO 4217 currency | yes | 17891 | 17849 | 42 | 43833 | unit 'KCHF' is not ISO N |
-| NUM-02 | Printed figure and unit recorded |  | 16314 | 16314 | 0 | 45410 |  |
-| NUM-04 | Magnitude in a plausible range |  | 20701 | 20609 | 92 | 41023 | N outside Ne+N |
-| NUM-05 | Counts are whole numbers | yes | 2136 | 2125 | 11 | 59588 | not a whole number |
-| NUM-06 | Percentages in range | yes | 4790 | 4788 | 2 | 56934 | N % of base salary |
-| NUM-07 | Holdings add up to 100% or less | yes | 821 | 806 | 15 | 60903 | holdings add up to N% |
-| NUM-08 | Breakdown adds up to the company total (5%) |  | 1776 | 1385 | 391 | 59948 | adds up to N vs N (N% apart) |
-| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 2393 | 2393 | 0 | 59331 |  |
-| NUM-11 | STI paid not above its maximum |  | 1290 | 1219 | 71 | 60434 | paid N% of baseN maximum N% |
-| NUM-12 | A role's amounts share currency and period |  | 14662 | 14644 | 18 | 47062 | currency N the role's other amounts GBP |
-| NUM-13 | FTE not above headcount |  | 626 | 572 | 54 | 61098 | FTE N above headcount N |
-| DER-03 | Derived value recalculates | yes | 454 | 454 | 0 | 61270 |  |
-| DER-06 | Derived value shows its formula |  | 2673 | 2673 | 0 | 59051 |  |
-| XF-01 | Parts not above the stated total (2%) | yes | 2549 | 2390 | 159 | 59175 | parts add up to N more than the stated N |
-| XF-02 | Total equals its parts (2%) |  | 2549 | 1946 | 603 | 59175 | parts add up to N stated N |
+| CORE-01 | Locator present (PDF links open at a page) | yes | 62823 | 62771 | 52 | 0 | no endpoint URL |
+| CORE-02 | Value can be read off its quote | yes | 27515 | 26659 | 856 | 35308 | N not in the quote |
+| CORE-03 | Quote is in the cached source, on the linked page | yes | 43774 | 41949 | 1825 | 19049 | source not cached; the run itself did not find the quote |
+| CORE-04 | Period end present (dated fields only) |  | 35973 | 35380 | 593 | 26850 | no period_end |
+| CORE-05 | Type matches (number, date, breakdown) |  | 62823 | 62809 | 14 | 0 | period_end 'N-N' is not a date |
+| COD-01 | Value in its code list or closed set | yes | 21194 | 21044 | 150 | 41629 | unit '' is not a target form |
+| COD-02 | Classification scheme named |  | 977 | 977 | 0 | 61846 |  |
+| COD-03 | Identifier check digits (LEI, ISIN) | yes | 1976 | 1976 | 0 | 60847 |  |
+| COD-06 | Dates are valid | yes | 2226 | 2197 | 29 | 60597 | not a yearN a year and monthN or a date |
+| NUM-01 | Money has an ISO 4217 currency | yes | 18284 | 18242 | 42 | 44539 | unit 'KCHF' is not ISO N |
+| NUM-02 | Printed figure and unit recorded |  | 16670 | 16670 | 0 | 46153 |  |
+| NUM-04 | Magnitude in a plausible range |  | 21165 | 21070 | 95 | 41658 | N outside Ne+N |
+| NUM-05 | Counts are whole numbers | yes | 2196 | 2185 | 11 | 60627 | not a whole number |
+| NUM-06 | Percentages in range | yes | 4853 | 4851 | 2 | 57970 | N % of base salary |
+| NUM-07 | Holdings add up to 100% or less | yes | 832 | 817 | 15 | 61991 | holdings add up to N% |
+| NUM-08 | Breakdown adds up to the company total (5%) |  | 1795 | 1401 | 394 | 61028 | adds up to N vs N (N% apart) |
+| NUM-09 | LTI says what it measures (granted, vested, expensed) |  | 2422 | 2422 | 0 | 60401 |  |
+| NUM-11 | STI paid not above its maximum |  | 1319 | 1247 | 72 | 61504 | paid N% of baseN maximum N% |
+| NUM-12 | A role's amounts share currency and period |  | 14991 | 14973 | 18 | 47832 | currency N the role's other amounts GBP |
+| NUM-13 | FTE not above headcount |  | 637 | 583 | 54 | 62186 | FTE N above headcount N |
+| DER-03 | Derived value recalculates | yes | 458 | 458 | 0 | 62365 |  |
+| DER-06 | Derived value shows its formula |  | 2750 | 2750 | 0 | 60073 |  |
+| XF-01 | Parts not above the stated total (2%) | yes | 2617 | 2453 | 164 | 60206 | parts add up to N more than the stated N |
+| XF-02 | Total equals its parts (2%) |  | 2617 | 1999 | 618 | 60206 | parts add up to N stated N |
 
 ## Fill rate
 
-Company fields: 33481 of 59942 filled (56%). Blank values are not checked above.
+Company fields: 34007 of 61910 filled (55%). Blank values are not checked above.
 
 | Field | Filled | Of |
 |---|---|---|
-| cik | 81 | 1462 |
-| staff_by_segment | 206 | 1462 |
-| staff_by_country | 410 | 1462 |
-| market_cap_band | 497 | 1462 |
-| share_price | 521 | 1462 |
-| other_names | 539 | 1462 |
-| revenue_by_country | 546 | 1462 |
-| exchange_segment | 612 | 1462 |
-| fte | 628 | 1462 |
-| revenue_by_segment | 635 | 1462 |
-| controlling_owner_name | 648 | 1462 |
-| shareholding_requirement | 700 | 1462 |
-| ultimate_parent | 715 | 1462 |
-| listing_date | 773 | 1462 |
-| pe_stake_5pct | 796 | 1462 |
-| ticker | 809 | 1462 |
-| largest_holders | 821 | 1462 |
-| ownership_type | 844 | 1462 |
-| controlling_owner | 845 | 1462 |
-| ebitda | 871 | 1462 |
-| headcount | 890 | 1462 |
-| accounting_basis | 906 | 1462 |
-| shares_outstanding | 906 | 1462 |
-| isin | 913 | 1462 |
-| revenue | 917 | 1462 |
-| total_assets | 920 | 1462 |
-| website | 939 | 1462 |
-| sector_code | 946 | 1462 |
-| sub_sector | 958 | 1462 |
-| reporting_currency | 958 | 1462 |
-| lei | 964 | 1462 |
-| exchange | 977 | 1462 |
-| listing_status | 981 | 1462 |
-| business_id | 982 | 1462 |
-| legal_name | 985 | 1462 |
-| country_code | 985 | 1462 |
-| head_office_city | 985 | 1462 |
-| pension_type | 1017 | 1462 |
-| benefits | 1018 | 1462 |
-| fiscal_year | 1411 | 1462 |
-| fiscal_year_end | 1426 | 1462 |
+| cik | 82 | 1510 |
+| staff_by_segment | 209 | 1510 |
+| staff_by_country | 417 | 1510 |
+| market_cap_band | 526 | 1510 |
+| other_names | 545 | 1510 |
+| revenue_by_country | 550 | 1510 |
+| share_price | 552 | 1510 |
+| exchange_segment | 621 | 1510 |
+| fte | 639 | 1510 |
+| revenue_by_segment | 640 | 1510 |
+| controlling_owner_name | 655 | 1510 |
+| shareholding_requirement | 706 | 1510 |
+| ultimate_parent | 724 | 1510 |
+| listing_date | 781 | 1510 |
+| pe_stake_5pct | 807 | 1510 |
+| ticker | 820 | 1510 |
+| largest_holders | 832 | 1510 |
+| ownership_type | 858 | 1510 |
+| controlling_owner | 859 | 1510 |
+| ebitda | 881 | 1510 |
+| headcount | 906 | 1510 |
+| accounting_basis | 917 | 1510 |
+| isin | 921 | 1510 |
+| revenue | 929 | 1510 |
+| total_assets | 931 | 1510 |
+| shares_outstanding | 941 | 1510 |
+| website | 950 | 1510 |
+| reporting_currency | 969 | 1510 |
+| lei | 973 | 1510 |
+| sector_code | 977 | 1510 |
+| exchange | 989 | 1510 |
+| sub_sector | 989 | 1510 |
+| business_id | 993 | 1510 |
+| listing_status | 993 | 1510 |
+| legal_name | 996 | 1510 |
+| country_code | 996 | 1510 |
+| head_office_city | 996 | 1510 |
+| pension_type | 1031 | 1510 |
+| benefits | 1032 | 1510 |
+| fiscal_year | 1429 | 1510 |
+| fiscal_year_end | 1445 | 1510 |
 
-Pay fields, over 3331 executive roles:
+Pay fields, over 3407 executive roles:
 
 | Field | Filled |
 |---|---|
-| base_salary | 2911 (87%) |
-| sti_paid | 2276 (68%) |
-| sti_target | 1122 (34%) |
-| sti_max | 1952 (59%) |
-| lti_vested | 1138 (34%) |
-| lti_granted | 1252 (38%) |
-| lti_target | 951 (29%) |
-| lti_max | 1453 (44%) |
-| benefits_value | 2247 (67%) |
-| pension_contribution | 2032 (61%) |
-| total_remuneration | 3016 (91%) |
+| base_salary | 2975 (87%) |
+| sti_paid | 2323 (68%) |
+| sti_target | 1127 (33%) |
+| sti_max | 1989 (58%) |
+| lti_vested | 1155 (34%) |
+| lti_granted | 1264 (37%) |
+| lti_target | 964 (28%) |
+| lti_max | 1459 (43%) |
+| benefits_value | 2306 (68%) |
+| pension_contribution | 2092 (61%) |
+| total_remuneration | 3090 (91%) |
 
-## Failed values (3078)
+## Failed values (3104)
 
 | Company | Field | Role | Value | Status | Why |
 |---|---|---|---|---|---|
@@ -130,6 +130,15 @@ Pay fields, over 3331 executive roles:
 | 4imprint-group-plc | lti_target | Chief Financial Officer (from  | 37.5 | Fail (hard) | CORE-02: 37.5 not in the quote |
 | 4imprint-group-plc | revenue_by_segment |  | North America: 1321.5; UK & Ir | Fail (hard) | CORE-03: quote not in the source text |
 | 4imprint-group-plc | total_assets |  | 308900000 | Fail (hard) | CORE-03: quote not in the source text |
+| T0002 | total_remuneration | Executive Management | -24000000 | Fail (hard) | NUM-04: -2.4e+07 outside 0..5e+10; XF-01: parts add up to -24,000,000, more than the stated -24,000,000 |
+| T0295 | share_price |  | 0.046 | Fail (hard) | CORE-02: 0.046 not in the quote |
+| T0325 | shares_outstanding |  | 73790829 | Fail (hard) | CORE-03: quote not in the source text |
+| T0377 | sub_sector |  | Global Workplace and facility  | Fail (hard) | CORE-03: quote not in the source text |
+| T0531 | sti_max | President and CEO | 0.666667 | Fail (hard) | CORE-02: 0.666667 not in the quote; CORE-03: quote not in the source text |
+| T0531 | total_remuneration | President and CEO | 702283 | Fail (hard) | XF-01: parts add up to 820,466, more than the stated 702,283; XF-02: parts add up to 820,466, stated 702,283 |
+| T0604 | controlling_owner |  | none | Fail (hard) | CORE-03: quote not in the source text |
+| T0604 | ownership_type |  | widely_held | Fail (hard) | CORE-03: quote not in the source text |
+| T0604 | staff_by_country |  | Suomi: 4608 | Fail (hard) | CORE-03: quote not in the source text |
 | a2a | fte |  | 14762 | Fail (hard) | CORE-02: 14762 not in the quote; CORE-03: source not cached; the run itself did not find the quote |
 | aalberts-nv | total_remuneration | CFO (up to 10 April 2025) | -16000 | Fail (hard) | NUM-04: -16000 outside 0..5e+10; XF-01: parts add up to -16,000, more than the stated -16,000 |
 | ab-inbev | ebitda |  | 21223000000 | Fail (hard) | NUM-01: unit 'US dollar' is not ISO 4217 |
@@ -448,7 +457,13 @@ Pay fields, over 3331 executive roles:
 | bachem-holding-ag | total_remuneration | Rest of the Corporate Executiv | 1933000 | Fail (hard) | XF-01: parts add up to 2,090,000, more than the stated 1,933,000; XF-02: parts add up to 2,090,000, stated 1,933,000 |
 | bae-systems-plc | role_disclosure | Board of directors (non-execut | aggregate | Fail (hard) | CORE-01: no endpoint URL |
 | bajaj-mobility-ag-8e6bef55 | ebitda |  | 874000000 | Fail (hard) | CORE-03: quote not in the source text |
-| bakkafrost | ebitda |  | 1672664000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
+| bakkafrost | ebitda |  | 1672664000 | Fail (hard) | CORE-03: quote not in the source text |
+| bakkafrost | sti_max | Chief Executive Officer | 100 | Fail (hard) | CORE-02: 100 not in the quote |
+| bakkafrost | sti_max | Managing Director | 100 | Fail (hard) | CORE-02: 100 not in the quote |
+| bakkafrost | sti_max | Chief Financial Officer | 100 | Fail (hard) | CORE-02: 100 not in the quote |
+| bakkafrost | total_remuneration | Chief Executive Officer | 6895000 | Fail (hard) | CORE-02: 6895 not in the quote; XF-02: parts add up to 3,035,000, stated 6,895,000 |
+| bakkafrost | total_remuneration | Managing Director | 2011000 | Fail (hard) | XF-01: parts add up to 2,128,000, more than the stated 2,011,000; XF-02: parts add up to 2,128,000, stated 2,011,000 |
+| bakkafrost | total_remuneration | Chief Financial Officer | 2010000 | Fail (hard) | XF-01: parts add up to 2,217,000, more than the stated 2,010,000; XF-02: parts add up to 2,217,000, stated 2,010,000 |
 | balfour-beatty-plc | pension_contribution | Outgoing Group Chief Executive | 43183 | Fail (hard) | CORE-03: quote not in the source text |
 | balfour-beatty-plc | total_remuneration | Group Chief Executive (appoint | 2938735 | Fail (hard) | XF-01: parts add up to 3,217,745, more than the stated 2,938,735; XF-02: parts add up to 3,217,745, stated 2,938,735 |
 | bally-s-intralot-s-a | controlling_owner |  | none | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
@@ -1034,7 +1049,7 @@ Pay fields, over 3331 executive roles:
 | cmb-tech | total_remuneration | Chief Chartering Officer | 312495 | Fail (hard) | CORE-03: quote not in the source text |
 | cmb-tech | total_remuneration | Chief Commercial Officer | 312495 | Fail (hard) | CORE-03: quote not in the source text |
 | cmb-tech | total_remuneration | Chief Strategy Officer | 312495 | Fail (hard) | CORE-03: quote not in the source text |
-| cmb-tech-nv | headcount |  | 2826 | Fail (hard) | CORE-02: 2826 not in the quote |
+| cmb-tech-nv | benefits_value | Chief Chartering Officer | 0 | Fail (hard) | CORE-03: quote not in the source text |
 | cmc-markets-plc | revenue_by_country |  | UK: 133.4; Rest of the world:  | Fail (hard) | CORE-03: quote not in the source text |
 | coats-group-plc | share_price |  | 84.55 | Fail (hard) | NUM-01: unit 'pence' is not ISO 4217 |
 | cobra-resources-plc | base_salary | Managing Director & Chief Exec | 150000 | Fail (hard) | CORE-03: quote not in the source text |
@@ -1081,6 +1096,8 @@ Pay fields, over 3331 executive roles:
 | convatec-group-plc | staff_by_country |  | Europe: 5276; North America: 3 | Fail (hard) | CORE-03: quote not in the source text |
 | convatec-group-plc | staff_by_segment |  | Operations: 3467; Sales and ma | Fail (hard) | CORE-03: quote not in the source text |
 | corem-property-d | base_salary | Other senior executives | 8317000 | Fail (hard) | CORE-02: 8317 not in the quote |
+| corem-property-pref | revenue_by_country |  | Sweden: 3244; Denmark: 59; Uni | Fail (hard) | CORE-03: quote not in the source text |
+| corem-property-pref | sti_max | VD | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | corpus-resources-plc | shares_outstanding |  | 3309339766 | Fail (hard) | CORE-02: 3309339766 not in the quote |
 | costain-group-plc | base_salary | Chief Financial Officer | 439544 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | costain-group-plc | benefits_value | Chief Financial Officer | 14945 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
@@ -1150,7 +1167,7 @@ Pay fields, over 3331 executive roles:
 | dcc-energy-plc | sti_paid | Chief Executive | 1928000 | Fail (hard) | CORE-03: quote not in the source text |
 | de-longhi | total_remuneration | Chairman and Chief Executive O | 2022823 | Fail (hard) | XF-01: parts add up to 2,602,823, more than the stated 2,022,823; XF-02: parts add up to 2,602,823, stated 2,022,823 |
 | defence-holdings-plc | lti_vested | Executive Director, Chief Fina | 648000 | Fail (hard) | CORE-02: 648 not in the quote |
-| dellia-group | ebitda |  | 74500000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
+| dellia-group | ebitda |  | 74500000 | Fail (hard) | CORE-03: quote not in the source text |
 | dellia-group | listing_date |  | 2025-09-29 | Fail (hard) | CORE-02: not in the quote: 2025 |
 | delticom-ag-na-o-n | listing_date |  | October 2006 | Fail (hard) | COD-06: not a year, a year and month, or a date |
 | delticom-ag-na-o-n | sti_max | Vorstandsmitglied (Philip von  | 63000 | Fail (hard) | CORE-02: 63000 not in the quote |
@@ -1584,15 +1601,7 @@ Pay fields, over 3331 executive roles:
 | foxtons-group-plc-1852b951 | lti_granted | CEO | 506000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | foxtons-group-plc-1852b951 | sti_paid | CEO | 87800 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | foxtons-group-plc-1852b951 | sti_paid | CFO | 45900 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| framery-group | base_salary | CEO | 219240 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| framery-group | benefits |  | company car, phone and accommo | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
-| framery-group | lti_vested | Management team | 3273000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| framery-group | revenue_by_country |  | Eurooppa, Lähi-itä ja Afrikka: | Fail | CORE-04: no period_end; NUM-08: adds up to 222,127,000 vs 162,119,000 (37.0% apart) |
-| framery-group | revenue_by_segment |  | Äänieristetyt työtilat: 216017 | Fail | CORE-04: no period_end; NUM-08: adds up to 222,127,000 vs 162,119,000 (37.0% apart) |
-| framery-group | staff_by_country |  | Finland: 357; Americas: 21; EM | Fail | CORE-04: no period_end; NUM-08: adds up to 398 vs 484 (17.8% apart) |
-| framery-group | sti_paid | CEO | 36000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| framery-group | total_remuneration | CEO | 255240 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| framery-group | website |  | framery.com | Fail (hard) | CORE-01: PDF link without #page=; CORE-02: no quote in the note |
+| framery-group | role_disclosure | Other members of the Managemen | aggregate | Fail (hard) | CORE-03: quote not in the source text |
 | frasers-group-plc-6a13d052 | shareholding_requirement |  | Executive Directors: share pri | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | frasers-group-plc-6a13d052 | total_remuneration | Chief Operating Officer | 251000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | frigoglass-s-a-i-c | headcount |  | 222 | Fail (hard) | CORE-03: quote not in the source text |
@@ -1865,6 +1874,11 @@ Pay fields, over 3331 executive roles:
 | igd-immobiliare-grande-distribuzione-siiq | staff_by_country |  | Italy: 169; Romania: 30 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | iktinos-hellas-s-a-greek-marble-industry-technical-and-touristic-company | headcount |  | 398 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | iktinos-hellas-s-a-greek-marble-industry-technical-and-touristic-company | revenue_by_country |  | Ευρωζώνη: 1893948; Λοιπές Ευρω | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
+| ilkka-2 | base_salary | Toimitusjohtaja | 278869 | Fail (hard) | CORE-03: quote not in the source text |
+| ilkka-2 | lti_max | Toimitusjohtaja | 60 | Fail (hard) | CORE-03: quote not in the source text |
+| ilkka-2 | lti_vested | Toimitusjohtaja | 8217 | Fail (hard) | CORE-03: quote not in the source text |
+| ilkka-2 | sti_paid | Toimitusjohtaja | 25717 | Fail (hard) | CORE-03: quote not in the source text |
+| ilkka-2 | total_remuneration | Toimitusjohtaja | 312803 | Fail (hard) | CORE-03: quote not in the source text; XF-01: parts add up to 354,586, more than the stated 312,803; XF-02: parts add up to 354,586, stated 312,803 |
 | ilyda-sa | fiscal_year_end |  | 2025-12-31 | Fail (hard) | CORE-03: quote not in the source text |
 | imaging-biometrics-limited-3542bcb1 | total_assets |  | 1014125 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | imc-exploration-group-plc-91b5483e | exchange_segment |  | Main Market | Fail (hard) | CORE-02: not in the quote: market |
@@ -2395,6 +2409,8 @@ Pay fields, over 3331 executive roles:
 | nyxoah | lti_target | Other members of executive man | 33.33 | Fail (hard) | CORE-02: 33.33 not in the quote |
 | nyxoah | sti_target | Chief Executive Officer | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | oci | total_remuneration | Executive Chair | 1050000 | Fail (hard) | XF-01: parts add up to 1,260,000, more than the stated 1,050,000; XF-02: parts add up to 1,260,000, stated 1,050,000 |
+| odfjell-technology | lti_target | CEO Odfjell Technology AS | 300000 | Fail (hard) | CORE-02: 300000 not in the quote; CORE-03: quote not in the source text |
+| odfjell-technology | lti_target | CFO Odfjell Technology AS | 100000 | Fail (hard) | CORE-02: 100000 not in the quote; CORE-03: quote not in the source text |
 | omv-ag-2c5e8b21 | lti_target | Chairman of the Executive Boar | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | omv-ag-2c5e8b21 | lti_target | Chief Financial Officer | 100 | Fail (hard) | CORE-02: 100 not in the quote |
 | omv-ag-2c5e8b21 | lti_target | Executive Vice President Energ | 100 | Fail (hard) | CORE-02: 100 not in the quote |
@@ -2557,8 +2573,6 @@ Pay fields, over 3331 executive roles:
 | prudential-plc-c6ad5538 | pension_contribution | Chief Executive Officer | 207000 | Fail (hard) | CORE-03: quote not in the source text |
 | prudential-plc-c6ad5538 | revenue_by_segment |  | Hong Kong: 2221; Indonesia: 25 | Fail (hard) | CORE-03: quote not in the source text; NUM-08: adds up to 6,990,000,000 vs 11,080,000,000 (36.9% apart) |
 | prudential-plc-c6ad5538 | sti_max | Chief Executive Officer | 200 | Fail (hard) | CORE-03: quote not in the source text |
-| public-property-invest | largest_holders |  | Samhällsbyggnadsbolaget i Nord | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
-| public-property-invest | pe_stake_5pct |  | no | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | puretech-health-plc-df8e539a | share_price |  | 1.204 | Fail (hard) | CORE-02: 1.204 not in the quote |
 | pz-cussons-plc-a434b740 | shareholding_requirement |  | Executive Directors: 200% of s | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | qev | revenue_by_country |  | Sweden: 4144785; Spain: 251881 | Fail | CORE-04: no period_end; NUM-08: adds up to 13,446,829 vs 22,991,751 (41.5% apart) |
@@ -2795,6 +2809,8 @@ Pay fields, over 3331 executive roles:
 | sensirion-holding-ag-0c2fb93b | total_remuneration | CEO | 628853 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | sensirion-holding-ag-0c2fb93b | total_remuneration | Other EC | 1686136 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote; XF-02: parts add up to 1,466,088, stated 1,686,136 |
 | sentia | revenue_by_country |  | Norway: 9404; Sweden: 2369 | Fail (hard) | CORE-03: quote not in the source text |
+| sequana-medical | benefits_value | Chief Executive Officer | 18985 | Fail (hard) | CORE-03: quote not in the source text |
+| sequana-medical | other_names |  | Sequana Medical Aktiengesellsc | Fail (hard) | CORE-02: not in the quote: sequana medical |
 | serco-group-plc-96a15710 | benefits_value | Group Chief Financial Officer | 52599 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | serco-group-plc-96a15710 | lti_vested | Group Chief Financial Officer | 1390285 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | serco-group-plc-96a15710 | pension_contribution | Group Chief Financial Officer | 40368 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
@@ -2812,6 +2828,9 @@ Pay fields, over 3331 executive roles:
 | sgs-ag-65380806 | total_remuneration | Chief Executive Officer | 1393000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote; XF-01: parts add up to 4,355,000, more than the stated 1,393,000; XF-02: parts add up to 4,355,000, stated 1,393,000 |
 | shaftesbury-capital-plc-1cc22072 | pension_type |  | defined contribution, 17.5 per | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | shawbrook-group-plc-d45cea57 | share_price |  | 4.86 | Fail (hard) | CORE-02: 4.86 not in the quote |
+| shell-plc | controlling_owner_name |  | Shell RDS Holding B.V. | Fail (hard) | CORE-02: not in the quote: rds holding b |
+| shell-plc | ebitda |  | 56135000000 | Fail (hard) | CORE-02: 56135 not in the quote |
+| shell-plc | pe_stake_5pct |  | no | Fail (hard) | CORE-03: quote not in the source text |
 | sidma-steel-s-a | exchange_segment |  | Main Market | Fail (hard) | CORE-02: not in the quote: main market |
 | siemens-health-ag-1a42fb66 | revenue_by_country |  | Europe, C.I.S., Africa, Middle | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
 | siemens-health-ag-1a42fb66 | sub_sector |  | Siemens Healthineers offers im | Fail (hard) | CORE-03: the run did not find the full quote (the note keeps only its start) |
@@ -2893,12 +2912,19 @@ Pay fields, over 3331 executive roles:
 | sparebank-1-helgeland | pension_contribution | Direktør forretningsutvikling | 273096 | Fail (hard) | CORE-03: quote not in the source text |
 | sparebank-1-helgeland | sti_paid | Direktør risikostyring | 20000 | Fail (hard) | CORE-03: quote not in the source text |
 | sparebank-1-nordmore | benefits |  | Ansattbetingelser, mobil og bi | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | base_salary | Leder av Divisjon Næringslivsm | 1561492 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | base_salary | Medlem av konsernledelsen (Joh | 2100597 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | benefits_value | Leder av Divisjon Næringslivsm | 440515 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | benefits_value | Medlem av konsernledelsen (Joh | 127783 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | pension_contribution | Leder av Divisjon Næringslivsm | 159764 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | pension_contribution | Medlem av konsernledelsen (Joh | 176028 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | sti_paid | Leder av Divisjon Næringslivsm | 469005 | Fail (hard) | CORE-03: quote not in the source text |
+| sparebanken-more | sti_paid | Medlem av konsernledelsen (Joh | 30488 | Fail (hard) | CORE-03: quote not in the source text |
 | sport-lisboa-e-benfica-futebol-sad | benefits |  | protocol benefits inherent to  | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | sport-lisboa-e-benfica-futebol-sad | ebitda |  | 32400000 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | sport-lisboa-e-benfica-futebol-sad | sti_max | Administrador Executivo/Vice-P | 40 | Fail (hard) | COD-01: unit '' is not a target form |
-| ssab-b | headcount |  | 14609 | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
 | ssab-b | listing_date |  | 1988 | Fail (hard) | CORE-02: not in the quote: 1988 |
-| ssab-b | shareholding_requirement |  | LTI participants must hold sha | Fail (hard) | CORE-03: source not cached; the run itself did not find the quote |
+| ssab-b | shareholding_requirement |  | LTI participants must hold sha | Fail (hard) | CORE-03: quote not in the source text |
 | ssp-group-plc-e4d12504 | benefits |  | private health insurance for t | Fail (hard) | CORE-03: quote not in the source text |
 | ssp-group-plc-e4d12504 | lti_max | Group CEO | 200 | Fail (hard) | CORE-03: quote not in the source text |
 | ssp-group-plc-e4d12504 | lti_max | Deputy CEO (until 30 September | 200 | Fail (hard) | CORE-03: quote not in the source text |

@@ -820,3 +820,28 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 
 - Exceptions list (`output/fy2025_runs_failures.md`): 20,493 values missing at 1,443 companies; not stated 10,510; pay where only the annual report was read 8,384; annual report not found 644; a calculated field missing an input 481.
 - `output/fy2025_runs_datapoints_checks.csv` is now 157 MB and stays local.
+
+---
+
+### 19 November 2026 (evening): Nordics re-run; every required company now run
+
+#### 65. Nordics re-run (76 companies) and the 8 required companies in no list
+- Checked the combined file against the 1,508 required companies of the FY2025 tracker: none extra, 48 not in it (46 Nordics, Shell, Sequana Medical). 42 of the 48 had been run before, but only in early files never merged into the combined one (`tracker_first50.csv`, `nordic_uk_10`); 6 had never been run. The list: `output/fy2025_tracker_gap.csv`.
+- **Nordics** (`data/rerun_nordics.csv`, built with `--no-bucket`): 73 of 76 run (3 done before), 282 Firecrawl credits. Run file `output/rerun_nordics_19nov.csv`; 956 values missing at 55 companies (not stated 542, pay where only the annual report was read 344, report not found 22). Handelsbanken, Paratus Energy, Sydbank and KDventures redone with `--redo --only`: little changed (cached documents, 2 credits).
+- **The 8 in no list** (`data/rerun_gap8.csv`, built from the tracker): Atlantic Sapphire, Cadeler, Goodtech, SRV, Keskisuomalainen, Lumo Kodit, Sequana Medical run (53 credits); Shell's earlier values carried over. Run file `output/rerun_gap8_19nov.csv`; 124 values missing at 6 companies.
+- `combine`: Nordics 36 companies replaced, 40 added (SSAB B kept its old pay rows: the run got under half); then the 8 added.
+- Need report links by hand: Sydbank, KDventures, Keskisuomalainen (read the 2023 report) need the FY2025 report; IQM Finland has no report found.
+
+#### The combined file now
+
+| | Before (1,462 IDs) | After (1,510 IDs, 1,503 companies) |
+|---|---|---|
+| Found (dashboard) | 74.0% | 74.1% |
+| Values passing the checks | 98.6% | 98.6% |
+| Required companies run | 1,460 of 1,508 | 1,508 of 1,508 |
+| All required fields found | 1,279 | 1,298 |
+| ... and every rule passed | 407 | 410 |
+
+- 11 required companies are in the file with no values at all (no report found): Accentro, NEXR, TC Unterhaltungselektronik, Inmobiliaria del Sur, Bergbahnen Engelberg-Titlis, Groupe Minoteries, Highlight Event, Liechtensteinische Landesbank, Mobimo, Romande Energie, Schweizerische Nationalbank. They need report links.
+- Exceptions list (`output/fy2025_runs_failures.md`): 20,861 values missing at 1,473 of 1,510 companies; not stated 10,787; pay where only the annual report was read 8,529; annual report not found 644 (37 companies); wrong-year report 84.
+- Backup before the splice: the session scratchpad, `before_nordics/`.

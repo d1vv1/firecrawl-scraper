@@ -1,6 +1,6 @@
 # What the run could not find: fy2025_runs_datapoints.csv
 
-20493 missing values in 1443 of 1462 companies (built 19 Nov 2026). Not asked for and not applicable rows are counted but are not failures.
+20861 missing values in 1473 of 1510 companies (built 19 Nov 2026). Not asked for and not applicable rows are counted but are not failures.
 
 ## By reason
 
@@ -8,75 +8,75 @@
 |---|---|---:|---:|---|
 | `WEBSITE_NOT_FOUND` | Company website not found | 33 | 1 | Fill in `website` (or `annual_report_url`) in the input and re-run |
 | `REPORT_NOT_FOUND` | Annual report not found | 644 | 37 | Put the FY annual report link (PDF, or a gs:// file) in `annual_report_url` and re-run |
-| `REMUNERATION_REPORT_NOT_FOUND` | Remuneration report not found | 28 | 28 | Put the remuneration report link in `remuneration_report_url` and re-run with fields=pay |
-| `NO_IDENTIFIER` | Needs an LEI or register number | 24 | 24 | Add `lei` or `business_id` to the input: only an official register gives this field |
-| `WRONG_YEAR_REPORT` | Values read from an older report | 82 | 82 | Put the FY report link in `annual_report_url` and re-run with --redo |
-| `CREDITS_EXHAUSTED` | Firecrawl credits ran out | 125 | 11 | Top up credits (or raise --max-run-credits / --doc-credits) and re-run |
+| `REMUNERATION_REPORT_NOT_FOUND` | Remuneration report not found | 29 | 29 | Put the remuneration report link in `remuneration_report_url` and re-run with fields=pay |
+| `NO_IDENTIFIER` | Needs an LEI or register number | 25 | 25 | Add `lei` or `business_id` to the input: only an official register gives this field |
+| `WRONG_YEAR_REPORT` | Values read from an older report | 84 | 84 | Put the FY report link in `annual_report_url` and re-run with --redo |
+| `CREDITS_EXHAUSTED` | Firecrawl credits ran out | 57 | 6 | Top up credits (or raise --max-run-credits / --doc-credits) and re-run |
 | `DOCUMENT_UNREADABLE` | Document could not be read | 60 | 5 | Scanned or broken file: supply a text PDF, or check the download |
-| `NETWORK_ERROR` | Network or site error | 58 | 4 | Re-run; if it repeats, supply the document link |
-| `DERIVATION_INPUT_MISSING` | Calculated field: an input is missing | 481 | 471 | Fix the input field it rests on (share price, shares outstanding, business description) |
-| `FX_RATE_MISSING` | Calculated field: no exchange rate | 10 | 10 | Re-run the field (the API step gives the ECB rate), or fix the currency unit |
+| `NETWORK_ERROR` | Network or site error | 62 | 5 | Re-run; if it repeats, supply the document link |
+| `DERIVATION_INPUT_MISSING` | Calculated field: an input is missing | 486 | 476 | Fix the input field it rests on (share price, shares outstanding, business description) |
+| `FX_RATE_MISSING` | Calculated field: no exchange rate | 11 | 11 | Re-run the field (the API step gives the ECB rate), or fix the currency unit |
 | `STATED_IN_OTHER_FORM` | Stated, but not in the form asked for | 54 | 28 | Accept or review: e.g. a % of salary where an amount is asked |
-| `REMUNERATION_REPORT_NOT_READ` | Pay field: only the annual report was read | 8384 | 830 | Supply the remuneration report in `remuneration_report_url` and re-run the field |
-| `NOT_DISCLOSED` | Not stated in the documents read | 10510 | 1064 | Review: the documents were read and do not state it; re-run only with a new source |
-| `NOT_APPLICABLE` | Does not apply | 6613 | 1377 | - |
-| `NOT_COLLECTED` | Not asked for in this run | 19243 | 871 | - |
+| `REMUNERATION_REPORT_NOT_READ` | Pay field: only the annual report was read | 8529 | 842 | Supply the remuneration report in `remuneration_report_url` and re-run the field |
+| `NOT_DISCLOSED` | Not stated in the documents read | 10787 | 1094 | Review: the documents were read and do not state it; re-run only with a new source |
+| `NOT_APPLICABLE` | Does not apply | 6773 | 1397 | - |
+| `NOT_COLLECTED` | Not asked for in this run | 20691 | 919 | - |
 
 ## By field
 
 | Field | Missing | Top reasons |
 |---|---:|---|
-| lti_target | 1908 | REMUNERATION_REPORT_NOT_READ 1231, NOT_DISCLOSED 677 |
-| sti_target | 1865 | REMUNERATION_REPORT_NOT_READ 1137, NOT_DISCLOSED 728 |
-| lti_vested | 1723 | REMUNERATION_REPORT_NOT_READ 956, NOT_DISCLOSED 764, STATED_IN_OTHER_FORM 3 |
-| lti_granted | 1612 | REMUNERATION_REPORT_NOT_READ 952, NOT_DISCLOSED 609, STATED_IN_OTHER_FORM 51 |
-| lti_max | 1405 | REMUNERATION_REPORT_NOT_READ 782, NOT_DISCLOSED 623 |
-| pension_contribution | 1305 | NOT_DISCLOSED 658, REMUNERATION_REPORT_NOT_READ 647 |
-| benefits_value | 1088 | REMUNERATION_REPORT_NOT_READ 697, NOT_DISCLOSED 391 |
-| sti_max | 1039 | REMUNERATION_REPORT_NOT_READ 582, NOT_DISCLOSED 457 |
-| sti_paid | 732 | REMUNERATION_REPORT_NOT_READ 448, NOT_DISCLOSED 284 |
-| staff_by_segment | 669 | NOT_DISCLOSED 633, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 9 |
-| staff_by_country | 486 | NOT_DISCLOSED 453, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 7 |
-| market_cap_band | 475 | DERIVATION_INPUT_MISSING 464, FX_RATE_MISSING 10, CREDITS_EXHAUSTED 1 |
-| share_price | 452 | NOT_DISCLOSED 415, REPORT_NOT_FOUND 24, CREDITS_EXHAUSTED 6 |
-| base_salary | 425 | REMUNERATION_REPORT_NOT_READ 246, NOT_DISCLOSED 179 |
-| shareholding_requirement | 409 | NOT_DISCLOSED 241, REMUNERATION_REPORT_NOT_READ 128, REPORT_NOT_FOUND 27 |
-| other_names | 387 | NOT_DISCLOSED 367, REPORT_NOT_FOUND 13, CREDITS_EXHAUSTED 3 |
-| revenue_by_country | 380 | NOT_DISCLOSED 345, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 8 |
-| exchange_segment | 318 | NOT_DISCLOSED 285, REPORT_NOT_FOUND 19, CREDITS_EXHAUSTED 10 |
-| total_remuneration | 314 | REMUNERATION_REPORT_NOT_READ 206, NOT_DISCLOSED 108 |
-| fte | 314 | NOT_DISCLOSED 282, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 6 |
-| revenue_by_segment | 288 | NOT_DISCLOSED 256, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 5 |
-| ultimate_parent | 247 | NOT_DISCLOSED 231, REPORT_NOT_FOUND 10, CREDITS_EXHAUSTED 2 |
-| aggregate_headcount | 177 | REMUNERATION_REPORT_NOT_READ 122, NOT_DISCLOSED 55 |
-| ticker | 176 | NOT_DISCLOSED 164, REPORT_NOT_FOUND 9, CREDITS_EXHAUSTED 1 |
-| listing_date | 171 | NOT_DISCLOSED 152, REPORT_NOT_FOUND 12, CREDITS_EXHAUSTED 4 |
-| pension_type | 161 | NOT_DISCLOSED 76, REMUNERATION_REPORT_NOT_READ 51, REPORT_NOT_FOUND 25 |
-| pe_stake_5pct | 155 | NOT_DISCLOSED 130, REPORT_NOT_FOUND 18, CREDITS_EXHAUSTED 3 |
-| benefits | 150 | REMUNERATION_REPORT_NOT_READ 75, NOT_DISCLOSED 43, REPORT_NOT_FOUND 23 |
-| pay_currency | 148 | REMUNERATION_REPORT_NOT_READ 91, NOT_DISCLOSED 57 |
-| largest_holders | 135 | NOT_DISCLOSED 111, REPORT_NOT_FOUND 18, CREDITS_EXHAUSTED 2 |
-| fiscal_year | 131 | WRONG_YEAR_REPORT 82, REPORT_NOT_FOUND 30, NOT_DISCLOSED 9 |
-| ownership_type | 128 | NOT_DISCLOSED 98, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 5 |
-| controlling_owner | 127 | NOT_DISCLOSED 97, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 5 |
-| controlling_owner_name | 121 | NOT_DISCLOSED 93, REPORT_NOT_FOUND 18, CREDITS_EXHAUSTED 6 |
-| ebitda | 99 | NOT_DISCLOSED 71, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 3 |
-| headcount | 94 | NOT_DISCLOSED 67, REPORT_NOT_FOUND 22, DOCUMENT_UNREADABLE 2 |
-| role_disclosure | 90 | NOT_DISCLOSED 29, REMUNERATION_REPORT_NOT_READ 28, REMUNERATION_REPORT_NOT_FOUND 28 |
-| shares_outstanding | 75 | NOT_DISCLOSED 46, REPORT_NOT_FOUND 21, NETWORK_ERROR 3 |
-| accounting_basis | 71 | NOT_DISCLOSED 43, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 3 |
-| revenue | 66 | NOT_DISCLOSED 37, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 2 |
-| isin | 65 | NOT_DISCLOSED 57, REPORT_NOT_FOUND 5, CREDITS_EXHAUSTED 2 |
+| lti_target | 1957 | REMUNERATION_REPORT_NOT_READ 1255, NOT_DISCLOSED 702 |
+| sti_target | 1924 | REMUNERATION_REPORT_NOT_READ 1160, NOT_DISCLOSED 764 |
+| lti_vested | 1768 | REMUNERATION_REPORT_NOT_READ 974, NOT_DISCLOSED 791, STATED_IN_OTHER_FORM 3 |
+| lti_granted | 1662 | REMUNERATION_REPORT_NOT_READ 972, NOT_DISCLOSED 639, STATED_IN_OTHER_FORM 51 |
+| lti_max | 1461 | REMUNERATION_REPORT_NOT_READ 804, NOT_DISCLOSED 657 |
+| pension_contribution | 1324 | NOT_DISCLOSED 673, REMUNERATION_REPORT_NOT_READ 651 |
+| benefits_value | 1102 | REMUNERATION_REPORT_NOT_READ 705, NOT_DISCLOSED 397 |
+| sti_max | 1066 | REMUNERATION_REPORT_NOT_READ 589, NOT_DISCLOSED 477 |
+| sti_paid | 749 | REMUNERATION_REPORT_NOT_READ 456, NOT_DISCLOSED 293 |
+| staff_by_segment | 672 | NOT_DISCLOSED 641, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 4 |
+| staff_by_country | 486 | NOT_DISCLOSED 457, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 3 |
+| market_cap_band | 481 | DERIVATION_INPUT_MISSING 469, FX_RATE_MISSING 11, CREDITS_EXHAUSTED 1 |
+| share_price | 456 | NOT_DISCLOSED 423, REPORT_NOT_FOUND 24, NETWORK_ERROR 4 |
+| base_salary | 437 | REMUNERATION_REPORT_NOT_READ 254, NOT_DISCLOSED 183 |
+| shareholding_requirement | 417 | NOT_DISCLOSED 250, REMUNERATION_REPORT_NOT_READ 130, REPORT_NOT_FOUND 27 |
+| other_names | 390 | NOT_DISCLOSED 372, REPORT_NOT_FOUND 13, NETWORK_ERROR 2 |
+| revenue_by_country | 384 | NOT_DISCLOSED 352, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 5 |
+| total_remuneration | 314 | REMUNERATION_REPORT_NOT_READ 204, NOT_DISCLOSED 110 |
+| exchange_segment | 314 | NOT_DISCLOSED 286, REPORT_NOT_FOUND 19, CREDITS_EXHAUSTED 5 |
+| fte | 311 | NOT_DISCLOSED 282, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 3 |
+| revenue_by_segment | 291 | NOT_DISCLOSED 262, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 2 |
+| ultimate_parent | 246 | NOT_DISCLOSED 232, REPORT_NOT_FOUND 10, NETWORK_ERROR 2 |
+| aggregate_headcount | 180 | REMUNERATION_REPORT_NOT_READ 125, NOT_DISCLOSED 55 |
+| ticker | 175 | NOT_DISCLOSED 164, REPORT_NOT_FOUND 9, WEBSITE_NOT_FOUND 1 |
+| listing_date | 173 | NOT_DISCLOSED 155, REPORT_NOT_FOUND 12, CREDITS_EXHAUSTED 3 |
+| pension_type | 161 | NOT_DISCLOSED 77, REMUNERATION_REPORT_NOT_READ 51, REPORT_NOT_FOUND 25 |
+| pe_stake_5pct | 153 | NOT_DISCLOSED 130, REPORT_NOT_FOUND 18, NETWORK_ERROR 2 |
+| benefits | 150 | REMUNERATION_REPORT_NOT_READ 75, NOT_DISCLOSED 44, REPORT_NOT_FOUND 23 |
+| pay_currency | 149 | REMUNERATION_REPORT_NOT_READ 91, NOT_DISCLOSED 58 |
+| fiscal_year | 134 | WRONG_YEAR_REPORT 84, REPORT_NOT_FOUND 30, NOT_DISCLOSED 9 |
+| largest_holders | 134 | NOT_DISCLOSED 111, REPORT_NOT_FOUND 18, NETWORK_ERROR 2 |
+| ownership_type | 127 | NOT_DISCLOSED 100, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 2 |
+| controlling_owner | 126 | NOT_DISCLOSED 99, REPORT_NOT_FOUND 21, CREDITS_EXHAUSTED 2 |
+| controlling_owner_name | 118 | NOT_DISCLOSED 93, REPORT_NOT_FOUND 18, CREDITS_EXHAUSTED 3 |
+| ebitda | 99 | NOT_DISCLOSED 72, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 2 |
+| headcount | 96 | NOT_DISCLOSED 69, REPORT_NOT_FOUND 22, DOCUMENT_UNREADABLE 2 |
+| role_disclosure | 87 | NOT_DISCLOSED 30, REMUNERATION_REPORT_NOT_FOUND 29, REMUNERATION_REPORT_NOT_READ 28 |
+| shares_outstanding | 75 | NOT_DISCLOSED 47, REPORT_NOT_FOUND 21, NETWORK_ERROR 3 |
+| accounting_basis | 70 | NOT_DISCLOSED 43, REPORT_NOT_FOUND 20, CREDITS_EXHAUSTED 2 |
+| revenue | 68 | NOT_DISCLOSED 39, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 2 |
+| isin | 66 | NOT_DISCLOSED 60, REPORT_NOT_FOUND 5, WEBSITE_NOT_FOUND 1 |
 | total_assets | 54 | NOT_DISCLOSED 25, REPORT_NOT_FOUND 22, CREDITS_EXHAUSTED 2 |
 | sector_code | 40 | REPORT_NOT_FOUND 17, DERIVATION_INPUT_MISSING 17, NOT_DISCLOSED 3 |
-| website | 38 | NOT_DISCLOSED 16, REPORT_NOT_FOUND 16, CREDITS_EXHAUSTED 4 |
 | fiscal_year_end | 36 | REPORT_NOT_FOUND 25, NOT_DISCLOSED 5, DOCUMENT_UNREADABLE 5 |
+| website | 35 | NOT_DISCLOSED 16, REPORT_NOT_FOUND 16, WEBSITE_NOT_FOUND 1 |
 | sub_sector | 31 | REPORT_NOT_FOUND 19, NOT_DISCLOSED 9, NETWORK_ERROR 2 |
 | reporting_currency | 29 | REPORT_NOT_FOUND 19, NOT_DISCLOSED 6, WEBSITE_NOT_FOUND 1 |
-| lei | 24 | NO_IDENTIFIER 24 |
-| exchange | 12 | NOT_DISCLOSED 5, REPORT_NOT_FOUND 5, CREDITS_EXHAUSTED 1 |
-| listing_status | 8 | REPORT_NOT_FOUND 5, CREDITS_EXHAUSTED 1, WEBSITE_NOT_FOUND 1 |
+| lei | 25 | NO_IDENTIFIER 25 |
+| exchange | 11 | NOT_DISCLOSED 5, REPORT_NOT_FOUND 5, WEBSITE_NOT_FOUND 1 |
 | business_id | 7 | NOT_DISCLOSED 3, REPORT_NOT_FOUND 3, WEBSITE_NOT_FOUND 1 |
+| listing_status | 7 | REPORT_NOT_FOUND 5, WEBSITE_NOT_FOUND 1, NOT_DISCLOSED 1 |
 | lti_target_pct | 5 | NOT_DISCLOSED 4, REMUNERATION_REPORT_NOT_READ 1 |
 | lti_max_pct | 5 | NOT_DISCLOSED 4, REMUNERATION_REPORT_NOT_READ 1 |
 | legal_name | 4 | REPORT_NOT_FOUND 3, WEBSITE_NOT_FOUND 1 |
@@ -99,9 +99,10 @@
 | Abitare In (`abitare-in`) | 98 | NOT_DISCLOSED: benefits_value, controlling_owner, controlling_owner_name, exchange_segment, largest_holders, lti_granted, lti_max, lti_target, lti_vested, other_names, ownership_type, pe_stake_5pct, pension_contribution, revenue_by_country, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, total_remuneration, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | MUENCH.RUECKVERSICHERUNGS GESELLSCHAFT.VNA O.N. (`muench-rueckversicherungs-gesellschaft-5bba2145`) | 97 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, fte, largest_holders, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, pe_stake_5pct, pension_contribution, revenue_by_country, staff_by_segment, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, sti_max, sti_paid, sti_target |
 | MERCEDES BENZ GROUP AG (`mercedes-benz-group-ag-1545d718`) | 89 | NOT_DISCLOSED: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
+| Sparebanken More (`sparebanken-more`) | 81 | NOT_DISCLOSED: exchange_segment, isin, lti_granted, lti_max, lti_target, lti_vested, other_names, revenue_by_country, sti_max, sti_target |
 | HELLA GMBH+CO.KGAA (`hella-gmbh-co-kgaa-740cce46`) | 78 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, pension_contribution, shareholding_requirement, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | Porsche AG Vz (`porsche-ag-531bb563`) | 78 | NOT_DISCLOSED: benefits_value, exchange_segment, lti_granted, lti_max, lti_target, other_names, revenue_by_country, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target, ticker; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
-| Melhus Sparebank (`melhus-sparebank`) | 67 | NOT_DISCLOSED: accounting_basis, benefits_value, ebitda, exchange, exchange_segment, fte, isin, largest_holders, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, pe_stake_5pct, revenue, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
+| Melhus Sparebank (`melhus-sparebank`) | 69 | NOT_DISCLOSED: accounting_basis, benefits_value, controlling_owner, ebitda, exchange, exchange_segment, fte, isin, largest_holders, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, ownership_type, pe_stake_5pct, revenue, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
 | FNM (`fnm`) | 67 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, revenue_by_country, shareholding_requirement, staff_by_segment, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | DEUTZ AG O.N. (`deutz-ag-8a315ac8`) | 66 | NOT_DISCLOSED: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, sti_max, sti_paid, sti_target, total_remuneration |
 | Upland Resources Limited (`upland-resources-limited-813e7dce`) | 62 | NOT_DISCLOSED: fte, headcount, isin, revenue, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_max, sti_target |
@@ -118,6 +119,7 @@
 | Gek Terna S.A. (`gek-terna-s-a`) | 53 | NOT_DISCLOSED: base_salary, benefits_value, fte, largest_holders, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pe_stake_5pct, pension_contribution, share_price, shareholding_requirement, staff_by_segment, sti_paid, sti_target, ticker, total_remuneration, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | Avax S.A. (`avax-s-a`) | 52 | NOT_DISCLOSED: fte, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, share_price, staff_by_country, sti_target, ticker; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_target, total_remuneration |
 | VIOHALCO (`viohalco`) | 52 | NOT_DISCLOSED: exchange_segment; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
+| Atlantic Sapphire ASA (`T0157`) | 52 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target |
 | Wolford AG (`wolford-ag-638e2dc1`) | 51 | NOT_DISCLOSED: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, other_names, pay_currency, pension_contribution, revenue_by_country, shareholding_requirement, sti_paid, sti_target, total_remuneration; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | HONGKONG LAND HOLDINGS LD (`hongkong-land-holdings-ld-a80908bb`) | 51 | NOT_DISCLOSED: fte, isin, listing_date, other_names, revenue_by_country, share_price, staff_by_country, staff_by_segment, ticker; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, pension_type, sti_max, sti_paid, sti_target, total_remuneration |
 | Sealand Capital Galaxy Limited (`sealand-capital-galaxy-limited-126bc181`) | 51 | NOT_DISCLOSED: ebitda, isin, listing_date, other_names, share_price, staff_by_country, staff_by_segment, ticker, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
@@ -130,6 +132,7 @@
 | INFINEON TECH.AG NA O.N. (`infineon-tech-ag-8660f215`) | 48 | NOT_DISCLOSED: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, staff_by_segment, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, benefits_value, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | Caltagirone (`caltagirone`) | 48 | NOT_DISCLOSED: exchange_segment, other_names, pension_contribution, share_price, shareholding_requirement, staff_by_segment, sti_max, sti_paid, sti_target; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Sol (`sol`) | 48 | NOT_DISCLOSED: lti_granted, lti_target, lti_vested, other_names, pension_contribution, revenue, revenue_by_country, revenue_by_segment, staff_by_segment, sti_max, sti_paid, sti_target, ultimate_parent; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, sti_max, sti_target |
+| Public Property Invest (`public-property-invest`) | 46 | NOT_DISCLOSED: base_salary, benefits_value, lti_granted, lti_max, lti_vested, pension_contribution, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | VAN DE VELDE (`van-de-velde`) | 46 | WRONG_YEAR_REPORT: fiscal_year; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Caltagirone Editore (`caltagirone-editore`) | 45 | NOT_DISCLOSED: accounting_basis, base_salary, benefits_value, ebitda, exchange_segment, fiscal_year, fte, other_names, pension_contribution, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, total_assets; DERIVATION_INPUT_MISSING: market_cap_band |
 | Banque Cantonale du Jura SA (`banque-cantonale-du-jura-sa`) | 44 | NOT_DISCLOSED: base_salary, benefits_value, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
@@ -175,7 +178,6 @@
 | DECEUNINCK (`deceuninck`) | 36 | REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_paid |
 | Lingotes Especiales, S.A. (`lingotes-especiales-s-a`) | 36 | NOT_DISCLOSED: benefits, other_names, shareholding_requirement, ticker, ultimate_parent; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Newprinces (`newprinces`) | 36 | NOT_DISCLOSED: benefits_value, fte, headcount, lti_granted, lti_vested, pension_contribution, pension_type, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
-| Tallink Grupp (`tallink-grupp-5c02812d`) | 35 | NOT_DISCLOSED: other_names, staff_by_segment; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, pension_contribution, pension_type, shareholding_requirement, sti_target |
 | FUCHS SE O.N. (`fuchs-se-4990a338`) | 35 | NOT_DISCLOSED: lti_max, lti_target, lti_vested, sti_max, sti_target |
 | Atresmedia Corporación de Medios de Comunicación, S.A. (`atresmedia-corporacion-de-medios-de-comunicacion-s-a`) | 35 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, pension_type, staff_by_country, staff_by_segment, ticker; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Logismos Information Systems S.A. (`logismos-information-systems-s-a`) | 35 | NOT_DISCLOSED: exchange_segment, fte, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ticker, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
@@ -195,19 +197,18 @@
 | Haidemenos Integrated Printing Services S.A. (`haidemenos-integrated-printing-services-s-a`) | 34 | NOT_DISCLOSED: fte, pension_contribution, revenue_by_country, share_price, shareholding_requirement, staff_by_country, sti_max, sti_target, ticker, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | Profile Systems & Software SA (`profile-systems-software-sa`) | 34 | NOT_DISCLOSED: aggregate_headcount, exchange_segment, fte, largest_holders, lti_max, lti_target, lti_vested, other_names, pe_stake_5pct, pension_contribution, pension_type, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, ticker; DERIVATION_INPUT_MISSING: market_cap_band |
 | VOPAK (`vopak`) | 34 | NOT_DISCLOSED: other_names, revenue_by_country; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
+| Tallink Grupp (`tallink-grupp-5c02812d`) | 33 | NOT_DISCLOSED: other_names, staff_by_segment; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, pension_contribution, pension_type, shareholding_requirement, sti_target |
 | ESSENTRA PLC (`essentra-plc`) | 33 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, listing_date, ownership_type, revenue, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_target, lti_vested, pay_currency, pension_contribution, sti_paid, sti_target, total_remuneration |
 | BAY.MOTOREN WERKE AG ST (`bay-motoren-werke-ag-2bc720d9`) | 33 | NOT_DISCLOSED: ebitda, exchange_segment, listing_date, lti_vested, other_names, revenue_by_country, revenue_by_segment, staff_by_segment; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Schindler Holding AG (`schindler-holding-ag-d2b61912`) | 33 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_target |
 | Panther Metals plc (`panther-metals-plc-a717d305`) | 33 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, ebitda, isin, listing_date, ownership_type, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment, ticker; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_granted, lti_max, lti_target, pension_contribution, shareholding_requirement, sti_max, sti_target; STATED_IN_OTHER_FORM: lti_vested |
-| CMB.TECH NV (`cmb-tech-nv`) | 32 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, pension_contribution, revenue_by_country, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
-| Ostasiatiske (`ostasiatiske`) | 32 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, isin, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, pension_type, revenue, revenue_by_country, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, ticker, ultimate_parent; NO_IDENTIFIER: lei |
+| Fastpartner D (`fastpartner-d`) | 32 | NO_IDENTIFIER: lei; NOT_DISCLOSED: isin, revenue_by_country, shares_outstanding, staff_by_country, staff_by_segment, ticker; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_paid, sti_target, total_remuneration |
 | voestalpine AG (`voestalpine-ag-0a494926`) | 32 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_target; REMUNERATION_REPORT_NOT_READ: benefits_value |
 | Warimpex Finanz- und Beteiligungs AG (`warimpex-finanz-und-beteiligungs-ag-ae611bc8`) | 32 | NOT_DISCLOSED: benefits_value, exchange_segment, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, staff_by_country, sti_paid, sti_target |
 | Landi Renzo (`landi-renzo`) | 32 | NOT_DISCLOSED: fte, headcount, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, sti_max, sti_target, total_assets; DERIVATION_INPUT_MISSING: market_cap_band |
 | Autohellas S.A. (`autohellas-s-a`) | 32 | NOT_DISCLOSED: largest_holders, lti_granted, lti_max, lti_target, lti_vested, pe_stake_5pct, pension_contribution, pension_type, revenue_by_country, shareholding_requirement, staff_by_segment, sti_paid, sti_target, ticker |
 | Centrale del Latte d'Italia (`centrale-del-latte-d-italia`) | 32 | NOT_DISCLOSED: benefits_value, exchange_segment, fte, lti_granted, lti_target, lti_vested, pension_contribution, staff_by_country, staff_by_segment, sti_paid, sti_target |
 | City of London Investment Group PLC (`city-of-london-investment-group-plc`) | 31 | REPORT_NOT_FOUND: accounting_basis, benefits, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fiscal_year, fiscal_year_end, fte, headcount, largest_holders, listing_date, other_names, ownership_type, pe_stake_5pct, pension_type, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, ultimate_parent, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
-| Fastighetsbolag Emilshus Pref (`fastighetsbolag-emilshus-pref`) | 31 | NOT_DISCLOSED: other_names, staff_by_country, staff_by_segment, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
 | Wiener Privatbank SE (`wiener-privatbank-se-e8881192`) | 31 | REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Kavango Resources PLC (`kavango-resources-plc-86ebc0c1`) | 31 | NOT_DISCLOSED: benefits, fte, revenue_by_country, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_max, sti_target |
 | London BTC Company Limited (`london-btc-company-limited-acdfd558`) | 31 | NOT_DISCLOSED: fte, headcount, isin, largest_holders, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, pension_type, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
@@ -219,8 +220,9 @@
 | Pharma Mar, S.A. (`pharma-mar-s-a`) | 31 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Pharmanutra (`pharmanutra`) | 31 | NOT_DISCLOSED: fte, lti_vested, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | IMMO MCC (`immo-mcc`) | 31 | REPORT_NOT_FOUND: accounting_basis, benefits, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fiscal_year, fiscal_year_end, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, pension_type, reporting_currency, revenue, revenue_by_country, revenue_by_segment, sector_code, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, ultimate_parent, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
+| Samhällsbyggnadsbolag B (`samhallsbyggnadsbolag-b`) | 31 | NOT_DISCLOSED: isin, listing_date, other_names, revenue_by_country, staff_by_segment; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_target |
 | Agilyx (`agilyx`) | 30 | NOT_DISCLOSED: benefits, share_price, shareholding_requirement, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
-| Fastpartner D (`fastpartner-d`) | 30 | NO_IDENTIFIER: lei; NOT_DISCLOSED: isin, revenue_by_country, staff_by_country, staff_by_segment, ticker; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_paid, sti_target, total_remuneration |
+| Fastighetsbolag Emilshus Pref (`fastighetsbolag-emilshus-pref`) | 30 | NOT_DISCLOSED: other_names, staff_by_country, staff_by_segment, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
 | RHEINMETALL AG (`rheinmetall-ag-cf2ff08a`) | 30 | NOT_DISCLOSED: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | SAP SE O.N. (`sap-se-b1a5f6d4`) | 30 | NOT_DISCLOSED: base_salary, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Hill & Smith PLC (`hill-smith-plc-f6cb355e`) | 30 | REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
@@ -232,7 +234,7 @@
 | BANQUP GROUP (`banqup-group`) | 30 | WRONG_YEAR_REPORT: fiscal_year; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_paid |
 | Indra Sistemas, S.A. (`indra-sistemas-s-a`) | 30 | NOT_DISCLOSED: accounting_basis, exchange_segment, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, revenue_by_segment, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, ultimate_parent |
 | Kekrops S.A. (`kekrops-s-a`) | 30 | DOCUMENT_UNREADABLE: accounting_basis, benefits, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fiscal_year, fiscal_year_end, fte, headcount, largest_holders, listing_date, other_names, ownership_type, pe_stake_5pct, pension_type, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, ticker, total_assets, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
-| Paratus Energy (`paratus-energy`) | 29 | NO_IDENTIFIER: lei; NOT_DISCLOSED: aggregate_headcount, base_salary, benefits, benefits_value, business_id, controlling_owner, controlling_owner_name, exchange_segment, isin, largest_holders, lti_max, lti_target, lti_vested, ownership_type, pay_currency, pe_stake_5pct, pension_contribution, pension_type, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, total_remuneration, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
+| Goodtech ASA (`T0428`) | 30 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, shareholding_requirement, sti_max, sti_target |
 | Arzneiwerk AG VIDA (`arzneiwerk-ag-vida`) | 29 | CREDITS_EXHAUSTED: accounting_basis, controlling_owner_name, ebitda, exchange_segment, fte, largest_holders, listing_date, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment, total_assets, website; DERIVATION_INPUT_MISSING: market_cap_band, sector_code; NOT_DISCLOSED: benefits, controlling_owner, fiscal_year, fiscal_year_end, headcount, ownership_type, pension_type, role_disclosure, share_price, shareholding_requirement, sub_sector |
 | Burkhalter Holding AG (`burkhalter-holding-ag`) | 29 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, largest_holders, lti_granted, lti_max, lti_target, lti_vested, ownership_type, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, sti_paid, sti_target, total_assets; DERIVATION_INPUT_MISSING: market_cap_band |
 | Cizzle Biotechnology Holdings plc (`cizzle-biotechnology-holdings-plc`) | 29 | NOT_DISCLOSED: revenue, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_paid, sti_target |
@@ -261,10 +263,10 @@
 | VIVORYON (`vivoryon`) | 28 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, ownership_type, revenue_by_country, revenue_by_segment, staff_by_country; WRONG_YEAR_REPORT: fiscal_year; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, pension_contribution, sti_max |
 | ROULARTA (`roularta`) | 28 | NOT_DISCLOSED: benefits, exchange_segment, staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Prim, S.A. (`prim-s-a`) | 28 | NOT_DISCLOSED: exchange_segment, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, share_price, staff_by_country, sti_paid, sti_target, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
+| Samhällsbyggnadsbolag D (`samhallsbyggnadsbolag-d`) | 28 | NOT_DISCLOSED: ebitda, isin, listing_date, other_names, staff_by_segment, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_target |
 | AEVIS VICTORIA SA (`aevis-victoria-sa`) | 27 | NOT_DISCLOSED: listing_date, other_names, revenue_by_country, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | Digia Oyj (`digia-oyj`) | 27 | NOT_DISCLOSED: aggregate_headcount, benefits_value, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, shareholding_requirement, staff_by_segment, sti_target, total_remuneration; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_max, sti_target |
-| Okeanis Eco Tankers (`okeanis-eco-tankers`) | 27 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, fte, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
-| Odfjell Technology (`odfjell-technology`) | 27 | CREDITS_EXHAUSTED: accounting_basis, benefits, controlling_owner, controlling_owner_name, ebitda, exchange, exchange_segment, fte, isin, largest_holders, listing_date, listing_status, ownership_type, pe_stake_5pct, pension_type, revenue_by_country, revenue_by_segment, role_disclosure, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, ticker, ultimate_parent, website; DERIVATION_INPUT_MISSING: market_cap_band |
+| CMB.TECH NV (`cmb-tech-nv`) | 27 | NOT_DISCLOSED: base_salary, exchange_segment, pension_contribution, revenue_by_country, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
 | IQM Finland Oy (`iqm-finland-oy`) | 27 | REPORT_NOT_FOUND: accounting_basis, controlling_owner, controlling_owner_name, ebitda, fiscal_year, fiscal_year_end, fte, headcount, largest_holders, ownership_type, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, shareholding_requirement; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
 | Arbonia AG (`arbonia-ag`) | 27 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, headcount, largest_holders, listing_date, lti_vested, other_names, ownership_type, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, website; REPORT_NOT_FOUND: sector_code; DERIVATION_INPUT_MISSING: market_cap_band |
 | Bystronic AG (`bystronic-ag`) | 27 | REPORT_NOT_FOUND: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, headcount, largest_holders, listing_date, other_names, ownership_type, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, sector_code, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_vested |
@@ -294,11 +296,12 @@
 | KME Group (`kme-group`) | 26 | NOT_DISCLOSED: exchange_segment, lti_max, lti_target, lti_vested, pension_contribution, share_price, shareholding_requirement, staff_by_segment, sti_max, sti_paid, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
 | BANIJAY GROUP (`banijay-group`) | 26 | NOT_DISCLOSED: exchange_segment, fte, shareholding_requirement; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | NEXTENSA (`nextensa`) | 26 | NOT_DISCLOSED: fte, staff_by_segment; REMUNERATION_REPORT_NOT_READ: base_salary, benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
+| Shell PLC (`shell-plc`) | 26 | NOT_DISCLOSED: listing_date, revenue_by_country; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | AUSTRIACARD HOLDINGS AG (`austriacard-holdings-ag`) | 25 | NOT_DISCLOSED: lti_target, lti_vested, share_price, shareholding_requirement, sti_target; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Addex Therapeutics Ltd (`addex-therapeutics-ltd`) | 25 | NOT_DISCLOSED: base_salary, benefits_value, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_target, total_remuneration |
 | ABB Ltd (`abb-ltd`) | 25 | NOT_DISCLOSED: ebitda, fte, largest_holders, lti_vested, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits, benefits_value, lti_granted, lti_vested, pension_contribution, shareholding_requirement |
+| Framery Group (`framery-group`) | 25 | NOT_DISCLOSED: revenue_by_segment, staff_by_segment; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | ADIDAS AG NA O.N. (`adidas-ag-na-o-n`) | 25 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, headcount, largest_holders, lti_vested, other_names, ownership_type, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, total_assets; DERIVATION_INPUT_MISSING: market_cap_band |
-| Alvotech SDB (`alvotech-sdb`) | 25 | NOT_DISCLOSED: revenue_by_segment, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
 | A.I.S. AG (`a-i-s-ag-4ae0fbee`) | 25 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, reporting_currency, revenue, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, total_assets; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, role_disclosure, shareholding_requirement |
 | DEUTSCHE POST AG NA O.N. (`deutsche-post-ag-b89554ef`) | 25 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Gem Resources Plc (`gem-resources-plc-cf7e06ac`) | 25 | NOT_DISCLOSED: revenue_by_segment, share_price, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target |
@@ -311,8 +314,7 @@
 | FOUNTAIN (`fountain`) | 25 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, ebitda, exchange_segment, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band, sector_code; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, role_disclosure, shareholding_requirement |
 | Performance Technologies S.A. (`performance-technologies-s-a`) | 25 | NOT_DISCLOSED: fte, headcount, largest_holders, lti_max, lti_target, lti_vested, other_names, pe_stake_5pct, pension_type, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, ticker; DERIVATION_INPUT_MISSING: market_cap_band |
 | NAI ORD SHARES (`nai-ord-shares`) | 25 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, fte, largest_holders, other_names, ownership_type, pe_stake_5pct, share_price, staff_by_country, staff_by_segment, ultimate_parent, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, pension_contribution, pension_type, shareholding_requirement |
-| Petrolia (`petrolia`) | 24 | NOT_DISCLOSED: accounting_basis, base_salary, benefits, benefits_value, exchange_segment, fte, headcount, isin, listing_date, pension_contribution, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
-| Voss Veksel Landmandsbank (`voss-veksel-landmandsbank`) | 24 | NOT_DISCLOSED: business_id, exchange_segment, isin, listing_date, other_names, revenue_by_country, staff_by_country, staff_by_segment, ticker, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution, shareholding_requirement, sti_paid, sti_target, total_remuneration |
+| Okeanis Eco Tankers (`okeanis-eco-tankers`) | 24 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, fte, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target; FX_RATE_MISSING: market_cap_band |
 | Addiko Bank AG (`addiko-bank-ag-167fa5c3`) | 24 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, sti_max, sti_target |
 | HAWESKO HOLDING SE (`hawesko-holding-se-bd2e62b7`) | 24 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: base_salary, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Helvetia Baloise Holding AG (`helvetia-baloise-holding-ag-784ff8e8`) | 24 | NOT_DISCLOSED: benefits_value, listing_date, lti_max, lti_target, lti_vested, revenue_by_country, staff_by_segment, sti_max, sti_target |
@@ -327,9 +329,12 @@
 | ING GROEP N.V. (`ing-groep-n-v`) | 24 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_paid, total_remuneration |
 | Arteche Lantegi Elkartea, S.A. (`arteche-lantegi-elkartea-s-a`) | 24 | NOT_DISCLOSED: benefits, other_names, shareholding_requirement, ticker; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | Brooks Macdonald Group plc (`brooks-macdonald-group-plc`) | 23 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, largest_holders, other_names, ownership_type, pe_stake_5pct, revenue_by_segment, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
+| Petrolia (`petrolia`) | 23 | NOT_DISCLOSED: accounting_basis, base_salary, benefits, benefits_value, exchange_segment, fte, isin, listing_date, pension_contribution, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | AJ Bell plc (`aj-bell-plc`) | 23 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, fte, headcount, largest_holders, ownership_type, pe_stake_5pct, share_price, shares_outstanding, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_max, sti_target |
+| Voss Veksel Landmandsbank (`voss-veksel-landmandsbank`) | 23 | NOT_DISCLOSED: business_id, exchange_segment, isin, listing_date, other_names, revenue_by_country, staff_by_country, staff_by_segment, ticker, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution, shareholding_requirement, sti_paid, sti_target, total_remuneration |
 | Brondbyernes IF (`brondbyernes-if`) | 23 | NOT_DISCLOSED: benefits_value, exchange_segment, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, revenue_by_country, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target, ticker; NO_IDENTIFIER: lei |
 | ELEMENTIS PLC (`elementis-plc`) | 23 | NOT_DISCLOSED: exchange_segment, fte, largest_holders, listing_date, other_names, pe_stake_5pct, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
+| Alvotech SDB (`alvotech-sdb`) | 23 | NOT_DISCLOSED: revenue_by_segment, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
 | PITTLER MASCHINENFABRIK AG (`pittler-maschinenfabrik-ag-fb62b449`) | 23 | NOT_DISCLOSED: fte, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, revenue_by_country, share_price, staff_by_country, staff_by_segment, sti_max, sti_target; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Dottikon ES Holding AG (`dottikon-es-holding-ag-d22b9c0d`) | 23 | NOT_DISCLOSED: base_salary, benefits, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target, total_remuneration |
 | PROCREDIT HOLDING AG NA EO 5 (`procredit-holding-ag-74495a3c`) | 23 | NOT_DISCLOSED: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
@@ -346,8 +351,10 @@
 | ACCENTIS (`accentis`) | 23 | NOT_DISCLOSED: benefits, other_names, revenue_by_segment, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, pay_currency, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | AS Commercial Industrial Company of Computers and Toys S.A. (`as-commercial-industrial-company-of-computers-and-toys-s-a`) | 23 | NOT_DISCLOSED: fte, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, share_price, shareholding_requirement, staff_by_segment, sti_max, sti_target, ticker, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | Unidata (`unidata`) | 23 | NETWORK_ERROR: accounting_basis, controlling_owner, controlling_owner_name, ebitda, fiscal_year, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, revenue, revenue_by_country, revenue_by_segment, sector_code, share_price, shares_outstanding, staff_by_country, staff_by_segment, sub_sector, total_assets, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
+| SEQUANA MEDICAL (`sequana-medical`) | 23 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, ownership_type, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ultimate_parent; WRONG_YEAR_REPORT: fiscal_year; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_target |
 | Sagax D (`sagax-d`) | 22 | NOT_DISCLOSED: benefits, isin, listing_date, other_names, staff_by_segment, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_target, total_remuneration |
 | Barratt Redrow plc (`barratt-redrow-plc`) | 22 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, listing_date, ownership_type, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, sti_target |
+| Ostasiatiske (`ostasiatiske`) | 22 | NOT_DISCLOSED: benefits_value, exchange_segment, isin, listing_date, lti_granted, lti_max, lti_target, lti_vested, other_names, pension_contribution, pension_type, revenue, revenue_by_country, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target, ticker, ultimate_parent; NO_IDENTIFIER: lei |
 | Addtech Nordic AB (`addtech-nordic-ab`) | 22 | NOT_DISCLOSED: accounting_basis, fte, isin, other_names, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, ticker, total_assets; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_target |
 | TTL BETEILIGUNGS- UND GRUNDBESITZ AG INH ON (`ttl-beteiligungs-und-grundbesitz-ag-02636470`) | 22 | REPORT_NOT_FOUND: fte, headcount, other_names, revenue, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, shares_outstanding, staff_by_country, staff_by_segment, total_assets; WRONG_YEAR_REPORT: fiscal_year; DERIVATION_INPUT_MISSING: market_cap_band; NOT_DISCLOSED: lti_granted, lti_max, pension_contribution, sti_target |
 | MBB SE O.N. (`mbb-se-be761dea`) | 22 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, sti_max, sti_target |
@@ -363,6 +370,7 @@
 | CTAC (`ctac`) | 22 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, exchange_segment, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, shares_outstanding, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, role_disclosure, shareholding_requirement |
 | Erste Group Bank AG (`erste-group-bank-ag`) | 21 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_paid, sti_target |
 | DEMIRE DEUTSCHE MITTELSTAND REAL ESTATE AG (`demire-deutsche-mittelstand-real-estate-ag`) | 21 | NOT_DISCLOSED: other_names, revenue_by_country, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
+| Himalaya Shipping (`himalaya-shipping`) | 21 | NOT_DISCLOSED: base_salary, benefits, benefits_value, lti_max, lti_target, lti_vested, pay_currency, pension_contribution, pension_type, share_price, shareholding_requirement, total_remuneration; DERIVATION_INPUT_MISSING: market_cap_band |
 | Airtel Mobile Commerce N.V., (`airtel-mobile-commerce-n-v`) | 21 | NOT_DISCLOSED: ebitda, exchange, exchange_segment, fte, isin, largest_holders, listing_date, listing_status, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ticker, website; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, role_disclosure, shareholding_requirement |
 | EASYJET PLC (`easyjet-plc`) | 21 | NOT_DISCLOSED: exchange_segment, listing_date, other_names, revenue_by_country, shares_outstanding, staff_by_country, staff_by_segment, total_assets; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target; STATED_IN_OTHER_FORM: lti_granted |
 | READCREST CAPITAL AG O.N. (`readcrest-capital-ag-e4689651`) | 21 | NOT_DISCLOSED: benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_paid, sti_target |
@@ -395,6 +403,7 @@
 | BP PLC (`bp-plc`) | 20 | REMUNERATION_REPORT_NOT_READ: aggregate_headcount, benefits_value, lti_granted, lti_max, lti_target, sti_max, sti_target |
 | CAFFYNS PLC (`caffyns-plc`) | 20 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_target |
 | CHEMRING GROUP PLC (`chemring-group-plc`) | 20 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, listing_date, other_names, ownership_type, share_price, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target |
+| Bakkafrost (`bakkafrost`) | 20 | NOT_DISCLOSED: controlling_owner, ownership_type, share_price, shareholding_requirement; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, sti_paid, sti_target |
 | Industrivärden C (`industrivarden-c`) | 20 | NOT_DISCLOSED: ebitda, isin, other_names, revenue, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment, ticker, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, sti_target |
 | Cantargia AB (`cantargia-ab-1b3e1f95`) | 20 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, other_names, revenue_by_segment, staff_by_segment, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, lti_target, lti_vested, sti_target |
 | BAYWA AG NA O.N. (`baywa-ag-na-o-n`) | 20 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: lti_granted, lti_max, lti_target, pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted |
@@ -453,6 +462,7 @@
 | Aegean Airlines S.A. (`aegean-airlines-s-a`) | 19 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, pension_contribution, share_price, staff_by_segment, sti_target, ticker, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | Banco Comercial Português, S.A. (`banco-comercial-portugues-s-a`) | 19 | NOT_DISCLOSED: shareholding_requirement; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_vested |
 | ASIA STRATEGIC HOLDINGS LIMITED (`asia-strategic-holdings-limited`) | 18 | NOT_DISCLOSED: fte, isin, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_target, lti_vested, pension_contribution, shareholding_requirement, sti_max, sti_target |
+| Paratus Energy (`paratus-energy`) | 18 | NO_IDENTIFIER: lei; NOT_DISCLOSED: benefits, business_id, controlling_owner, controlling_owner_name, exchange_segment, isin, largest_holders, ownership_type, pe_stake_5pct, pension_type, role_disclosure, share_price, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | DFS Furniture plc (`dfs-furniture-plc`) | 18 | NOT_DISCLOSED: listing_date, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_target |
 | Emerald Horizon AG (`emerald-horizon-ag-a6420623`) | 18 | NOT_DISCLOSED: exchange_segment, other_names, pe_stake_5pct, revenue_by_segment, shares_outstanding, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, benefits, benefits_value, lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_paid, sti_target |
 | Stadlauer Malzfabrik AG (`stadlauer-malzfabrik-ag-8a23c30d`) | 18 | NOT_DISCLOSED: aggregate_headcount, benefits, largest_holders, listing_date, lti_max, lti_target, other_names, pe_stake_5pct, pension_type, revenue_by_country, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
@@ -481,6 +491,7 @@
 | Montebalito, S.A. (`montebalito-s-a`) | 18 | NOT_DISCLOSED: base_salary, benefits_value, exchange_segment, other_names, pay_currency, pension_contribution, shareholding_requirement, staff_by_segment, ticker, total_remuneration, ultimate_parent |
 | Nicolás Correa, S.A. (`nicolas-correa-s-a`) | 18 | NOT_DISCLOSED: accounting_basis, controlling_owner, controlling_owner_name, exchange_segment, fte, headcount, largest_holders, other_names, ownership_type, pe_stake_5pct, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment, ticker, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | DiaSorin (`diasorin`) | 18 | NOT_DISCLOSED: fte, lti_max, lti_target, lti_vested, other_names, pension_contribution, share_price, shareholding_requirement, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band |
+| Ilkka 2 (`ilkka-2`) | 18 | REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | DELTICOM AG  NA O.N. (`delticom-ag-na-o-n`) | 17 | NOT_DISCLOSED: lti_max, lti_vested, other_names, pension_contribution, pension_type, revenue_by_country, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment; WRONG_YEAR_REPORT: fiscal_year |
 | ALSO Holding AG (`also-holding-ag`) | 17 | NOT_DISCLOSED: lti_max, lti_target, lti_vested, shareholding_requirement, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | Anemoi International Ltd (`anemoi-international-ltd`) | 17 | NOT_DISCLOSED: ebitda, fte, headcount, isin, other_names, revenue_by_country, share_price, staff_by_country, staff_by_segment, ticker, ultimate_parent; WRONG_YEAR_REPORT: fiscal_year; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, pension_type, role_disclosure, shareholding_requirement |
@@ -607,10 +618,8 @@
 | ATOSS SOFTWARE SE (`atoss-software-se`) | 14 | NOT_DISCLOSED: lti_granted, lti_vested, other_names, revenue_by_segment; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | BERTRANDT AG O.N. (`bertrandt-ag-o-n`) | 14 | NOT_DISCLOSED: fiscal_year, fiscal_year_end, lti_granted, lti_target, pension_contribution, sti_target |
 | CANCOM SE O.N. (`cancom-se-o-n`) | 14 | NOT_DISCLOSED: lti_vested, pension_contribution; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
-| Framery Group (`framery-group`) | 14 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_paid, sti_target, total_remuneration |
 | BSF Enterprise Plc (`bsf-enterprise-plc`) | 14 | REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target |
 | C&C Group PLC (`c-c-group-plc`) | 14 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, sti_paid, sti_target |
-| SED Energy (`sed-energy`) | 14 | NOT_DISCLOSED: benefits, benefits_value, exchange_segment, lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_paid, sti_target, total_remuneration |
 | Basilea Pharmaceutica AG, Allschwil (`basilea-pharmaceutica-ag-allschwil`) | 14 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, fte, lti_vested, ownership_type, pension_contribution, revenue_by_country, revenue_by_segment, share_price, staff_by_country; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_vested, pension_contribution |
 | Compass Group PLC (`compass-group-plc`) | 14 | NOT_DISCLOSED: exchange_segment, largest_holders, listing_date, other_names, pe_stake_5pct, revenue_by_country, staff_by_country; REMUNERATION_REPORT_NOT_READ: lti_target, lti_vested, sti_target |
 | Contango Holdings plc (`contango-holdings-plc`) | 14 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
@@ -660,9 +669,7 @@
 | AMINEX PLC (`aminex-plc`) | 13 | NOT_DISCLOSED: isin, listing_date, revenue_by_country, shareholding_requirement, staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_target |
 | Bodycote Plc (`bodycote-plc`) | 13 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, fte, headcount, listing_date, other_names, ownership_type, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_vested |
 | SEB A (`seb-a`) | 13 | NOT_DISCLOSED: listing_date, other_names, staff_by_segment, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: lti_max, lti_vested, sti_max, sti_paid, sti_target |
-| SSAB B (`ssab-b`) | 13 | NO_IDENTIFIER: lei; NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, ownership_type, ultimate_parent; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, sti_target |
 | COSTAIN GROUP PLC (`costain-group-plc`) | 13 | CREDITS_EXHAUSTED: controlling_owner, controlling_owner_name, exchange_segment, listing_date, other_names, ownership_type, revenue_by_country, staff_by_country; FX_RATE_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, sti_target |
-| Himalaya Shipping (`himalaya-shipping`) | 13 | CREDITS_EXHAUSTED: benefits, exchange_segment, fte, other_names, pension_type, revenue_by_country, revenue_by_segment, role_disclosure, share_price, staff_by_country, staff_by_segment, ultimate_parent; DERIVATION_INPUT_MISSING: market_cap_band |
 | Subsea7 (`subsea7`) | 13 | NO_IDENTIFIER: lei; NOT_DISCLOSED: exchange_segment, fte, sti_target, ultimate_parent; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_max, lti_target, sti_max, sti_paid, sti_target |
 | Atlantic Petroleum (`atlantic-petroleum`) | 13 | NOT_DISCLOSED: exchange_segment, isin, largest_holders, listing_date, pe_stake_5pct, pension_type, revenue_by_segment, shareholding_requirement, staff_by_country, staff_by_segment, sti_max, sti_target, total_remuneration |
 | Bell Food Group AG (`bell-food-group-ag`) | 13 | NOT_DISCLOSED: aggregate_headcount, benefits_value, lti_granted, lti_max, lti_target, lti_vested, sti_max |
@@ -706,7 +713,7 @@
 | Basellandschaftliche Kantonalbank (`basellandschaftliche-kantonalbank`) | 12 | NOT_DISCLOSED: aggregate_headcount, lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | BASLER AG O.N. (`basler-ag-o-n`) | 12 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, shareholding_requirement, sti_paid |
 | CVS GROUP PLC (`cvs-group-plc`) | 12 | REMUNERATION_REPORT_NOT_READ: lti_vested, sti_paid, sti_target; STATED_IN_OTHER_FORM: lti_granted |
-| Bakkafrost (`bakkafrost`) | 12 | CREDITS_EXHAUSTED: controlling_owner, controlling_owner_name, exchange_segment, other_names, ownership_type, pe_stake_5pct, role_disclosure, share_price, shareholding_requirement, staff_by_segment, website; DERIVATION_INPUT_MISSING: market_cap_band |
+| Odfjell Technology (`odfjell-technology`) | 12 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, share_price, shareholding_requirement, sti_target; DERIVATION_INPUT_MISSING: market_cap_band |
 | Aterian plc (`aterian-plc`) | 12 | REPORT_NOT_FOUND: accounting_basis, ebitda, fiscal_year, fte, headcount, revenue, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment, total_assets; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
 | Coats Group PLC (`coats-group-plc`) | 12 | NOT_DISCLOSED: exchange_segment, listing_date, staff_by_country, staff_by_segment; FX_RATE_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, sti_target |
 | Coca-Cola HBC AG (`coca-cola-hbc-ag`) | 12 | NOT_DISCLOSED: ultimate_parent; STATED_IN_OTHER_FORM: lti_granted; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_max, sti_target |
@@ -761,11 +768,11 @@
 | BELIMO Holding AG (`belimo-holding-ag`) | 11 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, sti_max, sti_target |
 | Alina Holdings Plc (`alina-holdings-plc`) | 11 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target, total_remuneration |
 | British American Tobacco Plc (`british-american-tobacco-plc`) | 11 | NOT_DISCLOSED: exchange_segment, fte, shares_outstanding, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested |
-| Public Property Invest (`public-property-invest`) | 11 | CREDITS_EXHAUSTED: controlling_owner, controlling_owner_name, exchange_segment, isin, ownership_type, revenue_by_country, revenue_by_segment, role_disclosure, shareholding_requirement, staff_by_country, staff_by_segment |
 | Stora Enso A (`stora-enso-a`) | 11 | NOT_DISCLOSED: listing_date, other_names, ultimate_parent; NO_IDENTIFIER: lei; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, sti_target |
 | Chill Brands Group plc (`chill-brands-group-plc`) | 11 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: revenue_by_segment, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution |
 | DIAGEO PLC (`diageo-plc`) | 11 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, pension_contribution, sti_paid, sti_target |
 | Eurocell plc (`eurocell-plc`) | 11 | FX_RATE_MISSING: market_cap_band; NOT_DISCLOSED: staff_by_segment; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, lti_vested, sti_paid |
+| Intea Fastigheter D (`intea-fastigheter-d`) | 11 | NOT_DISCLOSED: fte, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, total_remuneration |
 | EPIGENOMICS AG NA O.N. (`epigenomics-ag-ddb6ea6d`) | 11 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_target |
 | United Eco Solutions AG (`united-eco-solutions-ag-44c5756c`) | 11 | NOT_DISCLOSED: benefits_value, ebitda, listing_date, revenue_by_segment, share_price, shareholding_requirement, staff_by_country, staff_by_segment; WRONG_YEAR_REPORT: fiscal_year; DERIVATION_INPUT_MISSING: market_cap_band |
 | Cham Swiss Properties AG (`cham-swiss-properties-ag-7d9cb227`) | 11 | REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_max, sti_target |
@@ -888,19 +895,19 @@
 | AHOLD DEL (`ahold-del`) | 10 | NOT_DISCLOSED: exchange_segment, other_names, staff_by_country, ultimate_parent; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_max, sti_target |
 | ENVIPCO HOLDING (`envipco-holding`) | 10 | NOT_DISCLOSED: benefits, other_names, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; REMUNERATION_REPORT_NOT_READ: lti_max, lti_target, lti_vested, sti_target |
 | NEDAP (`nedap`) | 10 | NOT_DISCLOSED: benefits_value, lti_granted, lti_vested, sti_paid |
+| Sydbank AS (`T0002`) | 10 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: pension_contribution, shareholding_requirement, sti_max, sti_paid, sti_target; REMUNERATION_REPORT_NOT_READ: benefits_value |
+| SRV Group Plc (`T0531`) | 10 | REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, sti_max, sti_paid, sti_target, total_remuneration |
 | Admiral Group PLC (`admiral-group-plc`) | 9 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, fte, other_names, ownership_type, revenue_by_country, staff_by_country, staff_by_segment |
 | Alkemy Capital Investments PLC (`alkemy-capital-investments-plc`) | 9 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_granted, lti_max, lti_target, lti_vested, pension_contribution |
 | Baltic Classifieds Group PLC (`baltic-classifieds-group-plc`) | 9 | REMUNERATION_REPORT_NOT_READ: benefits_value, lti_granted, pension_contribution |
 | CALEDONIA INVESTMENTS PLC (`caledonia-investments-plc`) | 9 | NOT_DISCLOSED: revenue_by_country, staff_by_country, staff_by_segment; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target |
 | EuroTeleSites AG (`eurotelesites-ag`) | 9 | NOT_DISCLOSED: lti_vested; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_target |
-| Dellia Group (`dellia-group`) | 9 | CREDITS_EXHAUSTED: exchange_segment, fte, role_disclosure, share_price, shareholding_requirement, staff_by_country, staff_by_segment, website; DERIVATION_INPUT_MISSING: market_cap_band |
 | Canal+ S.A (`canal-s-a`) | 9 | NOT_DISCLOSED: share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, sti_target |
 | Chesterfield Resources PLC (`chesterfield-resources-plc`) | 9 | NOT_DISCLOSED: revenue; REMUNERATION_REPORT_NOT_READ: benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_paid, sti_target |
 | Cobra Resources plc (`cobra-resources-plc`) | 9 | NOT_DISCLOSED: revenue, share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution, sti_max, sti_target |
 | DIPLOMA PLC (`diploma-plc`) | 9 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, exchange_segment, largest_holders, listing_date, other_names, ownership_type, pe_stake_5pct, staff_by_country |
 | Ecora Royalties PLC (`ecora-royalties-plc`) | 9 | NOT_DISCLOSED: controlling_owner, controlling_owner_name, listing_date, ownership_type, staff_by_country, staff_by_segment, ultimate_parent; REMUNERATION_REPORT_NOT_READ: lti_granted |
 | SCA A (`sca-a`) | 9 | NOT_DISCLOSED: lti_granted, lti_max, lti_target, other_names, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, sti_target |
-| Intea Fastigheter D (`intea-fastigheter-d`) | 9 | NOT_DISCLOSED: fte, shareholding_requirement, staff_by_country, staff_by_segment, ultimate_parent; REMUNERATION_REPORT_NOT_READ: benefits_value, total_remuneration |
 | ALLGEIER SE  NA O.N. (`allgeier-se-9971b49d`) | 9 | NOT_DISCLOSED: shareholding_requirement; REMUNERATION_REPORT_NOT_READ: base_salary, benefits_value, lti_max, lti_target, lti_vested, pension_contribution, sti_max, sti_target |
 | MASCHINENFABRIK BERTHOLD HERMLE O.N. VZO (`maschinenfabrik-berthold-hermle-6808fdaf`) | 9 | NOT_DISCLOSED: lti_max, lti_vested, sti_max |
 | MAX AUTOMATION SE NA O.N. (`max-automation-se-e7586bc1`) | 9 | NOT_DISCLOSED: lti_granted, lti_target, lti_vested, pension_contribution, sti_target |
@@ -1027,6 +1034,7 @@
 | Autoneum Holding AG (`autoneum-holding-ag`) | 7 | NOT_DISCLOSED: lti_target, pension_contribution, sti_target; REMUNERATION_REPORT_NOT_READ: lti_target, lti_vested, pension_contribution, sti_target |
 | Berner Kantonalbank AG (`berner-kantonalbank-ag`) | 7 | NOT_DISCLOSED: lti_max, lti_target, lti_vested, sti_target |
 | Burckhardt Compression Holding AG (`burckhardt-compression-holding-ag`) | 7 | REMUNERATION_REPORT_NOT_READ: benefits_value, lti_target, lti_vested, sti_target |
+| SSAB B (`ssab-b`) | 7 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target, sti_target |
 | Amicorp FS (UK) plc (`amicorp-fs-uk-plc`) | 7 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution |
 | BUNZL PLC (`bunzl-plc`) | 7 | NOT_DISCLOSED: pe_stake_5pct; REMUNERATION_REPORT_NOT_READ: lti_target, lti_vested, sti_target |
 | UIE (`uie`) | 7 | NOT_DISCLOSED: fte, lti_max, lti_target, lti_vested, staff_by_country, staff_by_segment, sti_target |
@@ -1088,11 +1096,14 @@
 | Altea Green Power (`altea-green-power`) | 7 | NOT_DISCLOSED: other_names, revenue_by_country, revenue_by_segment, share_price, staff_by_country, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band |
 | Tessellis (`tessellis`) | 7 | NOT_DISCLOSED: revenue_by_country, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: benefits, role_disclosure, shareholding_requirement |
 | HYDRATEC (`hydratec`) | 7 | NOT_DISCLOSED: shareholding_requirement; REMUNERATION_REPORT_NOT_READ: lti_target, lti_vested, sti_target |
+| Corem Property Pref (`corem-property-pref`) | 7 | NOT_DISCLOSED: other_names, shareholding_requirement, staff_by_segment, sti_max, sti_target; REMUNERATION_REPORT_NOT_READ: benefits_value |
+| Nilfisk Holding A/S (`T0149`) | 7 | NOT_DISCLOSED: aggregate_headcount, pension_contribution; REMUNERATION_REPORT_NOT_READ: aggregate_headcount, pension_contribution |
 | AEP Plantations plc (`aep-plantations-plc`) | 6 | NOT_DISCLOSED: exchange_segment, staff_by_country, staff_by_segment, ultimate_parent; REMUNERATION_REPORT_NOT_READ: sti_max, sti_target |
 | BT Group plc (`bt-group-plc`) | 6 | NOT_DISCLOSED: exchange_segment, largest_holders, pe_stake_5pct, revenue_by_country, share_price; DERIVATION_INPUT_MISSING: market_cap_band |
 | CENTRICA PLC (`centrica-plc`) | 6 | REMUNERATION_REPORT_NOT_READ: lti_target, sti_paid; STATED_IN_OTHER_FORM: lti_granted |
 | AstraZeneca PLC (`astrazeneca-plc`) | 6 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target |
 | CLS HOLDINGS PLC (`cls-holdings-plc`) | 6 | NOT_DISCLOSED: largest_holders, pe_stake_5pct, staff_by_country, ultimate_parent; REMUNERATION_REPORT_NOT_READ: lti_target |
+| SED Energy (`sed-energy`) | 6 | NOT_DISCLOSED: benefits, benefits_value, exchange_segment, shareholding_requirement, staff_by_country, staff_by_segment |
 | Drax Group PLC (`drax-group-plc`) | 6 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested |
 | Entain Plc (`entain-plc`) | 6 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested |
 | ACCENTRO REAL ESTATE AG  O.N. (`accentro-real-estate-ag-fbdf101b`) | 6 | REPORT_NOT_FOUND: benefits, fiscal_year, fiscal_year_end, pension_type, shareholding_requirement; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
@@ -1263,11 +1274,17 @@
 | Webuild (`webuild`) | 5 | NOT_DISCLOSED: fte, pe_stake_5pct, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band |
 | NN GROUP (`nn-group`) | 5 | REMUNERATION_REPORT_NOT_READ: lti_vested, total_remuneration |
 | SIGNIFY NV (`signify-nv`) | 5 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_vested |
+| Handelsbanken (`handelsbanken`) | 5 | NETWORK_ERROR: benefits, fiscal_year, pension_type, shareholding_requirement; REMUNERATION_REPORT_NOT_FOUND: role_disclosure |
+| KDventures AB (`T0174`) | 5 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment |
+| Mendus AB (`T0443`) | 5 | NOT_DISCLOSED: revenue_by_country, revenue_by_segment, share_price, staff_by_segment; DERIVATION_INPUT_MISSING: market_cap_band |
+| Vivesto AB (`T0255`) | 5 | NOT_DISCLOSED: other_names, revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment |
+| Cadeler A/S (`T0397`) | 5 | NOT_DISCLOSED: lti_target, lti_vested, shareholding_requirement |
 | Amrize Ltd (`amrize-ltd`) | 4 | NOT_DISCLOSED: lti_target, lti_vested, sti_target |
 | BREEDON GROUP PLC (`breedon-group-plc`) | 4 | NOT_DISCLOSED: listing_date, other_names, staff_by_segment, ultimate_parent |
 | Bridgepoint Group Plc (`bridgepoint-group-plc`) | 4 | REMUNERATION_REPORT_NOT_READ: lti_target, lti_vested |
 | Cadogan Energy Solutions plc (`cadogan-energy-solutions-plc`) | 4 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_target, lti_vested, sti_target |
 | CASTINGS PLC (`castings-plc`) | 4 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band; REMUNERATION_REPORT_NOT_READ: sti_target |
+| Dellia Group (`dellia-group`) | 4 | NOT_DISCLOSED: benefits_value, share_price, shareholding_requirement; DERIVATION_INPUT_MISSING: market_cap_band |
 | Critical Metals Plc (`critical-metals-plc`) | 4 | REMUNERATION_REPORT_NOT_READ: benefits_value, pension_contribution |
 | Voltatron AG (`voltatron-ag-57b867a2`) | 4 | NOT_DISCLOSED: revenue_by_segment, staff_by_country, staff_by_segment, ultimate_parent |
 | INTERTAINMENT AG INH O.N. (`intertainment-ag-db87b5a6`) | 4 | NOT_DISCLOSED: benefits, benefits_value, pension_contribution, shareholding_requirement |
@@ -1363,6 +1380,7 @@
 | FORFARMERS (`forfarmers`) | 4 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_max, lti_target |
 | POSTNL (`postnl`) | 4 | REMUNERATION_REPORT_NOT_READ: lti_granted |
 | Galp Energia, SGPS, S.A. (`galp-energia-sgps-s-a`) | 4 | NOT_DISCLOSED: exchange_segment, fte, staff_by_segment, ultimate_parent |
+| Lumo Kodit Oyj (`T0609`) | 4 | NOT_DISCLOSED: revenue_by_country, revenue_by_segment, staff_by_country, staff_by_segment |
 | Acceler8 Ventures PLC (`acceler8-ventures-plc`) | 3 | NOT_DISCLOSED: revenue, role_disclosure, shareholding_requirement |
 | Bucher Industries AG (`bucher-industries-ag`) | 3 | NOT_DISCLOSED: pension_type, role_disclosure, shareholding_requirement |
 | Conduit Holdings Limited (`conduit-holdings-limited`) | 3 | REMUNERATION_REPORT_NOT_READ: lti_granted, lti_vested |
@@ -1504,6 +1522,12 @@
 | Orsero (`orsero`) | 2 | WRONG_YEAR_REPORT: fiscal_year; NOT_DISCLOSED: fte |
 | HEINEKEN (`heineken`) | 2 | NOT_DISCLOSED: exchange_segment, other_names |
 | TOMTOM (`tomtom`) | 2 | REMUNERATION_REPORT_NOT_READ: pension_contribution, sti_max |
+| Ponsse 1 (`ponsse-1`) | 2 | NOT_DISCLOSED: lti_target, sti_target |
+| Metsä Board Corporation (`T0448`) | 2 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band |
+| Interoil Exploration and Production ASA (`T0423`) | 2 | NOT_DISCLOSED: total_remuneration |
+| Otello Corp ASA (`T0325`) | 2 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band |
+| Ascelia Pharma AB (`T0368`) | 2 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band |
+| Keo Capital AB (`T0262`) | 2 | NOT_DISCLOSED: share_price; DERIVATION_INPUT_MISSING: market_cap_band |
 | BIOFRONTERA AG NA O.N. (`biofrontera-ag-na-o-n`) | 1 | NOT_DISCLOSED: pension_contribution |
 | SUSS MicroTec SE (`suss-microtec-se-b7558a97`) | 1 | NOT_DISCLOSED: staff_by_country |
 | UTD.INTERNET AG NA (`utd-internet-ag-fa5f4803`) | 1 | NOT_DISCLOSED: other_names |
@@ -1535,3 +1559,9 @@
 | Fine Foods & Pharmaceuticals NTM (`fine-foods-pharmaceuticals-ntm`) | 1 | NOT_DISCLOSED: staff_by_country |
 | PHARMING GROUP (`pharming-group`) | 1 | REMUNERATION_REPORT_NOT_READ: lti_granted |
 | Novabase - Sociedade Gestora de Participações Sociais, S.A. (`novabase-sociedade-gestora-de-participacoes-sociais-s-a`) | 1 | NOT_DISCLOSED: staff_by_country |
+| Det Østasiatiske Kompagni (`T0233`) | 1 | NOT_DISCLOSED: revenue |
+| Napatech A/S (`T0083`) | 1 | REMUNERATION_REPORT_NOT_READ: base_salary |
+| Pharma Equity Group A/S (`T0099`) | 1 | NOT_DISCLOSED: headcount |
+| NAXS AB (`T0373`) | 1 | NOT_DISCLOSED: revenue |
+| Orron Energy AB (`T0470`) | 1 | NOT_DISCLOSED: headcount |
+| Traction AB (`T0533`) | 1 | NOT_DISCLOSED: headcount |
