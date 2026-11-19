@@ -32,6 +32,28 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 #    without a version: of the saved results, only the remaining-UK run has it).
 SCRAPER_VERSION = 5
 
+# Rules that fill a value the source does not print, and that the client must agree to
+# first (docs/not_found_reduction_plan.md, decision D1). Each stays off until its name is
+# in SIGNED_OFF_RULES (.env, comma-separated):
+#   gleif_non_consolidating  ultimate_parent "none (no consolidating parent)" from GLEIF's
+#                            reporting exception NON_CONSOLIDATING
+#   zero_from_total          a role's benefits or pension 0 when its stated total is the sum
+#                            of its other amounts
+PENDING_RULES = ("gleif_non_consolidating", "zero_from_total")
+_env_loaded = False
+
+
+def signed_off(rule: str) -> bool:
+    """Has the client agreed to this rule (PENDING_RULES)? Read from the environment each
+    time (.env loaded once, not over a variable already set), so a test or a one-off run
+    can switch it on."""
+    global _env_loaded
+    if not _env_loaded:
+        load_dotenv(PROJECT_ROOT / ".env")
+        _env_loaded = True
+    names = {n.strip() for n in os.environ.get("SIGNED_OFF_RULES", "").split(",")}
+    return rule in names
+
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000
 CHUNK_WORDS = 1_500
