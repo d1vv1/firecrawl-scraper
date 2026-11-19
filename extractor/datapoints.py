@@ -77,7 +77,7 @@ from . import fields as selection
 from . import gcs
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
-from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
+from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings, signed_off
 from .documents import (DP_DOC_TYPES, Candidate, DocType, Document, Library, _stem as doc_stem,
                         title_year)
 from .extract import full_value, full_value_quoted, printed_figure
@@ -1801,6 +1801,11 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
     in_eur, at = cap, ""
     # a year-end price read without its date: the report's fiscal year end dates it
     fye = getattr(chosen.get("fiscal_year_end"), "value", "") or ""
+    if iso_date(price.period_end) and iso_date(fye) and abs(
+            (dt.date.fromisoformat(price.period_end) - dt.date.fromisoformat(str(fye))).days) > 366:
+        # Centrica's 2023 price quoted in its FY2025 report: not this year's size
+        return None, (f"not derived: the share price is dated {price.period_end}, over a year "
+                      f"from the fiscal year end {fye}")
     date = price.period_end or (str(fye) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(fye)) else "")
     if price.unit != "EUR":
         # The ECB's euro rate on the price's date (the last working day before it)
@@ -2424,11 +2429,19 @@ def iso_codes(rows: list[dict]) -> None:
         country = r.get("country", "")
         if r["data_point"] in ("pay_currency", "reporting_currency") and r["value"]:
             r["value"] = iso_currency(r["value"], country)
-        if r["data_point"] == "share_price" and r["unit"] in ("GBp", "GBX") \
-                and re.fullmatch(r"-?[\d.]+", r["value"]):
-            pence = r["value"]
-            r["value"], r["unit"] = fmt_number(float(pence) / 100), "GBP"
-            r["note"] = f"{r['note']}; printed {pence} pence" if r["note"] else f"printed {pence} pence"
+        if r["data_point"] == "share_price" and re.fullmatch(r"-?[\d.]+", r["value"]):
+            # "USD cents" and "pence" too (the ECB has no rate for them), and a price the
+            # page prints in "ZAR cents" taken as rand
+            whole = price_in_hundredths(r["unit"])
+            if not whole and re.fullmatch(r"[A-Z]{3}", r["unit"]) and \
+                    re.search(rf"{r['unit']} cents", r["note"]) and \
+                    not re.search(rf"printed [\d.]+ {r['unit']} cents", r["note"]):
+                whole = r["unit"]
+            if whole:
+                small = r["value"]
+                word = "pence" if whole == "GBP" else f"{whole} cents"
+                r["value"], r["unit"] = fmt_number(float(small) / 100), whole
+                r["note"] = f"{r['note']}; printed {small} {word}" if r["note"] else f"printed {small} {word}"
         if r["unit"]:
             head, _, rest = r["unit"].partition(" ")
             code = iso_currency(head, country)
@@ -2564,11 +2577,187 @@ def dates_of_the_report_year(rows: list[dict], report_end: str) -> None:
             r["note"] += f"; period end: the report's (document dated {m.group(1)})"
 
 
-def refresh(rows: list[dict]) -> list[dict]:
+def missing(r: dict | None) -> bool:
+    """A row the dashboard counts as not found: no value, and not "not applicable" or
+    "not collected" (dashboard.value_status)."""
+    return bool(r) and not r["value"] and not r["note"].startswith(("not applicable", selection.NOT_COLLECTED))
+
+
+def _derive_from(r: dict, src: dict, value: str, note: str) -> None:
+    """Fill the empty row `r` with `value`, worked out from the row `src`: its source,
+    locator, date and confidence, method DERIVED."""
+    r.update({k: src[k] for k in ("period_end", "source", "endpoint", "retrieved_at",
+                                  "confidence", "scraper_version") if k in src},
+             value=value, unit="", method="DERIVED", note=note)
+
+
+def parent_from_gleif(by: dict[str, dict], lookup) -> None:
+    """An empty ultimate_parent asked of GLEIF level 2 again (apis.gleif_parent, passed in
+    as `lookup` so that only `combine --gleif` goes online): its parent, or "none" where
+    a reporting exception says so. `by`: a company's rows by data point."""
+    up, lei = by.get("ultimate_parent"), (by.get("lei") or {}).get("value")
+    if not missing(up) or not lei:
+        return
+    f = lookup(lei)
+    if f and f.value:
+        up.update({k: v for k, v in asdict(f).items() if k in up})
+    elif f and f.note and f.note not in up["note"]:
+        up["note"] += f"; GLEIF {f.note}"
+
+
+# A line of a shareholder list that is a group of holders, not one holder: the whole name
+# is the group's ("Institutional", "Free float", "Board and management"), not a word in a
+# holder's name ("Marwyn Investment Management LLP").
+_GROUP_WORD = (r"(institutional|retail|free[- ]?float|public|others?|treasury|unidentified|"
+               r"identified trading|private|individuals|foundations|employees|management|"
+               r"directors|board( members)?|executives|rest|streubesitz|flottante|mercato|"
+               r"(own|treasury) shares)")
+HOLDER_GROUP = re.compile(rf"(other\s+)?{_GROUP_WORD}(\s+(and|&)\s+{_GROUP_WORD})?"
+                          r"(\s+(investors|shareholders|holders|shares))?(\s*\(.*\))?", re.I)
+_HOLDER = re.compile(r"(.+?)\s+(\d+(?:\.\d+)?)\s*%$")
+WIDELY_HELD = "derived from largest_holders: no holder of 20% or more (largest: {top})"
+
+
+def holder_stakes(text: str) -> list[tuple[str, float]]:
+    """The named holders of a largest_holders value ("BlackRock, Inc. 7.13%; FMR LLC
+    4.9%") with their stakes; groups ("Institutional 60.19%", "Free float") left out."""
+    out = []
+    for part in text.split(";"):
+        m = _HOLDER.match(part.strip())
+        if m and not HOLDER_GROUP.fullmatch(m.group(1).strip()):
+            out.append((m.group(1).strip(), float(m.group(2))))
+    return out
+
+
+def ownership_from_holders(by: dict[str, dict]) -> None:
+    """The client's rule (fields_list.json: controlling owner, ownership type and PE stake
+    are "derived from largest_holders"), for a company whose list was read but those
+    fields were not. Two or more named holders with stakes are needed: a list of one is
+    often a director's holding, not the register.
+    - largest stake under 20%: controlling_owner "none", ownership_type "widely_held"
+      (controlling_owner_name then reads "not applicable", no_controlling_owner);
+    - 20% or more: that holder is the controlling owner's name (its type is not in the
+      list, so controlling_owner and ownership_type stay open);
+    - every stake under 5%: pe_stake_5pct "no".
+    `by`: a company's rows by data point."""
+    lh = by.get("largest_holders")
+    if not lh or not lh["value"]:
+        return
+    stakes = holder_stakes(lh["value"])
+    if len(stakes) < 2:
+        return
+    name, top = max(stakes, key=lambda s: s[1])
+    shown = f"{name} {fmt_number(top)}%"
+    owner, kind, owner_name = (by.get(k) for k in ("controlling_owner", "ownership_type",
+                                                   "controlling_owner_name"))
+    if top < 20:
+        if missing(owner):
+            _derive_from(owner, lh, "none", WIDELY_HELD.format(top=shown))
+        if missing(kind) and (owner or {}).get("value") == "none":
+            _derive_from(kind, lh, "widely_held", WIDELY_HELD.format(top=shown))
+    elif missing(owner_name):
+        _derive_from(owner_name, lh, name, f"derived from largest_holders: {shown}, "
+                                           "the only holder of 20% or more"
+                     if sum(1 for _, s in stakes if s >= 20) == 1 else
+                     f"derived from largest_holders: {shown}, the largest of the holders of 20% or more")
+    pe = by.get("pe_stake_5pct")
+    if missing(pe) and top < 5 and len(stakes) >= 3:
+        _derive_from(pe, lh, "no", f"derived from largest_holders: no holder of 5% or more (largest: {shown})")
+
+
+ZERO_TOLERANCE = 0.005      # tighter than XF-02's 2%: a benefit is often under 2% of the total
+PAY_PARTS = ("base_salary", "sti_paid", "benefits_value", "pension_contribution")
+
+
+def zero_from_total(mine: dict[str, dict]) -> None:
+    """A role whose stated total is the sum of the amounts read (base salary, STI, the
+    others, and the LTI that fits, as check XF-02 adds them) within 0.5%, with no
+    benefits or no pension read: that part is 0. Needs the client's sign-off
+    (config.PENDING_RULES "zero_from_total"). `mine`: a role's rows by data point."""
+    def amount(k):
+        r = mine.get(k)
+        try:
+            return float(r["value"]) if r and r["value"] else None
+        except ValueError:
+            return None
+    total, base = amount("total_remuneration"), amount("base_salary")
+    gaps = [k for k in ("benefits_value", "pension_contribution") if missing(mine.get(k))]
+    if not total or total <= 0 or not base or not gaps:
+        return
+    parts = {k: amount(k) for k in PAY_PARTS if amount(k) is not None}
+    ltis = {k: amount(k) for k in pay.LTIS
+            if amount(k) is not None and mine[k]["unit"] != "instruments"}
+    options = [{}] + [{k: v} for k, v in ltis.items()] + ([ltis] if len(ltis) == 2 else [])
+    lti = min(options, key=lambda o: abs(sum(parts.values()) + sum(o.values()) - total))
+    added = {**parts, **lti}
+    if abs(sum(added.values()) - total) > ZERO_TOLERANCE * total:
+        return
+    tot = mine["total_remuneration"]
+    sums = " + ".join(f"{k} {v:,.0f}" for k, v in added.items())
+    for k in gaps:
+        _derive_from(mine[k], tot, "0", f"derived: 0, the stated total {total:,.0f} = {sums}")
+        mine[k]["unit"] = tot["unit"]
+
+
+def no_pay_for_year(mine: dict[str, dict]) -> None:
+    """A role whose stated total is 0 (a member who left before the year, or served
+    unpaid): its empty amounts are not applicable. `mine`: a role's rows by data point."""
+    tot = mine.get("total_remuneration")
+    if not tot or not re.fullmatch(r"-?0+(\.0+)?", tot["value"] or ""):
+        return
+    for k in pay.AMOUNTS:
+        if k != "total_remuneration" and missing(mine.get(k)):
+            mine[k]["note"] = "not applicable: no pay for the year (stated total 0)"
+
+
+def pay_currency_from_amounts(rows: list[dict]) -> None:
+    """An empty pay_currency: the currency of the role's own amounts when they all share
+    one, else the currency every other role of the company has. `rows`: a company's rows."""
+    roles: dict[str, dict[str, dict]] = {}
+    for r in rows:
+        if r["grain"] == "role":
+            roles.setdefault(r["role_row"], {})[r["data_point"]] = r
+    company = {m["pay_currency"]["value"] for m in roles.values()
+               if m.get("pay_currency") and m["pay_currency"]["value"]}
+    for role, mine in roles.items():
+        cur = mine.get("pay_currency")
+        if not missing(cur):
+            continue
+        amounts = [mine[k] for k in pay.AMOUNTS if k in mine and mine[k]["value"]
+                   and re.fullmatch(r"[A-Z]{3}", mine[k]["unit"] or "")]
+        units = {r["unit"] for r in amounts}
+        if len(units) == 1:
+            _derive_from(cur, amounts[0], units.pop(), "derived: the currency of the role's amounts")
+        elif not units and len(company) == 1:
+            src = next(m["pay_currency"] for m in roles.values()
+                       if m.get("pay_currency") and m["pay_currency"]["value"])
+            _derive_from(cur, src, next(iter(company)), "derived: the pay currency of the company's other roles")
+
+
+# A share price unit in hundredths of a currency: "GBp", "GBX", "pence", "USD cents".
+_HUNDREDTHS = re.compile(r"^(?:(?P<cur>[A-Z]{3})\s+)?(?:cents?|pence|p)$", re.I)
+
+
+def price_in_hundredths(unit: str) -> str | None:
+    """The currency a share price in pence or cents is a hundredth of ("GBp" -> "GBP",
+    "USD cents" -> "USD"), or None. "GBP" (pounds) is not "GBp" (pence)."""
+    if unit in ("GBp", "GBX", "GBx"):
+        return "GBP"
+    m = _HUNDREDTHS.match(unit or "")
+    if not m:
+        return None
+    if m.group("cur"):
+        return m.group("cur").upper()
+    return "GBP" if unit.lower() in ("pence", "p") else None
+
+
+def refresh(rows: list[dict], gleif=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
     or an ownership fact read without one. A role that is a pay table's "Total" line
-    (pay.total_roles) is removed. Other rows that already have their values are unchanged."""
+    (pay.total_roles) is removed. Other rows that already have their values are unchanged.
+    `gleif`: apis.gleif_parent, to ask GLEIF again for an empty ultimate parent (the one
+    rule that goes online; combine --gleif)."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
     # a group role read from two documents; a table's accounting line taken for a person
@@ -2583,7 +2772,11 @@ def refresh(rows: list[dict]) -> list[dict]:
         rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
+    if gleif:
+        parent_from_gleif(by, gleif)
+    ownership_from_holders(by)
     no_controlling_owner(by)
+    pay_currency_from_amounts(rows)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
         names = [f.name for f in fields(Found)]
@@ -2599,6 +2792,9 @@ def refresh(rows: list[dict]) -> list[dict]:
     for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
         whole = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role}
         unit_named_wrongly(whole)
+        no_pay_for_year(whole)
+        if signed_off("zero_from_total"):
+            zero_from_total(whole)
         no_variable_pay(whole)
         mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
                 and r["data_point"] in pay.TARGETS}

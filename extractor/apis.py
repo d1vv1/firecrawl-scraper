@@ -15,7 +15,7 @@ from dataclasses import dataclass
 import httpx
 
 from . import edgar, lei as gleif, registries
-from .config import CACHE_DIR
+from .config import CACHE_DIR, signed_off
 
 log = logging.getLogger(__name__)
 
@@ -114,25 +114,9 @@ def gleif_values(lei: str) -> list[Found]:
     if others:
         out.append(Found("other_names", "; ".join(others), **src))
 
-    parent = _gleif(f"lei-records/{lei}/ultimate-parent")
-    purl = url + "/ultimate-parent"
-    if parent and parent.get("data"):
-        p = parent["data"]
-        pname = p["attributes"]["entity"]["legalName"]["name"]
-        out.append(Found("ultimate_parent", pname, source="GLEIF level 2", endpoint=purl,
-                         method="API", confidence="A", note=f"parent LEI {p['id']}",
-                         retrieved_at=retrieved_at(_gleif_key(f"lei-records/{lei}/ultimate-parent"))))
-    else:
-        exc = _gleif(f"lei-records/{lei}/ultimate-parent-reporting-exception")
-        reason = ((exc or {}).get("data") or {}).get("attributes", {}).get("reason")
-        if reason:
-            # NO_KNOWN_PERSON / NATURAL_PERSONS: no company above this one
-            out.append(Found("ultimate_parent", "none (top of group)" if reason in
-                             ("NO_KNOWN_PERSON", "NATURAL_PERSONS") else None,
-                             source="GLEIF level 2", endpoint=purl + "-reporting-exception",
-                             method="API", confidence="A" if reason in
-                             ("NO_KNOWN_PERSON", "NATURAL_PERSONS") else "",
-                             note=f"reporting exception: {reason}", retrieved_at=src["retrieved_at"]))
+    parent = gleif_parent(lei)
+    if parent:
+        out.append(parent)
 
     isins = _gleif(f"lei-records/{lei}/isins", {"page[size]": 200})
     codes = [d["attributes"]["isin"] for d in (isins or {}).get("data") or []]
@@ -141,6 +125,46 @@ def gleif_values(lei: str) -> list[Found]:
         out.append(Found("_gleif_isins", ";".join(codes), source="GLEIF ISIN map",
                          endpoint=url + "/isins", method="API"))
     return out
+
+
+# GLEIF level 2 reporting exceptions that say no company stands above this one.
+TOP_OF_GROUP = ("NO_KNOWN_PERSON", "NATURAL_PERSONS")
+NO_CONSOLIDATING_PARENT = "none (no consolidating parent)"
+
+
+def gleif_parent(lei: str) -> Found | None:
+    """The ultimate parent from GLEIF level 2: the parent's legal name; "none (top of
+    group)" for NO_KNOWN_PERSON and NATURAL_PERSONS; for NON_CONSOLIDATING (no parent
+    includes this company in its consolidated accounts), "none (no consolidating parent)"
+    once the client has signed the rule off (config.PENDING_RULES), else no value. Any
+    other exception (NON_PUBLIC, ...): no value, the reason in the note. None when GLEIF
+    has neither a parent nor an exception.
+
+    NON_CONSOLIDATING says nothing about control: a PE fund, a foundation or the state can
+    control a company without consolidating it. It fills ultimate_parent only, never the
+    controlling owner or the ownership type."""
+    url = GLEIF_RECORD.format(lei=lei) + "/ultimate-parent"
+    parent = _gleif(f"lei-records/{lei}/ultimate-parent")
+    if parent and parent.get("data"):
+        p = parent["data"]
+        return Found("ultimate_parent", p["attributes"]["entity"]["legalName"]["name"],
+                     source="GLEIF level 2", endpoint=url, method="API", confidence="A",
+                     note=f"parent LEI {p['id']}",
+                     retrieved_at=retrieved_at(_gleif_key(f"lei-records/{lei}/ultimate-parent")))
+    path = f"lei-records/{lei}/ultimate-parent-reporting-exception"
+    exc = _gleif(path)
+    reason = ((exc or {}).get("data") or {}).get("attributes", {}).get("reason")
+    if not reason:
+        return None
+    value = None
+    if reason in TOP_OF_GROUP:
+        value = "none (top of group)"
+    elif reason == "NON_CONSOLIDATING" and signed_off("gleif_non_consolidating"):
+        value = NO_CONSOLIDATING_PARENT
+    return Found("ultimate_parent", value, source="GLEIF level 2",
+                 endpoint=url + "-reporting-exception", method="API",
+                 confidence="A" if value else "", note=f"reporting exception: {reason}",
+                 retrieved_at=retrieved_at(_gleif_key(path)))
 
 
 # --- SEC EDGAR --------------------------------------------------------------------
