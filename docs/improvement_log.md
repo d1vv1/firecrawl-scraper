@@ -793,3 +793,30 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 
 - Exceptions list (`output/fy2025_runs_failures.md`): 18,472 values missing at 1,259 companies; not stated in the documents read 9,398; pay where only the annual report was read 7,777; annual report not found 504; a calculated field missing an input 404.
 - Backup of the files before the splice: the session scratchpad, `before_praveen/`.
+
+---
+
+### 19 November 2026: Revanth J's run spliced in; his fixes merged
+
+#### 64. Revanth J's list run (277 companies) and fixes AXAC-380, 402, 404, 406, 407
+- His branch `runs-16nov-revanth_j` is merged into `main`: the run's files (`output/runs_16nov_revanth_j.csv`, `_checks.csv`, `_checks.md`) and five fixes, each with tests (538 pass):
+  - AXAC-402: another company's report is not used (a name must start a word of the host or file name: pancanal.com is not Canal+'s);
+  - AXAC-406: financial regulators' sites are not taken for a company's website; "K2A Knaust & Andersson Fastigheter AB" matches "K2A Knaust & Andersson";
+  - AXAC-407: a listing date can be a month ("2000-05"); "all revenue arises in the UK" is a one-country breakdown;
+  - AXAC-380: company values of the report's year are dated by its year end;
+  - AXAC-404: the pay step asks the annual report before other documents.
+- **190 new companies:** 76.4% of the values asked for found (Praveen's 73.1%, Divi's 73.3%).
+- **87 missing-field re-runs:** 99 of the 309 missing fields filled (32%); 31 companies gained at least one. Controlling owner 7 of 9, share price 10 of 32, market cap band 9 of 32, pension 9 of 40.
+- His run's failure report (`output/runs_16nov_revanth_j_failures.md`): 2,652 values missing at 258 companies; not stated 1,585, pay where only the annual report was read 714, report not found 150.
+- `combine`: 87 companies replaced, 190 added, 4,359 values kept that the run did not ask for. The companies listed as "kept the old rows" were re-run for company fields only and keep their pay.
+
+#### The combined file now (all three 16 Nov runs in)
+
+| | Before (1,272 companies) | After (1,462 companies) |
+|---|---|---|
+| Found (dashboard) | 73.2% | 74.0% |
+| Values passing the checks | 93% | 93% |
+| Values failing a hard check | 2,672 (5%) | 2,984 (5%) |
+
+- Exceptions list (`output/fy2025_runs_failures.md`): 20,493 values missing at 1,443 companies; not stated 10,510; pay where only the annual report was read 8,384; annual report not found 644; a calculated field missing an input 481.
+- `output/fy2025_runs_datapoints_checks.csv` is now 157 MB and stays local.
