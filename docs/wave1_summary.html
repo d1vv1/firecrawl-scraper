@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave 1 Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f1ed; --card:#fafaf7; --line:#dedbd3; --ink:#16181d; --ink2:#5d6270; --muted:#8a8f99;
+  --track:#e4e1da;
+  --rep:#1f9a6e; --rep-pale:#9fd6c1;
+  --pay:#1f3460; --pay-pale:#a3aecb;
+  --co:#a9c8ee; --chk:#6b5bb5;
+  --accent:#1f3460; --note-bg:#e8eef8; --note-line:#b9c8e3;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181c; --card:#1e2127; --line:#30343c; --ink:#eceef2; --ink2:#a9afbb; --muted:#7f8592;
+    --track:#2c3038;
+    --rep:#3bbf8f; --rep-pale:#1f5e48;
+    --pay:#7f9fe0; --pay-pale:#3a4766;
+    --co:#5f8fcf; --chk:#a597e8;
+    --accent:#9db5ea; --note-bg:#1f2736; --note-line:#38476a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181c; --card:#1e2127; --line:#30343c; --ink:#eceef2; --ink2:#a9afbb; --muted:#7f8592;
+  --track:#2c3038;
+  --rep:#3bbf8f; --rep-pale:#1f5e48;
+  --pay:#7f9fe0; --pay-pale:#3a4766;
+  --co:#5f8fcf; --chk:#a597e8;
+  --accent:#9db5ea; --note-bg:#1f2736; --note-line:#38476a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px}
+main{max-width:1240px;margin:0 auto;padding:48px 16px 40px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:30px;line-height:1.3;margin:10px 0 14px;max-width:1150px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;color:var(--ink2);font-size:14px;margin-bottom:12px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px}
+.head b{font-size:19px}
+.head span{color:var(--ink2);font-size:14px;text-align:right}
+.row{display:grid;grid-template-columns:96px 1fr 112px;align-items:center;gap:10px;height:30px}
+.row .lab{font-weight:600;font-size:14px}
+.bar{height:16px;background:var(--track);border-radius:3px;display:flex;overflow:hidden}
+.bar>div{height:100%}
+.bar>div+div{border-left:2px solid var(--card)}
+.val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.foot{margin-top:10px;color:var(--ink2);font-size:14px}
+.next{margin-top:18px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;background:var(--note-bg);border:1px solid var(--note-line);border-radius:8px;padding:14px 20px}
+.next b{color:var(--accent);font-size:16px;white-space:nowrap}
+.next p{margin:0;line-height:1.5}
+.small{margin-top:22px;color:var(--muted);font-size:13px;line-height:1.55;max-width:1150px}
+@media (max-width:520px){
+  h1{font-size:23px}
+  .row{grid-template-columns:76px 1fr 96px;gap:6px}
+  .next{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Wave 1 · what we hold, by region · 6 Nov 2026</div>
+  <h1>FY2025 annual reports are in hand for 89% of UK companies and 70% of Wave 1. 87% of collected values pass every check.</h1>
+
+  <div class="legend">
+    <span><i style="background:var(--rep)"></i>FY2025+ report in hand</span>
+    <span><i style="background:var(--rep-pale)"></i>older report</span>
+    <span><i style="background:var(--pay)"></i>FY2025+ executive pay</span>
+    <span><i style="background:var(--pay-pale)"></i>older pay</span>
+    <span><i style="background:var(--co)"></i>company facts found</span>
+    <span><i style="background:var(--chk)"></i>values passing all checks</span>
+  </div>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="next">
+    <b>Quality</b>
+    <p>Every value carries its source document, page and quote. Of 8,886 collected values, 7,703 pass all checks (87%),
+      429 are flagged for review (5%) and 754 have a failed check (8%).</p>
+  </div>
+
+  <p class="small">
+    Wave 1: 170 companies, 13,927 data rows.
+    Reports: the fiscal year of the latest annual report read (FY2026 counts, for years ending in early 2026).
+    Pay: the latest pay year with a base salary or total remuneration for any executive.
+    Company facts: share of applicable company-level fields filled; fields that do not apply to a company are left out.
+    Checks: share of filled values passing all checks, out of all checked values.
+    Regions: UK = GB 84; DACH = CH 37, DE 16, AT 5; Nordics = NO 12, SE 8, DK 4, FI 4.
+  </p>
+</main>
+<script>
+const R = [
+  {name:"UK", sub:"GB · 84 companies", n:84, rep:[75,4], pay:[75,1], co:[2489,3373], chk:[3910,4250]},
+  {name:"DACH", sub:"CH, DE, AT · 58 companies", n:58, rep:[28,9], pay:[27,15], co:[1604,2327], chk:[2726,3267]},
+  {name:"Nordics", sub:"NO, SE, DK, FI · 28 companies", n:28, rep:[16,2], pay:[15,11], co:[678,1122], chk:[1067,1369]},
+  {name:"All of Wave 1", sub:"8 countries · 170 companies", n:170, rep:[119,15], pay:[117,27], co:[4771,6822], chk:[7703,8886]},
+];
+const pct = (a,b) => Math.round(100*a/b);
+const fmt = v => v.toLocaleString("en");
+function row(label, parts, total, valText, tip){
+  const segs = parts.map(([v,c]) => v ? `<div style="width:${100*v/total}%;background:var(${c})"></div>` : "").join("");
+  return `<div class="row" title="${tip}"><span class="lab">${label}</span><div class="bar">${segs}</div>
+    <span class="val">${valText}</span></div>`;
+}
+document.getElementById("cards").innerHTML = R.map(r => `<section class="card">
+    <div class="head"><b>${r.name}</b><span>${r.sub}</span></div>
+    ${row("Reports", [[r.rep[0],"--rep"],[r.rep[1],"--rep-pale"]], r.n, `${pct(r.rep[0],r.n)}% · ${r.rep[0]}`,
+      `${r.rep[0]} FY2025+ reports, ${r.rep[1]} older`)}
+    ${row("Pay 2025", [[r.pay[0],"--pay"],[r.pay[1],"--pay-pale"]], r.n, `${pct(r.pay[0],r.n)}% · ${r.pay[0]}`,
+      `${r.pay[0]} with FY2025+ pay, ${r.pay[1]} older`)}
+    ${row("Company", [[r.co[0],"--co"]], r.co[1], `${pct(r.co[0],r.co[1])}% · ${fmt(r.co[0])}`,
+      `${fmt(r.co[0])} of ${fmt(r.co[1])} applicable company fields filled`)}
+    ${row("Checks", [[r.chk[0],"--chk"]], r.chk[1], `${pct(r.chk[0],r.chk[1])}% pass`,
+      `${fmt(r.chk[0])} of ${fmt(r.chk[1])} values pass all checks`)}
+    <div class="foot">${r.rep[1]} older report${r.rep[1]==1?"":"s"} · ${r.pay[1]} with older pay</div>
+  </section>`).join("");
+</script>
+</body>
+</html>

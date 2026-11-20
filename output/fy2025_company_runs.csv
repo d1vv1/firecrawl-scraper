@@ -1,0 +1,1463 @@
+﻿company_id,company_name,country,latest_run,latest_retrieved,all_runs
+austriacard-holdings-ag,AUSTRIACARD HOLDINGS AG,AT,dach_set1_datapoints.csv,2026-11-05,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+erste-group-bank-ag,Erste Group Bank AG,AT,dach_set1_datapoints.csv,2026-11-05,runs_16nov_revanth_j.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+flughafen-wien-ag,Flughafen Wien AG,AT,dach_set1_datapoints.csv,2026-11-05,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+aevis-victoria-sa,AEVIS VICTORIA SA,CH,wave1_half1_datapoints.csv,2026-11-05,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; wave1_half1_datapoints.csv
+addex-therapeutics-ltd,Addex Therapeutics Ltd,CH,wave1_half1_datapoints.csv,2026-11-05,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+allreal-holding-ag,Allreal Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+amrize-ltd,Amrize Ltd,CH,runs_16nov_revanth_j.csv,2026-11-18,fy2025_v2_trial_datapoints.csv; dach_set2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+ascom-holding-ag,Ascom Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half1_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+avolta-ag,Avolta AG,CH,wave1_half1_datapoints.csv,2026-11-05,dach_set2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+bachem-holding-ag,Bachem Holding AG,CH,wave1_half1_datapoints.csv,2026-11-05,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv; wave1_half1_datapoints.csv
+barry-callebaut-ag,Barry Callebaut AG,CH,wave1_half1_datapoints.csv,2026-11-05,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+bioversys-ag,BioVersys AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+beiersdorf-ag-o-n,BEIERSDORF AG O.N.,DE,dach_set1_datapoints.csv,2026-11-05,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+branicks-group-ag,BRANICKS Group AG,DE,dach_set1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+delticom-ag-na-o-n,DELTICOM AG  NA O.N.,DE,dach_set1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; wave1_half1_datapoints.csv; dach_set1_datapoints.csv
+digia-oyj,Digia Oyj,FI,wave1_half1_datapoints.csv,2026-11-05,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+kesko-b,Kesko B,FI,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+4imprint-group-plc,4IMPRINT GROUP PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+aep-plantations-plc,AEP Plantations plc,GB,runs_16nov_divi.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+aiq-limited,AIQ Limited,GB,runs_16nov_divi.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+altyngold-plc,ALTYNGOLD PLC,GB,runs_16nov_divi.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+aminex-plc,AMINEX PLC,GB,fy2025_v4_datapoints.csv,2026-11-14,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+ao-world-plc,AO World plc,GB,wave1_half1_datapoints.csv,2026-11-05,nordic_uk_10.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; nordic_uk_10_datapoints.csv; wave1_half1_datapoints.csv
+asia-strategic-holdings-limited,ASIA STRATEGIC HOLDINGS LIMITED,GB,runs_16nov_divi.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+associated-british-foods-plc,ASSOCIATED BRITISH FOODS PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+aberdeen-group-plc,Aberdeen Group plc,GB,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+admiral-group-plc,Admiral Group PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+airtel-africa-plc,Airtel Africa plc,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+alfa-financial-software-holdings-plc,Alfa Financial Software Holdings PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+alkemy-capital-investments-plc,Alkemy Capital Investments PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+amigo-resources-plc,Amigo Resources PLC,GB,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+antofagasta-plc,Antofagasta plc,GB,fy2025_v4_datapoints.csv,2026-11-15,runs_16nov_revanth_j.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+aptitude-software-group-plc,Aptitude Software Group PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+ashmore-group-plc,Ashmore Group Plc,GB,runs_16nov_revanth_j.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; runs_16nov_revanth_j.csv
+aston-martin-lagonda-global-holdings-plc,Aston Martin Lagonda Global Holdings PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+atalaya-mining-copper-s-a,"Atalaya Mining Copper, S.A.",GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+atlas-metals-group-plc,Atlas Metals Group plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+autotrader-group-plc,Autotrader Group plc,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+avon-technologies-plc,Avon Technologies plc,GB,runs_16nov_divi.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+babcock-international-group-plc,BABCOCK INTERNATIONAL GROUP PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+balfour-beatty-plc,BALFOUR BEATTY PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+barr-a-g-plc,BARR (A.G.) PLC,GB,runs_16nov_divi.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+bellway-plc,BELLWAY PLC,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+boot-henry-plc,BOOT (HENRY) PLC,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+breedon-group-plc,BREEDON GROUP PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bt-group-plc,BT Group plc,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+baltic-classifieds-group-plc,Baltic Classifieds Group PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+berkeley-group-holdings-the-plc,Berkeley Group Holdings (The) Plc,GB,wave1_half1_datapoints.csv,2026-11-05,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+blencowe-resources-plc,Blencowe Resources Plc,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+bodycote-plc,Bodycote Plc,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+bridgepoint-group-plc,Bridgepoint Group Plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+brooks-macdonald-group-plc,Brooks Macdonald Group plc,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+bytes-technology-group-plc,Bytes Technology Group plc,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+cab-payments-holdings-plc,CAB Payments Holdings Plc,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+caledonia-investments-plc,CALEDONIA INVESTMENTS PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cardiff-property-plc,CARDIFF PROPERTY PLC,GB,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+centrica-plc,CENTRICA PLC,GB,runs_16nov_revanth_j.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv; runs_16nov_revanth_j.csv
+close-brothers-group-plc,CLOSE BROTHERS GROUP PLC,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+cmc-markets-plc,CMC Markets Plc,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+cranswick-plc,CRANSWICK PLC,GB,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+cadogan-energy-solutions-plc,Cadogan Energy Solutions plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+capital-limited,Capital Limited,GB,fy2025_v4_datapoints.csv,2026-11-13,runs_16nov_praveen.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+carclo-plc,Carclo PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+agilyx,Agilyx,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bw-offshore-limited,BW Offshore Limited,NO,fy2025_v4_datapoints.csv,2026-11-15,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cmb-tech-nv,CMB.TECH NV,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+hermana-holding,Hermana Holding,NO,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+holand-og-setskog-sparebank,Holand Og Setskog Sparebank,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+melhus-sparebank,Melhus Sparebank,NO,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+okeanis-eco-tankers,Okeanis Eco Tankers,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+petrolia,Petrolia,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+sentia,Sentia,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+sparebank-1-helgeland,Sparebank 1 Helgeland,NO,wave1_half1_datapoints.csv,2026-11-06,fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+tekna-holding,Tekna Holding,NO,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+fastpartner-d,Fastpartner D,SE,fy2025_v4_datapoints.csv,2026-11-06,wave1_half1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+seb-a,SEB A,SE,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+sagax-d,Sagax D,SE,wave1_half1_datapoints.csv,2026-11-06,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_v2_trial_datapoints.csv; wave1_half1_datapoints.csv
+stora-enso-r,Stora Enso R,SE,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bawag-group-ag,BAWAG Group AG,AT,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+eurotelesites-ag,EuroTeleSites AG,AT,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+abb-ltd,ABB Ltd,CH,fy2025_v4_datapoints.csv,2026-11-13,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+also-holding-ag,ALSO Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+aryzta-ag,ARYZTA AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+accelleron-industries-ag,Accelleron Industries AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+adecco-group-ag,Adecco Group AG,CH,runs_16nov_revanth_j.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+alcon-inc,Alcon Inc.,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+autoneum-holding-ag,Autoneum Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+belimo-holding-ag,BELIMO Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bvz-holding-ag,BVZ Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+basellandschaftliche-kantonalbank,Basellandschaftliche Kantonalbank,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+basler-kantonalbank,Basler Kantonalbank,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bellevue-group-ag,Bellevue Group AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+berner-kantonalbank-ag,Berner Kantonalbank AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bossard-holding-ag,Bossard Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+burckhardt-compression-holding-ag,Burckhardt Compression Holding AG,CH,runs_16nov_revanth_j.csv,2026-11-18,wave1_half2_datapoints.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+atoss-software-se,ATOSS SOFTWARE SE,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+basler-ag-o-n,BASLER AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+baywa-ag-vink-na-o-n,BAYWA AG VINK.NA. O.N.,DE,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+bertrandt-ag-o-n,BERTRANDT AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+biofrontera-ag-na-o-n,BIOFRONTERA AG NA O.N.,DE,runs_16nov_praveen.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv; runs_16nov_praveen.csv
+cancom-se-o-n,CANCOM SE O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set1_datapoints.csv
+continental-ag-o-n,CONTINENTAL AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+demire-deutsche-mittelstand-real-estate-ag,DEMIRE DEUTSCHE MITTELSTAND REAL ESTATE AG,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; dach_set1_datapoints.csv
+framery-group,Framery Group,FI,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+ssab-b,SSAB B,FI,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+acg-metals-limited,ACG Metals Limited,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half2_datapoints.csv; runs_16nov_revanth_j.csv
+aib-group-plc,AIB Group plc,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half2_datapoints.csv; runs_16nov_revanth_j.csv
+aj-bell-plc,AJ Bell plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+amaroq-ltd,AMAROQ LTD.,GB,wave1_half2_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv
+asa-international-group-plc,ASA International Group Plc,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+asos-plc,ASOS plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+aviva-plc,AVIVA PLC,GB,wave1_half2_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv
+acceler8-ventures-plc,Acceler8 Ventures PLC,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+african-pioneer-plc,African Pioneer Plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+alina-holdings-plc,Alina Holdings Plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run5_datapoints.csv; runs_16nov_praveen.csv
+amicorp-fs-uk-plc,Amicorp FS (UK) plc,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+anemoi-international-ltd,Anemoi International Ltd,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+aseana-properties-limited,Aseana Properties Limited,GB,wave1_half2_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; wave1_half2_datapoints.csv
+ashtead-technology-holdings-plc,Ashtead Technology Holdings plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+astrazeneca-plc,AstraZeneca PLC,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+avation-plc,Avation PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+b-m-european-value-retail-plc,B&M EUROPEAN VALUE RETAIL PLC,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+bae-systems-plc,BAE SYSTEMS PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+barclays-plc,BARCLAYS PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+batm-advanced-communications-limited,BATM Advanced Communications Limited,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+bloomsbury-publishing-plc,BLOOMSBURY PUBLISHING PLC,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+bp-plc,BP PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half2_datapoints.csv; runs_16nov_revanth_j.csv
+bsf-enterprise-plc,BSF Enterprise Plc,GB,fy2025_v4_datapoints.csv,2026-11-14,runs_16nov_revanth_j.csv; wave1_half2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bunzl-plc,BUNZL PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+barratt-redrow-plc,Barratt Redrow plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+big-yellow-group-plc,Big Yellow Group plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+braemar-plc,Braemar Plc,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+british-american-tobacco-plc,British American Tobacco Plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+burberry-group-plc,Burberry Group plc,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+c-c-group-plc,C&C Group PLC,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+caffyns-plc,CAFFYNS PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,wave1_half2_datapoints.csv; runs_16nov_revanth_j.csv
+capita-plc,CAPITA PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+castings-plc,CASTINGS PLC,GB,runs_16nov_praveen.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_praveen.csv
+chemring-group-plc,CHEMRING GROUP PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+cls-holdings-plc,CLS HOLDINGS PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+costain-group-plc,COSTAIN GROUP PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+cvs-group-plc,CVS GROUP PLC,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+capricorn-energy-plc,Capricorn Energy PLC,GB,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+card-factory-plc,Card Factory plc,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; runs_16nov_divi.csv
+bakkafrost,Bakkafrost,NO,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+dellia-group,Dellia Group,NO,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+himalaya-shipping,Himalaya Shipping,NO,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+odfjell-technology,Odfjell Technology,NO,wave1_half2_datapoints.csv,2026-11-05,wave1_half2_datapoints.csv
+public-property-invest,Public Property Invest,NO,wave1_half2_datapoints.csv,2026-11-06,wave1_half2_datapoints.csv
+aurskog-sparebank,Aurskog Sparebank,NO,fy2025_run2_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv
+canal-s-a,Canal+ S.A,GB,runs_16nov_divi.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+industrivarden-c,Industrivärden C,SE,fy2025_run2_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv
+jinhui-shipping,Jinhui Shipping,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+paratus-energy,Paratus Energy,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+seb-c,SEB C,SE,fy2025_v2_trial_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv
+sed-energy,SED Energy,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+sparebank-1-nordmore,SpareBank 1 Nordmore,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+stora-enso-a,Stora Enso A,SE,fy2025_v4_datapoints.csv,2026-11-13,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+subsea7,Subsea7,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+voss-veksel-landmandsbank,Voss Veksel Landmandsbank,NO,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+uie,UIE,DK,fy2025_v4_datapoints.csv,2026-11-13,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+apg-sga-sa,APG SGA SA,CH,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+airtel-mobile-commerce-n-v,"Airtel Mobile Commerce N.V.,",GB,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bergbahnen-engelberg-trubsee-titlis-ag,Bergbahnen Engelberg-Trübsee-Titlis AG,CH,wave1_half1_datapoints.csv,,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; wave1_half1_datapoints.csv
+bluebird-mining-ventures-ltd,Bluebird Mining Ventures Ltd,GB,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+brondbyernes-if,Brondbyernes IF,DK,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+iqm-finland-oy,IQM Finland Oy,FI,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+ostasiatiske,Ostasiatiske,DK,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+adidas-ag-na-o-n,ADIDAS AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set1_datapoints.csv
+asmallworld-ag,ASMALLWORLD AG,CH,runs_16nov_divi.csv,2026-11-11,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+addtech-nordic-ab,Addtech Nordic AB,SE,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+adval-tech-holding-ag,Adval Tech Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+alpine-select-ag,Alpine Select AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; dach_set2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+arbonia-ag,Arbonia AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+arzneiwerk-ag-vida,Arzneiwerk AG VIDA,DE,runs_16nov_praveen.csv,2026-11-17,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; dach_set1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+aterian-plc,Aterian plc,GB,runs_16nov_divi.csv,2026-11-17,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+atlantic-petroleum,Atlantic Petroleum,DK,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bkw-ag,BKW AG,CH,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; wave1_half1_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+banque-cantonale-du-jura-sa,Banque Cantonale du Jura SA,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+basilea-pharmaceutica-ag-allschwil,"Basilea Pharmaceutica AG, Allschwil",CH,runs_16nov_divi.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; dach_set2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+bell-food-group-ag,Bell Food Group AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bucher-industries-ag,Bucher Industries AG,CH,runs_16nov_praveen.csv,2026-11-17,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+burkhalter-holding-ag,Burkhalter Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; wave1_half1_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bystronic-ag,Bystronic AG,CH,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; dach_set2_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cantargia-ab-1b3e1f95,Cantargia AB,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+revolutionrace,Revolutionrace,SE,fy2025_v4_datapoints.csv,2026-11-13,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+s-d-standard-etc,S.D. Standard ETC,NO,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+tallink-grupp-5c02812d,Tallink Grupp,FI,fy2025_v4_datapoints.csv,2026-11-12,fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+baywa-ag-na-o-n,BAYWA AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-11,wave1_half1_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set1_datapoints.csv
+ceres-power-holdings-plc,Ceres Power Holdings PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+chesnara-plc,Chesnara PLC,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+chesterfield-resources-plc,Chesterfield Resources PLC,GB,fy2025_run5_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv
+chill-brands-group-plc,Chill Brands Group plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cindrigo-holdings-limited,Cindrigo Holdings Limited,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_run2_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_v3_datapoints.csv; runs_16nov_revanth_j.csv
+city-of-london-investment-group-plc,City of London Investment Group PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cizzle-biotechnology-holdings-plc,Cizzle Biotechnology Holdings plc,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+clarkson-plc,Clarkson PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cloudbreak-discovery-plc,Cloudbreak Discovery Plc,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+coats-group-plc,Coats Group PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cobra-resources-plc,Cobra Resources plc,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+coca-cola-europacific-partners-plc,Coca-Cola Europacific Partners plc,GB,fy2025_run2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; fy2025_run2_datapoints.csv
+coca-cola-hbc-ag,Coca-Cola HBC AG,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+compass-group-plc,Compass Group PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+computacenter-plc,Computacenter Plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+conduit-holdings-limited,Conduit Holdings Limited,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+contango-holdings-plc,Contango Holdings plc,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+convatec-group-plc,ConvaTec Group Plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+corpus-resources-plc,Corpus Resources Plc,GB,fy2025_run2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; fy2025_run2_datapoints.csv
+crest-nicholson-holdings-plc,Crest Nicholson Holdings PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v2_trial_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+critical-metals-plc,Critical Metals Plc,GB,runs_16nov_praveen.csv,2026-11-13,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+critical-mineral-resources-plc,Critical Mineral Resources Plc,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+croda-international-plc,Croda International Plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+currys-plc,Currys plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cykel-ai-plc,Cykel AI PLC,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; runs_16nov_praveen.csv
+dcc-energy-plc,DCC Energy plc,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+derwent-london-plc,DERWENT LONDON PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dfi-retail-group-holdings-limited,DFI Retail Group Holdings Limited,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; runs_16nov_revanth_j.csv
+dfs-furniture-plc,DFS Furniture plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+diageo-plc,DIAGEO PLC,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+diploma-plc,DIPLOMA PLC,GB,fy2025_v4_datapoints.csv,2026-11-15,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dar-global-plc,Dar Global PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; runs_16nov_revanth_j.csv
+defence-holdings-plc,Defence Holdings PLC,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; runs_16nov_praveen.csv
+dialight-plc,Dialight PLC,GB,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+domino-s-pizza-group-plc,Domino's Pizza Group Plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dr-martens-plc,Dr. Martens plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+drax-group-plc,Drax Group PLC,GB,runs_16nov_praveen.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+dunelm-group-plc,Dunelm Group plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+easyjet-plc,EASYJET PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+elementis-plc,ELEMENTIS PLC,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+essentra-plc,ESSENTRA PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_run6_datapoints.csv; fy2025_run6b_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+east-star-resources-plc,East Star Resources Plc,GB,runs_16nov_revanth_j.csv,2026-11-11,fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; runs_16nov_revanth_j.csv
+ecora-royalties-plc,Ecora Royalties PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+elixirr-international-plc,Elixirr International plc,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_run2_datapoints.csv; runs_16nov_praveen.csv
+enquest-plc,EnQuest PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+endeavour-mining-plc,Endeavour Mining plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+energean-plc,Energean PLC,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+entain-plc,Entain Plc,GB,runs_16nov_revanth_j.csv,2026-11-18,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+eurocell-plc,Eurocell plc,GB,fy2025_v4_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+everest-global-plc,Everest Global PLC,GB,runs_16nov_divi.csv,2026-11-11,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+experian-plc,Experian plc,GB,runs_16nov_praveen.csv,2026-11-17,fy2025_run2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+besqab-pref-b,Besqab Pref B,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half2_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+fastighetsbolag-emilshus-pref,Fastighetsbolag Emilshus Pref,SE,fy2025_v4_datapoints.csv,2026-11-11,wave1_half2_datapoints.csv; fy2025_run2_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_run4_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+k2a-knaust-andersson-pref,K2A Knaust & Andersson Pref,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_run4_datapoints.csv; wave1_half2_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+sca-a,SCA A,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half2_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+alvotech-sdb,Alvotech SDB,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+corem-property-d,Corem Property D,SE,fy2025_v3_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_v3_datapoints.csv
+intea-fastigheter-d,Intea Fastigheter D,SE,fy2025_v4_datapoints.csv,2026-11-13,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bilfinger-se-o-n,BILFINGER SE O.N.,DE,dach_set1_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set1_datapoints.csv
+commerzbank-ag,COMMERZBANK AG,DE,dach_set1_datapoints.csv,2026-11-11,fy2025_run2_datapoints.csv; wave1_half1_datapoints.csv; fy2025_run3_datapoints.csv; fy2025_run5_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set1_datapoints.csv
+softing-ag-365a9352,SOFTING AG O.N.,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+stabilus-se-52dccb73,"STABILUS SE INH. EO-,01",DE,fy2025_v4_datapoints.csv,2026-11-13,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+suss-microtec-se-b7558a97,SUSS MicroTec SE,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+thyssenkrupp-nucera-ag-kgaa-fac8c580,THYSSENKRUPP NUCERA AG & KGAA,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+tkms-ag-co-kgaa-f468ef4d,TKMS AG + CO. KGAA O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+traton-se-8a6b8f62,TRATON SE   INH O.N.,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+uniper-se-2cd8e9fe,UNIPER SE  NA O.N.,DE,runs_16nov_praveen.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+utd-internet-ag-fa5f4803,UTD.INTERNET AG NA,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+verbio-se-9b8df34d,VERBIO SE ON,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+villeroy-boch-ag-c5a85d57,VILLEROY + BOCH AG VZ,DE,runs_16nov_revanth_j.csv,2026-11-18,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv; runs_16nov_revanth_j.csv
+vincorion-se-16aba459,Vincorion SE,DE,runs_16nov_divi.csv,2026-11-13,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+viscom-se-859e40d6,VISCOM SE,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+volkswagen-ag-be878a5e,VOLKSWAGEN AG ST O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+voltatron-ag-57b867a2,Voltatron AG,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+wuestenrot-wuerttembergische-ag-07b9dfbc,WUESTENROT+WUERTTEMBERGISCHE AG O.N.,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+electrovac-ag-8d562e26,Electrovac AG,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+2invest-ag-bf4e0781,2INVEST AG  NA O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+a-i-s-ag-4ae0fbee,A.I.S. AG,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set2_datapoints.csv
+accentro-real-estate-ag-fbdf101b,ACCENTRO REAL ESTATE AG  O.N.,DE,runs_16nov_praveen.csv,,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+albis-leasing-ag-30344d1d,ALBIS LEASING AG O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+allgeier-se-9971b49d,ALLGEIER SE  NA O.N.,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+berentzen-gruppe-ag-957f8708,BERENTZEN-GRUPPE AG,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+bijou-brigitte-c3387b07,BIJOU BRIGITTE O.N.,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+camerit-ag-45f4d990,CAMERIT AG,DE,runs_16nov_revanth_j.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+nexum-group-ag-f3ad001d,Nexum Group AG,DE,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+deutsche-real-estate-ag-8625fa60,DEUTSCHE REAL ESTATE AG O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dierig-holding-ag-91dc6032,DIERIG HOLDING AG O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+eisen-und-huettenwerke-5b76d547,EISEN- UND HUETTENWERKE,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+enbw-energie-baden-wuerttemberg-30b5438b,ENBW ENERGIE BADEN-WUERTTEMBERG ON,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+epigenomics-ag-ddb6ea6d,EPIGENOMICS AG NA O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+fair-value-reit-ag-cef1dc63,FAIR VALUE REIT-AG INH.ON,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set2_datapoints.csv
+intertainment-ag-db87b5a6,INTERTAINMENT AG INH O.N.,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+khd-humboldt-wedag-eff61cda,KHD HUMBOLDT WEDAG O.N.,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+kps-ag-d763be73,KPS AG NA O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+maschinenfabrik-berthold-hermle-6808fdaf,MASCHINENFABRIK BERTHOLD HERMLE O.N. VZO,DE,runs_16nov_revanth_j.csv,2026-11-18,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv; runs_16nov_revanth_j.csv
+maternus-kliniken-ag-fe2ae118,MATERNUS-KLINIKEN AG O.N.,DE,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+max-automation-se-e7586bc1,MAX AUTOMATION SE NA O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+ming-le-sports-ag-fc0affd5,MING LE SPORTS AG,DE,fy2025_v3_datapoints.csv,2026-11-11,fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv
+mueller-die-lila-logistik-se-f3c40a4b,MUELLER-DIE LILA LOGISTIK SE,DE,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+nexr-technologies-se-d1999a2e,NEXR TECHNOLOGIES SE  INH O.N.,DE,runs_16nov_divi.csv,,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+norcom-information-technology-2811f08c,NORCOM INFORMATION TECHNOLOGY INH ON,DE,runs_16nov_revanth_j.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv; runs_16nov_revanth_j.csv
+nordwest-handel-ag-ee04116a,NORDWEST HANDEL AG,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set2_datapoints.csv
+orbis-se-3d0d94ff,ORBIS SE O.N.,DE,dach_set2_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+united-eco-solutions-ag-44c5756c,United Eco Solutions AG,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+path2-hydrogen-ag-4a522574,Path2 Hydrogen AG,DE,runs_16nov_divi.csv,2026-11-13,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+pearl-gold-ag-da4e9b62,PEARL GOLD AG,DE,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+pfeiffer-vacuum-tech-ag-a38e65f0,PFEIFFER VACUUM TECH. AG O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+pferdewetten-de-ag-07705286,PFERDEWETTEN.DE AG NA ON,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+pittler-maschinenfabrik-ag-fb62b449,PITTLER MASCHINENFABRIK AG,DE,runs_16nov_divi.csv,2026-11-13,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+planoptik-ag-9429909d,Planoptik AG,DE,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+readcrest-capital-ag-e4689651,READCREST CAPITAL AG O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+sino-german-united-ag-388acb2d,SINO-GERMAN UNITED AG O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+sto-se-co-kgaa-9a1ae007,STO SE+CO.KGAA VZO O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+tc-unterhaltungselektronik-7628c15f,TC UNTERHALTUNGSELEKTRONIK,DE,runs_16nov_divi.csv,,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+tiscon-ag-i-a-9dafa5a9,TISCON AG i.A.,DE,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+ttl-beteiligungs-und-grundbesitz-ag-02636470,TTL BETEILIGUNGS- UND GRUNDBESITZ AG INH ON,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv; dach_set2_datapoints.csv
+uzin-utz-se-808b3f93,UZIN UTZ SE O.N.,DE,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+wasgau-produktions-handels-8c33a77d,WASGAU PRODUKTIONS & HANDELS NA O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+wild-bunch-ag-7b9483b1,WILD BUNCH AG O.N.,DE,dach_set2_datapoints.csv,2026-11-11,fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; dach_set2_datapoints.csv
+singulus-technol-66103de1,SINGULUS TECHNOL. EO 1,DE,fy2025_v4_datapoints.csv,2026-11-13,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+helios-solar-ag-797724e7,HELIOS SOLAR AG,DE,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+apg-sga-sa-8679206d,APG SGA SA,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+bergbahnen-engelberg-trubsee-titlis-ag-e3e76859,Bergbahnen Engelberg-Trübsee-Titlis AG,CH,fy2025_v4_datapoints.csv,,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+c-capital-holdings-ag-53a1594e,C Capital Holdings AG,CH,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+calida-holding-ag-1793bfba,Calida Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+carlo-gavazzi-holding-ag-39d1d1b5,Carlo Gavazzi Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cembra-money-bank-ag-752ce099,Cembra Money Bank AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+centiel-ag-eeeda54a,Centiel AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+cham-swiss-properties-ag-7d9cb227,Cham Swiss Properties AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+chocoladefabriken-lindt-sprungli-ag-f056b804,Chocoladefabriken Lindt & Sprüngli AG,CH,fy2025_v4_datapoints.csv,2026-11-13,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+cicor-technologies-ltd-39bd9715,Cicor Technologies Ltd.,CH,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+clariant-ag-0616ec80,Clariant AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+coltene-holding-ag-8c3c775c,COLTENE Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+comet-holding-ag-f1ab2b78,Comet Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+compagnie-financiere-richemont-sa-060892f5,Compagnie Financière Richemont SA,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+compagnie-financiere-tradition-sa-940d20ce,Compagnie financière Tradition SA,CH,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+cph-group-ag-2a655fb2,CPH Group AG,CH,fy2025_v3_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v4_datapoints.csv; fy2025_v3_datapoints.csv
+curatis-holding-ag-adc33085,Curatis Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+datwyler-holding-ag-eca04fdb,Dätwyler Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_praveen.csv
+dksh-holding-ag-6576340c,DKSH Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+docmorris-ag-be190279,DocMorris AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dormakaba-holding-ag-9c17f7d1,dormakaba Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dottikon-es-holding-ag-d22b9c0d,Dottikon ES Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-14,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+dsm-firmenich-ag-62366aa6,DSM-Firmenich AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+edisun-power-europe-ag-e6666cb6,Edisun Power Europe AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_revanth_j.csv
+efg-international-ag-549347cb,EFG International AG,CH,runs_16nov_divi.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+elma-electronic-ag-e6027e1b,Elma Electronic AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+emmi-ag-ad10f47a,Emmi AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+ems-chemie-holding-ag-d319099b,Ems-Chemie Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+epic-suisse-ag-7c2f8dc4,EPIC Suisse AG,CH,fy2025_v4_datapoints.csv,2026-11-11,dach_set2_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+agrana-beteiligungs-ag-60d4466c,AGRANA Beteiligungs-AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+amag-austria-metall-ag-9da856cd,AMAG Austria Metall AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+at-s-austria-technologie-systemtechnik-aktiengesel-768eb540,AT&S Austria Technologie & Systemtechnik Aktiengesellschaft,AT,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+bajaj-mobility-ag-8e6bef55,Bajaj Mobility AG,AT,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+ca-immobilien-anlagen-ag-a9ff4a4a,CA Immobilien Anlagen AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+cpi-europe-ag-27dac1eb,CPI Europe AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+do-co-aktiengesellschaft-1ce4abbb,DO & CO Aktiengesellschaft,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+evn-ag-90cea5f3,EVN AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+facc-ag-5f4b658e,FACC AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+frequentis-ag-b26b4708,Frequentis AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+kapsch-trafficcom-ag-1d6bbc81,Kapsch TrafficCom AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+lenzing-ag-c20f8b4a,Lenzing AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+mayr-melnhof-karton-ag-ef1c26e1,Mayr-Melnhof Karton AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+omv-ag-2c5e8b21,OMV AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+osterreichische-post-ag-73cb1454,Österreichische Post AG,AT,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+palfinger-ag-e07e19f6,Palfinger AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+polytec-holding-ag-2a433fdb,Polytec Holding AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+porr-ag-127fa41a,Porr AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+rosenbauer,Rosenbauer International AG,AT,runs_16nov_divi.csv,2026-11-14,validation_datapoints.csv; dach_set1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv; runs_16nov_divi.csv
+sbo-ag-167118dc,SBO AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+semperit-ag-holding-2a7b594a,Semperit AG Holding,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+strabag-se-8e9d954e,STRABAG SE,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+telekom-austria-ag-62fec5fa,Telekom Austria AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+verbund,Verbund AG,AT,fy2025_v4_datapoints.csv,2026-11-14,validation_datapoints.csv; dach_set1_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+vienna-insurance-group-ag-wiener-versicherung-grup-cf6631de,Vienna Insurance Group AG Wiener Versicherung Gruppe,AT,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+voestalpine-ag-0a494926,voestalpine AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+emerald-horizon-ag-a6420623,Emerald Horizon AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+warimpex-finanz-und-beteiligungs-ag-ae611bc8,Warimpex Finanz- und Beteiligungs AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+wolford-ag-638e2dc1,Wolford AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+addiko-bank-ag-167fa5c3,Addiko Bank AG,AT,runs_16nov_divi.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_divi.csv
+bks-bank-ag-5e8b8669,BKS Bank AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+btv-vier-lander-bank-ag-9e06fc63,BTV Vier Länder Bank AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+burgenland-holding-ag-a95d1abc,Burgenland Holding AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+frauenthal-holding-ag-edd167fb,Frauenthal Holding AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+gurktaler-ag-313b0a0d,Gurktaler AG,AT,dach_set1_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+heid-maschinenfabrik-ag-72bb31c5,Heid Maschinenfabrik AG,AT,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+josef-manner-comp-ag-4b81bd60,Josef Manner & Comp. AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+linz-textil-holding-ag-e11cf1a9,Linz Textil Holding AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+marinomed-biotech-ag-807f84bd,Marinomed Biotech AG,AT,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+rath-ag-9e9ac567,Rath AG,AT,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+stadlauer-malzfabrik-ag-8a23c30d,Stadlauer Malzfabrik AG,AT,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+sw-umwelttechnik-stoiser-wolschner-ag-fbdd5b89,SW Umwelttechnik Stoiser & Wolschner AG,AT,dach_set1_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+wiener-privatbank-se-e8881192,Wiener Privatbank SE,AT,dach_set1_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+auto1-group-se-0e2acd91,AUTO1 GROUP SE,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+bay-motoren-werke-ag-2bc720d9,BAY.MOTOREN WERKE AG ST,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+cherry-se-57089b55,CHERRY SE,DE,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+cts-eventim-kgaa-1664614e,CTS EVENTIM KGAA,DE,dach_set1_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+data-modul-ag-9cac6e64,DATA MODUL AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+deutsche-post-ag-b89554ef,DEUTSCHE POST AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+deutz-ag-8a315ac8,DEUTZ AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+draegerwerk-6fd21937,DRAEGERWERK ST.A.O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+draegerwerk-be66d9df,DRAEGERWERK VZO O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+dt-konsum-real-estae-ag-4e32eb34,DT. Konsum Real Estae AG,DE,dach_set1_datapoints.csv,2026-11-11,runs_16nov_divi.csv; dach_set1_datapoints.csv
+dt-pfandbriefbk-ag-71e35702,DT.PFANDBRIEFBK AG,DE,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+dt-telekom-ag-9dfbbd0c,DT.TELEKOM AG NA,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+dws-group-gmbh-co-kgaa-c6d99d12,DWS GROUP GMBH+CO.KGAA ON,DE,dach_set1_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+evotec-se-0d298d1f,EVOTEC SE  INH O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+first-sensor-ag-34cd25ce,FIRST SENSOR AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+flatexdegiro-se-0d4c8d91,FLATEXDEGIRO SE,DE,runs_16nov_praveen.csv,2026-11-11,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+fortec-elektro-b45e5cd6,FORTEC ELEKTRO. O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+fresenius-medical-care-ag-241c7b04,FRESENIUS MEDICAL CARE AG O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+fuchs-se-4990a338,FUCHS SE O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+gerresheimer-ag-25295c16,GERRESHEIMER AG,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+hamborner-reit-ag-cb84ee44,HAMBORNER REIT AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+hamburger-hafen-und-logistik-a-sp-53728df8,HAMBURGER HAFEN UND LOGISTIK A-SP NA,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+hawesko-holding-se-bd2e62b7,HAWESKO HOLDING SE,DE,dach_set1_datapoints.csv,2026-11-11,runs_16nov_divi.csv; dach_set1_datapoints.csv
+heidelberg-materials-ag-20cc4657,HEIDELBERG MATERIALS AG O.N.,DE,dach_set1_datapoints.csv,2026-11-11,dach_set1_datapoints.csv
+hella-gmbh-co-kgaa-740cce46,HELLA GMBH+CO.KGAA,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+hochtief-ag-3d11e5c0,HOCHTIEF AG,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+hypoport-se-73d5ece9,HYPOPORT SE  NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+infineon-tech-ag-8660f215,INFINEON TECH.AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+init-innovation-3237f8ad,INIT INNOVATION O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+intica-systems-se-18005922,INTICA SYSTEMS SE,DE,runs_16nov_praveen.csv,2026-11-12,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+ivu-traffic-techn-ag-020c6212,IVU TRAFFIC TECHN.AG O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+koenig-bauer-ag-1f22b792,KOENIG + BAUER AG ST O.N.,DE,runs_16nov_praveen.csv,2026-11-12,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+krones-ag-f49c3596,KRONES AG O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+ksb-se-co-kgaa-22d5b1d9,KSB SE+CO.KGAA  ST O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set1_datapoints.csv
+lufthansa-ag-0bc3d92c,LUFTHANSA AG VNA O.N.,DE,runs_16nov_praveen.csv,2026-11-12,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+masterflex-96d8f19f,MASTERFLEX O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+mbb-se-be761dea,MBB SE O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+mercedes-benz-group-ag-1545d718,MERCEDES BENZ GROUP AG,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+muench-rueckversicherungs-gesellschaft-5bba2145,MUENCH.RUECKVERSICHERUNGS GESELLSCHAFT.VNA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+nagarro-se-9ed14a85,NAGARRO SE  NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+patrizia-se-41659152,PATRIZIA SE NA ON,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+paragon-kgaa-7616d267,PARAGON KGAA  INH O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+pne-ag-1fc0baf7,PNE AG  NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+porsche-ag-531bb563,Porsche AG Vz,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+procredit-holding-ag-74495a3c,PROCREDIT HOLDING AG NA EO 5,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set1_datapoints.csv
+prosiebensat-1-media-se-52d34a8f,PROSIEBENSAT.1 MEDIA SE  NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+q-beyond-ag-a25f57b8,Q.BEYOND AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set1_datapoints.csv
+r-stahl-ag-04fdadc0,R. STAHL AG NA O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+rheinmetall-ag-cf2ff08a,RHEINMETALL AG,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+rhoen-klinikum-0a013089,RHOEN-KLINIKUM O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+saf-holland-se-e07079b5,SAF HOLLAND SE  INH EO 1,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+sap-se-b1a5f6d4,SAP SE O.N.,DE,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+sartorius-ag-9a9c739c,SARTORIUS AG O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+sartorius-ag-a22309c5,SARTORIUS AG VZO O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+schott-pharma-ag-co-kgaa-26f01ea5,SCHOTT Pharma AG & Co. KGaA,DE,runs_16nov_praveen.csv,2026-11-12,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+secunet-security-ag-c4d9b7e4,SECUNET SECURITY AG O.N.,DE,runs_16nov_revanth_j.csv,2026-11-18,dach_set1_datapoints.csv; runs_16nov_revanth_j.csv
+siemens-health-ag-1a42fb66,SIEMENS HEALTH.AG NA O.N.,DE,runs_16nov_divi.csv,2026-11-17,dach_set1_datapoints.csv; runs_16nov_divi.csv
+sixt-se-8094cf8b,SIXT SE ST O.N.,DE,dach_set1_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set1_datapoints.csv
+sma-solar-technol-ag-1fa9e8e7,SMA SOLAR TECHNOL.AG,DE,runs_16nov_praveen.csv,2026-11-12,dach_set1_datapoints.csv; runs_16nov_praveen.csv
+snp-schneider-neureither-f82bee76,SNP SCHNEIDER-NEUREITHER O.N.,DE,dach_set1_datapoints.csv,2026-11-12,dach_set1_datapoints.csv
+evonext-holdings-sa-be1893c4,EvoNext Holdings SA,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+feintool-international-holding-ag-dd22099c,Feintool International Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+forbo-holding-ag-6863b5df,Forbo Holding AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+fundamenta-real-estate-ag-9401efdc,Fundamenta Real Estate AG,CH,runs_16nov_praveen.csv,2026-11-11,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+galderma-group-ag-8c1dbf8c,Galderma Group AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+galenica-ag-3e4e6756,Galenica AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+gam-holding-ag-6ce711d2,GAM Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+geberit-ag-c1d8a2d9,Geberit AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+givaudan-sa-b9d48cbe,Givaudan SA,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+glarner-kantonalbank-8ede902a,Glarner Kantonalbank,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+graubundner-kantonalbank-746931b2,Graubündner Kantonalbank,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_divi.csv; dach_set3_datapoints.csv
+groupe-minoteries-sa-11276f01,Groupe Minoteries SA,CH,runs_16nov_praveen.csv,,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+gurit-holding-ag-02374e88,Gurit Holding AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+helvetia-baloise-holding-ag-784ff8e8,Helvetia Baloise Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+hiag-immobilien-holding-ag-3a28978d,HIAG Immobilien Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+highlight-event-and-entertainment-ag-de285c44,Highlight Event and Entertainment AG,CH,runs_16nov_divi.csv,,dach_set3_datapoints.csv; runs_16nov_divi.csv
+holcim-ltd-b2e462f1,Holcim Ltd,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+huber-suhner-ag-11887265,Huber+Suhner AG,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+hypothekarbank-lenzburg-ag-52099ad5,Hypothekarbank Lenzburg AG,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+idorsia-ltd-c5656188,Idorsia Ltd,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+implenia-ag-9355840d,Implenia AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+inficon-holding-ag-4220ed6f,INFICON HOLDING AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+infomaniak-sa-87b05313,Infomaniak SA,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+infracore-sa-b3b0dcce,Infracore SA,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+interroll-holding-ag-ef2328b8,Interroll Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+intershop-holding-ag-6e9d3cef,Intershop Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_divi.csv; dach_set3_datapoints.csv
+investis-holding-sa-b57723a7,Investis Holding SA,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+ivf-hartmann-holding-ag-fc38ba38,IVF HARTMANN Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+julius-bar-gruppe-ag-de864d89,Julius Bär Gruppe AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+jungfraubahn-holding-ag-90ceddd3,Jungfraubahn Holding AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+kardex-holding-ag-b5808d3c,Kardex Holding AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+klingelnberg-ag-d32e6349,Klingelnberg AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+komax,Komax Holding AG,CH,fy2025_v4_datapoints.csv,2026-11-15,runs_16nov_praveen.csv; validation_datapoints.csv; dach_set3_datapoints.csv; fy2025_v3_datapoints.csv; fy2025_v4_datapoints.csv
+kudelski-s-a-fca01ba3,Kudelski S.A.,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+kuhne-nagel-international-ag-2949951f,Kühne + Nagel International AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+kuros-biosciences-ltd-32d9b34e,Kuros Biosciences Ltd.,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+landis-gyr-group-ag-7b8d0754,Landis+Gyr Group AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+leclanche-sa-29b435c9,Leclanché SA,CH,dach_set3_datapoints.csv,,runs_16nov_divi.csv; dach_set3_datapoints.csv
+lem-holding-sa-cc5005fc,LEM Holding SA,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+leonteq-ag-6723ca54,Leonteq AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+liechtensteinische-landesbank-ag-53271b6c,Liechtensteinische Landesbank AG,CH,runs_16nov_revanth_j.csv,,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+logitech-international-s-a-0a74f2ba,Logitech International S.A.,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+lonza-group-ag-e4f248d2,Lonza Group AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+luzerner-kantonalbank-ag-79246b45,Luzerner Kantonalbank AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+mch-group-ag-c6fc7898,MCH Group AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+medacta-group-sa-00954b7f,Medacta Group SA,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+medartis-holding-ag-4ef02932,Medartis Holding AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+medmix-ag-f840dcb1,medmix AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+meier-tobler-group-ag-f96a3151,Meier Tobler Group AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+metall-zug-ag-7412eb32,Metall Zug AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+mikron-holding-ag-0842218f,Mikron Holding AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+mindmaze-therapeutics-holding-sa-b2339575,MindMaze Therapeutics Holding SA,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+mobilezone-holding-ag-fc013b59,mobilezone holding ag,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+mobimo-holding-ag-df63dd1a,Mobimo Holding AG,CH,runs_16nov_praveen.csv,,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+molecular-partners-ag-86d659ae,Molecular Partners AG,CH,dach_set3_datapoints.csv,2026-11-11,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+montana-aerospace-ag-bc5706d8,Montana Aerospace AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+naturenergie-holding-ag-a1be2274,naturenergie holding AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set3_datapoints.csv
+nestle-ag-371e324c,Nestlé AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+novartis-ag-f0d1b7d5,Novartis AG,CH,dach_set3_datapoints.csv,2026-11-11,dach_set3_datapoints.csv
+novavest-real-estate-ag-796f6493,Novavest Real Estate AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+oc-oerlikon-corporation-ag-8ad162da,OC Oerlikon Corporation AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+orell-fussli-ag-c5631ff9,Orell Füssli AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+orior-ag-bfeb91d6,Orior AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+partners-group-holding-ag-d09fd15d,Partners Group Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+peach-property-group-ag-b0194e98,Peach Property Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+phoenix-mecano-ag-d882ab5c,Phoenix Mecano AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+plazza-ag-a1578cf1,PLAZZA AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set3_datapoints.csv
+polypeptide-group-ag-ec98be88,PolyPeptide Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+psp-swiss-property-ag-05c2c3ad,PSP Swiss Property AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+r-s-group-holding-ag-8cdcd57a,R&S Group Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+rieter-holding-ag-73ac7c64,Rieter Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+roche-holding-ag-5abd8231,Roche Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+romande-energie-holding-sa-3dac8f90,Romande Energie Holding SA,CH,runs_16nov_divi.csv,,dach_set3_datapoints.csv; runs_16nov_divi.csv
+sandoz-group-ag-7e6ec0e7,Sandoz Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+santhera-pharmaceuticals-holding-ag-8f83ccd5,Santhera Pharmaceuticals Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+schindler-holding-ag-d2b61912,Schindler Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+schlatter-industries-ag-e8b6df3d,Schlatter Industries AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+schweiter-technologies-ag-b9dd7eca,Schweiter Technologies AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+schweizerische-nationalbank-e298a12f,Schweizerische Nationalbank,CH,runs_16nov_divi.csv,,dach_set3_datapoints.csv; runs_16nov_divi.csv
+sensirion-holding-ag-0c2fb93b,Sensirion Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+sf-urban-properties-ag-b860022e,SF Urban Properties AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+sfs-group-ag-f427427a,SFS Group AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+sgs-ag-65380806,SGS AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+siegfried-holding-ag-5b520bab,Siegfried Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+sig-group-ltd-69ad78ae,SIG Group Ltd,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+skan-group-ag-684bb9fa,SKAN Group AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+smg-swiss-marketplace-group-holding-ag-40385dff,SMG Swiss Marketplace Group Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+softwareone-holding-ag-ee2860ae,SoftwareOne Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+sonova-holding-ag-e87e288d,Sonova Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set3_datapoints.csv
+st-galler-kantonalbank-ag-ba864955,St.Galler Kantonalbank AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+stadler-rail-ag-ddc4f964,Stadler Rail AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+starragtornos-group-ag-15e3832b,StarragTornos Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+straumann-holding-ag-d8e91d7f,Straumann Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+sunrise-communications-ag-548ca7af,Sunrise Communications AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+swiss-life-holding-ag-403064f3,Swiss Life Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+swiss-prime-site-ag-da6d9b3d,Swiss Prime Site AG,CH,runs_16nov_divi.csv,2026-11-12,dach_set3_datapoints.csv; runs_16nov_divi.csv
+swiss-re-ag-6528d850,Swiss Re AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+swisscom-ag-b3649c71,Swisscom AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+swissquote-group-holding-ltd-8a2aaa88,Swissquote Group Holding Ltd,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+tecan-group-ag-328eeee8,Tecan Group AG,CH,runs_16nov_revanth_j.csv,2026-11-18,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+temenos-ag-21209ec1,TEMENOS AG,CH,runs_16nov_divi.csv,2026-11-12,dach_set3_datapoints.csv; runs_16nov_divi.csv
+the-swatch-group-ag-6a144b9f,The Swatch Group AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+thurgauer-kantonalbank-3b36a058,Thurgauer Kantonalbank,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+tx-group-ag-cdcf98d0,TX Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+ubs-group-ag-944a2b19,UBS Group AG,CH,runs_16nov_revanth_j.csv,2026-11-12,dach_set3_datapoints.csv; runs_16nov_revanth_j.csv
+v-zug-holding-ag-f40cbd57,V-ZUG Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+valartis-group-ag-1d140c83,Valartis Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+valiant-holding-ag-1e2ca715,Valiant Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+varia-us-properties-ag-9f548364,Varia US Properties AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+vat-group-ag-ccdd96de,VAT Group AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+vaudoise-assurances-holding-sa-00d7d6b4,Vaudoise Assurances Holding SA,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_praveen.csv; dach_set3_datapoints.csv
+vetropack-holding-ag-3a954192,Vetropack Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+villars-holding-s-a-0f65ebf6,Villars Holding S.A.,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+vontobel-holding-ag-1d88ea32,Vontobel Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+vp-bank-ag-e661c993,VP Bank AG,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+vz-holding-ag-6150cdf9,VZ Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+walliser-kantonalbank-2ca3a748,Walliser Kantonalbank,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_divi.csv; dach_set3_datapoints.csv
+warteck-invest-ag-66b36e41,Warteck Invest AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+xlife-sciences-ag-1d9f77f3,Xlife Sciences AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+ypsomed-holding-ag-9cb8acfe,Ypsomed Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+zehnder-group-ag-125a701c,Zehnder Group AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+zublin-immobilien-holding-ag-cf81b4e5,Züblin Immobilien Holding AG,CH,runs_16nov_praveen.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_praveen.csv
+zug-estates-holding-ag-4947dbda,Zug Estates Holding AG,CH,dach_set3_datapoints.csv,2026-11-12,dach_set3_datapoints.csv
+zuger-kantonalbank-67b7c3b8,Zuger Kantonalbank,CH,dach_set3_datapoints.csv,2026-11-12,runs_16nov_revanth_j.csv; dach_set3_datapoints.csv
+zurich-insurance-group-ag-d14f6a93,Zurich Insurance Group AG,CH,runs_16nov_divi.csv,2026-11-17,dach_set3_datapoints.csv; runs_16nov_divi.csv
+fdm-group-holdings-plc-5f964aeb,FDM Group (Holdings) plc,GB,runs_16nov_divi.csv,2026-11-17,uk_remaining_datapoints.csv; runs_16nov_divi.csv
+firstgroup-plc-14f42f50,FIRSTGROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+fisher-james-sons-plc-1d273817,FISHER (JAMES) & SONS PLC,GB,runs_16nov_praveen.csv,2026-11-17,uk_remaining_datapoints.csv; runs_16nov_praveen.csv
+fuller-smith-turner-plc-0314e97e,"FULLER, SMITH & TURNER PLC",GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+fairview-international-plc-ae11bf81,Fairview International PLC,GB,runs_16nov_revanth_j.csv,2026-11-18,uk_remaining_datapoints.csv; runs_16nov_revanth_j.csv
+ferrexpo-plc-5653b4e7,Ferrexpo plc,GB,runs_16nov_praveen.csv,2026-11-17,uk_remaining_datapoints.csv; runs_16nov_praveen.csv
+ferro-alloy-resources-limited-e5e70579,Ferro-Alloy Resources Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+fevara-plc-92307031,Fevara plc,GB,runs_16nov_revanth_j.csv,2026-11-18,uk_remaining_datapoints.csv; runs_16nov_revanth_j.csv
+first-class-metals-plc-ae225da0,First Class Metals PLC,GB,runs_16nov_divi.csv,2026-11-17,uk_remaining_datapoints.csv; runs_16nov_divi.csv
+first-tin-plc-9086dd77,First Tin PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+foresight-group-holdings-limited-122103c3,Foresight Group Holdings Limited,GB,uk_remaining_datapoints.csv,2026-11-13,runs_16nov_revanth_j.csv; uk_remaining_datapoints.csv
+forterra-plc-101232a7,Forterra plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+foxtons-group-plc-1852b951,Foxtons Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+frasers-group-plc-6a13d052,Frasers Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+fresnillo-plc-c4b75885,Fresnillo Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+funding-circle-holdings-plc-5c033007,Funding Circle Holdings Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+future-plc-efa5f84f,Future Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+games-workshop-group-plc-0f667d1d,GAMES WORKSHOP GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gamma-communications-plc-4deb67ef,GAMMA COMMUNICATIONS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gb-group-plc-a9e1b652,GB Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+genflow-biosciences-plc-e8a62139,GENFLOW BIOSCIENCES PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+goodwin-plc-9f507dfb,GOODWIN PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+grafton-group-plc-79b8acde,GRAFTON GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+grainger-plc-e2cb3986,GRAINGER PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+great-portland-estates-plc-808a0fed,GREAT PORTLAND ESTATES PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+great-southern-copper-plc-d619eabd,GREAT SOUTHERN COPPER PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+greencore-group-plc-1026165b,GREENCORE GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+greggs-plc-5347e6c0,GREGGS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gsk-plc-669dcd41,GSK plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gstechnologies-ltd-43df31ee,GSTechnologies Ltd,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+galliford-try-holdings-plc-46fc9d1a,Galliford Try Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gem-diamonds-limited-a386ff99,Gem Diamonds Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gem-resources-plc-cf7e06ac,Gem Resources Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+genel-energy-plc-dc8659be,Genel Energy plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+genuit-group-plc-d097219b,Genuit Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+genus-plc-01b59a75,Genus PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+georgia-capital-plc-298a1d16,Georgia Capital PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+georgina-energy-plc-7639c631,Georgina Energy plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+glencore-plc-e07e9a2a,Glencore Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+globaldata-plc-8552de44,GlobalData Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+grand-vision-media-holdings-plc-aca75f65,Grand Vision Media Holdings PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gulf-keystone-petroleum-limited-88d8a58d,Gulf Keystone Petroleum Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+gulf-marine-services-plc-f393af40,Gulf Marine Services PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+halma-plc-9844443d,HALMA PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hammerson-plc-f1d49abe,HAMMERSON PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hays-plc-7467dcac,HAYS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+helical-plc-cefce900,HELICAL PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hidong-estate-plc-cc203b38,HIDONG ESTATE PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hongkong-land-holdings-ld-a80908bb,HONGKONG LAND HOLDINGS LD,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hsbc-holdings-plc-4c10f5ba,HSBC HOLDINGS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hunting-plc-1f6cc394,HUNTING PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+haleon-plc-fbfe0678,Haleon plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+halfords-group-plc-f8d1c722,Halfords Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hamak-gold-limited-68536373,Hamak Gold Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hansard-global-plc-f13a5b81,Hansard Global Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+harbour-energy-plc-7a9017f1,Harbour Energy PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+harena-rare-earths-plc-229c562b,Harena Rare Earths Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+harworth-group-plc-7d3f06a0,Harworth Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+helios-towers-plc-e4fbb8f9,Helios Towers plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hemogenyx-pharmaceuticals-plc-ff627795,Hemogenyx Pharmaceuticals Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hikma-pharmaceuticals-plc-b8d686c5,Hikma Pharmaceuticals PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hill-smith-plc-f6cb355e,Hill & Smith PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hilton-food-group-plc-3a56b109,Hilton Food Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hiscox-ltd-e0375f35,Hiscox Ltd,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hochschild-mining-plc-4d2379f4,Hochschild Mining PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hollywood-bowl-group-plc-cf76bae2,Hollywood Bowl Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hostelworld-group-plc-162ea308,Hostelworld Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+howden-joinery-group-plc-c3913525,Howden Joinery Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+hydrogen-utopia-international-plc-51b104d1,Hydrogen Utopia International PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+icfg-limited-cfbafea2,ICFG Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+icg-plc-b82eb2fc,ICG plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ig-group-holdings-plc-702b4563,IG Group Holdings Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+imc-exploration-group-plc-91b5483e,IMC EXPLORATION GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+imi-plc-cbc5827b,IMI PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+imperial-brands-plc-323b70dc,IMPERIAL BRANDS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+inchcape-plc-ea221c9f,INCHCAPE PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ip-group-plc-116a40f2,IP Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+irish-continental-group-plc-7ab1ffb0,IRISH CONTINENTAL GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+itv-plc-304113fa,ITV PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ibstock-plc-81ff3340,Ibstock plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+imaging-biometrics-limited-3542bcb1,Imaging Biometrics Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+informa-plc-40c3a060,Informa plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+integrafin-holdings-plc-27547212,IntegraFin Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+integrated-diagnostics-holdings-plc-b28b60df,Integrated Diagnostics Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+intercontinental-hotels-group-plc-ca6a391f,InterContinental Hotels Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+international-consolidated-airlines-group-s-a-afe59a89,International Consolidated Airlines Group S.A.,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+international-workplace-group-plc-3ae007b6,International Workplace Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+intertek-group-plc-0f840c70,Intertek Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+investacc-group-limited-a223f237,InvestAcc Group Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+investec-plc-422fa59c,Investec PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ithaca-energy-plc-c6840a94,Ithaca Energy plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+jardine-matheson-holdings-ld-9fc044a9,JARDINE MATHESON HOLDINGS LD,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+jd-sports-fashion-plc-bb0972c8,JD Sports Fashion Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+jersey-electricity-plc-f27b7332,JERSEY ELECTRICITY PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+johnson-matthey-plc-e14061cd,JOHNSON MATTHEY PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+johnson-service-group-plc-9e93b50d,Johnson Service Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+jupiter-fund-management-plc-fdbf14df,Jupiter Fund Management PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+keller-group-plc-85e72b53,KELLER GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kenmare-resources-plc-e7d5776b,KENMARE RESOURCES PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kerry-group-plc-56fe152d,KERRY GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kier-group-plc-bc0b668a,KIER GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kingfisher-plc-94bd46d7,KINGFISHER PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kr1-plc-4c4ecf76,KR1 plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kainos-group-plc-c7147294,Kainos Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kavango-resources-plc-86ebc0c1,Kavango Resources PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kelso-group-holdings-plc-5218b8cc,Kelso Group Holdings Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+kendrick-resources-plc-f52b1485,Kendrick Resources plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+law-debenture-corporation-plc-the-d1b5e75c,LAW DEBENTURE CORPORATION PLC (THE),GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+legal-general-group-plc-c48e212e,LEGAL & GENERAL GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+lloyds-banking-group-plc-003b014c,LLOYDS BANKING GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+lsl-property-services-plc-b9f0b280,LSL Property Services PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+lancashire-holdings-limited-94cc95db,Lancashire Holdings Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+land-securities-group-plc-07e79f8d,Land Securities Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+lion-finance-group-plc-03b7fac3,Lion Finance Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+liontrust-asset-management-plc-0a50daee,Liontrust Asset Management PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+london-btc-company-limited-acdfd558,London BTC Company Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+london-stock-exchange-group-plc-e057fe1a,London Stock Exchange Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+londonmetric-property-plc-7b6ae645,LondonMetric Property PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+luceco-plc-1431e7e2,Luceco plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+m-g-plc-b3f586ff,M&G plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+macfarlane-group-plc-be6437b7,MACFARLANE GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mcbride-plc-fd766eb4,MCBRIDE PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+me-group-international-plc-174d99a5,ME Group International plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mitie-group-plc-78834590,MITIE GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mj-gleeson-plc-f432eba6,MJ Gleeson Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mony-group-plc-1ebb7a16,MONY GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+morgan-sindall-group-plc-a9def688,MORGAN SINDALL GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mountview-estates-plc-6b66d1a5,MOUNTVIEW ESTATES PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+malibu-life-holdings-limited-bdcf12a6,Malibu Life Holdings Limited,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+man-group-plc-ff3bca71,Man Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mantle-resilience-plc-90cc3350,Mantle Resilience Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+marks-and-spencer-group-plc-1955eb29,Marks and Spencer Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+marshalls-plc-ba8b711a,Marshalls Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+marston-s-plc-1442ebdc,Marston's Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mears-group-plc-67e5aca9,Mears Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+melrose-industries-plc-2473b10a,Melrose Industries Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+meridian-mining-plc-5760f027,Meridian Mining PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+metlen-energy-metals-plc-f17cd684,Metlen Energy & Metals Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+metro-bank-holdings-plc-3ac1d88a,Metro Bank Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+michael-page-plc-f65a03eb,Michael Page plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mila-resources-plc-585b51da,Mila Resources Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mitchells-butlers-plc-30f2f1e2,Mitchells & Butlers plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mobico-group-plc-3ce9316e,Mobico Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mondi-plc-b3f2e211,Mondi plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+moonpig-group-plc-1a2a5dc2,Moonpig Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+morgan-advanced-materials-plc-58a5cd32,Morgan Advanced Materials Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+mortgage-advice-bureau-holdings-plc-6818e743,Mortgage Advice Bureau (Holdings) PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+motorpoint-group-plc-a642e064,Motorpoint Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ncc-group-plc-ef9a927a,NCC Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+next-plc-37d4cfcc,NEXT PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+nanoco-group-plc-c86c4088,Nanoco Group plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+narf-industries-plc-2c307c53,Narf Industries Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+natwest-group-plc-0cca2e57,NatWest Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+national-grid-plc-08987e06,National Grid plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+neo-energy-metals-plc-5b9d4be5,Neo Energy Metals plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+neoterra-group-plc-e1ef6c9d,NeoTerra Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+newriver-reit-plc-20056ec9,NewRiver REIT plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ninety-one-plc-23209795,Ninety One plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+norcros-plc-c8639b5b,Norcros plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+nostrum-oil-gas-plc-2662c1d0,Nostrum Oil & Gas plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+nuformix-plc-98385a38,Nuformix plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+osb-group-plc-0972698d,OSB GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+oxford-instruments-plc-25a1fbdf,OXFORD INSTRUMENTS PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ocado-group-plc-87573c24,Ocado Group Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+on-the-beach-group-plc-bb910bc1,On The Beach Group PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+ondo-insurtech-plc-e2c31efb,Ondo InsurTech Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+orient-telecoms-plc-9de5e795,Orient Telecoms Plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+oxford-biomedica-plc-76dcfac7,Oxford Biomedica plc,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+oxford-nanopore-technologies-plc-0e6547be,Oxford Nanopore Technologies plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pearson-plc-0f5eb5e5,PEARSON PLC,GB,uk_remaining_datapoints.csv,2026-11-13,uk_remaining_datapoints.csv
+persimmon-plc-03d19fa0,PERSIMMON PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pharos-energy-plc-c7b796c5,PHAROS ENERGY PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+porvair-plc-4e103c62,PORVAIR PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pphe-hotel-group-limited-8368d7b3,PPHE Hotel Group Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pz-cussons-plc-a434b740,PZ CUSSONS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+palace-capital-plc-d1ecc7a0,Palace Capital plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pan-african-resources-plc-e4db7ca3,Pan African Resources PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+panther-metals-plc-a717d305,Panther Metals plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+paragon-banking-group-plc-4e0326d5,Paragon Banking Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+paypoint-plc-c431010f,PayPoint PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pennon-group-plc-7143cdb4,Pennon Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pensana-plc-3caf2324,Pensana Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pensionbee-group-plc-fc32fad9,PensionBee  Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+petra-diamonds-limited-5f8d5389,Petra Diamonds Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pets-at-home-group-plc-d9594ce2,Pets at Home Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+playtech-plc-4d633d69,Playtech Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+plus500-ltd-c1762b4f,Plus500 Ltd.,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+pollen-street-group-limited-18ef67f4,Pollen Street Group Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+predator-oil-gas-holdings-plc-0ba3277f,Predator Oil & Gas Holdings Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+premier-foods-plc-b6f5f233,Premier Foods plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+primary-health-properties-plc-dc3a3b23,Primary Health Properties plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+princes-group-plc-95096765,Princes Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+procook-group-plc-45a2e6f4,ProCook Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+prudential-plc-c6ad5538,Prudential PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+puretech-health-plc-df8e539a,PureTech Health PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+qinetiq-group-plc-f5a9622e,QinetiQ Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+quantum-data-energy-plc-52f9bd33,Quantum Data Energy PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+quilter-plc-fd79ebd8,Quilter plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+r-e-a-holdings-plc-5b9a0020,R.E.A. HOLDINGS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rank-group-plc-26f67d4c,RANK GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rc365-holding-plc-1f4ebdbd,RC365 Holding plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+relx-plc-28248427,RELX PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+renishaw-plc-02f27561,RENISHAW PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rhi-magnesita-n-v-fb7495f7,RHI Magnesita N.V.,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rio-tinto-plc-1ed16286,RIO TINTO PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rm-plc-e6d5fda7,RM PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rotork-plc-119d0a2a,ROTORK PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rs-group-plc-9ec766f0,RS Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rainbow-rare-earths-limited-53b9f467,Rainbow Rare Earths Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+raspberry-pi-holdings-plc-d0b387d0,Raspberry Pi Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rathbones-group-plc-272d1adc,Rathbones Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+reach-plc-e8816dd8,Reach plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+reckitt-benckiser-group-plc-06559416,Reckitt Benckiser Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+record-plc-8e9102d2,Record PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rentokil-initial-plc-8eff6540,Rentokil Initial Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rightmove-plc-f30003db,Rightmove Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+robert-walters-plc-ee19d4ce,Robert Walters PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rolls-royce-holdings-plc-5c92af4f,Rolls-Royce Holdings PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+rosebank-industries-plc-0724d06f,Rosebank Industries plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+s-u-plc-d076a510,S & U PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+s4-capital-plc-c1328a0a,S4 Capital PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sainsbury-j-plc-5943ac28,SAINSBURY (J) PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+savills-plc-159e730d,SAVILLS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+segro-plc-83f811d0,SEGRO plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+serco-group-plc-96a15710,SERCO GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+severn-trent-plc-2f585ef6,SEVERN TRENT PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sig-plc-36f9635a,SIG PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+smart-j-co-contractors-plc-5d0db364,SMART (J.) & CO. (CONTRACTORS) PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+smith-nephew-plc-c9e41729,SMITH & NEPHEW PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sse-plc-640d28c9,SSE Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+ssp-group-plc-e4d12504,SSP Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+st-james-s-place-plc-23c228ff,ST. JAMES'S PLACE PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+standard-chartered-plc-4f4cc096,STANDARD CHARTERED PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+stv-group-plc-8c122da5,STV Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sthree-plc-e05c7079,SThree PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sabre-insurance-group-plc-39f58b74,Sabre Insurance Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+safestore-holdings-plc-c17fb612,Safestore Holdings PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+saga-plc-3572ddce,Saga PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sealand-capital-galaxy-limited-126bc181,Sealand Capital Galaxy Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+secure-trust-bank-plc-f393d9db,Secure Trust Bank PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+serica-energy-plc-4b22024a,Serica Energy plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+severfield-plc-598e26e7,Severfield Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+shaftesbury-capital-plc-1cc22072,Shaftesbury Capital PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+shawbrook-group-plc-d45cea57,Shawbrook Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+sirius-real-estate-limited-9190d4f5,Sirius Real Estate Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+smiths-group-plc-74ee79d4,Smiths Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+smiths-news-plc-e1bd4c22,Smiths News PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+softcat-plc-d9d4c66c,Softcat Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+solvonis-therapeutics-plc-6f6b5d21,Solvonis Therapeutics Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+speedy-hire-plc-a0c06d9a,Speedy Hire PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+spirax-group-plc-13efaf7d,Spirax Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+spire-healthcare-group-plc-ca3dba5b,Spire Healthcare Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+standard-life-plc-77687025,Standard Life plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+stelrad-group-plc-2e1bd2c0,Stelrad Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+supermarket-income-reit-plc-3dbe8d27,Supermarket Income REIT plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+symphony-international-holdings-limited-fa241bdf,Symphony International Holdings Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+synthomer-plc-3c60ceb4,Synthomer Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tate-lyle-plc-0f1c0dfd,TATE & LYLE PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+taylor-wimpey-plc-66b3fcee,TAYLOR WIMPEY PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tbc-bank-group-plc-6b9bee2a,TBC Bank Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tesco-plc-596de5a2,TESCO PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+thg-plc-24b2c5db,THG plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+topps-tiles-plc-85c83f1d,TOPPS TILES PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+town-centre-securities-plc-5107b789,TOWN CENTRE SECURITIES PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tp-icap-group-plc-4a64e99a,TP ICAP Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+travis-perkins-plc-53aadfa6,TRAVIS PERKINS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+triad-group-plc-f815b4d8,TRIAD GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+trifast-plc-3989d139,TRIFAST PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tt-electronics-plc-a0096882,TT ELECTRONICS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tullow-oil-plc-22ae25bd,TULLOW OIL PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+taylor-maritime-limited-6aeccfd1,Taylor Maritime Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+technologies-new-energy-plc-2628dc2d,Technologies New Energy plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+telecom-plus-plc-64a59f0e,Telecom plus Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+thalassa-holdings-ltd-0eaa446d,Thalassa Holdings Ltd,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+tharisa-plc-f4ea0c2f,Tharisa plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-beauty-tech-group-plc-65ff7e12,The Beauty Tech Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-british-land-company-plc-ff87bb98,The British Land Company PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-gym-group-plc-ddd9174c,The Gym Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-magnum-ice-cream-company-n-v-6d471687,The Magnum Ice Cream Company N.V.,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-sage-group-plc-a2e841b0,The Sage Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+the-smarter-web-company-plc-1e8404aa,The Smarter Web Company PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+total-graphite-plc-c68433cc,Total Graphite Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+trainline-plc-b4b3d1ca,Trainline plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+trustpilot-group-plc-f322927b,Trustpilot Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+unilever-plc-b59b11b1,UNILEVER PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+unicorn-mineral-resources-plc-3fc39557,Unicorn Mineral Resources plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+unite-group-plc-507a1ba4,Unite Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+united-utilities-group-plc-4e52d704,United Utilities Group Plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+upland-resources-limited-813e7dce,Upland Resources Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vanquis-banking-group-plc-0a416b36,VANQUIS BANKING GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+victrex-plc-88643903,VICTREX PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vistry-group-plc-016bb23d,VISTRY GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vp-plc-94ebb5f9,VP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vesuvius-plc-2a126702,Vesuvius plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+videndum-plc-a3c6fcc6,Videndum plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vodafone-group-plc-8b2b35c3,Vodafone Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+volex-plc-4ceba090,Volex plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+volution-group-plc-111343a8,Volution Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+vox-valor-capital-limited-f573f9e1,Vox Valor Capital Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+w-a-g-payment-solutions-plc-44f2e7ea,W.A.G PAYMENT SOLUTIONS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+weir-plc-2d38cf63,WEIR PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wetherspoon-j-d-plc-f0b40e8d,WETHERSPOON ( J D ) PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wh-smith-plc-c56b3bfb,WH Smith PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wilmington-plc-55c4248b,WILMINGTON PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+workspace-group-plc-23f80ffe,WORKSPACE GROUP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wpp-plc-8fd77caa,WPP PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+watches-of-switzerland-group-plc-cbe5a2bd,Watches of Switzerland Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+whitbread-plc-5a7a51cc,Whitbread plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wickes-group-plc-8a2fb481,Wickes Group PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wise-group-plc-0765a8ab,Wise Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+wizz-air-holdings-plc-fca22f4f,Wizz Air Holdings plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+world-chess-plc-fa996740,World Chess plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+xaar-plc-44438ac8,XAAR PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+xp-power-ltd-2507bfe3,XP Power Ltd,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+xps-pensions-group-plc-bf3a20e5,XPS Pensions Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+young-co-s-brewery-plc-dea1760d,YOUNG & CO'S BREWERY PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+zigup-plc-d5f0480d,ZIGUP plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+zotefoams-plc-4b8f7aee,ZOTEFOAMS PLC,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+zegona-communications-plc-62fe3df0,Zegona Communications plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+zenith-energy-ltd-4fdd6c5a,Zenith Energy Ltd,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+zoyo-limited-7dac566f,Zoyo Limited,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+discoverie-group-plc-d676c327,discoverIE Group plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+evoke-plc-5c77d1d2,evoke plc,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+iforex-financial-trading-holdings-ltd-74e42f45,iFOREX Financial Trading Holdings Ltd,GB,uk_remaining_datapoints.csv,2026-11-14,uk_remaining_datapoints.csv
+ab-inbev,AB INBEV,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ackermans-v-haaren,ACKERMANS V.HAAREN,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+agfa-gevaert,AGFA-GEVAERT,BE,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+azelis-group,AZELIS GROUP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+barco,BARCO,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+biosenic,BIOSENIC,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+bque-nat-belgique,BQUE NAT. BELGIQUE,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+celyad-oncology,CELYAD ONCOLOGY,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cie-bois-sauvage,CIE BOIS SAUVAGE,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cumulex,CUMULEX,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+deme-group,DEME GROUP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+elia-group,ELIA GROUP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+exmar,EXMAR,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+fluxys-belgium-d,FLUXYS BELGIUM D,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+gimv,GIMV,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+iba,IBA,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+immo-moury,IMMO MOURY,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+jensen-group,JENSEN-GROUP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+kinepolis-group,KINEPOLIS GROUP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+materialise,MATERIALISE,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+montea,MONTEA,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+nyrstar,NYRSTAR,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+option,OPTION,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+proximus,PROXIMUS,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+recticel,Recticel SA/NV,BE,validation_datapoints.csv,2026-10-23,runs_16nov_divi.csv; validation_datapoints.csv
+sipef,SIPEF,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+solvay,SOLVAY,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+tessenderlo,TESSENDERLO,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+titan-s-a,TITAN S.A.,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+umicore,UMICORE,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+vgp,VGP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+wdp,WDP,BE,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+acciona-s-a,"Acciona, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+adolfo-dominguez-s-a,"Adolfo Domínguez, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+airtificial-intelligence-structures-s-a,"Airtificial Intelligence Structures, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+amper-s-a,"Amper, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+atresmedia-corporacion-de-medios-de-comunicacion-s-a,"Atresmedia Corporación de Medios de Comunicación, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+azkoyen,Azkoyen SA,ES,validation_datapoints.csv,2026-10-23,runs_16nov_divi.csv; validation_datapoints.csv
+cementos-molins-s-a,"Cementos Molins, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cleop,Cleop,ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+compania-espanola-de-viviendas-en-alquiler-s-a,Compañía Española de Viviendas en Alquiler S.A.,ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cox-infrastructure-group-s-a,"Cox Infrastructure Group, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+digi-spain-telecom-s-a,"DIGI Spain Telecom, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ebro-foods-s-a,"Ebro Foods, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ence-energia-y-celulosa-s-a,"ENCE Energía y Celulosa, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+gestamp-automocion-s-a,"Gestamp Automoción, S.A.",ES,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+grifols-s-a,"Grifols, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+iberdrola-s-a,"Iberdrola, S.A.",ES,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+inmobiliaria-del-sur-s-a,"Inmobiliaria del Sur, S.A.",ES,runs_16nov_divi.csv,,runs_16nov_divi.csv
+laboratorio-reig-jofre-s-a,"Laboratorio Reig Jofre, S.A.",ES,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+logista-integral-s-a,"Logista Integral, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+merlin-properties-socimi-s-a,"MERLIN Properties SOCIMI, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+naturgy-energy-group-s-a,"Naturgy Energy Group, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+nueva-expresion-textil-s-a,"Nueva Expresión Textil, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+pescanova-s-a,"Pescanova, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+promotora-de-informaciones-s-a,"Promotora de Informaciones, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+realia-business-s-a,"Realia Business, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+repsol-s-a,"Repsol, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+soltec-power-holdings-s-a,"Soltec Power Holdings, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+telefonica-s-a,"Telefónica, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+tubos-reunidos-s-a,"Tubos Reunidos, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+urbas-grupo-financiero-s-a,"Urbas Grupo Financiero, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+arima-real-estate-socimi-s-a,"Árima Real Estate SOCIMI, S.A.",ES,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+auction-technology-group-plc,Auction Technology Group plc,GB,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+aktor-societe-anonyme-holding-company-technical-and-energy-projects,Aktor Societe Anonyme Holding Company Technical and Energy Projects,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+alter-ego-media-s-a,Alter Ego Media S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+athens-international-airport-s-a,Athens International Airport S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+attica-holdings-s-a,Attica Holdings S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+avax-s-a,Avax S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+biokarpet-s-a,Biokarpet S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cpi-computer-peripherals-international,CPI Computer Peripherals International,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+domiki-kritis-s-a,Domiki Kritis S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ekter-sa,Ekter SA,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+elinoil-hellenic-petroleum-company-s-a,Elinoil Hellenic Petroleum Company S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+elvalhalcor-hellenic-copper-and-aluminium-industry-s-a,Elvalhalcor Hellenic Copper and Aluminium Industry S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+eurobank-s-a,Eurobank S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+evrofarma-sa,Evrofarma SA,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+flexopack-societe-anonyme-commercial-and-industrial-plastics-company,Flexopack Société Anonyme Commercial and Industrial Plastics Company,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+frigoglass-s-a-i-c,Frigoglass S.A.I.C.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+gr-sarantis-s-a,Gr. Sarantis S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+helleniq-energy-holdings-s-a,HELLENiQ ENERGY Holdings S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ilyda-sa,Ilyda SA,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+interwood-xylemporia-a-t-e-n-e,Interwood-Xylemporia A.T.E.N.E.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+jumbo,Jumbo SA,GR,validation_datapoints.csv,2026-10-23,runs_16nov_divi.csv; validation_datapoints.csv
+kordellos-ch-bros-s-a,Kordellos Ch. Bros S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+lampsa-hellenic-hotels-s-a,Lampsa Hellenic Hotels S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+logismos-information-systems-s-a,Logismos Information Systems S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+medicon-hellas-s-a,Medicon Hellas S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+motor-oil-hellas-corinth-refineries-s-a,Motor Oil (Hellas) Corinth Refineries S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+national-bank-of-greece-s-a,National Bank of Greece S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+papoutsanis-s-a,Papoutsanis S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+philippos-nakas-s-a,Philippos Nakas S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+piraeus-port-authority-s-a,Piraeus Port Authority S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+public-power-corporation-s-a,Public Power Corporation S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+quest-holdings-s-a,Quest Holdings S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+sidma-steel-s-a,Sidma Steel S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+thessaloniki-port-authority-societe-anonyme,Thessaloniki Port Authority Societe Anonyme,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+unibios-holdings-s-a,Unibios Holdings S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+y-knot-invest-s-a,Y/Knot Invest S.A.,GR,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+acinque,Acinque,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+aeroporto-guglielmo-marconi-di-bologna,Aeroporto Guglielmo Marconi di Bologna,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+anima-holding,Anima Holding,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+assicurazioni-generali,Assicurazioni Generali,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+b-c-speakers,B&C Speakers,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+banca-ifis,Banca Ifis,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+banca-profilo,Banca Profilo,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+banco-di-desio-e-della-brianza,Banco di Desio e della Brianza,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+beewize,Beewize,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+biesse,Biesse,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+buzzi,Buzzi,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+caltagirone,Caltagirone,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cellularline,Cellularline,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+cir,CIR,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+credito-emiliano-credem,Credito Emiliano (Credem),IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+danieli-c,Danieli & C.,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+digital-bros,Digital Bros,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+el-en,El.En.,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+enav,Enav,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+equita-group,Equita Group,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+eukedos,Eukedos,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+ferretti,Ferretti,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+fila,Fila,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+finecobank,FinecoBank,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+garofalo-health-care,Garofalo Health Care,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+generalfinance,Generalfinance,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+gpi,GPI,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+i-grandi-viaggi,I Grandi Viaggi,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+immsi,Immsi,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+intercos,Intercos,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+irce,Irce,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+italgas,Italgas,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+juventus-football-club,Juventus Football Club,IT,runs_16nov_divi.csv,2026-11-16,runs_16nov_divi.csv
+landi-renzo,Landi Renzo,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+maire,Maire,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+moltiply-group,Moltiply Group,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+mondo-tv,Mondo TV,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+nexi,Nexi,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+ops-italia,OPS Italia,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+ovs,OVS,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+piaggio,Piaggio,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+plc,PLC,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+ratti,Ratti,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+reply,Reply,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+s-s-lazio,S.S. Lazio,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+seco,Seco,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+snam,Snam,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+sol,Sol,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+technogym,Technogym,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+terna,Terna,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+the-italian-sea-group,The Italian Sea Group,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+triboo,Triboo,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+unipol,Unipol,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+wiit,Wiit,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+zucchi,Zucchi,IT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+acomo,ACOMO,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+ajax,AJAX,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+almunda-pro-nv,ALMUNDA PRO NV,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+arcadis,ARCADIS,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+asr-nederland,ASR NEDERLAND,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+bam-groep-kon,BAM GROEP KON,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+be-semiconductor,BE SEMICONDUCTOR,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+cabka,CABKA,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+csg,CSG,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+ease2pay-nv,EASE2PAY NV,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+er-capital,ER Capital,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+exor-nv,EXOR NV,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+fugro,FUGRO,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+hawick-data-nv,HAWICK DATA NV,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+heineken-holding,HEINEKEN HOLDING,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+imcd,IMCD,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+kpn-kon,KPN KON,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+mkb-nedsense,MKB Nedsense,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+nepi-rockcastle,NEPI ROCKCASTLE,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+nsi-n-v,NSI N.V.,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+onward-medical,ONWARD MEDICAL,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+philips-kon,PHILIPS KON,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+prosus,PROSUS,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+sbm-offshore,SBM OFFSHORE,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+sligro-food-group,SLIGRO FOOD GROUP,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+triodos-bank,TRIODOS BANK,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+value8,VALUE8,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+wereldhave,WERELDHAVE,NL,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+corticeira-amorim-s-g-p-s-s-a,"Corticeira Amorim, S.G.P.S., S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+flexdeal-simfe-s-a,Flexdeal Simfe S.A.,PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+glintt-global-intelligent-technologies-s-a,"Glintt - Global Intelligent Technologies, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+impresa-sociedade-gestora-de-participacoes-sociais-s-a,"Impresa - Sociedade Gestora de Participações Sociais, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+mota-engil-sgps-s-a,"Mota-Engil, SGPS, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+pharol-sgps-s-a,"Pharol, SGPS, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+semapa-sociedade-de-investimento-e-gestao-sgps-s-a,"Semapa - Sociedade de Investimento e Gestão, SGPS, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+sporting-clube-de-portugal-futebol-sad,"Sporting Clube de Portugal - Futebol, SAD",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+toyota-caetano-portugal-s-a,"Toyota Caetano Portugal, S.A.",PT,runs_16nov_divi.csv,2026-11-17,runs_16nov_divi.csv
+abo-group,ABO GROUP,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+aedifica,AEDIFICA,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ascencio,ASCENCIO,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+banimmo-a,BANIMMO A,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+bekaert,BEKAERT,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+biotalys,BIOTALYS,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+campine,CAMPINE,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+cenergy,CENERGY,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+cmb-tech,CMB.TECH,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+d-ieteren-group,D'IETEREN GROUP,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+econocom-group,ECONOCOM GROUP,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+energyvision,ENERGYVISION,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+fagron,FAGRON,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+fountain,FOUNTAIN,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+home-invest-be,HOME INVEST BE.,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+iep-invest,IEP INVEST,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+immobel,IMMOBEL,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+kbc,KBC,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+lakefront-biother,LAKEFRONT BIOTHER.,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+melexis,MELEXIS,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+moury-construct,MOURY CONSTRUCT,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+nyxoah,NYXOAH,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+orange-belgium,ORANGE BELGIUM,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+qrf,QRF,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+retail-estates,RETAIL ESTATES,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+sofina,SOFINA,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+spadel,SPADEL,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+texaf,TEXAF,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+tubize-fin,TUBIZE-FIN,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+van-de-velde,VAN DE VELDE,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+viohalco,VIOHALCO,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+wereldhave-belgium,WERELDHAVE BELGIUM,BE,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+acerinox-s-a,"Acerinox, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+aedas-homes-s-a,"Aedas Homes, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+almirall-s-a,"Almirall, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+amrest-holdings-se,AmRest Holdings SE,ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+atrys-health-s-a,"Atrys Health, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+bankinter-s-a,"Bankinter, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+cie-automotive-s-a,"CIE Automotive, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+clinica-baviera-s-a,"Clínica Baviera, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+construcciones-y-auxiliar-de-ferrocarriles-s-a,"Construcciones y Auxiliar de Ferrocarriles, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+deoleo-s-a,"Deoleo, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+distribuidora-internacional-de-alimentacion-s-a,"Distribuidora Internacional de Alimentación, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ecoener-s-a,"Ecoener, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+fomento-de-construcciones-y-contratas-s-a,"Fomento de Construcciones y Contratas, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+global-dominion-access-s-a,"Global Dominion Access, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+grupo-empresarial-san-jose-s-a,"Grupo Empresarial San José, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+iberpapel-gestion-s-a,"Iberpapel Gestión, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+inmocemento-s-a,"Inmocemento, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+libertas-7-s-a,"Libertas 7, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+linea-directa-aseguradora-s-a-compania-de-seguros-y-reaseguros,"Línea Directa Aseguradora, S.A., Compañía de Seguros y Reaseguros",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+miquel-y-costas-miquel-s-a,"Miquel y Costas & Miquel, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+naturhouse-health-s-a,"Naturhouse Health, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+nyesa-valores-corporacion-s-a,"Nyesa Valores Corporación, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+pharma-mar-s-a,"Pharma Mar, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+prosegur-cash-s-a,"Prosegur Cash, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+redeia-corporacion-s-a,"Redeia Corporación, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+sacyr-s-a,"Sacyr, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+squirrel-media-s-a,"Squirrel Media, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+tsk-electronica-y-electricidad-s-a,"TSK Electrónica y Electricidad, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+tecnicas-reunidas-s-a,"Técnicas Reunidas, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+vidrala-s-a,"Vidrala, S.A.",ES,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+anglo-american-plc,ANGLO AMERICAN PLC,GB,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+admie-holding-s-a,Admie Holding S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+alpha-bank-s-a,Alpha Bank S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+alumil-aluminium-industry-s-a,Alumil Aluminium Industry S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+athens-medical-c-s-a,Athens Medical C.S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+attica-publications-s-a,Attica Publications S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ave-s-a,AVE S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ble-kedros-reic,Ble Kedros REIC,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+crediabank-s-a,CrediaBank S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+dromeas-sa,Dromeas SA,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+el-d-mouzakis-s-a,EL. D. Mouzakis S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ellaktor-s-a,Ellaktor S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+elve-s-a,Elve S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+euronext-athens-holding-s-a,Euronext Athens Holding S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+evropi-holdings-societe-anonyme,Evropi Holdings Societe Anonyme,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+flour-mills-c-sarantopoulos-s-a,Flour Mills C. Sarantopoulos S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+gek-terna-s-a,Gek Terna S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+haidemenos-integrated-printing-services-s-a,Haidemenos Integrated Printing Services S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+ideal-holdings-s-a,Ideal Holdings S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+interlife-general-insurance-company-s-a,Interlife General Insurance Company S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+intracom-holdings-s-a,Intracom Holdings S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+karelia-tobacco-company-inc,Karelia Tobacco Company Inc.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+kri-kri-milk-industry-s-a,Kri-Kri Milk Industry S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+lanakam-s-a,Lanakam S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+loulis-food-ingredients-s-a,Loulis Food Ingredients S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+mevaco-s-a,Mevaco S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+n-varveris-moda-bagno-s-a,N. Varveris-Moda Bagno S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+onyx-touristiki-societe-anonyme,Onyx Touristiki Societe Anonyme,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+performance-technologies-s-a,Performance Technologies S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+pipe-works-l-girakian-profil-s-a,Pipe Works L. Girakian Profil S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+plastika-kritis-s-a,Plastika Kritis S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+qualco-group-s-a,Qualco Group S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+real-consulting-s-a,Real Consulting S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+space-hellas-s-a,Space Hellas S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+thessaloniki-water-supply-sewerage-co-s-a,Thessaloniki Water Supply & Sewerage Co S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+vogiatzoglou-systems-s-a,Vogiatzoglou Systems S.A.,GR,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+a2a,A2a,IT,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+aedes,Aedes,IT,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+alerion,Alerion,IT,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+aquafil,Aquafil,IT,runs_16nov_praveen.csv,2026-11-16,runs_16nov_praveen.csv
+autostrade-meridionali,Autostrade Meridionali,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+b-f,B.F.,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+banca-mediolanum,Banca Mediolanum,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+banca-sistema,Banca Sistema,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+basicnet,Basicnet,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+bestbe-holding,Bestbe Holding,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+borgosesia,Borgosesia,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+cairo-communication,Cairo Communication,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+caltagirone-editore,Caltagirone Editore,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+cembre,Cembre,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+class-editori,Class Editori,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+csp-international-industria-calze,CSP International Industria Calze,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+de-longhi,De'Longhi,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+dovalue,doValue,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+elica,Elica,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+enervit,Enervit,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+erg,ERG,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+eurogroup-laminations,Eurogroup Laminations,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+fidia,Fidia,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+fincantieri,Fincantieri,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+fnm,FNM,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+gas-plus,Gas Plus,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+gens-aurea,Gens Aurea,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+gvs,GVS,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+icop,Icop,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+indel-b,Indel B,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+interpump-group,Interpump Group,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+iren,Iren,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+italian-exhibition-group,Italian Exhibition Group,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+kme-group,KME Group,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+lottomatica-group,Lottomatica Group,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+marr,MARR,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+moncler,Moncler,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+neodecortech,Neodecortech,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+olidata,Olidata,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+ops-retail,OPS Retail,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+pharmanutra,Pharmanutra,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+pininfarina,Pininfarina,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+poste-italiane,Poste Italiane,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+rcs-mediagroup,RCS MediaGroup,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+revo-insurance,Revo Insurance,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+sabaf,Sabaf,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+seri-industrial,Seri Industrial,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+softlab,Softlab,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+somec,Somec,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+technoprobe,Technoprobe,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+tesmec,Tesmec,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+toscana-aeroporti,Toscana Aeroporti,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+txt-e-solutions,TXT e-solutions,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+valsoia,Valsoia,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+zest,Zest,IT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+aalberts-nv,AALBERTS NV,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+adyen,ADYEN,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+akzo-nobel,AKZO NOBEL,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+alumexx-n-v,ALUMEXX N.V.,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+asm-international,ASM INTERNATIONAL,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+avantium,AVANTIUM,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+banijay-group,BANIJAY GROUP,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+bever-holding,BEVER HOLDING,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+cm-com,CM.COM,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+ctac,CTAC,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+ebusco-holding,EBUSCO HOLDING,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+eurocommercial,EUROCOMMERCIAL,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+fastned,FASTNED,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+green-earth-group,GREEN EARTH GROUP,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+heijmans-kon,HEIJMANS KON,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+holland-colours,HOLLAND COLOURS,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+ing-groep-n-v,ING GROEP N.V.,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+lavide-holding,LAVIDE HOLDING,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+nai-ord-shares,NAI ORD SHARES,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+new-sources-energy,NEW SOURCES ENERGY,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+nx-filtration,NX FILTRATION,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+pb-holding,PB HOLDING,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+porceleyne-fles,PORCELEYNE FLES,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+qev,QEV,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+sif-holding,SIF HOLDING,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+tkh-group,TKH GROUP,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+umg,UMG,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+vivoryon,VIVORYON,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+wolters-kluwer,WOLTERS KLUWER,NL,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+edp-s-a,"EDP, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+futebol-clube-do-porto-futebol-sad,"Futebol Clube do Porto - Futebol, SAD",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+grupo-media-capital-sgps-s-a,"Grupo Média Capital, SGPS, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+jeronimo-martins-sgps-s-a,"Jerónimo Martins, SGPS, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+nos-s-g-p-s-s-a,"NOS, S.G.P.S., S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+ramada-investimentos-e-industria-s-a,"Ramada Investimentos e Indústria, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+sonaecom-sgps-s-a,"Sonaecom, SGPS, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+teixeira-duarte-s-a,"Teixeira Duarte, S.A.",PT,runs_16nov_praveen.csv,2026-11-17,runs_16nov_praveen.csv
+accentis,ACCENTIS,BE,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+ageas,AGEAS,BE,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+atenor,ATENOR,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+banqup-group,BANQUP GROUP,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+belysse-group,BELYSSE GROUP,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+bpost,BPOST,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+care-property-inv,CARE PROPERTY INV.,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+cfe,CFE,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+colruyt,COLRUYT,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+deceuninck,DECEUNINCK,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+ekopak,EKOPAK,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+evs,EVS,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+floridienne,FLORIDIENNE,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+gbl,GBL,BE,runs_16nov_revanth_j.csv,2026-11-19,runs_16nov_revanth_j.csv
+hyloris,HYLORIS,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+immo-mcc,IMMO MCC,BE,runs_16nov_revanth_j.csv,2026-11-16,runs_16nov_revanth_j.csv
+inclusio-sa-nv,INCLUSIO SA/NV,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+kbc-ancora,KBC ANCORA,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+lotus-bakeries,LOTUS BAKERIES,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+miko,MIKO,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+nextensa,NEXTENSA,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+ontex-group,ONTEX GROUP,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+oxurion,OXURION,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+questfor-gr-pricaf,QUESTFOR GR-PRICAF,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+roularta,ROULARTA,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+solvac,SOLVAC,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+syensqo,SYENSQO,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+tinc,TINC,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+ucb,UCB,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+vastned,VASTNED,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+warehouses-estates,WAREHOUSES ESTATES,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+xior,XIOR,BE,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+acs-actividades-de-construccion-y-servicios-s-a,"ACS, Actividades de Construcción y Servicios, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+aena-s-m-e-s-a,"Aena S.M.E., S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+amadeus-it-group-s-a,"Amadeus IT Group, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+arteche-lantegi-elkartea-s-a,"Arteche Lantegi Elkartea, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+audax-renovables-s-a,"Audax Renovables, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+bodegas-riojanas-s-a,"Bodegas Riojanas, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+cirsa-enterprises-s-a,"Cirsa Enterprises, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+colonial-sfl-socimi-s-a,"Colonial SFL, Socimi S. A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+corporacion-acciona-energias-renovables-s-a,"Corporación Acciona Energías Renovables, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+desarrollos-especiales-de-sistemas-de-anclaje-s-a,"Desarrollos Especiales de Sistemas de Anclaje, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+duro-felguera-s-a,"Duro Felguera, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+elecnor-s-a,"Elecnor, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+general-de-alquiler-de-maquinaria-s-a,"General de Alquiler de Maquinaria, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+grenergy-renovables-s-a,"Grenergy Renovables, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+grupo-ezentis-s-a,"Grupo Ezentis, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+indra-sistemas-s-a,"Indra Sistemas, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+innovative-solutions-ecosystem-s-a,"Innovative Solutions Ecosystem, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+lingotes-especiales-s-a,"Lingotes Especiales, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+melia-hotels-international-s-a,"Meliá Hotels International, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+montebalito-s-a,"Montebalito, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+nicolas-correa-s-a,"Nicolás Correa, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+obrascon-huarte-lain-s-a,"Obrascón Huarte Lain, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+prim-s-a,"Prim, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+prosegur-compania-de-seguridad-s-a,"Prosegur Compañía de Seguridad, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+renta-corporacion-real-estate-s-a,"Renta Corporación Real Estate, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+solaria-energia-y-medio-ambiente-s-a,"Solaria Energía y Medio Ambiente, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+talgo-s-a,"Talgo, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+tubacex-s-a,"Tubacex, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+unicaja-banco-s-a,"Unicaja Banco, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+viscofan-s-a,"Viscofan, S.A.",ES,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+applied-nutrition-plc,Applied Nutrition plc,GB,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+aegean-airlines-s-a,Aegean Airlines S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+alpha-real-estate-services-s-a,Alpha Real Estate Services S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+as-commercial-industrial-company-of-computers-and-toys-s-a,AS Commercial Industrial Company of Computers and Toys S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+athens-water-supply-and-sewerage-company-s-a,Athens Water Supply and Sewerage Company S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+autohellas-s-a,Autohellas S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+bally-s-intralot-s-a,Bally's Intralot S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+centric-holdings-s-a,Centric Holdings S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+daios-plastics-s-a,Daios Plastics S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+e-pairis-s-a,E. Pairis S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+elastron-s-a-steel-service-centers,Elastron S.A. - Steel Service Centers,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+elton-international-trading-company-s-a,Elton International Trading Company S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+emporiki-eisagogiki-aftokiniton-ditrohon-kai-mihanon-thalassis-societe-anonyme,Emporiki Eisagogiki Aftokiniton Ditrohon kai Mihanon Thalassis Societe Anonyme,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+european-innovation-solutions-s-a,European Innovation Solutions S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+fais-holding-societe-anonyme,Fais Holding Societe Anonyme,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+fourlis-holdings-s-a,Fourlis Holdings S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+general-commercial-industrial-s-a,General Commercial & Industrial S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+hellenic-telecommunications-organization-s-a,Hellenic Telecommunications Organization S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+iktinos-hellas-s-a-greek-marble-industry-technical-and-touristic-company,Iktinos Hellas S.A. Greek Marble Industry Technical and Touristic Company,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+intertech-s-a-inter-technologies,Intertech S.A. Inter. Technologies,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+j-b-ladenis-bros-s-a-minerva-knitwear-manufacturing-company,J. & B. Ladenis Bros S.A. - Minerva - Knitwear Manufacturing Company,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+kekrops-s-a,Kekrops S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+lamda-development-s-a,LAMDA Development S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+lavipharm-s-a,Lavipharm S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+mathios-refractories-s-a,Mathios Refractories S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+mig-holdings-s-a,MIG Holdings S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+nafpaktos-textile-industry-s-a,Nafpaktos Textile Industry S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+optima-bank-s-a,Optima bank S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+petros-petropoulos-aeve,Petros Petropoulos AEVE,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+piraeus-bank-s-a,Piraeus Bank S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+profile-systems-software-sa,Profile Systems & Software SA,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+quality-reliability-a-b-e-e,Quality & Reliability A.B.E.E.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+revoil-s-a,Revoil S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+technical-olympic-s-a,Technical Olympic S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+thrace-plastics-holding-company-s-a,Thrace Plastics Holding Company S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+wool-industry-tria-alfa-s-a,Wool Industry Tria Alfa S.A.,GR,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+abitare-in,Abitare In,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+aeffe,Aeffe,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+altea-green-power,Altea Green Power,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+ascopiave,Ascopiave,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+avio,Avio,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+banca-generali,Banca Generali,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+banca-monte-dei-paschi-di-siena,Banca Monte dei Paschi di Siena,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+banco-bpm,Banco BPM,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+bastogi,Bastogi,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+bff-bank,BFF Bank,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+brioschi-sviluppo-immobiliare,Brioschi Sviluppo Immobiliare,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+caleffi,Caleffi,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+carel-industries,Carel Industries,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+centrale-del-latte-d-italia,Centrale del Latte d'Italia,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+comer-industries,Comer Industries,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+cy4gate,Cy4gate,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+diasorin,DiaSorin,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+edison,Edison,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+emak,Emak,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+eph-invest,EPH Invest,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+esprinet,Esprinet,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+eurotech,Eurotech,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+fiera-milano,Fiera Milano,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+fine-foods-pharmaceuticals-ntm,Fine Foods & Pharmaceuticals NTM,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+gabetti-property-solutions,Gabetti Property Solutions,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+gefran,Gefran,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+geox,Geox,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+hera,Hera,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+igd-immobiliare-grande-distribuzione-siiq,IGD Immobiliare Grande Distribuzione SIIQ,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+industrie-de-nora,Industrie De Nora,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+inwit,Inwit,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+it-way,IT Way,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+italmobiliare,Italmobiliare,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+kruso-kapital,Kruso Kapital,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+lu-ve,LU-VE,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+met-extra-group,Met.Extra Group,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+mondadori-editore,Mondadori Editore,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+newprinces,Newprinces,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+ops-ecom,OPS Ecom,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+orsero,Orsero,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+philogen,Philogen,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+piquadro,Piquadro,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+rai-way,Rai Way,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+recordati,Recordati,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+risanamento,Risanamento,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+sanlorenzo,Sanlorenzo,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+sit,Sit,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+sogefi,Sogefi,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+sys-dat,Sys-Dat,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+telecom-italia,Telecom Italia,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+tessellis,Tessellis,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+trevi-finanziaria-industriale,Trevi Finanziaria Industriale,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+unidata,Unidata,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+webuild,Webuild,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+zignago-vetro,Zignago Vetro,IT,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+abn-amro-bank-n-v,ABN AMRO BANK N.V.,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+ahold-del,AHOLD DEL,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+alfen,ALFEN,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+amg,AMG,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+asml,ASML Holding N.V.,NL,runs_16nov_revanth_j.csv,2026-11-17,validation_datapoints.csv; runs_16nov_revanth_j.csv
+azerion,AZERION,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+basic-fit,BASIC-FIT,NL,runs_16nov_revanth_j.csv,2026-11-17,runs_16nov_revanth_j.csv
+brunel-internat,BRUNEL INTERNAT,NL,runs_16nov_revanth_j.csv,2026-11-19,runs_16nov_revanth_j.csv
+corbion,CORBION,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+ctp,CTP,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+envipco-holding,ENVIPCO HOLDING,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+euronext,EURONEXT,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+forfarmers,FORFARMERS,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+havas,HAVAS,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+heineken,HEINEKEN,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+hydratec,HYDRATEC,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+kendrion,Kendrion N.V.,NL,runs_16nov_revanth_j.csv,2026-11-18,validation_datapoints.csv; runs_16nov_revanth_j.csv
+magnum,MAGNUM,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+nedap,NEDAP,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+nn-group,NN GROUP,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+oci,OCI,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+pharming-group,PHARMING GROUP,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+postnl,POSTNL,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+randstad-nv,RANDSTAD NV,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+signify-nv,SIGNIFY NV,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+tomtom,TOMTOM,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+v-lanschot-kempen,V LANSCHOT KEMPEN,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+vopak,VOPAK,NL,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+banco-comercial-portugues-s-a,"Banco Comercial Português, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+estoril-sol-sgps-s-a,"Estoril Sol, SGPS, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+galp-energia-sgps-s-a,"Galp Energia, SGPS, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+ibersol-s-g-p-s-s-a,"Ibersol, S.G.P.S., S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+martifer-sgps-s-a,"Martifer SGPS, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+novabase-sociedade-gestora-de-participacoes-sociais-s-a,"Novabase - Sociedade Gestora de Participações Sociais, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+ren-redes-energeticas-nacionais-sgps-s-a,"REN - Redes Energéticas Nacionais, SGPS, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+sport-lisboa-e-benfica-futebol-sad,"Sport Lisboa e Benfica - Futebol, SAD",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
+the-navigator-company-s-a,"The Navigator Company, S.A.",PT,runs_16nov_revanth_j.csv,2026-11-18,runs_16nov_revanth_j.csv
