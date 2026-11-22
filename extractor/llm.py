@@ -52,17 +52,23 @@ _broken_fallbacks: set[str] = set()
 def ask_fallback(system_prompt: str, user_prompt: str, schema: type[T],
                  images: list[bytes] | None = None) -> T | None:
     """call_llm with the fallback model; None when it fails (a model the project has no
-    access to, a schema it rejects): the first answer then stands, and the model is not
-    asked again in this run."""
+    access to, a schema it rejects, or no answer): the first answer then stands. A model the
+    project can't use is not asked again in this run; an empty answer is a miss for that
+    question only."""
     m = fallback_model()
     if not m:
         return None
     try:
         return call_llm(system_prompt, user_prompt, schema, images=images, model=m)
     except (openai.NotFoundError, openai.BadRequestError, openai.PermissionDeniedError,
-            LLMRefusalError, StructuredOutputsUnsupportedError) as e:
+            StructuredOutputsUnsupportedError) as e:
         log.warning("Fallback model %s failed (%s); not asked again in this run", m, str(e)[:150])
         _broken_fallbacks.add(m)
+        return None
+    except LLMRefusalError as e:
+        # an empty or refused answer to this one question (Gemini 3.1 Pro returned no parsed
+        # output for Mondo TV's pay, 22 Nov): the model still works for the next company
+        log.warning("Fallback model %s gave no answer (%s)", m, str(e)[:150])
         return None
 
 
@@ -208,8 +214,8 @@ def call_llm(system_prompt: str, user_prompt: str, schema: type[T],
 
     usage = completion.usage
     if usage:
-        log.info("LLM %s: %d prompt + %d completion tokens", schema.__name__,
-                 usage.prompt_tokens, usage.completion_tokens)
+        log.info("LLM %s: %s prompt + %s completion tokens", schema.__name__,
+                 usage.prompt_tokens, usage.completion_tokens)   # Gemini 3.1 Pro can omit one
     message = completion.choices[0].message
     if message.refusal:
         raise LLMRefusalError(f"Model refused: {message.refusal}")

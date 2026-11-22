@@ -211,9 +211,17 @@ def test_a_failing_fallback_model_leaves_the_first_answer(monkeypatch, tmp_path)
     monkeypatch.setattr(llm, "_broken_fallbacks", set())
 
     def fake(system, user, schema, images=None, model=None):
-        if model:   # a model the project has no access to
-            raise llm.LLMRefusalError("no such model")
+        if model:   # an empty answer from the stronger model: a miss for this question only
+            raise llm.LLMRefusalError("No parsed output returned (finish_reason=stop).")
         return _empty_facts()
     monkeypatch.setattr(llm, "call_llm", fake)
     facts = dp.ask("Acme", "u", [Chunk(1, "t")], "w", "k2")
+    assert facts.revenue.value is None and "pro-x" not in llm._broken_fallbacks
+
+    def rejected(system, user, schema, images=None, model=None):
+        if model:   # a model or schema the project rejects: not asked again in this run
+            raise llm.StructuredOutputsUnsupportedError("rejected")
+        return _empty_facts()
+    monkeypatch.setattr(llm, "call_llm", rejected)
+    facts = dp.ask("Acme", "u", [Chunk(1, "t")], "w", "k3")
     assert facts.revenue.value is None and "pro-x" in llm._broken_fallbacks

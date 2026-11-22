@@ -1,6 +1,6 @@
 # Plan: priority fields under 3% not found
 
-*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: decisions made (22 Nov); Phase A done, Phase B in code (scraper version 6); neither applied to the combined file yet*
+*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: decisions made (22 Nov); Phase A done; Phase B in code (scraper version 6) and tested on 50 companies; neither applied to the combined file yet*
 
 ## Progress
 
@@ -25,11 +25,31 @@ The sign-off switch is gone since 22 Nov: the D1 rules are decided and on (see s
 | B2 | Prompts: "None" / "no pension" / "cash allowance" when the text says so, quoting it. On saved rows: `shareholding_none_if_absent`: "None" (confidence C) when the role pay was read from a remuneration report that was searched for the rule | shareholding_requirement 37.1% → **21.4%** |
 | B3 | ESEF tags: the company's own EBITDA tag, else `ProfitLossFromOperatingActivities` (note says "operating profit"); `combine --esef` and every new run. The prompt already had the operating-profit fallback | ebitda 10.1% → **8.0%** |
 | B4 | ESEF tags `NumberOfSharesOutstanding`, else `NumberOfSharesIssued` (note says which) | shares_outstanding 7.4% → 7.2% |
-| B5 | Prompt: year-end close wording in each language, pence/cents named; new fact `market_cap` (the cap the company states) gives the band without a price | re-run needed |
-| B6 | An empty answer for the financial facts, or a pay document with no amount at all, is asked once more of `LLM_FALLBACK_MODEL` (default Gemini 2.5 Pro on Vertex; "off" to switch off); the cache records the model and that the retry was made | re-run needed |
+| B5 | Prompt: year-end close wording in each language, pence/cents named. The planned `market_cap` fact was dropped: `DataPointFacts` is at Vertex's schema size limit, and any further nested fact gives 400 INVALID_ARGUMENT | share_price 76.1% → 68.1% on the 50 |
+| B6 | An empty answer for the financial facts, or a pay document with no amount at all, is asked once more of `LLM_FALLBACK_MODEL` (default Gemini 3.1 Pro preview on Vertex: the project has no 2.5 Pro or 3 Pro; "off" to switch off); the cache records the model and that the retry was made. A model the project rejects is not asked again in the run; an empty answer is a miss for that question only | not measured: in the test it answered once (empty) and was then switched off, since fixed |
 | B7 | The GB annual report is already read whole (up to 150,000 words); the GB gaps (86 of 1,124 roles) are mostly members who left, whose single-figure row is all dashes: `no_pay_for_year` now reads such a row as no pay | about 20–40 GB roles |
 
-Still open in B: the 50-company test re-run (costs Firecrawl credits and AI calls), which measures B1, B5 and B6.
+**50-company test (22 Nov).** List `data/not_found_phase_b_test.csv` (50 companies with the most priority gaps, 12 countries), run with `--redo` at version 6: 118 Firecrawl credits, no company failed (a first attempt failed 47 of 50 on the `market_cap` schema error and the missing 2.5 Pro; both fixed in `ecd1421`). Output `output/not_found_phase_b_test_datapoints.csv`. Missing values on the 50, as the dashboard counts them:
+
+| Field | Original | Rules only (A + B on saved rows) | Re-run (+ rules) |
+|---|---|---|---|
+| base_salary | 40.0% | 40.0% | **17.7%** |
+| total_remuneration | 37.6% | 37.6% | **29.3%** |
+| benefits_value | 72.3% | 61.1% | **41.5%** |
+| pension_contribution | 70.0% | 57.7% | **42.6%** |
+| pay_currency | 16.4% | 1.3% | 1.4% |
+| pension_type / benefits | 35.4% / 37.5% | same | 25.0% / 25.0% |
+| shareholding_requirement | 76.6% | 51.1% | **39.6%** |
+| ownership_type | 31.9% | 29.8% | 25.0% |
+| ultimate_parent | 32.6% | 8.7% | 8.3% |
+| share_price | 76.1% | 76.1% | 68.1% |
+| market_cap_band | 78.3% | 78.3% | 70.2% |
+| revenue / total_assets | 19.1% / 12.8% | same | 22.9% / 18.8% |
+| **All priority fields** | **44.0%** | **38.1%** | **28.9%** |
+
+The 50 are the worst companies, so the rates are far above the file's. Revenue and total assets lost values at C-Capital Holdings and SECO: the run now rejects their reports as another company's (the old values came from those same reports, so they were likely wrong), plus run-to-run misses at Helios Solar, Cykel AI (EBITDA) and Arzneiwerk (shares). Share price and the band stay the largest gap: Phase C's exchange files are still needed.
+
+Still open in B: the fallback model's effect (re-run the companies with an empty answer), and applying all of it to the combined file.
 
 ## Goal
 

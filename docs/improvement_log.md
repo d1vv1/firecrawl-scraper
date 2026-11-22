@@ -845,3 +845,57 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - 11 required companies are in the file with no values at all (no report found): Accentro, NEXR, TC Unterhaltungselektronik, Inmobiliaria del Sur, Bergbahnen Engelberg-Titlis, Groupe Minoteries, Highlight Event, Liechtensteinische Landesbank, Mobimo, Romande Energie, Schweizerische Nationalbank. They need report links.
 - Exceptions list (`output/fy2025_runs_failures.md`): 20,861 values missing at 1,473 of 1,510 companies; not stated 10,787; pay where only the annual report was read 8,529; annual report not found 644 (37 companies); wrong-year report 84.
 - Backup before the splice: the session scratchpad, `before_nordics/`.
+
+---
+
+### 22 November 2026: not-found plan, decisions and Phases A and B (branch `not-found-phase-b`)
+
+#### 66. Fewer "not found" values: rules over saved rows, prompt changes, ESEF tags, a second model
+- **Decisions** (`docs/not_found_reduction_plan.md`, section 6), taken on the client's behalf from their own field list, for them to confirm. The four rules that fill a value the source does not print (`gleif_non_consolidating`, `zero_from_total`, `none_if_absent`, `included_in_other`) are on by default. To switch one off, list it in `RULES_OFF` in `.env`; no code change is needed.
+- **Phase A** (rules over saved rows; reach every company through `python -m extractor.combine --into <file> --gleif`):
+  - ownership from the named holders;
+  - pay currency from the amounts;
+  - a benefit or pension of 0 when the stated total is the sum of the other parts;
+  - ultimate parent from GLEIF (including "none (no consolidating parent)");
+  - prices in pence or cents converted.
+
+  On a copy of the 1,508-company file:
+
+  | Field | Missing before | Missing after |
+  |---|---|---|
+  | ultimate_parent | 25.4% | 2.2% |
+  | benefits_value | 32.3% | 18.4% |
+  | pension_contribution | 38.8% | 19.7% |
+  | pay_currency | 4.4% | 0.4% |
+  | ownership_type | 12.9% | 8.3% |
+- **Phase B** (scraper version 6):
+  - Pay prompt: a dash in a component's own cell is 0. A pension folded into another amount is recorded as "not applicable: included in ...".
+  - "None" / "no pension" when the text says so. shareholding_requirement is "None" when the remuneration report was read and states no rule (37.1% → 21.4% on saved rows).
+  - Year-end share price wording in each language.
+  - EBITDA (or operating profit) and share counts from the ESEF filing's tags (`combine --esef`; ebitda 10.1% → 8.0%).
+  - An all-dash pay row is no pay for the year.
+  - An empty answer is asked again of `LLM_FALLBACK_MODEL`.
+- **Dropped:** the planned `market_cap` fact. `DataPointFacts` is at Vertex's schema size limit, and any further nested fact gives 400 INVALID_ARGUMENT.
+- **Second model:** the project has no Gemini 2.5 Pro, so the fallback model is Gemini 3.1 Pro preview.
+- **50-company test** (`data/not_found_phase_b_test.csv`, the 50 companies with the most priority gaps, run with `--redo`):
+  - The first attempt failed 47 of 50 on those two errors.
+  - After the fixes (commit `ecd1421`): 50 of 50 ran, using 118 Firecrawl credits.
+  - Missing priority-field values on the 50 went from 44.0% to 38.1% with the rules alone, and to **28.9%** after the re-run plus the rules.
+  - Gains by field:
+
+    | Field | Missing before | Missing after |
+    |---|---|---|
+    | base_salary | 40% | 18% |
+    | benefits_value | 72% | 42% |
+    | pension_contribution | 70% | 43% |
+    | shareholding_requirement | 77% | 40% |
+    | share_price | 76% | 68% |
+  - Revenue and total assets were lost at C-Capital Holdings and SECO. The run now rejects their reports as another company's, so the old values were likely wrong.
+  - Output: `output/not_found_phase_b_test_datapoints.csv`.
+- **Fixed after the test:**
+  - The fallback model answered once (empty, for Mondo TV's pay) and was then switched off for the whole run. Now only a model or schema the project rejects switches it off; an empty answer is a miss for that question only.
+  - A token log line crashed on a missing completion count.
+- **Still to do:**
+  - Measure the fallback model.
+  - Splice the 50 into the combined file and run `combine --gleif --esef` over it. Neither is done; the combined file is unchanged.
+  - Fix Centrica's price by hand. Its report prints "1.4065 pence" for £1.4065.
