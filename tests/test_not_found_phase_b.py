@@ -69,3 +69,160 @@ def test_no_none_without_a_remuneration_report_read(monkeypatch):
     rows = _company()
     dp.refresh(rows)
     assert rows[0]["value"] == ""
+
+
+# --- B3, B4: EBITDA, shares and the parent from ESEF tags -----------------------------------------
+
+from extractor import esef  # noqa: E402
+
+FY = "2025-12-31"
+
+
+def _facts(*items):
+    """ESEF facts: (concept, value, unit, period)."""
+    return {str(i): {"value": v, "dimensions": {"concept": c, "unit": u, "period": p, "entity": "x"}}
+            for i, (c, v, u, p) in enumerate(items)}
+
+
+YEAR = "2025-01-01T00:00:00/2026-01-01T00:00:00"
+
+
+def test_extension_ebitda_operating_profit_and_shares_are_read_for_the_year():
+    got = esef.extra_figures(_facts(
+        ("acme:Ebitda", "48829000", "iso4217:EUR", YEAR),
+        ("acme:DepreciationRecognisedInProfitOrLossEbitda", "-19127000", "iso4217:EUR", YEAR),
+        ("ifrs-full:ProfitLossFromOperatingActivities", "29702000", "iso4217:EUR", YEAR),
+        ("ifrs-full:ProfitLossFromOperatingActivities", "1", "iso4217:EUR",
+         "2024-01-01T00:00:00/2025-01-01T00:00:00"),
+        ("ifrs-full:NumberOfSharesIssued", "16862067", "xbrli:shares", "2026-01-01T00:00:00"),
+        ("ifrs-full:NameOfUltimateParentOfEntity", "<p>Acme Holding SA</p>", None, YEAR)), FY)
+    assert got["ebitda"].value == 48829000 and got["ebitda"].concept == "acme:Ebitda"
+    assert got["operating_profit"].value == 29702000
+    assert got[esef.SHARES_ISSUED_CONCEPT].value == 16862067
+    assert got["ifrs-full:NameOfUltimateParentOfEntity"][0] == "Acme Holding SA"
+
+
+def _x(**kw):
+    return esef.ExtraFigures(period_end=FY, report_url="https://filings.xbrl.org/r.xhtml", viewer_url=None, **kw)
+
+
+def _gaps(legal="Acme Plc"):
+    return [_row("a", "lei", "L" * 20), _row("a", "fiscal_year_end", FY), _row("a", "legal_name", legal),
+            *(_row("a", k, "", note="not found in: ESEF filing (filings.xbrl.org)")
+              for k in ("ebitda", "shares_outstanding", "ultimate_parent"))]
+
+
+def test_gaps_filled_from_the_tags_with_operating_profit_named_as_such():
+    rows = _gaps()
+    x = _x(operating_profit=esef.TaggedFigure(29702000, "EUR", esef.OPERATING_PROFIT_CONCEPT, "y"),
+           shares=esef.TaggedFigure(16862067, "shares", esef.SHARES_ISSUED_CONCEPT, FY),
+           parent=("Acme Plc", "ifrs-full:NameOfUltimateParentOfEntity"))
+    dp.refresh(rows, esef_extras=lambda lei, fye: x)
+    by = _by(rows)
+    assert by["ebitda"]["value"] == "29702000" and by["ebitda"]["unit"] == "EUR"
+    assert by["ebitda"]["note"].startswith("operating profit (no EBITDA tagged")
+    assert by["ebitda"]["method"] == "XBRL" and by["ebitda"]["confidence"] == "A"
+    assert by["shares_outstanding"]["value"] == "16862067"
+    assert "shares issued" in by["shares_outstanding"]["note"]
+    assert by["ultimate_parent"]["value"] == "none (top of group)"
+
+
+def test_a_value_already_read_is_not_replaced_and_nothing_is_asked_without_gaps():
+    rows = _gaps()
+    for r in rows[3:]:
+        r.update(value="1", note="")
+    asked = []
+    dp.refresh(rows, esef_extras=lambda lei, fye: asked.append(lei))
+    assert not asked and [r["value"] for r in rows[3:]] == ["1", "1", "1"]
+
+
+# --- B5: the market cap the company states -------------------------------------------------------
+
+from extractor.apis import Found  # noqa: E402
+
+
+def test_a_stated_market_cap_gives_the_band_without_a_price():
+    chosen = {"market_cap_stated": Found("market_cap_stated", 2_500_000_000, unit="EUR",
+                                         period_end=FY, source="Annual report (PDF)", confidence="B",
+                                         note='PDF page 30: "Market capitalisation EUR 2.5bn"'),
+              "shares_outstanding": Found("shares_outstanding", 1000)}
+    band, why = dp.market_cap_band(chosen)
+    assert band and band.method == "DERIVED" and "as the company states it" in band.note
+    assert band.value == dp.market_cap_band({**chosen, "share_price": Found(
+        "share_price", 2_500_000, unit="EUR", period_end=FY)})[0].value
+    # no price and nothing stated: still not derived
+    assert dp.market_cap_band({"shares_outstanding": Found("shares_outstanding", 1000)})[0] is None
+
+
+def test_answers_cached_before_version_6_still_read():
+    from extractor.schemas import DataPointFacts
+    fields = {k: None for k in DataPointFacts.model_fields}
+    assert "market_cap" in fields and DataPointFacts.model_fields["market_cap"].default.value is None
+
+
+# --- B6: an empty answer asked once more of the stronger model ---------------------------------
+
+from extractor import llm  # noqa: E402
+from extractor.schemas import DataPointFacts  # noqa: E402
+from extractor.sections import Chunk  # noqa: E402
+
+
+def _empty_facts(**over):
+    def blank(name):
+        f = DataPointFacts.model_fields[name]
+        ann = f.annotation
+        if getattr(ann, "__origin__", None) is list:
+            return []
+        return {k: ([] if k == "items" else None) for k in ann.model_fields}
+    d = {k: blank(k) for k in DataPointFacts.model_fields}
+    d.update(over)
+    return DataPointFacts.model_validate(d)
+
+
+def test_an_empty_financial_answer_is_asked_of_the_fallback_model(monkeypatch, tmp_path):
+    monkeypatch.setattr(dp, "CACHE_DIR", tmp_path)
+    monkeypatch.setattr(llm, "fallback_model", lambda: "google/gemini-2.5-pro")
+    monkeypatch.setattr(llm, "model_name", lambda: "google/gemini-2.5-flash")
+    found = _empty_facts(revenue={"value": 120.5, "unit": "millions", "currency": "EUR",
+                                  "period_end": None, "quote": "Revenue 120.5", "chunk_id": 1})
+    asked = []
+
+    def fake(system, user, schema, images=None, model=None):
+        asked.append(model)
+        return found if model else _empty_facts()
+    monkeypatch.setattr(llm, "call_llm", fake)
+    chunks = [Chunk(1, "Revenue 120.5")]
+    facts = dp.ask("Acme", "https://x/ar.pdf", chunks, "the annual report", "acme_ar")
+    assert asked == [None, "google/gemini-2.5-pro"] and facts.revenue.value == 120.5
+    saved = (tmp_path / "acme_ar_datapoints_llm.json").read_text(encoding="utf-8")
+    assert '"model": "google/gemini-2.5-pro"' in saved and '"fallback_tried": true' in saved
+    # cached: not asked again
+    asked.clear()
+    dp.ask("Acme", "https://x/ar.pdf", chunks, "the annual report", "acme_ar")
+    assert asked == []
+
+
+def test_no_retry_when_the_answer_has_figures_or_none_is_configured(monkeypatch, tmp_path):
+    monkeypatch.setattr(dp, "CACHE_DIR", tmp_path)
+    asked = []
+    monkeypatch.setattr(llm, "call_llm", lambda *a, model=None, **k: asked.append(model) or _empty_facts())
+    monkeypatch.setattr(llm, "fallback_model", lambda: None)
+    monkeypatch.setattr(llm, "model_name", lambda: "m")
+    chunks = [Chunk(1, "text")]
+    dp.ask("Acme", "u", chunks, "w", "k1")
+    assert asked == [None]
+
+
+# --- B7: a member paid nothing in the year (GB single-figure rows of dashes) ----------------------
+
+def test_a_row_of_dashes_is_no_pay_for_the_year():
+    assert dp.all_dashes("Jon Lewis 8,10 2025 – – – – – – – – –")
+    assert dp.all_dashes("Jack Clarke\ufffd|2025|\ufffd|\ufffd|\ufffd|\ufffd")
+    assert not dp.all_dashes("C Chadwick | 120,000 | 20,000 | - | - | -")
+    assert not dp.all_dashes("Jeremy Suddards, former Chief Executive Officer")
+    rows = [_row("a", "role_disclosure", "individual", "role", "Former CEO",
+                 'executive; report text: "Jon Lewis 8,10 2025 – – – – – – – – –"'),
+            *(_role(k, "", role="Former CEO") for k in ("base_salary", "total_remuneration", "pension_contribution"))]
+    dp.refresh(rows)
+    assert all(r["note"] == "not applicable: no pay for the year (the table row is all dashes)"
+               for r in rows[1:])

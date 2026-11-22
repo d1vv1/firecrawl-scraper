@@ -192,10 +192,12 @@ def splice(groups: dict[str, list[dict]], order: list[str], incoming: dict[str, 
     return out
 
 
-def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool = False) -> dict:
+def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool = False,
+            esef: bool = False) -> dict:
     """Merge the runs (in order) into `into`, and their checks into its checks file.
     `keep_better`: a block a run got clearly fewer values for stays (merge_company).
-    `gleif`: ask GLEIF level 2 again for every empty ultimate parent (datapoints.refresh)."""
+    `gleif`: ask GLEIF level 2 again for every empty ultimate parent (datapoints.refresh).
+    `esef`: fill an empty EBITDA, share count or ultimate parent from the ESEF filing's tags."""
     rows, cols = read(into) if into.exists() else ([], COLUMNS)
     checks_path = into.with_name(into.stem + "_checks.csv")
     checks, ccols = read(checks_path) if checks_path.exists() else ([], [])
@@ -240,22 +242,24 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool 
             corder = list(dict.fromkeys(c["company_id"] for c in checks))
             checks = splice(cgroups, corder, merged_checks)
         log.info("Merged %s: %d companies replaced, %d added", run.name, stats["replaced"], stats["added"])
-    rows = refreshed(rows, gleif)
+    rows = refreshed(rows, gleif, esef)
     write(into, rows, cols)
     if ccols:
         write(checks_path, checks, ccols)
     return stats
 
 
-def refreshed(rows: list[dict], gleif: bool = False) -> list[dict]:
+def refreshed(rows: list[dict], gleif: bool = False, esef: bool = False) -> list[dict]:
     """Every company's rows under the current rules for saved rows, in the same order.
     `gleif`: an empty ultimate parent is asked of GLEIF again (online, cached a week)."""
     from .apis import gleif_parent
+    from .esef import extras_for
     lookup = gleif_parent if gleif else None
+    extras = extras_for if esef else None
     groups: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         groups[r["company_id"]].append(r)
-    return [r for block in groups.values() for r in refresh(block, lookup)]
+    return [r for block in groups.values() for r in refresh(block, lookup, extras)]
 
 
 def main(argv=None) -> int:
@@ -272,12 +276,16 @@ def main(argv=None) -> int:
     p.add_argument("--gleif", action="store_true",
                    help="Ask GLEIF level 2 again for every empty ultimate parent (a parent added "
                         "since, or a reporting exception that gives one)")
+    p.add_argument("--esef", action="store_true",
+                   help="Fill an empty EBITDA (else operating profit), share count or ultimate "
+                        "parent from the tags of the ESEF filing for the fiscal year (online)")
     args = p.parse_args(argv)
     missing = [r for r in args.runs if not r.exists()]
     if missing:
         print(f"ERROR: not found: {', '.join(map(str, missing))}", file=sys.stderr)
         return 1
-    stats = combine(args.runs, args.into, keep_better=not args.take_newer, gleif=args.gleif)
+    stats = combine(args.runs, args.into, keep_better=not args.take_newer, gleif=args.gleif,
+                    esef=args.esef)
     print(f"{args.into}: {stats['replaced']} companies replaced, {stats['added']} added, "
           f"{stats['kept']} values kept that the runs did not collect")
     if stats["worse"]:

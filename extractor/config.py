@@ -30,7 +30,11 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 #    (pay.PAY_WORDS, pay.ask_opportunities).
 # 5: 15 Nov 2026, a deferred part of the annual bonus is read with the bonus (PR #4, merged
 #    without a version: of the saved results, only the remaining-UK run has it).
-SCRAPER_VERSION = 5
+# 6: 22 Nov 2026, not-found plan Phase B: a dash in a pay cell is 0 and a folded pension is
+#    "included in"; "None" / "no pension" when the text says so; the year-end share price
+#    in each language and the market cap the company states; an empty answer asked again
+#    of LLM_FALLBACK_MODEL; gaps filled from the ESEF filing's tags.
+SCRAPER_VERSION = 6
 
 # Rules that fill a value the source does not print (docs/not_found_reduction_plan.md,
 # decisions D1 and D4). Decided on 22 Nov 2026 on the client's behalf, by their own field
@@ -92,6 +96,9 @@ class Settings:
     vertex_project: str | None = None
     vertex_location: str = "global"
     vertex_model: str = "google/gemini-2.5-flash"
+    # Asked once more when the model's answer for the facts or the pay is empty (plan B6).
+    # Default on Vertex: Gemini 2.5 Pro; "off" or "none" switches the retry off.
+    llm_fallback_model: str | None = None
 
     def require(self, *names: str) -> None:
         missing = [n.upper() for n in names if not getattr(self, n)]
@@ -114,7 +121,17 @@ def load_settings() -> Settings:
         vertex_project=os.getenv("VERTEX_PROJECT") or None,
         vertex_location=os.getenv("VERTEX_LOCATION") or "global",
         vertex_model=os.getenv("VERTEX_MODEL") or "google/gemini-2.5-flash",
+        llm_fallback_model=_fallback_model(),
     )
+
+
+def _fallback_model() -> str | None:
+    v = (os.getenv("LLM_FALLBACK_MODEL") or "").strip()
+    if v.lower() in ("off", "none"):
+        return None
+    if v:
+        return v
+    return "google/gemini-2.5-pro" if (os.getenv("LLM_PROVIDER") or "").strip().lower() == "vertex" else None
 
 
 def clean_name(legal_name: str) -> str:

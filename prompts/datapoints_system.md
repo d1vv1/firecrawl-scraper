@@ -83,6 +83,18 @@ Facts:
   (treasury shares) at year end, as printed. Null if not stated.
 - share_price: the closing share price on the last trading day of the
   fiscal year, with its currency and date. Not a high, low or average.
+  Reports print it in the share or investor section ("The share", "Share
+  information", "Die Aktie", "Andamento del titolo", "Aktien", "Osake") and
+  the key figures, e.g. "share price at year end", "closing price",
+  "Schlusskurs", "Jahresschlusskurs", "prezzo ufficiale", "prezzo di
+  chiusura", "cours de clôture", "slutkurs", "sluttkurs", "τιμή κλεισίματος".
+  Give the currency of the quote: "GBp" or "pence" when the price is in
+  pence, "USD cents" when in cents.
+- market_cap: the company's market capitalisation at the fiscal year end
+  as the report states it ("market capitalisation", "Marktkapitalisierung",
+  "capitalizzazione di borsa", "börsvärde", "markedsverdi",
+  "κεφαλαιοποίηση"), with its unit, currency and date. Never work it out
+  from the price and the share count yourself.
 - controlling_owner: the shareholder with 20% or more of the votes, or
   stated as the controlling / principal / majority owner, or the parent
   company. holder_type: private_equity (buyout and growth-equity funds and
@@ -111,6 +123,9 @@ Facts:
   "defined contribution, 25% of base salary".
 - benefits: the executives' other benefits as described in the policy,
   e.g. "company car, health and life insurance".
+- pension_type also "cash allowance in lieu of pension" or "no pension"
+  when that is what the text says, quoting it.
 - shareholding_requirement: the rule that executives or directors must
   hold company shares, e.g. "CEO: shares worth 100% of base salary within
-  5 years". Null if there is no such rule.
+  5 years". "None" when the text says there is no such rule, quoting that
+  sentence. Null if the text does not say.

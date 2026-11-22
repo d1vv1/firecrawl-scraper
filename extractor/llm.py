@@ -39,6 +39,12 @@ def model_name() -> str | None:
     return s.vertex_model if s.llm_provider == "vertex" else s.foundry_deployment
 
 
+def fallback_model() -> str | None:
+    """The stronger model asked once more when an answer is empty (plan B6), or None."""
+    m = load_settings().llm_fallback_model
+    return m if m and m != model_name() else None
+
+
 @lru_cache(maxsize=1)
 def _client() -> tuple[OpenAI, str]:
     s = load_settings()
@@ -163,9 +169,11 @@ def _log_retry(retry_state) -> None:
                                       openai.APITimeoutError, openai.InternalServerError)),
        stop=stop_after_attempt(8), wait=_wait, before_sleep=_log_retry, reraise=True)
 def call_llm(system_prompt: str, user_prompt: str, schema: type[T],
-             images: list[bytes] | None = None) -> T:
-    """`images`: PNG pages shown to the model next to the text (pay tables)."""
+             images: list[bytes] | None = None, model: str | None = None) -> T:
+    """`images`: PNG pages shown to the model next to the text (pay tables). `model`:
+    another model of the same provider (fallback_model()) instead of the configured one."""
     client, deployment = _client()
+    deployment = model or deployment
     try:
         completion = _parse(client, deployment, system_prompt, user_prompt, schema, images)
     except openai.BadRequestError as e:

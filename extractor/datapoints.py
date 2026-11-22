@@ -72,7 +72,7 @@ import httpx
 import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, fx, listing, llm, pay, pay_tables, requote, sector
+from . import apis, edgar, esef, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
 from . import gcs
 from .apis import Found
@@ -691,19 +691,41 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
     facts asked for (`wanted`: DataPointFacts fields; None asks for all)."""
     path = CACHE_DIR / f"{cache_key}_datapoints_llm.json"
     ids = [c.id for c in chunks]
+    fallback = llm.fallback_model()
     if path.exists():
         saved = json.loads(path.read_text(encoding="utf-8"))
         if (saved.get("chunk_ids") == ids and saved.get("wanted") == wanted
                 and saved.get("prompt") == llm.load_prompt("datapoints_system")):
-            return DataPointFacts.model_validate(saved["facts"])
-    facts = llm.call_llm(llm.load_prompt("datapoints_system"),
-                         _user_prompt(name, url, chunks, what, wanted), DataPointFacts)
+            facts = DataPointFacts.model_validate(saved["facts"])
+            if not (fallback and facts_empty(facts, wanted) and not saved.get("fallback_tried")):
+                return facts
+    prompt, user = llm.load_prompt("datapoints_system"), _user_prompt(name, url, chunks, what, wanted)
+    facts, model = llm.call_llm(prompt, user, DataPointFacts), llm.model_name()
+    tried = False
+    if fallback and facts_empty(facts, wanted):
+        # plan B6: an empty answer is asked once more of the stronger model
+        log.info("Data points: no answer from %s for %s; asking %s", model, url, fallback)
+        tried = True
+        again = llm.call_llm(prompt, user, DataPointFacts, model=fallback)
+        if not facts_empty(again, wanted):
+            facts, model = again, fallback
     CACHE_DIR.mkdir(exist_ok=True)
-    path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted,
-                                "prompt": llm.load_prompt("datapoints_system"),
-                                "model": llm.model_name(), "facts": facts.model_dump()},
+    path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted, "prompt": prompt,
+                                "model": model, "fallback_tried": tried,
+                                "facts": facts.model_dump()},
                                ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
+
+
+# The facts whose empty answer is worth asking the stronger model again (plan B6).
+RETRY_FACTS = ("revenue", "total_assets", "ebitda", "shares_outstanding", "share_price")
+
+
+def facts_empty(facts: DataPointFacts, wanted: list[str] | None) -> bool:
+    """No value for any of the financial facts asked for (RETRY_FACTS): the answer of a
+    model that missed the figures, worth one more try."""
+    asked = [k for k in RETRY_FACTS if wanted is None or k in wanted]
+    return bool(asked) and all(getattr(facts, k).value is None for k in asked)
 
 
 def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
@@ -825,6 +847,13 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
     if p.value is not None and p.currency:
         add("share_price", p.value, p, unit=p.currency, period=p.date or "", figure=p.value,
             extra=f"closing price {p.date}" if p.date else "closing price at year end")
+    mc = facts.market_cap
+    if mc.value is not None and mc.unit and mc.currency:
+        # not a field of its own: the market-cap band where no price was read (plan B5)
+        shown = printed_figure(mc.value, mc.unit, mc.quote)
+        add("market_cap_stated", full_value_quoted(mc.value, mc.unit, mc.quote), mc,
+            unit=iso_currency(mc.currency), period=mc.date or "", figure=shown,
+            extra=f"printed {fmt_number(shown)} {mc.unit}")
     for name in ("legal_name", "business_id", "other_names", "head_office_city", "ticker",
                  "isin", "exchange", "exchange_segment", "listing_date", "sub_sector",
                  "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
@@ -1793,11 +1822,15 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
     """Shares outstanding x year-end share price, banded in EUR (MARKET_CAP_BANDS_EUR).
     Returns (the band, or None with the reason)."""
     shares, price = chosen.get("shares_outstanding"), chosen.get("share_price")
-    if not shares or not price:
+    stated = chosen.get("market_cap_stated")
+    if (not shares or not price) and stated:
+        # the market cap the company states (plan B5): the band without a price
+        shares, price = None, stated
+    elif not shares or not price:
         missing = " and ".join(n for n, f in (("shares outstanding", shares), ("share price", price))
                                if not f)
         return None, f"not derived: no {missing}"
-    cap = float(shares.value) * float(price.value)
+    cap = float(shares.value) * float(price.value) if shares else float(price.value)
     in_eur, at = cap, ""
     # a year-end price read without its date: the report's fiscal year end dates it
     fye = getattr(chosen.get("fiscal_year_end"), "value", "") or ""
@@ -1818,6 +1851,12 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
         if not price.period_end:
             at += f"; the price has no date: the rate of the fiscal year end {date}"
     band = next(name for floor, name in MARKET_CAP_BANDS_EUR if in_eur >= floor)
+    if not shares:
+        return Found("market_cap_band", band, unit="", period_end=price.period_end or date,
+                     source="derived", endpoint=price.endpoint, method="DERIVED",
+                     confidence=price.confidence,
+                     note=f"market cap {in_eur:,.0f} EUR, as the company states it{at} "
+                          f"({price.source}: {clip(price.note, 120)})"), ""
     worst = min((shares, price), key=lambda f: CONFIDENCE_RANK[f.confidence])
     return Found("market_cap_band", band, unit="", period_end=price.period_end or date,
                  source="derived", endpoint=price.endpoint, method="DERIVED",
@@ -2264,7 +2303,15 @@ def process(t: Target, opts: dict) -> dict:
     finally:
         logging.getLogger().removeHandler(handler)
         handler.close()
-    rows = save_rows(t, rows_for(t, found))
+    rows = rows_for(t, found)
+    if opts.get("apis", True):
+        # free, no AI: the ESEF filing's tags for an EBITDA, share count or parent not read
+        try:
+            fill_from_esef({r["data_point"]: r for r in rows if r["grain"] == "company"},
+                           esef.extras_for)
+        except Exception as e:  # noqa: BLE001 - a gap filler; the rows stand without it
+            log.warning("ESEF tags for the gaps failed: %s", str(e)[:150])
+    rows = save_rows(t, rows)
     if "no_credits" in flags:
         no_credits_path(c).write_text(NO_CREDITS, encoding="utf-8")
     else:
@@ -2591,6 +2638,47 @@ def _derive_from(r: dict, src: dict, value: str, note: str) -> None:
              value=value, unit="", method="DERIVED", note=note)
 
 
+def fill_from_esef(by: dict[str, dict], lookup) -> None:
+    """Gaps the ESEF filing for the company's fiscal year fills from its tags (plan B3,
+    B4), asked through `lookup` (esef.extras_for; combine --esef, and every new run):
+    - ebitda: the company's own EBITDA tag, else operating profit (the client's rule:
+      "EBITDA, else operating profit", the note says which);
+    - shares_outstanding: the shares outstanding tag, else the shares issued;
+    - ultimate_parent: the tagged name of the ultimate parent ("none (top of group)" when
+      it is the company itself).
+    Only empty values; tags are exact (method XBRL, confidence A). `by`: a company's rows
+    by data point."""
+    lei = (by.get("lei") or {}).get("value")
+    fye = (by.get("fiscal_year_end") or {}).get("value") or ""
+    gaps = [k for k in ("ebitda", "shares_outstanding", "ultimate_parent") if missing(by.get(k))]
+    if not lei or not iso_date(fye) or not gaps:
+        return
+    x = lookup(lei, fye)
+    if not x:
+        return
+    viewer = f"; viewer {x.viewer_url}" if x.viewer_url else ""
+
+    def put(k, value, unit, note):
+        by[k].update(value=value, unit=unit, period_end=x.period_end,
+                     source="ESEF filing (filings.xbrl.org)", endpoint=x.report_url,
+                     method="XBRL", confidence="A", retrieved_at=_now(), note=note + viewer)
+    if "ebitda" in gaps and (x.ebitda or x.operating_profit):
+        t = x.ebitda or x.operating_profit
+        what = ("ebitda (company-defined)" if x.ebitda else
+                "operating profit (no EBITDA tagged; the client's rule: EBITDA, else operating profit)")
+        put("ebitda", fmt_number(t.value), t.currency, f"{what}; tag {t.concept}")
+    if "shares_outstanding" in gaps and x.shares:
+        issued = x.shares.concept == esef.SHARES_ISSUED_CONCEPT
+        put("shares_outstanding", fmt_number(x.shares.value), "shares",
+            f"tag {x.shares.concept}" + ("; shares issued (no outstanding count tagged)" if issued else ""))
+    if "ultimate_parent" in gaps and x.parent:
+        name, concept = x.parent
+        own = (by.get("legal_name") or {}).get("value") or ""
+        top = same_company(name, own)
+        put("ultimate_parent", "none (top of group)" if top else name, "",
+            f"tag {concept}: {clip(name, 80)}" + ("; the company itself" if top else ""))
+
+
 def parent_from_gleif(by: dict[str, dict], lookup) -> None:
     """An empty ultimate_parent asked of GLEIF level 2 again (apis.gleif_parent, passed in
     as `lookup` so that only `combine --gleif` goes online): its parent, or "none" where
@@ -2699,15 +2787,39 @@ def zero_from_total(mine: dict[str, dict]) -> None:
         mine[k]["unit"] = tot["unit"]
 
 
+_DASH = re.compile(r"[-–—�]")
+_AMOUNT = re.compile(r"\d{1,3}(?:[,.' ]\d{3})+|\d{4,}")
+
+
+def all_dashes(quote: str) -> bool:
+    """A pay table row whose figures are all dashes ("Jon Lewis 8,10 2025 – – – – –",
+    "Jack Clarke|2025|–|–|–"): three dashes or more, and no amount but a year."""
+    cells = [c.strip() for c in re.split(r"[|\s]+", quote) if c.strip()]
+    dashes = sum(1 for c in cells if _DASH.fullmatch(c))
+    amounts = [c for c in cells if _AMOUNT.fullmatch(c) and not re.fullmatch(r"(19|20)\d{2}", c)]
+    return dashes >= 3 and not amounts
+
+
 def no_pay_for_year(mine: dict[str, dict]) -> None:
-    """A role whose stated total is 0 (a member who left before the year, or served
-    unpaid): its empty amounts are not applicable. `mine`: a role's rows by data point."""
+    """A role paid nothing in the year (a member who left before it, or served unpaid):
+    its empty amounts are not applicable. Either its stated total is 0, or no amount was
+    read and the table row it was found on is all dashes (Capita's former CEO; GB
+    single-figure tables). `mine`: a role's rows by data point."""
     tot = mine.get("total_remuneration")
-    if not tot or not re.fullmatch(r"-?0+(\.0+)?", tot["value"] or ""):
+    why = ""
+    if tot and re.fullmatch(r"-?0+(\.0+)?", tot["value"] or ""):
+        why = "stated total 0"
+    elif not any(mine.get(k, {}).get("value") for k in pay.AMOUNTS):
+        found_on = (mine.get("role_disclosure") or {}).get("note", "")
+        m = re.search(r'(?:PDF page \d+|report text|web page): "([^"]*)', found_on)
+        if m and all_dashes(m.group(1)):
+            why = "the table row is all dashes"
+    if not why:
         return
     for k in pay.AMOUNTS:
-        if k != "total_remuneration" and missing(mine.get(k)):
-            mine[k]["note"] = "not applicable: no pay for the year (stated total 0)"
+        if k != "total_remuneration" or why != "stated total 0":
+            if missing(mine.get(k)):
+                mine[k]["note"] = f"not applicable: no pay for the year ({why})"
 
 
 # What an amount's "includes ..." names, for each part a table can fold into another.
@@ -2805,13 +2917,14 @@ def price_in_hundredths(unit: str) -> str | None:
     return "GBP" if unit.lower() in ("pence", "p") else None
 
 
-def refresh(rows: list[dict], gleif=None) -> list[dict]:
+def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
     or an ownership fact read without one. A role that is a pay table's "Total" line
     (pay.total_roles) is removed. Other rows that already have their values are unchanged.
     `gleif`: apis.gleif_parent, to ask GLEIF again for an empty ultimate parent (the one
-    rule that goes online; combine --gleif)."""
+    rule that goes online; combine --gleif). `esef_extras`: esef.extras_for, to fill an
+    empty EBITDA, share count or ultimate parent from the ESEF filing's tags (combine --esef)."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
     # a group role read from two documents; a table's accounting line taken for a person
@@ -2828,6 +2941,8 @@ def refresh(rows: list[dict], gleif=None) -> list[dict]:
     headcount_from_fte(by)
     if gleif:
         parent_from_gleif(by, gleif)
+    if esef_extras:
+        fill_from_esef(by, esef_extras)
     ownership_from_holders(by)
     no_controlling_owner(by)
     pay_currency_from_amounts(rows)

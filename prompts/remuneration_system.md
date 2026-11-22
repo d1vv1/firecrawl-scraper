@@ -41,6 +41,14 @@ during the year (e.g. "Former CEO (until April 2025)").
   states in the form it states it. If one figure bundles other components (pension with
   social security, base salary with allowances, pension with benefits),
   say so in `includes`.
+  A component the table gives this role a column for, with a dash ("-",
+  "–"), "nil", "none" or "0" in this role's cell, is 0: value 0, quoting
+  the row. Null only when the table has no column for it or the cell is
+  empty. A component the table folds into another column (a "Pension and
+  social security" column; Italy's Schema 7-bis "Benefici non monetari" or
+  "Altri compensi" with the pension in them, as its notes say) is null
+  itself, and the column it is in names it in `includes` (e.g. includes
+  "pension contributions"): never 0.
   - base_salary: the fixed base salary only. Leave out board fees,
     benefits, holiday-pay adjustments, allowances and salary additions
     (e.g. a fixed salary addition paid instead of pension): those belong
@@ -95,12 +103,16 @@ during the year (e.g. "Former CEO (until April 2025)").
 
 Company level, from the policy or report:
 - pension_type: the pension arrangement for executives, e.g. "defined
-  contribution, 25% of base salary".
+  contribution, 25% of base salary"; "cash allowance in lieu of pension"
+  when that is what they get; "no pension" when the text says the
+  executives get none, quoting that sentence.
 - benefits: the executives' other benefits as described, e.g. "company
   car, health insurance".
 - shareholding_requirement: the rule that executives must hold company
   shares, e.g. "CEO: shares worth 200% of base salary within 5 years".
-  Null if there is no such rule.
+  "None" when the text says there is no such rule ("no shareholding
+  guidelines apply"), quoting that sentence. Null if the text does not
+  say.
 - sti_plan, lti_plan: whether the executives have a short-term incentive
   (an annual bonus) and a long-term incentive (share, option or
   performance-share awards over several years). exists: true when the text

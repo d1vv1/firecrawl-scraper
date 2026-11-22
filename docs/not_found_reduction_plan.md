@@ -1,6 +1,6 @@
 # Plan: priority fields under 3% not found
 
-*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: Phase A in code (19 Nov), not yet applied to the combined file*
+*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: decisions made (22 Nov); Phase A done, Phase B in code (scraper version 6); neither applied to the combined file yet*
 
 ## Progress
 
@@ -15,7 +15,21 @@
 | A5 | Partly: a role whose stated total is 0 → its empty amounts "not applicable: no pay for the year". **Not done:** moving non-executive entries into the board row (a scope change, to look at with the 50-company test) | base_salary 400 → 392; about 20 per pay field |
 | A6 | Share prices in "pence", "p", "GBx", "USD cents" and a page's "ZAR cents" → the whole currency (10 prices); no band from a price dated over a year from the fiscal year end (Centrica's 2023 price). **Not done:** several share classes | market_cap_band 398 → 391 |
 
-To apply: sign-off from the client on D1, then `SIGNED_OFF_RULES=gleif_non_consolidating,zero_from_total` in `.env` and the `combine` command above (it rescores and rebuilds the dashboard). Centrica's report prints "1.4065 pence" for £1.4065: its price is now 0.014065 GBP and wrong (it was wrong before as well, and it is a 2023 price); fix it by hand.
+The sign-off switch is gone since 22 Nov: the D1 rules are decided and on (see section 6); `RULES_OFF=<rule>` in `.env` switches one off. Centrica's report prints "1.4065 pence" for £1.4065: its price is now 0.014065 GBP and wrong (it was wrong before as well, and it is a 2023 price); fix it by hand.
+
+**22 Nov 2026, Phase B (branch `not-found-phase-b`, on top of Phase A; scraper version 6).** Tests: `tests/test_not_found_phase_b.py`. Measured on a copy of the 1,508-company file of 22 Nov (Phase A rules, then Phase B's rules on saved rows); prompt changes show only after a re-run.
+
+| # | Done | Effect (missing before → after, on saved rows) |
+|---|---|---|
+| B1 | Pay prompt: a dash, "nil" or "0" in a component's own cell is 0; a component folded into another column is null and named in that column's `includes` (Italy's Schema 7-bis). `pay_tables.py` already read dashes as 0. D4 on saved rows: `included_in_other` | re-run needed; a few roles now "included in" |
+| B2 | Prompts: "None" / "no pension" / "cash allowance" when the text says so, quoting it. On saved rows: `shareholding_none_if_absent`: "None" (confidence C) when the role pay was read from a remuneration report that was searched for the rule | shareholding_requirement 37.1% → **21.4%** |
+| B3 | ESEF tags: the company's own EBITDA tag, else `ProfitLossFromOperatingActivities` (note says "operating profit"); `combine --esef` and every new run. The prompt already had the operating-profit fallback | ebitda 10.1% → **8.0%** |
+| B4 | ESEF tags `NumberOfSharesOutstanding`, else `NumberOfSharesIssued` (note says which) | shares_outstanding 7.4% → 7.2% |
+| B5 | Prompt: year-end close wording in each language, pence/cents named; new fact `market_cap` (the cap the company states) gives the band without a price | re-run needed |
+| B6 | An empty answer for the financial facts, or a pay document with no amount at all, is asked once more of `LLM_FALLBACK_MODEL` (default Gemini 2.5 Pro on Vertex; "off" to switch off); the cache records the model and that the retry was made | re-run needed |
+| B7 | The GB annual report is already read whole (up to 150,000 words); the GB gaps (86 of 1,124 roles) are mostly members who left, whose single-figure row is all dashes: `no_pay_for_year` now reads such a row as no pay | about 20–40 GB roles |
+
+Still open in B: the 50-company test re-run (costs Firecrawl credits and AI calls), which measures B1, B5 and B6.
 
 ## Goal
 
@@ -300,7 +314,20 @@ These are estimates from the bucket analysis in section 1, not measurements. The
 
 ---
 
-## 6. Decisions needed
+## 6. Decisions
+
+**22 Nov 2026: decided on the client's behalf** (they would most likely decide the same; the "Decided" column), each reversible: a D1 or D4 rule the client rejects goes off with `RULES_OFF=<rule>` in `.env` and a `combine`.
+
+| # | Decided |
+|---|---|
+| D1 | **All four accepted**, each only where its condition holds (details below). On by default: `gleif_non_consolidating`, `zero_from_total`, `none_if_absent`; operating profit for EBITDA was already in the prompt, and now also from the ESEF tag. |
+| D2 | **Free official sources only, no paid licence for now.** The company's own figure first (B5), then exchange files whose terms allow download (Athens, SIX, Wiener Börse: terms to be read before C1/C2). No automated Euronext or LSE downloads (their terms forbid it). LSE Data Shop counts as banned "LSEG". Accept about 15–20% share prices missing; reopen if the client wants the last points. |
+| D3 | **market_cap_band is best effort.** The client's own list says "never used", so no paid source for it; it is derived where a price or a stated market cap exists. |
+| D4 | **A folded pension or benefit is "not applicable: included in <field>"** (rule `included_in_other`): not 0, not missing, the note names the column it is in. |
+| D5 | **Names from the registers allowed**: name, % and date only, from regulators whose terms allow automated reuse (the same names are already in the annual reports we store). CNMV (403 to automated access) left out. |
+| D6 | **Not ours to decide**: ask the client for read access to the CDP bucket; meanwhile widen our own remuneration report search (C7). |
+
+The questions as first put:
 
 | # | Question | Who |
 |---|---|---|
@@ -322,7 +349,7 @@ Each of these turns "not found" into an answer, so each moves the dashboard a lo
 | 3 | `ebitda` = operating profit when the report has no EBITDA, the note naming the measure | The field list says "EBITDA, else operating profit", but the two differ by depreciation and amortisation. The client should confirm they want operating profit under `ebitda` rather than a blank. | ebitda 11.3% → about 4% (estimate) | B3, not built |
 | 4 | `shareholding_requirement` = "None" when no requirement is stated | The field list says "record 'None' if absent"; our prompt says null. "None" is true only when a remuneration policy or full remuneration report was actually read and states none, so the rule would apply only then. | shareholding_requirement 37.4% → about 8% (estimate) | B2, not built |
 
-Once agreed: `SIGNED_OFF_RULES=gleif_non_consolidating,zero_from_total` in `.env`, then `python -m extractor.combine --into output/fy2025_runs_datapoints.csv --gleif` (items 1 and 2); items 3 and 4 go into the Phase B prompt changes.
+Decided 22 Nov (above): items 1, 2 and 4 are rules on saved rows, on by default; item 3 is in the prompt and the ESEF tag fill.
 
 ---
 
