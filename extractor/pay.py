@@ -163,8 +163,8 @@ def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
         # stronger model
         log.info("Pay: no amounts from %s in %s; asking %s", model, url, fallback)
         tried = True
-        again = llm.call_llm(prompt, user, RemunerationFacts, images=images or None, model=fallback)
-        if not no_amounts(again):
+        again = llm.ask_fallback(prompt, user, RemunerationFacts, images=images or None)
+        if again is not None and not no_amounts(again):
             facts, model = again, fallback
     CACHE_DIR.mkdir(exist_ok=True)
     path.write_text(json.dumps({"chunk_ids": ids, "prompt": prompt, "image_pages": shown,

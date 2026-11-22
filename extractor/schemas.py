@@ -144,18 +144,6 @@ class PriceFact(BaseModel):
     chunk_id: Optional[int]
 
 
-class MarketCapFact(BaseModel):
-    value: Optional[float]          # market capitalisation at fiscal year end, as printed
-    unit: Optional[Unit]
-    currency: Optional[str]
-    date: Optional[str]             # YYYY-MM-DD it is stated for, if given
-    quote: Optional[str]
-    chunk_id: Optional[int]
-
-
-NO_MARKET_CAP = MarketCapFact(value=None, unit=None, currency=None, date=None, quote=None, chunk_id=None)
-
-
 class DataPointFacts(BaseModel):
     """Everything the report (or a web page) can tell beyond the core figures."""
     revenue: NumberFact
@@ -192,8 +180,8 @@ class DataPointFacts(BaseModel):
     pension_type: TextFact
     benefits: TextFact              # company-level executive benefits
     shareholding_requirement: TextFact
-    # scraper version 6 (plan B5): answers cached before have none
-    market_cap: MarketCapFact = NO_MARKET_CAP
+    # No room for more: Vertex rejects this schema with one more nested fact (400
+    # INVALID_ARGUMENT; tried 22 Nov 2026 with a market cap fact).
 
 
 # --- executive pay, role grain (python -m extractor.datapoints) --------------------

@@ -40,9 +40,30 @@ def model_name() -> str | None:
 
 
 def fallback_model() -> str | None:
-    """The stronger model asked once more when an answer is empty (plan B6), or None."""
+    """The stronger model asked once more when an answer is empty (plan B6), or None
+    (none set, or it failed before in this run)."""
     m = load_settings().llm_fallback_model
-    return m if m and m != model_name() else None
+    return m if m and m != model_name() and m not in _broken_fallbacks else None
+
+
+_broken_fallbacks: set[str] = set()
+
+
+def ask_fallback(system_prompt: str, user_prompt: str, schema: type[T],
+                 images: list[bytes] | None = None) -> T | None:
+    """call_llm with the fallback model; None when it fails (a model the project has no
+    access to, a schema it rejects): the first answer then stands, and the model is not
+    asked again in this run."""
+    m = fallback_model()
+    if not m:
+        return None
+    try:
+        return call_llm(system_prompt, user_prompt, schema, images=images, model=m)
+    except (openai.NotFoundError, openai.BadRequestError, openai.PermissionDeniedError,
+            LLMRefusalError, StructuredOutputsUnsupportedError) as e:
+        log.warning("Fallback model %s failed (%s); not asked again in this run", m, str(e)[:150])
+        _broken_fallbacks.add(m)
+        return None
 
 
 @lru_cache(maxsize=1)

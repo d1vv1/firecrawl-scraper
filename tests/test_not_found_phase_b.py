@@ -136,30 +136,6 @@ def test_a_value_already_read_is_not_replaced_and_nothing_is_asked_without_gaps(
     assert not asked and [r["value"] for r in rows[3:]] == ["1", "1", "1"]
 
 
-# --- B5: the market cap the company states -------------------------------------------------------
-
-from extractor.apis import Found  # noqa: E402
-
-
-def test_a_stated_market_cap_gives_the_band_without_a_price():
-    chosen = {"market_cap_stated": Found("market_cap_stated", 2_500_000_000, unit="EUR",
-                                         period_end=FY, source="Annual report (PDF)", confidence="B",
-                                         note='PDF page 30: "Market capitalisation EUR 2.5bn"'),
-              "shares_outstanding": Found("shares_outstanding", 1000)}
-    band, why = dp.market_cap_band(chosen)
-    assert band and band.method == "DERIVED" and "as the company states it" in band.note
-    assert band.value == dp.market_cap_band({**chosen, "share_price": Found(
-        "share_price", 2_500_000, unit="EUR", period_end=FY)})[0].value
-    # no price and nothing stated: still not derived
-    assert dp.market_cap_band({"shares_outstanding": Found("shares_outstanding", 1000)})[0] is None
-
-
-def test_answers_cached_before_version_6_still_read():
-    from extractor.schemas import DataPointFacts
-    fields = {k: None for k in DataPointFacts.model_fields}
-    assert "market_cap" in fields and DataPointFacts.model_fields["market_cap"].default.value is None
-
-
 # --- B6: an empty answer asked once more of the stronger model ---------------------------------
 
 from extractor import llm  # noqa: E402
@@ -226,3 +202,18 @@ def test_a_row_of_dashes_is_no_pay_for_the_year():
     dp.refresh(rows)
     assert all(r["note"] == "not applicable: no pay for the year (the table row is all dashes)"
                for r in rows[1:])
+
+
+def test_a_failing_fallback_model_leaves_the_first_answer(monkeypatch, tmp_path):
+    monkeypatch.setattr(dp, "CACHE_DIR", tmp_path)
+    monkeypatch.setattr(llm, "model_name", lambda: "flash")
+    monkeypatch.setattr(llm, "fallback_model", lambda: "pro-x")
+    monkeypatch.setattr(llm, "_broken_fallbacks", set())
+
+    def fake(system, user, schema, images=None, model=None):
+        if model:   # a model the project has no access to
+            raise llm.LLMRefusalError("no such model")
+        return _empty_facts()
+    monkeypatch.setattr(llm, "call_llm", fake)
+    facts = dp.ask("Acme", "u", [Chunk(1, "t")], "w", "k2")
+    assert facts.revenue.value is None and "pro-x" in llm._broken_fallbacks

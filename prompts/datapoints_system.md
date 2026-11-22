@@ -90,11 +90,6 @@ Facts:
   chiusura", "cours de clôture", "slutkurs", "sluttkurs", "τιμή κλεισίματος".
   Give the currency of the quote: "GBp" or "pence" when the price is in
   pence, "USD cents" when in cents.
-- market_cap: the company's market capitalisation at the fiscal year end
-  as the report states it ("market capitalisation", "Marktkapitalisierung",
-  "capitalizzazione di borsa", "börsvärde", "markedsverdi",
-  "κεφαλαιοποίηση"), with its unit, currency and date. Never work it out
-  from the price and the share count yourself.
 - controlling_owner: the shareholder with 20% or more of the votes, or
   stated as the controlling / principal / majority owner, or the parent
   company. holder_type: private_equity (buyout and growth-equity funds and

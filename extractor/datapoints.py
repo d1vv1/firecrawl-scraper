@@ -706,8 +706,8 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
         # plan B6: an empty answer is asked once more of the stronger model
         log.info("Data points: no answer from %s for %s; asking %s", model, url, fallback)
         tried = True
-        again = llm.call_llm(prompt, user, DataPointFacts, model=fallback)
-        if not facts_empty(again, wanted):
+        again = llm.ask_fallback(prompt, user, DataPointFacts)
+        if again is not None and not facts_empty(again, wanted):
             facts, model = again, fallback
     CACHE_DIR.mkdir(exist_ok=True)
     path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted, "prompt": prompt,
@@ -847,13 +847,6 @@ def from_facts(facts: DataPointFacts, origin: Origin | Bundle, country: str | No
     if p.value is not None and p.currency:
         add("share_price", p.value, p, unit=p.currency, period=p.date or "", figure=p.value,
             extra=f"closing price {p.date}" if p.date else "closing price at year end")
-    mc = facts.market_cap
-    if mc.value is not None and mc.unit and mc.currency:
-        # not a field of its own: the market-cap band where no price was read (plan B5)
-        shown = printed_figure(mc.value, mc.unit, mc.quote)
-        add("market_cap_stated", full_value_quoted(mc.value, mc.unit, mc.quote), mc,
-            unit=iso_currency(mc.currency), period=mc.date or "", figure=shown,
-            extra=f"printed {fmt_number(shown)} {mc.unit}")
     for name in ("legal_name", "business_id", "other_names", "head_office_city", "ticker",
                  "isin", "exchange", "exchange_segment", "listing_date", "sub_sector",
                  "fiscal_year_end", "reporting_currency", "accounting_basis", "pension_type",
@@ -1822,15 +1815,11 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
     """Shares outstanding x year-end share price, banded in EUR (MARKET_CAP_BANDS_EUR).
     Returns (the band, or None with the reason)."""
     shares, price = chosen.get("shares_outstanding"), chosen.get("share_price")
-    stated = chosen.get("market_cap_stated")
-    if (not shares or not price) and stated:
-        # the market cap the company states (plan B5): the band without a price
-        shares, price = None, stated
-    elif not shares or not price:
+    if not shares or not price:
         missing = " and ".join(n for n, f in (("shares outstanding", shares), ("share price", price))
                                if not f)
         return None, f"not derived: no {missing}"
-    cap = float(shares.value) * float(price.value) if shares else float(price.value)
+    cap = float(shares.value) * float(price.value)
     in_eur, at = cap, ""
     # a year-end price read without its date: the report's fiscal year end dates it
     fye = getattr(chosen.get("fiscal_year_end"), "value", "") or ""
@@ -1851,12 +1840,6 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
         if not price.period_end:
             at += f"; the price has no date: the rate of the fiscal year end {date}"
     band = next(name for floor, name in MARKET_CAP_BANDS_EUR if in_eur >= floor)
-    if not shares:
-        return Found("market_cap_band", band, unit="", period_end=price.period_end or date,
-                     source="derived", endpoint=price.endpoint, method="DERIVED",
-                     confidence=price.confidence,
-                     note=f"market cap {in_eur:,.0f} EUR, as the company states it{at} "
-                          f"({price.source}: {clip(price.note, 120)})"), ""
     worst = min((shares, price), key=lambda f: CONFIDENCE_RANK[f.confidence])
     return Found("market_cap_band", band, unit="", period_end=price.period_end or date,
                  source="derived", endpoint=price.endpoint, method="DERIVED",

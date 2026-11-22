@@ -97,7 +97,8 @@ class Settings:
     vertex_location: str = "global"
     vertex_model: str = "google/gemini-2.5-flash"
     # Asked once more when the model's answer for the facts or the pay is empty (plan B6).
-    # Default on Vertex: Gemini 2.5 Pro; "off" or "none" switches the retry off.
+    # Default on Vertex: Gemini 3.1 Pro (preview; the project has no 2.5 Pro or 3 Pro);
+    # "off" or "none" switches the retry off.
     llm_fallback_model: str | None = None
 
     def require(self, *names: str) -> None:
@@ -131,7 +132,7 @@ def _fallback_model() -> str | None:
         return None
     if v:
         return v
-    return "google/gemini-2.5-pro" if (os.getenv("LLM_PROVIDER") or "").strip().lower() == "vertex" else None
+    return "google/gemini-3.1-pro-preview" if (os.getenv("LLM_PROVIDER") or "").strip().lower() == "vertex" else None
 
 
 def clean_name(legal_name: str) -> str:
