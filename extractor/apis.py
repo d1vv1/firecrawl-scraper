@@ -136,7 +136,7 @@ def gleif_parent(lei: str) -> Found | None:
     """The ultimate parent from GLEIF level 2: the parent's legal name; "none (top of
     group)" for NO_KNOWN_PERSON and NATURAL_PERSONS; for NON_CONSOLIDATING (no parent
     includes this company in its consolidated accounts), "none (no consolidating parent)"
-    once the client has signed the rule off (config.PENDING_RULES), else no value. Any
+    unless the rule is switched off (config.DECIDED_RULES, RULES_OFF), else no value. Any
     other exception (NON_PUBLIC, ...): no value, the reason in the note. None when GLEIF
     has neither a parent nor an exception.
 

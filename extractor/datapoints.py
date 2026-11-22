@@ -2672,8 +2672,8 @@ PAY_PARTS = ("base_salary", "sti_paid", "benefits_value", "pension_contribution"
 def zero_from_total(mine: dict[str, dict]) -> None:
     """A role whose stated total is the sum of the amounts read (base salary, STI, the
     others, and the LTI that fits, as check XF-02 adds them) within 0.5%, with no
-    benefits or no pension read: that part is 0. Needs the client's sign-off
-    (config.PENDING_RULES "zero_from_total"). `mine`: a role's rows by data point."""
+    benefits or no pension read: that part is 0. A decided rule (config.DECIDED_RULES
+    "zero_from_total"). `mine`: a role's rows by data point."""
     def amount(k):
         r = mine.get(k)
         try:
@@ -2708,6 +2708,60 @@ def no_pay_for_year(mine: dict[str, dict]) -> None:
     for k in pay.AMOUNTS:
         if k != "total_remuneration" and missing(mine.get(k)):
             mine[k]["note"] = "not applicable: no pay for the year (stated total 0)"
+
+
+# What an amount's "includes ..." names, for each part a table can fold into another.
+FOLDED = {"pension_contribution": re.compile(r"\b(pension|retirement|vorsorge|previdenz|pensjon|"
+                                             r"pensio|eläke|BVG|LPP)", re.I),
+          "benefits_value": re.compile(r"\b(benefit|fringe|in kind|sachbezüg|nebenleistung|"
+                                       r"benefici|avantages|förmåner|fordele|goder)", re.I)}
+_INCLUDES = re.compile(r"\bincludes ([^;]+)")
+
+
+def included_in_other(mine: dict[str, dict]) -> None:
+    """Decision D4: a pension or benefit the table folds into another amount ("pension and
+    social security" in one column; Italy's "benefici non monetari" with the pension in it)
+    is neither 0 nor missing. The empty part reads "not applicable: included in <field>",
+    when another amount of the role (not the total, which includes everything) says in its
+    note that it includes it. A decided rule ("included_in_other"). `mine`: a role's rows
+    by data point."""
+    for part, words in FOLDED.items():
+        if not missing(mine.get(part)):
+            continue
+        for k in pay.AMOUNTS:
+            r = mine.get(k)
+            if k in (part, "total_remuneration") or not r or not r["value"]:
+                continue
+            m = _INCLUDES.search(r["note"])
+            if m and words.search(m.group(1)):
+                mine[part]["note"] = f"not applicable: included in {k} ({clip(m.group(1), 80)})"
+                break
+
+
+NO_SHAREHOLDING_RULE = "None"
+PAY_DOCUMENT = re.compile(r"remuneration|compensation|vergütung|remunerazione|ersättning|"
+                          r"godtgjørelse|vederlag|palkitsemis|rémunération|retribuci", re.I)
+
+
+def shareholding_none_if_absent(rows: list[dict]) -> None:
+    """The client's rule for shareholding_requirement: "record 'None' if absent". Only
+    where its absence means something: the role pay was read from a remuneration report
+    (a document that sets out the executives' pay in full) and that report was searched
+    for the rule. The value then is "None", confidence C (an absence, not a quote), its
+    locator the report. A decided rule ("none_if_absent"). `rows`: a company's rows."""
+    sr = next((r for r in rows if r["grain"] == "company"
+               and r["data_point"] == "shareholding_requirement"), None)
+    if not missing(sr) or not PAY_DOCUMENT.search(sr["note"]):
+        return
+    pay_row = next((r for r in rows if r["grain"] == "role" and r["value"]
+                    and r["data_point"] in pay.AMOUNTS and PAY_DOCUMENT.search(r["source"])), None)
+    if not pay_row:
+        return
+    sr.update(value=NO_SHAREHOLDING_RULE, unit="", method="DERIVED", confidence="C",
+              source=pay_row["source"], endpoint=pay_row["endpoint"].split("#")[0],
+              period_end=pay_row["period_end"], retrieved_at=pay_row["retrieved_at"],
+              note=f"derived: no shareholding requirement in the remuneration report read "
+                   f"(the client's rule: 'None' if absent); {sr['note']}")
 
 
 def pay_currency_from_amounts(rows: list[dict]) -> None:
@@ -2777,6 +2831,8 @@ def refresh(rows: list[dict], gleif=None) -> list[dict]:
     ownership_from_holders(by)
     no_controlling_owner(by)
     pay_currency_from_amounts(rows)
+    if signed_off("none_if_absent"):
+        shareholding_none_if_absent(rows)
     band = by.get("market_cap_band")
     if band and not band["value"] and band["note"].startswith("not derived: market cap"):
         names = [f.name for f in fields(Found)]
@@ -2793,6 +2849,8 @@ def refresh(rows: list[dict], gleif=None) -> list[dict]:
         whole = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role}
         unit_named_wrongly(whole)
         no_pay_for_year(whole)
+        if signed_off("included_in_other"):
+            included_in_other(whole)
         if signed_off("zero_from_total"):
             zero_from_total(whole)
         no_variable_pay(whole)

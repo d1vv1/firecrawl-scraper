@@ -31,12 +31,12 @@ def _gleif(monkeypatch, parent, reason):
     monkeypatch.setattr(apis, "_gleif", fake)
 
 
-def test_non_consolidating_fills_the_ultimate_parent_only_once_signed_off(monkeypatch):
+def test_non_consolidating_fills_the_ultimate_parent_unless_switched_off(monkeypatch):
     _gleif(monkeypatch, None, "NON_CONSOLIDATING")
-    monkeypatch.setenv("SIGNED_OFF_RULES", "")
+    monkeypatch.setenv("RULES_OFF", "gleif_non_consolidating")
     f = apis.gleif_parent("X" * 20)
     assert f.value is None and f.note == "reporting exception: NON_CONSOLIDATING"
-    monkeypatch.setenv("SIGNED_OFF_RULES", "zero_from_total, gleif_non_consolidating")
+    monkeypatch.setenv("RULES_OFF", "zero_from_total")
     f = apis.gleif_parent("X" * 20)
     assert f.value == apis.NO_CONSOLIDATING_PARENT and f.confidence == "A"
     _gleif(monkeypatch, None, "NON_PUBLIC")
@@ -146,7 +146,6 @@ def _pay(**amounts):
 
 
 def test_benefits_and_pension_are_0_when_the_total_is_the_other_parts(monkeypatch):
-    monkeypatch.setenv("SIGNED_OFF_RULES", "zero_from_total")
     rows = _pay(base_salary="500000", sti_paid="200000", lti_vested="100000", total_remuneration="800000")
     dp.refresh(rows)
     by = _by(rows)
@@ -156,12 +155,11 @@ def test_benefits_and_pension_are_0_when_the_total_is_the_other_parts(monkeypatc
             in by[k]["note"]
 
 
-def test_no_zero_when_the_total_holds_more_or_before_sign_off(monkeypatch):
-    monkeypatch.setenv("SIGNED_OFF_RULES", "zero_from_total")
+def test_no_zero_when_the_total_holds_more_or_the_rule_is_off(monkeypatch):
     rows = _pay(base_salary="500000", sti_paid="200000", total_remuneration="710000")   # 1.4% more
     dp.refresh(rows)
     assert _by(rows)["pension_contribution"]["value"] == ""
-    monkeypatch.setenv("SIGNED_OFF_RULES", "")
+    monkeypatch.setenv("RULES_OFF", "zero_from_total")
     rows = _pay(base_salary="500000", sti_paid="200000", total_remuneration="700000")
     dp.refresh(rows)
     assert _by(rows)["pension_contribution"]["value"] == ""

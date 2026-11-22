@@ -32,27 +32,32 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 #    without a version: of the saved results, only the remaining-UK run has it).
 SCRAPER_VERSION = 5
 
-# Rules that fill a value the source does not print, and that the client must agree to
-# first (docs/not_found_reduction_plan.md, decision D1). Each stays off until its name is
-# in SIGNED_OFF_RULES (.env, comma-separated):
+# Rules that fill a value the source does not print (docs/not_found_reduction_plan.md,
+# decisions D1 and D4). Decided on 22 Nov 2026 on the client's behalf, by their own field
+# list ("record 0, not blank", "record 'None' if absent"), for them to confirm; each is on
+# unless its name is in RULES_OFF (.env, comma-separated), so one the client rejects is
+# switched off without a code change:
 #   gleif_non_consolidating  ultimate_parent "none (no consolidating parent)" from GLEIF's
 #                            reporting exception NON_CONSOLIDATING
 #   zero_from_total          a role's benefits or pension 0 when its stated total is the sum
 #                            of its other amounts
-PENDING_RULES = ("gleif_non_consolidating", "zero_from_total")
+#   none_if_absent           shareholding_requirement "None" when the remuneration report
+#                            was read and states no such rule
+#   included_in_other        a pension or benefit the table folds into another amount is
+#                            "not applicable: included in ..." (D4), not "not found"
+DECIDED_RULES = ("gleif_non_consolidating", "zero_from_total", "none_if_absent", "included_in_other")
 _env_loaded = False
 
 
 def signed_off(rule: str) -> bool:
-    """Has the client agreed to this rule (PENDING_RULES)? Read from the environment each
-    time (.env loaded once, not over a variable already set), so a test or a one-off run
-    can switch it on."""
+    """Is this rule (DECIDED_RULES) on? Read from the environment each time (.env loaded
+    once, not over a variable already set), so a test or a one-off run can switch it off."""
     global _env_loaded
     if not _env_loaded:
         load_dotenv(PROJECT_ROOT / ".env")
         _env_loaded = True
-    names = {n.strip() for n in os.environ.get("SIGNED_OFF_RULES", "").split(",")}
-    return rule in names
+    off = {n.strip() for n in os.environ.get("RULES_OFF", "").split(",")}
+    return rule in DECIDED_RULES and rule not in off
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000
