@@ -225,3 +225,12 @@ def test_a_failing_fallback_model_leaves_the_first_answer(monkeypatch, tmp_path)
     monkeypatch.setattr(llm, "call_llm", rejected)
     facts = dp.ask("Acme", "u", [Chunk(1, "t")], "w", "k3")
     assert facts.revenue.value is None and "pro-x" in llm._broken_fallbacks
+
+
+def test_a_zero_read_from_a_dash_or_none_in_another_language_is_in_its_quote():
+    from extractor.validate import states_none
+    for q in ("Nessuno", "η Εταιρεία δεν έχει θεσπίσει συνταξιοδοτικά προγράμματα",
+              "Pension | – |", "Jon Lewis 2025 – – –", "ningún plan de pensiones"):
+        assert states_none(q), q
+    for q in ("Pension||", "Salary 2024-2025 1,200", "Non-executive director fees 50,000"):
+        assert not states_none(q), q

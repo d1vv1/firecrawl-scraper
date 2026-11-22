@@ -1,6 +1,6 @@
 # Plan: priority fields under 3% not found
 
-*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: decisions made (22 Nov); Phase A done; Phase B in code (scraper version 6) and tested on 50 companies; neither applied to the combined file yet*
+*18 November 2026 · firecrawl-scraper (`python -m extractor.datapoints`) · status: decisions made (22 Nov); Phase A and B done, tested on 50 companies and applied to the combined file (22 Nov); Phase C next*
 
 ## Progress
 
@@ -49,7 +49,9 @@ The sign-off switch is gone since 22 Nov: the D1 rules are decided and on (see s
 
 The 50 are the worst companies, so the rates are far above the file's. Revenue and total assets lost values at C-Capital Holdings and SECO: the run now rejects their reports as another company's (the old values came from those same reports, so they were likely wrong), plus run-to-run misses at Helios Solar, Cykel AI (EBITDA) and Arzneiwerk (shares). Share price and the band stay the largest gap: Phase C's exchange files are still needed.
 
-Still open in B: the fallback model's effect (re-run the companies with an empty answer), and applying all of it to the combined file.
+**Applied to the combined file (22 Nov):** the 50 spliced in and `combine --gleif --esef` run over all 1,510. Missing on the whole file: ultimate_parent 25.4% → 2.2%, benefits_value 32.3% → 17.3%, pension_contribution 38.8% → 18.7%, shareholding_requirement 37.1% → 20.8%, ebitda 10.1% → 7.7%, share_price 45.2% → 44.8%, market_cap_band 47.8% → 46.5%. Hard fails 3,013 → 3,035 on 1,792 more values (improvement log 66).
+
+Still open in B: the fallback model's effect (re-run the companies with an empty answer).
 
 ## Goal
 

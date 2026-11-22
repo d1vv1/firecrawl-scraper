@@ -899,3 +899,33 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
   - Measure the fallback model.
   - Splice the 50 into the combined file and run `combine --gleif --esef` over it. Neither is done; the combined file is unchanged.
   - Fix Centrica's price by hand. Its report prints "1.4065 pence" for £1.4065.
+
+#### The combined file now (the 50 spliced in, Phase A and B rules applied)
+- `python -m extractor.combine --into output/fy2025_runs_datapoints.csv --gleif --esef output/not_found_phase_b_test_datapoints.csv`: 50 companies replaced. C-Capital Holdings kept its old rows because the run got under half the values: the run rejected its report as another company's. Its old values need checking.
+- Backup before the splice: the session scratchpad, `before_phase_b_splice/`.
+- Fixed with the splice: check CORE-02 (the value is in its quote) now takes a 0 from a dash cell or from "none" in Italian, Spanish, Portuguese or Greek ("Nessuno", "δεν έχει θεσπίσει"). Before the fix, Phase B's dash-as-0 values failed it.
+
+Missing priority-field values, whole file:
+
+| Field | Before | After |
+|---|---|---|
+| ultimate_parent | 25.4% | **2.2%** |
+| benefits_value | 32.3% | **17.3%** |
+| pension_contribution | 38.8% | **18.7%** |
+| shareholding_requirement | 37.1% | **20.8%** |
+| pay_currency | 4.4% | 0.3% |
+| controlling_owner / ownership_type | 12.8% / 12.9% | 8.0% / 8.1% |
+| base_salary | 12.8% | 11.4% |
+| ebitda | 10.1% | 7.7% |
+| share_price | 45.2% | 44.8% |
+| market_cap_band | 47.8% | 46.5% |
+
+| | Before | After |
+|---|---|---|
+| Filled values checked | 62,823 | 64,615 |
+| Values passing the checks | 58,334 (93%) | 60,077 (93%) |
+| Values failing a hard check | 3,013 | 3,035 |
+| Missing values (exceptions list) | 20,861 | 18,658 |
+
+- The 22 extra hard fails are in the 50 re-run companies. Pay figures that don't match their quote: BKW's Group Executive Board amounts look like the other year's column; a Banque Cantonale du Jura row; CMB.Tech's monthly salary was taken as annual. A 0 from an empty cell (CMB.Tech "Pension||") stays a fail: a blank cell is not a stated 0.
+- Share price and the market cap band are still the largest gaps, at about 45% missing. Phase C is next for them.
