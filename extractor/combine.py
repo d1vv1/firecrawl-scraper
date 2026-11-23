@@ -23,8 +23,10 @@ are on another machine. With no run given, only that and the scoring are done.
 
 import argparse
 import csv
+import datetime as dt
 import logging
 import os
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -111,6 +113,31 @@ def worse_blocks(old: list[dict], new: list[dict]) -> set[str]:
     return out
 
 
+OTHER_COMPANYS_REPORT = "OtherCompanysReport"
+# an old value dated this long before the run's fiscal year end is from another year
+KEEP_MAX_DAYS_BEFORE = 92
+
+
+def lost_by_rerun(old: dict, new: dict, fye: str = "") -> bool:
+    """A company fact the earlier run read and this run did not find (run-to-run misses,
+    Phase B test: Helios Solar's EBITDA, Arzneiwerk's shares): the old value stays. Not
+    when this run set the report aside as another company's (the old value likely came
+    from that same report: C-Capital, SECO), and not when the old value is dated in an
+    earlier year than the run's fiscal year end."""
+    if old["grain"] != "company" or new["value"] or not old.get("value"):
+        return False
+    if OTHER_COMPANYS_REPORT in new["note"]:
+        return False
+    end, when = fye[:10], (old.get("period_end") or "")[:10]
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", end) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", when):
+        try:
+            if (dt.date.fromisoformat(end) - dt.date.fromisoformat(when)).days > KEEP_MAX_DAYS_BEFORE:
+                return False
+        except ValueError:
+            pass
+    return True
+
+
 def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
                   ) -> tuple[list[dict], set[Key]]:
     """A company's rows after a run: the run's, except where the run did not collect a
@@ -137,6 +164,7 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         rest, kept_rest = merge_company([r for r in old if r["grain"] != "role"],
                                         [r for r in new if r["grain"] != "role"], keep_better)
         return rest + roles, kept_rest | ({key(r) for r in old_roles} - filled_keys)
+    fye = next((r["value"] for r in new if r["data_point"] == "fiscal_year_end" and r["value"]), "")
     for r in new:
         if key(r) in kept_worse:
             out.append(r)
@@ -146,7 +174,8 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         o = before.get(key(r))
         # a value entered by hand (manual_prices) stays unless the run read one itself
         if o and o.get("value") and (r["note"].startswith(NOT_COLLECTED)
-                                     or (o.get("method") == "MANUAL" and not r["value"])):
+                                     or (o.get("method") == "MANUAL" and not r["value"])
+                                     or lost_by_rerun(o, r, fye)):
             out.append(o)
             kept.add(key(r))
         else:

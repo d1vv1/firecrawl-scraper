@@ -95,3 +95,18 @@ def test_a_later_run_that_finds_no_price_keeps_the_one_entered_by_hand():
     new[0]["value"] = "21"
     rows, _ = combine.merge_company(old, new)
     assert rows[0]["value"] == "21"
+
+
+def test_a_rerun_that_misses_a_fact_keeps_the_old_value_unless_the_report_was_anothers():
+    fye = _row("a", "fiscal_year_end", "2025-12-31")
+    old = [_row("a", "revenue", "100") | {"period_end": "2025-12-31"},
+           _row("a", "ebitda", "9") | {"period_end": "2024-12-31"}, fye]
+    new = [_row("a", "revenue", note="not found in: Annual report (PDF)"),
+           _row("a", "ebitda", note="not found in: Annual report (PDF)"), fye]
+    rows, kept = combine.merge_company(old, new, keep_better=False)
+    # revenue stays; the 2024 EBITDA is from another year and goes
+    assert [r["value"] for r in rows] == ["100", "", "2025-12-31"]
+    other = [r | {"note": "not found: the annual report was not read (OtherCompanysReport: ...)"}
+             for r in new[:2]] + [fye]
+    rows, _ = combine.merge_company(old, other, keep_better=False)
+    assert [r["value"] for r in rows[:2]] == ["", ""]

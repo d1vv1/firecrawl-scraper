@@ -187,10 +187,78 @@ def build(batch: str, queue: Path, out: Path, tracker_path: Path = TRACKER,
     return out_rows
 
 
+# The not-found plan's priority fields (docs/not_found_reduction_plan.md, Goal)
+PRIORITY = ("ebitda", "revenue", "total_assets", "shares_outstanding", "total_remuneration",
+            "base_salary", "benefits_value", "pension_contribution", "pay_currency",
+            "pension_type", "benefits", "shareholding_requirement", "largest_holders",
+            "controlling_owner", "controlling_owner_name", "ownership_type", "pe_stake_5pct",
+            "ultimate_parent", "share_price", "market_cap_band")
+
+
+def missing_priority(rows: list[dict]) -> int:
+    return sum(1 for r in rows if r["data_point"] in PRIORITY and not r["value"]
+               and not r["note"].lower().startswith(("not applicable", "not collected")))
+
+
+def from_combined(into: Path, out: Path, versions: set[str], limit: int | None = None,
+                  bucket: bool = True) -> list[dict]:
+    """Phase D's list straight from the combined file (the 14 Nov queue is out of date):
+    the companies last run at one of `versions` that still miss a priority field, most
+    missing first, each for a full re-run ("all": they missed every prompt fix since),
+    with the bucket's FY2025 report links. merge_company keeps a value the re-run misses."""
+    per = defaultdict(list)
+    with open(into, encoding="utf-8-sig", newline="") as fh:
+        for r in csv.DictReader(fh):
+            per[r["company_id"]].append(r)
+    match = None
+    if bucket:
+        gcs.sync()
+        match = gcs.Matcher(gcs.records())
+    picked = []
+    for cid, rows in per.items():
+        version = max((r.get("scraper_version") or "0" for r in rows), key=lambda v: int(v) if v.isdigit() else 0)
+        n = missing_priority(rows)
+        if version in versions and n:
+            picked.append((n, cid, rows))
+    picked.sort(key=lambda x: (-x[0], x[1]))
+    out_rows = []
+    for n, cid, rows in picked[:limit]:
+        v = {r["data_point"]: r["value"] for r in rows if r["grain"] == "company"}
+        first = rows[0]
+        lei = first.get("lei") or v.get("lei", "")
+        website = v.get("website", "")
+        if website and not website.startswith("http"):
+            website = "https://" + website
+        rec, how = (match(cid, first["company_name"], first["country"], v.get("isin", ""), lei)
+                    if match else (None, "bucket not used"))
+        docs = gcs.documents(rec) if rec else {"annual": None, "remuneration": None}
+        out_rows.append({
+            "company_id": cid, "company_name": first["company_name"], "country": first["country"],
+            "lei": lei, "isin": v.get("isin", ""), "website": website,
+            "annual_report_url": docs["annual"] or "", "remuneration_report_url": docs["remuneration"] or "",
+            "run_required": "", "fields": "all", "field_count": n,
+            "buckets": f"version {max(r.get('scraper_version') or '0' for r in rows)}",
+            "before_run": "", "tracker_id": "",
+            "bucket_company_id": rec["company_id"] if rec else "",
+            "bucket_match": (how + ": " + ", ".join(k for k, x in docs.items() if x)) if rec else how,
+        })
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", encoding="utf-8-sig", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS)
+        w.writeheader()
+        w.writerows(out_rows)
+    return out_rows
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m extractor.rerun_list",
                                 description="Targeted re-run input for one batch of the re-run queue")
-    p.add_argument("batch", help="Batch (region) in the queue: Nordics, UK, DACH, Benelux, ...")
+    p.add_argument("batch", help="Batch (region) in the queue: Nordics, UK, DACH, Benelux, ...; "
+                   "with --from-combined, a name for the list")
+    p.add_argument("--from-combined", type=Path, metavar="CSV",
+                   help="Build the list from this combined file instead of the queue (Phase D)")
+    p.add_argument("--versions", default="0,1,2", help="With --from-combined: scraper versions to re-run")
+    p.add_argument("--limit", type=int, help="With --from-combined: at most this many companies")
     p.add_argument("--queue", type=Path, default=QUEUE)
     p.add_argument("--out", type=Path)
     p.add_argument("--tracker", type=Path, default=TRACKER)
@@ -198,7 +266,11 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     out = args.out or PROJECT_ROOT / "data" / f"rerun_{slug(args.batch).replace('-', '_')}.csv"
     try:
-        rows = build(args.batch, args.queue, out, args.tracker, bucket=not args.no_bucket)
+        if args.from_combined:
+            rows = from_combined(args.from_combined, out, set(args.versions.split(",")),
+                                 args.limit, bucket=not args.no_bucket)
+        else:
+            rows = build(args.batch, args.queue, out, args.tracker, bucket=not args.no_bucket)
     except (OSError, ValueError, KeyError, gcs.GcsError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 1
