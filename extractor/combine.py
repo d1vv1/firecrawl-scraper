@@ -144,7 +144,9 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         if r["grain"] == "role" and roles_skipped:
             continue
         o = before.get(key(r))
-        if r["note"].startswith(NOT_COLLECTED) and o and o.get("value"):
+        # a value entered by hand (manual_prices) stays unless the run read one itself
+        if o and o.get("value") and (r["note"].startswith(NOT_COLLECTED)
+                                     or (o.get("method") == "MANUAL" and not r["value"])):
             out.append(o)
             kept.add(key(r))
         else:

@@ -63,6 +63,13 @@ Still open in B: the fallback model's effect (re-run the companies with an empty
 
 So none of the free exchange sources that D2 allowed can be automated. Missing share prices in the combined file: GB 121, IT 95, GR 82, DE 32, ES 29, BE 23, CH 21, NO 12, PT 12, NL 11, AT 7, SE 5, FI 2: 452 in all, with market_cap_band following them. Closing that gap now needs one of: a written licence (D2 said to reopen if the client wants the last points), written consent from Athens / SIX, or entry by hand from the companies' own share pages.
 
+**Prices by hand (chosen 23 Nov).** `python -m extractor.manual_prices build` writes `output/manual_share_prices.csv`: the 452 companies with no share price, with ISIN, ticker, exchange, fiscal year end and website, and columns to fill in (share_price, currency, price_date, source_url, entered_by). 35 of them say "skip": their values were read from an older report, so they need the FY2025 report first. `python -m extractor.manual_prices load output/manual_share_prices.csv` checks each filled row and refuses it if:
+- the date is after the fiscal year end or more than 31 days before it;
+- the currency is not ISO 4217 (pence are divided by 100);
+- there is no http(s) source.
+
+Accepted rows are written as method MANUAL, confidence B, with the page as endpoint. The current rules then run, so the market-cap band is derived from the new price. A price that a run read itself is replaced only with `--replace`, and a later run that finds no price keeps the one entered by hand. Tests: `tests/test_manual_prices.py`.
+
 C7 sized: of the 1,848 priority pay values missing for executive roles, 250 (84 companies) sit in role rows read from the annual report at companies whose remuneration report *was* read (an "Executive Directors" or "Amministratori" total from the notes). The "remuneration report not read" label overstates the search gap; a wider search is a smaller lever than the plan assumed.
 
 ## Goal

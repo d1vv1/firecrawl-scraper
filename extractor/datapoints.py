@@ -138,7 +138,7 @@ LISTED_REPORTS_ONLY = {"pension_type", "benefits", "shareholding_requirement"}
 MARKET_CAP_BANDS_EUR = [(1_000_000_000, "large"), (150_000_000, "mid"), (0, "small")]
 
 CONFIDENCE_RANK = {"A": 3, "B": 2, "C": 1, "": 0}
-METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
+METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "MANUAL": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
 
 DP_DIR = OUTPUT_DIR / "datapoints"
 # A report up to this long is read whole. The keyword pick below showed the AI a median 14%
@@ -2932,7 +2932,11 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     if signed_off("none_if_absent"):
         shareholding_none_if_absent(rows)
     band = by.get("market_cap_band")
-    if band and not band["value"] and band["note"].startswith("not derived: market cap"):
+    # derived again when only the euro rate was missing, or an input has come since (a share
+    # price entered by hand: manual_prices)
+    if band and not band["value"] and (band["note"].startswith("not derived: market cap") or (
+            band["note"].startswith("not derived:")
+            and all(by.get(k, {}).get("value") for k in ("shares_outstanding", "share_price")))):
         names = [f.name for f in fields(Found)]
         chosen = {k: Found(**{n: by[k][n] for n in names if n in by[k]})
                   for k in ("shares_outstanding", "share_price", "fiscal_year_end")

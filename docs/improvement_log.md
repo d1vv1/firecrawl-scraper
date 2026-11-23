@@ -929,3 +929,19 @@ Missing priority-field values, whole file:
 
 - The 22 extra hard fails are in the 50 re-run companies. Pay figures that don't match their quote: BKW's Group Executive Board amounts look like the other year's column; a Banque Cantonale du Jura row; CMB.Tech's monthly salary was taken as annual. A 0 from an empty cell (CMB.Tech "Pension||") stays a fail: a blank cell is not a stated 0.
 - Share price and the market cap band are still the largest gaps, at about 45% missing. Phase C is next for them.
+
+---
+
+### 23 November 2026: not-found plan, Phase C started (branch `not-found-phase-c`)
+
+#### 67. Exchange terms read; share prices by hand
+- **Terms first, as decision D2 requires.** No free exchange source can be automated:
+  - Athens (now Euronext Athens): personal use only, no bots or scripts, no commercial use. Its closing-price files for Dec 2025 are no longer served.
+  - SIX: no reproduction or use "for public or commercial purposes without the prior written consent".
+  - Wiener Börse: sells price data to professional users, and its history is adjusted for corporate actions. Only 7 Austrian prices are missing, so those are done by hand.
+- **Prices by hand:** `extractor/manual_prices.py`.
+  - `build` lists the 452 companies with no share price in `output/manual_share_prices.csv`: GB 121, IT 95, GR 82, DE 32, ES 29, BE 23, CH 21, others 49. Each row has its ISIN, ticker, exchange, fiscal year end and website. 35 are marked "skip" because their values come from an older report.
+  - `load` checks each filled row (date within 31 days before the fiscal year end, ISO currency or pence, an http(s) source). It writes accepted rows as method MANUAL, confidence B, and the market-cap band is then derived from them.
+  - The band is now also derived again when its missing input arrives later, not only when the euro rate was missing.
+  - `combine` keeps a MANUAL value when a later run finds none.
+- **C7 sized:** 250 of the 1,848 missing priority pay values for executive roles are in annual-report role rows at companies whose remuneration report was read. The "remuneration report not read" label overstates the gap a wider search would close.
