@@ -53,6 +53,18 @@ The 50 are the worst companies, so the rates are far above the file's. Revenue a
 
 Still open in B: the fallback model's effect (re-run the companies with an empty answer).
 
+**23 Nov 2026, Phase C started (branch `not-found-phase-c`): terms read first, as D2 requires.**
+
+| # | Source | Finding (read 23 Nov) | Verdict |
+|---|---|---|---|
+| C1 | Athens (now `athens.euronext.com`) closing-price files | Terms of use: a licence "solely for your personal information, strictly prohibiting the commercial use of the Content"; no "bots or other automated methods", no "scripts, robots ... to scrape the Webpages or otherwise copy the Content". The page also serves only recent days: the Dec 2025 files return 404 | **Blocked** |
+| C2 | SIX historical prices | Terms: "Reproduction, transmission ... or use of the SIX Swiss Exchange Ltd website, in whole or in part, for public or commercial purposes without the prior written consent of the SIX Swiss Exchange Ltd is prohibited." | **Blocked** without written consent |
+| C2 | Wiener Börse history | No reuse clause found in the public disclaimer, but the exchange sells price data to professional users, and its history is adjusted for corporate actions. Only 7 AT prices are missing | Not worth automating: **do the 7 by hand** |
+
+So none of the free exchange sources that D2 allowed can be automated. Missing share prices in the combined file: GB 121, IT 95, GR 82, DE 32, ES 29, BE 23, CH 21, NO 12, PT 12, NL 11, AT 7, SE 5, FI 2: 452 in all, with market_cap_band following them. Closing that gap now needs one of: a written licence (D2 said to reopen if the client wants the last points), written consent from Athens / SIX, or entry by hand from the companies' own share pages.
+
+C7 sized: of the 1,848 priority pay values missing for executive roles, 250 (84 companies) sit in role rows read from the annual report at companies whose remuneration report *was* read (an "Executive Directors" or "Amministratori" total from the notes). The "remuneration report not read" label overstates the search gap; a wider search is a smaller lever than the plan assumed.
+
 ## Goal
 
 Bring the dashboard's "not found" rate under 3% for these fields (priority 0 is highest):
