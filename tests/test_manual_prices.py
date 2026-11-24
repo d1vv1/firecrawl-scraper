@@ -155,3 +155,15 @@ def test_a_saved_uk_gb_mismatch_is_taken_back():
     dp.country_alias_not_a_mismatch(rows)
     assert [(r["confidence"], r["note"]) for r in rows] == [
         ("B", 'PDF page 3: "Revenue 1"'), ("C", '"EBITDA 2" (quote not found verbatim)')]
+
+
+def test_a_value_read_from_a_bucket_file_gets_its_browser_address():
+    from extractor import gcs
+    local = gcs.local_uri("gs://bkt/uk/gb/a/fy2025/A B.pdf") + "#page=3"
+    url = gcs.browser_url(local)
+    assert url == "https://storage.cloud.google.com/bkt/uk/gb/a/fy2025/A%20B.pdf#page=3"
+    assert gcs.local_for(url) == local.split("#")[0]
+    assert gcs.browser_url("https://x.com/a.pdf#page=2") == "https://x.com/a.pdf#page=2"
+    rows = [_row("a", "revenue", "1") | {"endpoint": local}]
+    dp.refresh(rows)
+    assert rows[0]["endpoint"] == url

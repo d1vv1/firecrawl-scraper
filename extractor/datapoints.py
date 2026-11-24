@@ -2965,6 +2965,8 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     # a group role read from two documents; a table's accounting line taken for a person
     gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
     rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
+    for r in rows:                       # a bucket file: its browser address, not a local path
+        r["endpoint"] = gcs.browser_url(r["endpoint"])
     iso_codes(rows)
     country_alias_not_a_mismatch(rows)
     no_future_year_end(rows)

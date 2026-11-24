@@ -31,6 +31,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import gcs
 from .config import CACHE_DIR, OUTPUT_DIR
 from .datapoints import MARKET_CAP_BANDS_EUR, OWNER_CATEGORY, OWNERSHIP_TYPE
 from .scraper import markdown_to_pages
@@ -261,6 +262,9 @@ class Sources:
 
     def _load(self, url: str) -> dict[int, str] | None:
         variants = {url, url.rstrip("/")}
+        local = gcs.local_for(url)          # a bucket file: cached under its file: URI
+        if local:
+            variants.add(local)
         for u in variants:
             h = hashlib.sha1(u.encode()).hexdigest()[:16]
             for path in list(self.cache.glob(f"*_doc_{h}.md")) + list(self.cache.glob(f"*_sec_{h}.md")):

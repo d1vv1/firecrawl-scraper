@@ -194,6 +194,26 @@ def local_uri(uri: str) -> str:
     return local_path(uri).resolve().as_uri()
 
 
+# A bucket object's address in the browser (signed in with read access): the endpoint of
+# a value read from a bucket file, not this machine's file: path (CORE-01 needs http(s))
+BROWSER = "https://storage.cloud.google.com/"
+_LOCAL = re.compile(r"^file:/{2,3}.*?/cache/gcs/objects/(.+)$", re.I)
+
+
+def browser_url(endpoint: str) -> str:
+    """file:///.../cache/gcs/objects/bucket/a/b%20c.pdf#page=3 ->
+    https://storage.cloud.google.com/bucket/a/b%20c.pdf#page=3; anything else unchanged."""
+    m = _LOCAL.match(endpoint or "")
+    return BROWSER + m.group(1) if m else endpoint
+
+
+def local_for(url: str) -> str | None:
+    """The browser address -> the file: URI the run read it from (None if not one)."""
+    if not (url or "").startswith(BROWSER):
+        return None
+    return local_uri("gs://" + url[len(BROWSER):].split("#")[0])
+
+
 def fetch(uri: str) -> Path:
     """Download a bucket object once; the cached copy is reused."""
     path = local_path(uri)
