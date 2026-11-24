@@ -637,6 +637,13 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
                          f"{fmt_number(broad)} {rev.unit} (ifrs-full:RevenueAndOperatingIncome)")
     period = result.get("period_end_date") or ""
     at = result.get("extracted_at") or ""
+    today = at[:10] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", at[:10]) else dt.date.today().isoformat()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", period[:10]) and period[:10] > today:
+        # a year that has not ended yet (Nestlé's Annual Review 2025 gave 2026-12-31):
+        # not the year of the figures; neither the year nor its end is stored
+        log.warning("Report period end %s is after the day it was read (%s); not used", period, today)
+        result = {**result, "period_end_date": None, "fiscal_year": None}
+        period = ""
     money = next((f for f in out), None)
     if money is None and origin is not None:
         # no revenue or total assets read (a pre-revenue company, a bank): the year and its
@@ -2900,6 +2907,28 @@ def price_in_hundredths(unit: str) -> str | None:
     return "GBP" if unit.lower() in ("pence", "p") else None
 
 
+FUTURE_YEAR_END = "not used: the period end read ({}) is after the day it was read"
+
+
+def no_future_year_end(rows: list[dict]) -> None:
+    """A fiscal year end after the day the values were read is a year that had not ended
+    (Nestlé's Annual Review 2025 gave 2026-12-31; Bellway, Smiths, Volution 2026-07-31):
+    the year end and the fiscal year are cleared, the note saying why."""
+    by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
+    end = by.get("fiscal_year_end")
+    if not end or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", end["value"][:10]):
+        return
+    read = (end.get("retrieved_at") or "")[:10]
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", read) or end["value"][:10] <= read:
+        return
+    day = end["value"][:10]
+    note = FUTURE_YEAR_END.format(day)
+    year = by.get("fiscal_year")
+    if year and year["value"] and year["period_end"][:10] == day:
+        year.update(value="", unit="", period_end="", method="", confidence="", note=note)
+    end.update(value="", unit="", period_end="", method="", confidence="", note=note)
+
+
 def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2914,6 +2943,7 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
     rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
     iso_codes(rows)
+    no_future_year_end(rows)
     fiscal_year_from_its_end(rows)
     totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
     if totals:

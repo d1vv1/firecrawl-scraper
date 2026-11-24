@@ -126,9 +126,12 @@ def lost_by_rerun(old: dict, new: dict, fye: str = "") -> bool:
     earlier year than the run's fiscal year end."""
     if old["grain"] != "company" or new["value"] or not old.get("value"):
         return False
-    if OTHER_COMPANYS_REPORT in new["note"]:
+    if OTHER_COMPANYS_REPORT in new["note"] and (old.get("source") or "").startswith("Annual report"):
+        # Hidong Estate: the bucket's file was another company's; its Companies House values stay
         return False
     end, when = fye[:10], (old.get("period_end") or "")[:10]
+    if end > dt.date.today().isoformat():
+        end = ""                        # a year that has not ended (Nestlé's 2026-12-31): no guide
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", end) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", when):
         try:
             if (dt.date.fromisoformat(end) - dt.date.fromisoformat(when)).days > KEEP_MAX_DAYS_BEFORE:
