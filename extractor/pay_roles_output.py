@@ -43,8 +43,8 @@ REVIEW_COLUMNS = ["company_id", "company_name", "pay_line_id", "role_title", "ki
                   "detail", "gap"]
 
 MONEY = [n for n, f in FIELDS.items() if f.cell.__name__ in ("PayCell", "LtiCell")]
-TOTAL_PARTS = ["base_salary", "committee_fees", "benefits", "pension", "pension_allowance",
-               "sti_paid", "sti_deferred"]
+TOTAL_PARTS = ["base_salary", "committee_fees", "meeting_fees", "benefits", "pension",
+               "pension_allowance", "sti_paid", "sti_deferred", "other_pay"]
 TOTAL_TOLERANCE = 0.005          # 0.5% of the total, or 1 printed unit, for rounding
 TOKEN_SALARY_MAX = float(os.getenv("PAY_ROLES_TOKEN_SALARY_MAX", "1000"))   # in currency units
 

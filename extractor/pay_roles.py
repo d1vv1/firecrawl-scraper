@@ -80,7 +80,7 @@ class Request:
     fields: list[str]
     roles: list[str]                 # role_details (mode role), else []
     roles_spec: str
-    images: bool
+    images: str                      # auto (pages with broken tables) | on | off
     ref_path: str
     cdp_roles: list[tuple[str, str]] | None = None
     from_run: str = ""               # gap-fill: the run whose flagged cells are asked again
@@ -233,6 +233,59 @@ def map_role(ref: ref_roles.RefRoles, line: dict, country: str,
             "title_flags": [], **({"note": note} if note else {})}
 
 
+_ROW = re.compile(r"^\s*\|(.*)\|\s*$")
+_SEPARATOR = re.compile(r"^\s*\|?\s*:?-{3,}")
+_FIGURE = re.compile(r"^[\s(−\-]*\d[\d\s.,]*\)?\s*%?$")
+_FRAGMENT = re.compile(r"^[^\W\d_]{1,3}$")
+_YEAR_CELL = re.compile(r"^(19|20)\d{2}(/\d{2})?$")     # "2025 | 2024" is a real header
+
+
+def _cells(line: str) -> list[str] | None:
+    m = _ROW.match(line)
+    return [c.strip().strip("*") for c in m.group(1).split("|")] if m else None
+
+
+def broken_tables(text: str) -> list[str]:
+    """Signs that the PDF-to-markdown conversion damaged a table on this page: a row that is
+    only the wrapped rest of a label ("|g||2024|138|"), a header row that holds figures (the
+    second part of a cut table), or two tables in a row with the same columns."""
+    lines = (text or "").splitlines()
+    out: list[str] = []
+    blocks: list[tuple[int, int]] = []          # (last line index, columns) of each table
+    for i, line in enumerate(lines):
+        cells = _cells(line)
+        if cells is None or _SEPARATOR.match(line):
+            continue
+        filled = [c for c in cells if c]
+        label = next((c for c in cells if c), "")
+        if label and _FRAGMENT.match(label) and len(filled) < len(cells) - 1:
+            out.append(f"fragment row: {line.strip()[:60]}")
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if _SEPARATOR.match(nxt) and filled:
+            # whole years are a normal header; split ones ("20 | 25", "202 | 5") are not
+            figures = sum(1 for c in filled if _FIGURE.match(c) and not _YEAR_CELL.match(c))
+            if figures >= max(2, len(filled) // 2):
+                out.append(f"figures in a header row: {line.strip()[:60]}")
+            if blocks and i - blocks[-1][0] <= 3 and blocks[-1][1] == len(cells):
+                out.append(f"table cut in two before: {line.strip()[:60]}")
+        if blocks and blocks[-1][0] == i - 1:
+            blocks[-1] = (i, blocks[-1][1])
+        else:
+            blocks.append((i, len(cells)))
+    return out
+
+
+def image_pages(mode: str, chunks, origin) -> list[int]:
+    """The PDF pages to attach as images: none (off), the pay-table pages (on), or the
+    pay-table pages whose tables the conversion damaged (auto). Images were not better on
+    clean tables in earlier tests (pay.py), so auto keeps them for the broken ones."""
+    if mode == "off" or not origin.pdf or not Path(origin.pdf).exists():
+        return []
+    texts = origin.page_text()
+    pages = pay.table_pages(chunks, texts)
+    return pages if mode == "on" else [p for p in pages if broken_tables(texts.get(p, ""))]
+
+
 def build_request(c: Company, req: Request, ref: ref_roles.RefRoles,
                   gaps: list[prompts.Gap] | None = None):
     """(origin, chunks, system prompt, user message, page numbers shown, request key)."""
@@ -246,8 +299,7 @@ def build_request(c: Company, req: Request, ref: ref_roles.RefRoles,
                                 what="the company's remuneration report", chunks=chunks,
                                 ref=ref, country=c.country, selected=req.roles or None,
                                 cdp_roles=req.cdp_roles, gaps=gaps)
-    shown = (pay.table_pages(chunks, origin.page_text())
-             if req.images and origin.pdf and Path(origin.pdf).exists() else [])
+    shown = image_pages(req.images, chunks, origin)
     if shown:
         user += pay.IMAGE_NOTE.format(pages=", ".join(map(str, shown)))
     key = prompts.request_key(system, user + f"|images:{shown}", ref.version)
@@ -541,8 +593,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--retry-failed", action="store_true")
     p.add_argument("--dry-run", action="store_true",
                    help="find and read the reports and build the prompts, but ask no AI")
-    p.add_argument("--images", choices=["on", "off"], default=None,
-                   help="attach pay-table page images (default: PAY_PAGE_IMAGES, as pay.py)")
+    p.add_argument("--images", choices=["auto", "on", "off"], default="auto",
+                   help="attach pay-table page images: auto (only pages whose tables the PDF "
+                        "conversion damaged; default), on (all pay-table pages) or off")
     p.add_argument("--ref-roles", default=os.getenv("REF_ROLES_XLSX") or "",
                    help="the role workbook (default: REF_ROLES_XLSX or ../../Reports/ref_roles.xlsx)")
     p.add_argument("--cdp-repo", type=Path,
@@ -582,7 +635,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         from . import ocr
         ocr.ENABLED = False     # OCR reads scans with the AI: a dry run reports them instead
-    images = pay.PAGE_IMAGES if args.images is None else args.images == "on"
+    images = args.images
     req = Request(args.mode, fields, roles, args.roles if args.mode == "role" else "", images,
                   str(ref.path), None if gapfill else load_cdp_roles(args.cdp_repo, ref),
                   args.from_run)

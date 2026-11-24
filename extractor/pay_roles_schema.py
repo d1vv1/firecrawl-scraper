@@ -72,6 +72,7 @@ class Field:
 FIELDS: dict[str, Field] = {f.name: f for f in [
     Field("base_salary", PayCell, ("base_salary",)),
     Field("committee_fees", PayCell, ()),
+    Field("meeting_fees", PayCell, ()),
     Field("benefits", PayCell, ("benefits_value",)),
     Field("pension", PayCell, ("pension_contribution",)),
     Field("pension_allowance", PayCell, ()),
@@ -79,6 +80,7 @@ FIELDS: dict[str, Field] = {f.name: f for f in [
     Field("sti_deferred", PayCell, ()),
     Field("lti_vested", LtiCell, ("lti_vested",)),
     Field("lti_granted", LtiCell, ("lti_granted",)),
+    Field("other_pay", PayCell, ()),
     Field("total", PayCell, ("total_remuneration",)),
     Field("sti_target", TargetCell, ("sti_target_value", "sti_target_basis")),
     Field("sti_max", TargetCell, ("sti_max_value", "sti_max_basis")),
@@ -118,7 +120,9 @@ def line_model(fields: list[str]) -> type[BaseModel]:
     """A pay line with these pay fields (and the line fields every line has)."""
     fields = check_fields(fields)
     spec = dict(LINE_FIELDS)
-    spec.update({n: (FIELDS[n].cell, ...) for n in fields})
+    # a field the text does not give is null, not an object of nulls: an answer of 30 lines
+    # with 14 empty objects each ran past the output limit in the pilot (Sydbank)
+    spec.update({n: (Optional[FIELDS[n].cell], ...) for n in fields})
     return create_model("PayLine", **spec)
 
 

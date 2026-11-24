@@ -19,6 +19,11 @@ remuneration, nomination or other committee), as one printed figure. If
 the table gives one column per committee and no total, give null and say
 so in `includes`; never add them up.
 
+### meeting_fees
+For a board member: fees paid per board or committee meeting attended
+(Finnish "kokouspalkkiot", Swedish "mötesarvode"), as one printed figure;
+null if the table has none.
+
 ### benefits
 The value of other benefits for the year (car, insurance, housing,
 benefits in kind), as printed.
@@ -60,6 +65,13 @@ money: then `unit` "units" and `currency_printed` null),
 The long-term incentive granted (awarded) in the year, at its grant value
 as printed. Reports often give both vested and granted: fill both. `form`
 as for lti_vested.
+
+### other_pay
+A component the table puts into the total that is none of the fields
+above (e.g. travel allowance, sign-on or severance pay, a holiday-pay
+adjustment, "other remuneration"), as one printed figure; say in
+`includes` what it is. If there are several such columns and no subtotal,
+give the largest and name the others in `includes`; never add them.
 
 ### total
 The total remuneration as the company states it. Never add it up yourself;

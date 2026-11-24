@@ -220,6 +220,58 @@ class TestMapRole:
         assert m["mapping_source"] == "unmapped" and "wizard" in m["note"]
 
 
+GOODTECH_PAGE = """| Name | Role | Year | Fee | Committee | Other | Total |
+|---|---|---|---|---|---|---|
+|Mimi Kristine Berdal|Chairerson|2025|550|30|82|**662**|
+||p|2024|535|10||**545**|
+|Benedicte Willumsen Grie|Board member|2025|275|35||**310**|
+|g||2024|138|||**138**|"""
+
+CUT_TABLE = """| Name | Base salary | Pension | Total |
+|---|---|---|---|
+| Anna A | 1 000 | 100 | 1 100 |
+
+| Bo B | 900 | 90 | 990 |
+|---|---|---|---|
+| Cy C | 800 | 80 | 880 |"""
+
+CLEAN = """| Name | Base salary | Pension | Total |
+|---|---|---|---|
+| Anna A | 1 000 | 100 | 1 100 |
+| Bo B | 900 | 90 | 990 |"""
+
+
+class TestBrokenTables:
+    def test_wrapped_labels_are_fragment_rows(self):
+        found = pr.broken_tables(GOODTECH_PAGE)
+        assert any(f.startswith("fragment row: |g|") for f in found)
+        assert any("||p|2024" in f for f in found)
+
+    def test_cut_table_shows_figures_as_header(self):
+        found = pr.broken_tables(CUT_TABLE)
+        assert any(f.startswith("figures in a header row") for f in found)
+        assert any(f.startswith("table cut in two") for f in found)
+
+    def test_clean_table(self):
+        assert pr.broken_tables(CLEAN) == []
+        assert pr.broken_tables("no tables here") == []
+
+    def test_year_headers_are_fine_split_years_are_not(self):
+        assert pr.broken_tables("|Tkr|2025|2024|2023|\n|---|---|---|---|\n|VD|4 100|3 900|3 500|") == []
+        assert pr.broken_tables("||**2025**||**2024**||\n|---|---|---|---|---|---|") == []
+        assert pr.broken_tables("||**20**|**25**|**20**|**24**|\n|---|---|---|---|---|")
+
+    def test_auto_images_only_for_broken_pages(self, monkeypatch, tmp_path):
+        pdf = tmp_path / "x.pdf"
+        pdf.write_bytes(b"%PDF")
+        origin = Origin("pdf", "u", "s", "PARSE", "now",
+                        [Page(1, CLEAN), Page(2, GOODTECH_PAGE)], {}, pdf=pdf)
+        monkeypatch.setattr(pr.pay, "table_pages", lambda chunks, texts: [1, 2])
+        assert pr.image_pages("auto", [], origin) == [2]
+        assert pr.image_pages("on", [], origin) == [1, 2]
+        assert pr.image_pages("off", [], origin) == []
+
+
 def test_blank_company_ids_get_a_stable_fallback(tmp_path):
     p = tmp_path / "c.csv"
     p.write_text("company_id,company_name,country,lei\n,Stora Enso A,SE,\n,Stora Enso R,SE,\n"

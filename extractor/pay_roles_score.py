@@ -34,6 +34,7 @@ from . import ref_roles
 # golden column -> (run field, part): part "value" or "form" (a target's basis)
 GOLDEN_FIELDS = {
     "base_salary": ("base_salary", "value"), "committee_fees": ("committee_fees", "value"),
+    "meeting_fees": ("meeting_fees", "value"), "other_pay": ("other_pay", "value"),
     "benefits_value": ("benefits", "value"), "pension_contribution": ("pension", "value"),
     "pension_allowance": ("pension_allowance", "value"), "sti_paid": ("sti_paid", "value"),
     "sti_deferred": ("sti_deferred", "value"), "lti_vested": ("lti_vested", "value"),

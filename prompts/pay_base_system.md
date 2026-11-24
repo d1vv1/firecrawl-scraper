@@ -9,9 +9,36 @@ For every value, give `quote`: ONE continuous passage copied EXACTLY from a
 single chunk (in the text's own language, never translated, under 25
 words, no "..." joining passages) that contains the answer, and the
 `chunk_id` it came from. For a value in a table, quote the table row as it
-appears, e.g. "Base salary|1,050|1,000". If the text does not state a
-value, set it, its quote and its chunk_id to null. A value without a
-supporting quote is not allowed.
+appears, e.g. "Base salary|1,050|1,000"; the quote must contain the figure
+you give. If the text does not state a field at all, give the whole field
+as null (not an object of nulls). A value without a supporting quote is
+not allowed.
+
+## How the text was made
+
+The text is an automatic conversion of a PDF into markdown, and its tables
+are often damaged. Expect these faults and read past them:
+- A row label that wraps onto a second line in the PDF ("Benedicte
+  Willumsen Grieg" printed over two lines) becomes two rows: the first with
+  the start of the label and the figures, the next with the rest of the
+  label ("g") and empty cells or the next row's figures. Join the label
+  parts; take the figures from the row that belongs to the person and the
+  year you want, never from the fragment's neighbour.
+- A table that runs over a gap, a page break or a long wrapped label can be
+  cut into two tables. The second part then shows its first data row as if
+  it were the header row. Treat that "header" as a data row and use the
+  column headers of the first part.
+- A header that wraps over two lines can lose its second line, or two
+  neighbouring columns can be merged into one cell ("Fixed salary
+  Benefits" over "1 050 120"). Use the column order of the other rows and
+  of the same table in the comparison year to tell which figure is which.
+- Words can come out garbled ("Chairerson", "oar memer") or split.
+  Read them as the word they clearly are; quote them as they appear.
+- Where images of the pay-table pages are attached, the image is right and
+  the text may be wrong: read every figure, row and column from the image,
+  and copy the quote from the text.
+If a row or figure cannot be told apart even so, leave the field null
+rather than guess, and say why in `includes`.
 
 ## Everything verbatim
 
@@ -43,14 +70,20 @@ executive team as a group, the board chair, vice chair, board members,
 employee representatives, deputy board members, supervisory board members
 and statutory auditors, and board totals.
 
-- `printed_title`: the person's function exactly as printed, in the
+- `printed_title`: the person's FUNCTION exactly as printed, in the
   report's language ("Verkställande direktör", "Vorsitzender des
-  Aufsichtsrats", "Other members of group management"). Keep words like
-  "Former", "Tidigare", "Acting", "until April 2025" that are printed with
-  it. Use the body's name ("Member of the Management Board") only when the
-  text gives no function. If the text gives two functions (a board member
-  who is also an employee representative), give the more specific one.
-- `person_name`: the name when the text gives one, else null.
+  Aufsichtsrats", "Other members of group management"), never the
+  person's name. Keep words like "Former", "Tidigare", "Acting", "until
+  April 2025" that are printed with it. When a table row gives only a name,
+  take the function from where the text gives it for that person: a column
+  of the row, the table's heading or caption ("Hallintoneuvoston jäsenten
+  palkkiot", "Board of Directors"), a footnote, or the section on the board
+  or management; use the body's name ("Member of the Supervisory Board",
+  "Hallintoneuvoston jäsen") when that is all the text gives. If the text
+  gives two functions (a board member who is also an employee
+  representative), give the more specific one.
+- `person_name`: the name when the text gives one, else null. Never put
+  the function in it.
 - `is_aggregate`: true when one figure covers several people ("other
   executives", "board of directors total"). Leave out a table's total line
   that only adds up people you list one by one ("Total", "Executive Board
@@ -94,5 +127,11 @@ text gives the period or its end ("year ended 31 March 2026", "perioden
 1. juli 2025 til 30. juni 2026"), that date. Where it names the year only
 ("räkenskapsåret 2025", a pay table headed "2025"), the year is the
 calendar year: "2025-12-31". Null if the text does not say which year the
-pay figures are for. Always take the most recent year in the text; ignore
-the comparison year's column.
+pay figures are for.
+
+Always take the most recent year. Tables often give the comparison year
+too, either as columns ("2025 | 2024") or as rows: one row per person and
+year ("Jane Doe | 2025 | 550 | 662" then "| 2024 | 535 | 545"), or a 2024
+block under the 2025 one. Every figure and quote must come from the most
+recent year's column or row; a quote that shows the comparison year is
+wrong.

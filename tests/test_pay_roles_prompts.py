@@ -61,6 +61,19 @@ class TestSystemPrompt:
 
 
 class TestAnswerModels:
+    def test_an_absent_field_is_null(self):
+        line = answer_model(["base_salary", "total"]).model_fields["lines"].annotation.__args__[0]
+        empty = {k: None for k in line.model_fields}
+        empty.update(printed_title="CEO", is_aggregate=False, role_disclosure="individual",
+                     period_coverage="full_year")
+        assert line.model_validate(empty).base_salary is None
+
+    def test_prompt_warns_about_damaged_tables(self):
+        base = llm.load_prompt("pay_base_system")
+        assert "How the text was made" in base and "cut into two tables" in base
+        assert "never the\n  person's name" in base or "never the person's name" in base
+        assert "as rows" in base                        # comparison year as rows
+
     def test_by_field_model_has_only_those_fields(self):
         line = answer_model(["base_salary"]).model_fields["lines"].annotation.__args__[0]
         assert "base_salary" in line.model_fields and "pension" not in line.model_fields
