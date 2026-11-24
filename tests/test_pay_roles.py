@@ -53,6 +53,18 @@ ANSWER = {"fiscal_year": "2025", "period_end": "2025-12-31", "lines": [
 ]}
 
 
+def gap_cells(user):
+    """The fake AI's gap-fill answer: every asked cell found again as 99, quoted from the text."""
+    out = []
+    for ln in user.split("Cells to check:")[1].split("\n\n")[0].strip().splitlines():
+        ref, title, field = [p.strip() for p in ln[len("- line_ref "):].split("|")][:3]
+        out.append({"line_ref": ref, "field": field, "found": True, "value": 99, "printed": "99",
+                    "unit_printed": "tkr", "unit": "thousands", "currency_printed": "SEK",
+                    "form": None, "includes": None, "quote": "Totalt|20 000", "chunk_id": 1,
+                    "not_found_reason": None})
+    return out
+
+
 @pytest.fixture()
 def env(tmp_path, monkeypatch):
     """A fake reports folder, report text and AI; runs and cache in tmp_path."""
@@ -63,10 +75,14 @@ def env(tmp_path, monkeypatch):
         calls.append({"system": system, "user": user, "schema": schema.__name__})
         logging.getLogger("extractor.llm").info("LLM %s: %d prompt + %d completion tokens",
                                                 schema.__name__, 1000, 200)
+        if schema.__name__ == "GapAnswer":
+            return schema.model_validate({"cells": gap_cells(user)})
         return schema.model_validate(ANSWER)
 
     def read_origin(rep):
-        pages = [Page(1, "Ersättning till ledande befattningshavare\nVD|12 400")]
+        pages = [Page(1, "Ersättning till ledande befattningshavare\nVD|12 400\n"
+                         "Grundlön|12400\nGrundlön|3100\nGrundlön|2900\nGrundlön|800\n"
+                         "Totalt|20 000")]
         chunks = {1: Chunk(1, pages[0].text, [1])}
         return Origin("pdf", "file:///x.pdf", "x.pdf (PDF)", "PARSE", "now", pages, chunks), "k"
 
@@ -180,7 +196,8 @@ class TestRun:
     def test_bad_requests(self, env, capsys):
         assert pr.main(["--mode", "field"] + env["args"]) == 1             # no fields
         assert pr.main(["--mode", "role", "--roles", "wizard"] + env["args"]) == 1
-        assert pr.main(["--mode", "gapfill"] + env["args"]) == 2           # not built yet
+        assert pr.main(["--mode", "gapfill"] + env["args"]) == 1           # needs --from-run
+        assert pr.main(["--mode", "gapfill", "--from-run", "nope"] + env["args"]) == 1
 
 
 class TestMapRole:

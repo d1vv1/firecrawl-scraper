@@ -5,6 +5,7 @@ no web; the only call out is the AI.
     python -m extractor.pay_roles --mode role --roles required --countries SE,NO,DK,FI --workers 3
     python -m extractor.pay_roles --mode field --fields base_salary,sti_paid --only <company_id>
     python -m extractor.pay_roles --mode all --countries SE --run-id <run_id>      # resume
+    python -m extractor.pay_roles --mode gapfill --from-run <run_id>               # re-ask flags
 
 For each company of the list (default ../fy2025_pipeline_required.csv; `run_required` and the
 gs:// URL columns are ignored):
@@ -24,6 +25,13 @@ Output, in output/pay_roles/<run_id>/:
                                 <id>.error.json is retried only with --retry-failed)
   summary.csv                   one line per company
   run.json                      the request, model, prompt and workbook versions
+  fact_pay_line.csv, evidence.csv, role_review.csv   see pay_roles_output.py
+
+A gap-fill run (--mode gapfill --from-run <run_id>) takes an earlier run's results, asks the
+AI again only about the cells its checks flag (a total that does not add up, a figure that
+looks 1,000 times off, a quote not found in the text, an executive with no fixed pay), and
+writes a new run with those cells replaced; the old value stays in the cell's "previous" and
+in evidence.csv. The earlier run is not changed.
 """
 from __future__ import annotations
 
@@ -43,6 +51,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from . import llm, pay, ref_roles
+from . import pay_roles_output as output
 from . import pay_roles_prompts as prompts
 from . import report_library as rl
 from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT
@@ -74,6 +83,7 @@ class Request:
     images: bool
     ref_path: str
     cdp_roles: list[tuple[str, str]] | None = None
+    from_run: str = ""               # gap-fill: the run whose flagged cells are asked again
 
 
 @dataclass
@@ -223,18 +233,19 @@ def map_role(ref: ref_roles.RefRoles, line: dict, country: str,
             "title_flags": [], **({"note": note} if note else {})}
 
 
-def build_request(c: Company, req: Request, ref: ref_roles.RefRoles):
+def build_request(c: Company, req: Request, ref: ref_roles.RefRoles,
+                  gaps: list[prompts.Gap] | None = None):
     """(origin, chunks, system prompt, user message, page numbers shown, request key)."""
     from .datapoints import _pay_chunks
 
     origin, _ = read_origin(c.report)
     chunks = _pay_chunks(origin, pay.PAY_WORDS)
-    fields = prompts.fields_for(req.mode, req.fields)
+    fields = prompts.fields_for(req.mode, req.fields, gaps)
     system = prompts.system_prompt(req.mode, fields)
     user = prompts.user_message(req.mode, company=c.company_name, source=c.report["file_name"],
                                 what="the company's remuneration report", chunks=chunks,
                                 ref=ref, country=c.country, selected=req.roles or None,
-                                cdp_roles=req.cdp_roles)
+                                cdp_roles=req.cdp_roles, gaps=gaps)
     shown = (pay.table_pages(chunks, origin.page_text())
              if req.images and origin.pdf and Path(origin.pdf).exists() else [])
     if shown:
@@ -275,36 +286,17 @@ def run_company(c: Company, req: Request, run_dir: Path, dry_run: bool = False) 
         return finish("dry_run", f"{len(chunks)} chunk(s), {len(shown)} image page(s)",
                       prompt_tokens=est)
 
-    cache = CACHE_DIR / f"payroles_{key}.json"
-    tokens, cached = _Tokens(), cache.exists()
-    if cached:
-        saved = json.loads(cache.read_text(encoding="utf-8"))
-        answer = saved["answer"]
-        tokens.prompt, tokens.completion = saved.get("prompt_tokens", 0), saved.get("completion_tokens", 0)
-    else:
-        images = pay.page_images(Path(origin.pdf), shown) if shown else None
-        schema = prompts.answer_schema(req.mode, prompts.fields_for(req.mode, req.fields))
-        llm_log = logging.getLogger(llm.__name__)
-        level = llm_log.level
-        llm_log.setLevel(logging.INFO)          # the token line is INFO, whatever the setup
-        llm_log.addHandler(tokens)
-        try:
-            answer = llm.call_llm(system, user, schema, images=images).model_dump()
-        finally:
-            llm_log.removeHandler(tokens)
-            llm_log.setLevel(level)
-        CACHE_DIR.mkdir(exist_ok=True)
-        cache.write_text(json.dumps({"model": llm.model_name(), "request_key": key,
-                                     "prompt_tokens": tokens.prompt,
-                                     "completion_tokens": tokens.completion, "answer": answer},
-                                    ensure_ascii=False, indent=1), encoding="utf-8")
-
+    answer, tokens, cached = ask(key, system, user, origin, shown,
+                                 prompts.answer_schema(req.mode,
+                                                       prompts.fields_for(req.mode, req.fields)))
+    texts = {ch.id: ch.text for ch in chunks}
     cdp_ids = {i for i, _ in req.cdp_roles or []}
     fy = answer.get("fiscal_year")
     lines = []
     for line in answer.get("lines", []):
         lines.append({"pay_line_id": pay_line_id(c.company_id, fy, line),
-                      "mapping": map_role(ref, line, c.country, cdp_ids), "line": line})
+                      "mapping": map_role(ref, line, c.country, cdp_ids), "line": line,
+                      "quote_check": quote_checks(line, texts)})
     count = {s: sum(1 for x in lines if x["mapping"]["mapping_source"] == s)
              for s in ("auto", "suggestion", "unmapped")}
     cells = sum(1 for x in lines for f in FIELDS if isinstance(x["line"].get(f), dict)
@@ -312,13 +304,158 @@ def run_company(c: Company, req: Request, run_dir: Path, dry_run: bool = False) 
     detail = {"run_mode": req.mode, "fields": prompts.fields_for(req.mode, req.fields),
               "roles": req.roles, "model": llm.model_name(), "request_key": key,
               "ref_roles_version": ref.version, "image_pages": shown,
-              "report": c.report, "annual_file": c.annual_file, "lines": lines}
+              "report": c.report, "annual_file": c.annual_file,
+              "chunk_pages": {str(ch.id): ch.pages for ch in chunks}, "lines": lines}
     return finish("ok" if lines else "no_lines", "" if lines else "the AI found no pay line",
                   fiscal_year=fy or "", period_end=answer.get("period_end") or "",
                   lines=len(lines), mapped_auto=count["auto"],
                   mapped_suggestion=count["suggestion"], unmapped=count["unmapped"],
                   cells=cells, prompt_tokens=tokens.prompt,
                   completion_tokens=tokens.completion, cached=cached, _detail=detail)
+
+
+def ask(key: str, system: str, user: str, origin, shown: list[int], schema) -> tuple:
+    """The AI's answer to one request, from the cache when it was asked before.
+    Returns (answer dict, _Tokens, cached)."""
+    cache = CACHE_DIR / f"payroles_{key}.json"
+    tokens = _Tokens()
+    if cache.exists():
+        saved = json.loads(cache.read_text(encoding="utf-8"))
+        tokens.prompt = saved.get("prompt_tokens", 0)
+        tokens.completion = saved.get("completion_tokens", 0)
+        return saved["answer"], tokens, True
+    images = pay.page_images(Path(origin.pdf), shown) if shown else None
+    llm_log = logging.getLogger(llm.__name__)
+    level = llm_log.level
+    llm_log.setLevel(logging.INFO)          # the token line is INFO, whatever the setup
+    llm_log.addHandler(tokens)
+    try:
+        answer = llm.call_llm(system, user, schema, images=images).model_dump()
+    finally:
+        llm_log.removeHandler(tokens)
+        llm_log.setLevel(level)
+    CACHE_DIR.mkdir(exist_ok=True)
+    cache.write_text(json.dumps({"model": llm.model_name(), "request_key": key,
+                                 "prompt_tokens": tokens.prompt,
+                                 "completion_tokens": tokens.completion, "answer": answer},
+                                ensure_ascii=False, indent=1), encoding="utf-8")
+    return answer, tokens, False
+
+
+def quote_checks(line: dict, texts: dict[int, str]) -> dict[str, bool]:
+    """For each filled cell (and the line itself): is its quote in the text it was read from?"""
+    out = {}
+    for name in ["line", *FIELDS]:
+        cell = line if name == "line" else line.get(name)
+        if isinstance(cell, dict) and (name == "line" or cell.get("value") is not None):
+            found = output.quote_found(cell.get("quote"), cell.get("chunk_id"), texts)
+            if found is not None:
+                out[name] = found
+    return out
+
+
+# --- gap-fill --------------------------------------------------------------------------------
+
+def gaps_of(doc: dict) -> list[prompts.Gap]:
+    """The cells of one company's result that the checks want asked again. A total that does
+    not add up asks again for the total and each part the line has."""
+    pages = doc.get("chunk_pages", {})
+    lines = {x["pay_line_id"]: x["line"] for x in doc.get("lines", [])}
+    out, seen = [], set()
+    for f in output.check_company(doc):
+        if not f.gap or f.pay_line_id not in lines:
+            continue
+        line = lines[f.pay_line_id]
+        fields = [f.field]
+        if f.kind == "total_mismatch":
+            fields += [p for p in output.TOTAL_PARTS if output.filled(line.get(p))]
+        for name in fields:
+            if (f.pay_line_id, name) in seen:
+                continue
+            seen.add((f.pay_line_id, name))
+            cell = line.get(name) if isinstance(line.get(name), dict) else {}
+            chunk = cell.get("chunk_id") if cell.get("chunk_id") is not None else line.get("chunk_id")
+            page = (pages.get(str(chunk)) or [None])[0]
+            out.append(prompts.Gap(f.pay_line_id, line.get("printed_title", ""), name, page,
+                                   f"{f.kind}: {f.detail}"))
+    return out
+
+
+def merge_gaps(doc: dict, answer: dict, gaps: list[prompts.Gap], texts: dict[int, str]) -> int:
+    """Put a gap-fill answer into a copy of the earlier result. A cell found again replaces
+    the old one, which is kept under "previous"; a cell not found keeps its old value with
+    the reason. Returns the number of cells changed."""
+    asked = {(g.line_ref, g.field): g for g in gaps}
+    items = {x["pay_line_id"]: x for x in doc.get("lines", [])}
+    changed = 0
+    for cell in answer.get("cells", []):
+        key = (cell.get("line_ref"), cell.get("field"))
+        if key not in asked or key[0] not in items or key[1] not in FIELDS:
+            continue
+        item = items[key[0]]
+        old = item["line"].get(key[1]) or {}
+        if not cell.get("found"):
+            if isinstance(old, dict) and old:
+                old["gapfill_note"] = f"rechecked, not found: {cell.get('not_found_reason') or '-'}"
+            continue
+        keys = FIELDS[key[1]].cell.model_fields
+        new = {k: cell.get(k) for k in keys}
+        new["previous"] = {k: old.get(k) for k in keys} if old else None
+        new["gapfill_note"] = f"rechecked: {asked[key].reason}"
+        item["line"][key[1]] = new
+        item.setdefault("quote_check", {}).pop(key[1], None)
+        found = output.quote_found(new.get("quote"), new.get("chunk_id"), texts)
+        if found is not None:
+            item["quote_check"][key[1]] = found
+        changed += 1
+    return changed
+
+
+def run_gapfill(doc: dict, req: Request, run_dir: Path, dry_run: bool = False) -> dict:
+    """One company of a gap-fill run: its earlier result, with the flagged cells asked again
+    (or copied as it is when nothing is flagged)."""
+    started = time.monotonic()
+    cid = doc["company_id"]
+    gaps = gaps_of(doc) if doc.get("status") == "ok" else []
+    row = {k: doc.get(k, "") for k in ("company_id", "company_name", "country", "also_listed_as",
+                                       "match_type", "source_file", "format", "fiscal_year",
+                                       "period_end", "lines", "mapped_auto",
+                                       "mapped_suggestion", "unmapped", "cells")}
+    if gaps and not dry_run:
+        ref = ref_roles.load(req.ref_path)
+        c = Company(cid, doc["company_name"], doc.get("country", ""), "", report=doc["report"])
+        origin, chunks, system, user, shown, key = build_request(c, req, ref, gaps)
+        answer, tokens, cached = ask(key, system, user, origin, shown,
+                                     prompts.answer_schema("gapfill", []))
+        doc = json.loads(json.dumps(doc))       # a copy: the earlier run stays as it was
+        changed = merge_gaps(doc, answer, gaps, {ch.id: ch.text for ch in chunks})
+        doc["gapfill"] = {"of_run": req.from_run, "asked": len(gaps), "changed": changed,
+                          "request_key": key}
+        row.update(status="ok", note=f"{len(gaps)} cell(s) asked again, {changed} changed",
+                   prompt_tokens=tokens.prompt, completion_tokens=tokens.completion,
+                   cached=cached)
+    elif gaps:
+        row.update(status="dry_run", note=f"{len(gaps)} cell(s) to ask again")
+    else:
+        row.update(status=doc.get("status", ""), note="nothing to ask again: copied")
+    row["seconds"] = round(time.monotonic() - started, 1)
+    if not dry_run:
+        out = run_dir / "companies" / f"{cid}.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({**doc, **{k: v for k, v in row.items()
+                                             if k in ("note", "seconds", "prompt_tokens",
+                                                      "completion_tokens", "cached")}},
+                                  ensure_ascii=False, indent=1), encoding="utf-8")
+    return row
+
+
+def _gap_worker(doc: dict, req: Request, run_dir: Path, dry_run: bool) -> dict:
+    try:
+        return run_gapfill(doc, req, run_dir, dry_run)
+    except Exception as e:  # noqa: BLE001
+        log.exception("%s failed", doc.get("company_id"))
+        return {"company_id": doc.get("company_id"), "company_name": doc.get("company_name"),
+                "country": doc.get("country"), "status": "error", "note": repr(e)[:300]}
 
 
 def _worker(c: Company, req: Request, run_dir: Path, dry_run: bool) -> dict:
@@ -410,13 +547,17 @@ def main(argv: list[str] | None = None) -> int:
                    help="the role workbook (default: REF_ROLES_XLSX or ../../Reports/ref_roles.xlsx)")
     p.add_argument("--cdp-repo", type=Path,
                    default=Path(os.getenv("CDP_REPO_DIR") or DEFAULT_CDP_REPO))
+    p.add_argument("--from-run", default="",
+                   help="mode gapfill: the run whose flagged cells are asked again")
     args = p.parse_args(argv)
     _setup_logging()
 
-    if args.mode == "gapfill":
-        print("ERROR: --mode gapfill needs the run checks (next build step); not available yet",
+    gapfill = args.mode == "gapfill"
+    from_dir = RUNS_DIR / args.from_run if args.from_run else None
+    if gapfill and not (from_dir and (from_dir / "companies").is_dir()):
+        print(f"ERROR: --mode gapfill needs --from-run <run_id> of a run in {RUNS_DIR}",
               file=sys.stderr)
-        return 2
+        return 1
     try:
         ref = ref_roles.load(args.ref_roles or None)
     except ref_roles.RefRolesError as e:
@@ -424,8 +565,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     try:
         roles = ref.select(args.roles) if args.mode == "role" else []
-        fields = prompts.fields_for(args.mode, [f.strip() for f in args.fields.split(",")
-                                                if f.strip()])
+        fields = [] if gapfill else prompts.fields_for(
+            args.mode, [f.strip() for f in args.fields.split(",") if f.strip()])
     except (ValueError, ref_roles.RefRolesError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 1
@@ -434,7 +575,7 @@ def main(argv: list[str] | None = None) -> int:
         print("ERROR: LOCAL_REPORTS_DIR is not set: the reports folder is the only source",
               file=sys.stderr)
         return 1
-    if not args.companies.is_file():
+    if not gapfill and not args.companies.is_file():
         print(f"ERROR: no company list at {args.companies}", file=sys.stderr)
         return 1
 
@@ -443,17 +584,35 @@ def main(argv: list[str] | None = None) -> int:
         ocr.ENABLED = False     # OCR reads scans with the AI: a dry run reports them instead
     images = pay.PAGE_IMAGES if args.images is None else args.images == "on"
     req = Request(args.mode, fields, roles, args.roles if args.mode == "role" else "", images,
-                  str(ref.path), load_cdp_roles(args.cdp_repo, ref))
+                  str(ref.path), None if gapfill else load_cdp_roles(args.cdp_repo, ref),
+                  args.from_run)
     countries = {c.strip().upper() for c in args.countries.split(",") if c.strip()}
     only = {c.strip() for c in args.only.split(",") if c.strip()}
+    if gapfill:
+        docs = [d for d in output.load_companies(from_dir)
+                if (not countries or d.get("country") in countries)
+                and (not only or d.get("company_id") in only)]
+        docs = docs[:args.limit] if args.limit else docs
+        return _run(args, req, ref, root, countries, only, docs,
+                    [Company(d["company_id"], d.get("company_name", ""), d.get("country", ""), "")
+                     for d in docs])
     companies = read_companies(args.companies, countries, only, args.limit)
     lib = rl.ReportRetriever(root)
     find_reports(companies, lib)
+    return _run(args, req, ref, root, countries, only, companies, companies)
 
+
+def _run(args, req: Request, ref: ref_roles.RefRoles, root: str, countries: set[str],
+         only: set[str], items: list, companies: list[Company]) -> int:
+    """Run `items` (companies, or a gap-fill's earlier results) and write the run's files."""
+    gapfill, roles, fields, images = req.mode == "gapfill", req.roles, req.fields, req.images
     found = [c for c in companies if c.report]
-    print(f"{len(companies)} companies; remuneration report on disk for {len(found)}; "
-          f"{sum(1 for c in companies if c.duplicate_of)} share a PDF with another")
-    for c in companies:
+    if gapfill:
+        print(f"gap-fill of run {req.from_run}: {len(items)} companies")
+    else:
+        print(f"{len(companies)} companies; remuneration report on disk for {len(found)}; "
+              f"{sum(1 for c in companies if c.duplicate_of)} share a PDF with another")
+    for c in ([] if gapfill else companies):
         if c.match_type == "name-class" or (c.report and c.report["country"] != c.country):
             print(f"  check: {c.company_name} ({c.country}) -> {c.report['file_name']} "
                   f"[{c.match_type}]")
@@ -463,11 +622,12 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  no remuneration report: {c.company_name} ({c.country})"
                   + (f", annual only: {c.annual_file}" if c.annual_file else ""))
 
-    spec = args.roles if args.mode == "role" else (args.fields or args.mode)
+    spec = (args.from_run if gapfill else
+            args.roles if args.mode == "role" else (args.fields or args.mode))
     run_id = args.run_id or run_id_for(args.mode, spec)
     run_dir = RUNS_DIR / run_id
     todo = []
-    for c in companies:
+    for item, c in zip(items, companies):
         done = run_dir / "companies" / f"{c.company_id}.json"
         failed = done.with_suffix(".error.json")
         if not args.dry_run and not args.force:
@@ -475,10 +635,11 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             if failed.exists() and not args.retry_failed:
                 continue
-        todo.append(c)
+        todo.append(item)
 
-    meta = {"run_id": run_id, "mode": args.mode, "roles_spec": req.roles_spec,
-            "roles": roles, "fields": fields, "countries": sorted(countries),
+    meta = {"run_id": run_id, "mode": args.mode, "from_run": req.from_run,
+            "roles_spec": req.roles_spec, "roles": roles, "fields": fields,
+            "countries": sorted(countries),
             "only": sorted(only), "companies_file": str(args.companies),
             "reports_folder": root, "model": llm.model_name(), "images": images,
             "ref_roles": str(ref.path), "ref_roles_version": ref.version,
@@ -494,14 +655,16 @@ def main(argv: list[str] | None = None) -> int:
 
     rows: dict[str, dict] = {}
     workers = max(1, args.workers)
+    work = _gap_worker if gapfill else _worker
     if workers == 1:
-        for c in todo:
-            rows[c.company_id] = _worker(c, req, run_dir, args.dry_run)
-            _progress(rows[c.company_id], len(rows), len(todo))
+        for item in todo:
+            row = work(item, req, run_dir, args.dry_run)
+            rows[row["company_id"]] = row
+            _progress(row, len(rows), len(todo))
     else:
         with ProcessPoolExecutor(max_workers=workers, initializer=_worker_init,
                                  initargs=(args.dry_run,)) as pool:
-            futures = [pool.submit(_worker, c, req, run_dir, args.dry_run) for c in todo]
+            futures = [pool.submit(work, item, req, run_dir, args.dry_run) for item in todo]
             for f in as_completed(futures):
                 row = f.result()
                 rows[row["company_id"]] = row
@@ -514,13 +677,19 @@ def main(argv: list[str] | None = None) -> int:
     tokens = sum(int(r.get("prompt_tokens") or 0) for r in rows.values())
     print("statuses: " + ", ".join(f"{k} {v}" for k, v in sorted(statuses.items())))
     if args.dry_run:
-        print(f"estimated prompt tokens: {tokens:,} for {statuses.get('dry_run', 0)} AI call(s) "
-              "(output tokens not estimated)")
+        if not gapfill:
+            print(f"estimated prompt tokens: {tokens:,} for {statuses.get('dry_run', 0)} AI "
+                  "call(s) (output tokens not estimated)")
         return 0
     meta["finished"] = dt.datetime.now().isoformat(timespec="seconds")
     meta["statuses"] = statuses
+    meta["files"] = output.export(run_dir)
     (run_dir / "run.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     print(f"summary: {write_summary(run_dir, companies, rows)}")
+    f = meta["files"]
+    print(f"fact_pay_line.csv: {f['lines']} line(s); evidence.csv: {f['cells']} cell(s); "
+          f"role_review.csv: {f['review']} row(s), {f['gaps']} to ask again "
+          f"(--mode gapfill --from-run {run_dir.name})")
     return 1 if statuses.get("error") else 0
 
 
