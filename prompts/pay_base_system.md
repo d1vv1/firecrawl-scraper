@@ -70,6 +70,11 @@ executive team as a group, the board chair, vice chair, board members,
 employee representatives, deputy board members, supervisory board members
 and statutory auditors, and board totals.
 
+- `row_label`: the line's label exactly as the table or text prints it,
+  whatever it is: a name ("Henrik Lind"), a name with a function
+  ("Ellen Trane Nørby, formand"), a function ("CFO") or a group ("Other
+  executives"); a wrapped label joined into one. Null only for a line
+  that is a sentence, not a table row.
 - `printed_title`: the person's FUNCTION exactly as printed, in the
   report's language ("Verkställande direktör", "Vorsitzender des
   Aufsichtsrats", "Other members of group management"), never the

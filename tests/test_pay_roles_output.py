@@ -117,6 +117,32 @@ class TestRows:
     def test_fiscal_year(self, fy, end, want):
         assert out.fiscal_year_int(fy, end) == want
 
+    def test_quote_grades(self):
+        # the wrapped label's two parts have another column's cell between them
+        chunks = {1: "|Ellen Trane Nørby,|Board|\n|formand|1.098.035|900.000|\n|Pension|300|",
+                  2: "| Bonus | 50 |"}
+        assert out.quote_grade("formand|1.098.035", "1.098.035", 1, chunks) == "exact"
+        # a wrapped label joined by the AI: the figure and most words are there
+        assert out.quote_grade("Ellen Trane Nørby, formand|1.098.035", "1.098.035", 1,
+                               chunks) == "close"
+        # the figure is not in the quote's chunk
+        assert out.quote_grade("Ellen Trane Nørby, formand|2.000.000", "2.000.000", 1,
+                               chunks) == "missing"
+        assert out.quote_grade(None, "1", 1, chunks) is None
+
+    def test_comparison_year(self):
+        assert out.comparison_year("Benedicte|g||2024|138|||**138**", 2025)
+        assert not out.comparison_year("Anna|2025|550|2024|535", 2025)
+        assert not out.comparison_year("Grundlön|12 400", 2025)
+
+    def test_comparison_year_is_flagged(self):
+        ln = line("Board member")
+        ln["base_salary"] = cell(138, quote="Grieg||2024|138")
+        f = [x for x in out.check_company(doc([item(ln, "non_executive_director",
+                                                       "board_member")]))
+             if x.kind == "comparison_year"]
+        assert f and f[0].gap and "2024" in f[0].detail
+
     def test_quote_found(self):
         chunks = {1: "| Grundlön | 12 400 |\n| Pension | 300 |"}
         assert out.quote_found("Grundlön|12 400", 1, chunks) is True
@@ -135,7 +161,7 @@ class TestRunFiles:
         assert facts[0]["role_code"] == "ceo" and facts[0]["run_id"] == "o1"
         with (d / "evidence.csv").open(encoding="utf-8-sig") as fh:
             ev = list(csv.DictReader(fh))
-        assert {r["quote_found"] for r in ev} == {"True"}
+        assert {r["quote_found"] for r in ev} == {"exact"}
         with (d / "role_review.csv").open(encoding="utf-8-sig") as fh:
             review = {r["kind"] for r in csv.DictReader(fh)}
         assert {"role_suggestion", "role_unmapped", "completeness"} <= review

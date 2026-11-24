@@ -207,7 +207,9 @@ def map_role(ref: ref_roles.RefRoles, line: dict, country: str,
     when it names a known role_detail (source suggestion) or, failing that, a CDP role from
     the list it was given (low), else unmapped."""
     suggested = line.get("suggested_role_detail") or ""
-    m = ref.match(line.get("printed_title") or "", country)
+    # the function first; the row's own label second ("Ellen Trane Nørby, formand")
+    m = (ref.match(line.get("printed_title") or "", country)
+         or ref.match(line.get("row_label") or "", country))
     if m:
         out = {"role_detail": m.role_detail, "role_code": m.role_code,
                "cdp_role_id": m.cdp_role_id, "mapping_source": "auto",
@@ -394,16 +396,40 @@ def ask(key: str, system: str, user: str, origin, shown: list[int], schema) -> t
     return answer, tokens, False
 
 
-def quote_checks(line: dict, texts: dict[int, str]) -> dict[str, bool]:
-    """For each filled cell (and the line itself): is its quote in the text it was read from?"""
+def quote_checks(line: dict, texts: dict[int, str]) -> dict[str, str]:
+    """For each filled cell (and the line itself): how well its quote matches the text it was
+    read from (pay_roles_output.quote_grade: exact, close or missing)."""
     out = {}
     for name in ["line", *FIELDS]:
         cell = line if name == "line" else line.get(name)
         if isinstance(cell, dict) and (name == "line" or cell.get("value") is not None):
-            found = output.quote_found(cell.get("quote"), cell.get("chunk_id"), texts)
-            if found is not None:
-                out[name] = found
+            grade = output.quote_grade(cell.get("quote"), None if name == "line"
+                                       else cell.get("printed"), cell.get("chunk_id"), texts)
+            if grade is not None:
+                out[name] = grade
     return out
+
+
+def recheck(run_dir: Path) -> dict[str, int]:
+    """Grade every quote of an existing run again from the cached report text, and rewrite
+    the run's files. No AI call: for a run made before a change to the checks."""
+    from .datapoints import _pay_chunks
+
+    done = 0
+    for path in sorted((run_dir / "companies").glob("*.json")):
+        if path.name.endswith(".error.json"):
+            continue
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        if doc.get("status") != "ok" or not doc.get("report"):
+            continue
+        origin, _ = read_origin(doc["report"])
+        texts = {ch.id: ch.text for ch in _pay_chunks(origin, pay.PAY_WORDS)}
+        for item in doc.get("lines", []):
+            item["quote_check"] = quote_checks(item["line"], texts)
+        path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+        done += 1
+    files = output.export(run_dir)
+    return {"companies": done, **files}
 
 
 # --- gap-fill --------------------------------------------------------------------------------
@@ -456,9 +482,9 @@ def merge_gaps(doc: dict, answer: dict, gaps: list[prompts.Gap], texts: dict[int
         new["gapfill_note"] = f"rechecked: {asked[key].reason}"
         item["line"][key[1]] = new
         item.setdefault("quote_check", {}).pop(key[1], None)
-        found = output.quote_found(new.get("quote"), new.get("chunk_id"), texts)
-        if found is not None:
-            item["quote_check"][key[1]] = found
+        grade = output.quote_grade(new.get("quote"), new.get("printed"), new.get("chunk_id"), texts)
+        if grade is not None:
+            item["quote_check"][key[1]] = grade
         changed += 1
     return changed
 
@@ -579,7 +605,9 @@ def git_commit() -> str:
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m extractor.pay_roles",
                                 description="Role-based pay from the remuneration reports on disk.")
-    p.add_argument("--mode", required=True, choices=["field", "role", "all", "gapfill"])
+    p.add_argument("--mode", choices=["field", "role", "all", "gapfill"])
+    p.add_argument("--recheck", default="", metavar="RUN_ID",
+                   help="grade the quotes of an existing run again and rewrite its files (no AI)")
     p.add_argument("--roles", default="required",
                    help="mode role: required | optional | all | role_details or codes, comma-separated")
     p.add_argument("--fields", default="", help="mode field: pay fields, comma-separated")
@@ -605,6 +633,17 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     _setup_logging()
 
+    if args.recheck:
+        run_dir = RUNS_DIR / args.recheck
+        if not (run_dir / "companies").is_dir():
+            print(f"ERROR: no run at {run_dir}", file=sys.stderr)
+            return 1
+        f = recheck(run_dir)
+        print(f"rechecked {f['companies']} companies of {args.recheck}: {f['lines']} line(s), "
+              f"{f['cells']} cell(s), {f['review']} review row(s), {f['gaps']} to ask again")
+        return 0
+    if not args.mode:
+        p.error("--mode is required (or --recheck RUN_ID)")
     gapfill = args.mode == "gapfill"
     from_dir = RUNS_DIR / args.from_run if args.from_run else None
     if gapfill and not (from_dir and (from_dir / "companies").is_dir()):

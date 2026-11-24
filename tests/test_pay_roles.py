@@ -33,7 +33,8 @@ def cell(value=None, quote=None):
 
 
 def line(title, base=None, suggested=None, name=None, aggregate=False):
-    out = {"printed_title": title, "person_name": name, "is_aggregate": aggregate,
+    out = {"row_label": name or title, "printed_title": title, "person_name": name,
+           "is_aggregate": aggregate,
            "aggregate_headcount": 7 if aggregate else None, "aggregate_excludes": None,
            "role_disclosure": "aggregate" if aggregate else "individual",
            "period_coverage": "full_year", "months_in_role": None, "period_quote": None,
@@ -193,6 +194,19 @@ class TestRun:
         assert s["acme-a"]["status"] == "error" and "unreadable PDF" in s["acme-a"]["note"]
         assert (env["tmp"] / "runs" / "r5" / "companies" / "acme-a.error.json").exists()
 
+    def test_recheck_grades_quotes_again_without_the_ai(self, env):
+        pr.main(["--mode", "all", "--only", "acme-a", "--run-id", "rc"] + env["args"])
+        path = env["tmp"] / "runs" / "rc" / "companies" / "acme-a.json"
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        for it in doc["lines"]:
+            it["quote_check"] = {"base_salary": False}          # an old, ungraded run
+        path.write_text(json.dumps(doc, ensure_ascii=False), encoding="utf-8")
+        n = len(env["calls"])
+        assert pr.main(["--recheck", "rc"]) == 0
+        assert len(env["calls"]) == n
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        assert doc["lines"][0]["quote_check"]["base_salary"] == "exact"
+
     def test_bad_requests(self, env, capsys):
         assert pr.main(["--mode", "field"] + env["args"]) == 1             # no fields
         assert pr.main(["--mode", "role", "--roles", "wizard"] + env["args"]) == 1
@@ -214,6 +228,12 @@ class TestMapRole:
         ln["suggested_cdp_role_id"] = "R011"
         assert pr.map_role(ref, ln, "SE", {"R011"})["cdp_role_id"] == "R011"
         assert pr.map_role(ref, ln, "SE", set())["mapping_source"] == "unmapped"
+
+    def test_row_label_is_matched_when_the_title_is_not(self, ref):
+        ln = line("Henrik Lind", suggested="non_executive_director")      # a name as title
+        ln["row_label"] = "Henrik Lind, Styrelseordförande"
+        m = pr.map_role(ref, ln, "SE", set())
+        assert (m["role_detail"], m["mapping_source"]) == ("board_chair", "auto")
 
     def test_unknown_suggestion_is_unmapped(self, ref):
         m = pr.map_role(ref, line("Chief Wizard", suggested="wizard"), "SE", set())

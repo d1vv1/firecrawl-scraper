@@ -91,6 +91,9 @@ CORE_FIELDS = [n for n, f in FIELDS.items() if f.phase == 1]
 
 # What every line carries whatever fields are asked for.
 LINE_FIELDS: dict[str, tuple] = {
+    # the row's label as printed, which is often only a name ("Henrik Lind"): a place for it,
+    # so that printed_title can be the function (in the pilot, names ended up as titles)
+    "row_label": (Optional[str], ...),
     "printed_title": (str, ...),                    # the role or person's function, as printed
     "person_name": (Optional[str], ...),
     "is_aggregate": (bool, ...),

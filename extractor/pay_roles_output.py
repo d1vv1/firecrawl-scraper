@@ -84,6 +84,9 @@ def words(text: str | None) -> str:
     return re.sub(r"[\W_]+", "", (text or "").casefold())
 
 
+CLOSE_COVERAGE = 0.8             # a "close" quote: this share of its words is in the chunk
+
+
 def quote_found(quote: str | None, chunk_id: int | None, chunks: dict[int, str]) -> bool | None:
     """Whether the quote is in its chunk (or, failing that, any chunk). None: no quote."""
     if not quote:
@@ -94,6 +97,40 @@ def quote_found(quote: str | None, chunk_id: int | None, chunks: dict[int, str])
     if chunk_id in chunks and q in words(chunks[chunk_id]):
         return True
     return any(q in words(t) for t in chunks.values())
+
+
+def quote_grade(quote: str | None, printed: str | None, chunk_id: int | None,
+                chunks: dict[int, str]) -> str | None:
+    """How well a cell's quote matches the text it was read from:
+      exact    the quote is in the text as it stands (letters and digits);
+      close    not as it stands, but the printed figure is in the quote's chunk and most of
+               the quote's words are too: the AI tidied a damaged row (joined a wrapped label,
+               skipped empty cells), which the prompt asks it to do;
+      missing  neither: the figure may not come from the text.
+    None when there is no quote (a line's own quote with no figure is graded on words)."""
+    if not quote or not words(quote):
+        return None
+    if quote_found(quote, chunk_id, chunks):
+        return "exact"
+    home = [chunks[chunk_id]] if chunk_id in chunks else list(chunks.values())
+    for text in home:
+        body = words(text)
+        figure = words(printed)
+        if figure and figure not in body:
+            continue
+        tokens = [words(t) for t in re.split(r"[\s|]+", quote) if words(t)]
+        if tokens and sum(t in body for t in tokens) / len(tokens) >= CLOSE_COVERAGE:
+            return "close"
+    return "missing"
+
+
+def comparison_year(quote: str | None, fiscal_year: int | None) -> bool:
+    """The quote shows the year before the pay year and not the pay year itself: the figure
+    is likely the comparison year's (a table with one row per person and year)."""
+    if not quote or not fiscal_year:
+        return False
+    years = set(re.findall(r"(?<!\d)((?:19|20)\d{2})(?!\d)", quote))
+    return str(fiscal_year - 1) in years and str(fiscal_year) not in years
 
 
 def filled(cell) -> bool:
@@ -153,11 +190,17 @@ def check_company(doc: dict) -> list[Finding]:
         if key in seen:
             add(item, "duplicate_line", f"same title and name as {seen[key]}")
         seen[key] = item["pay_line_id"]
-        # quotes
+        # quotes (True/False: runs before quotes were graded)
+        fy = fiscal_year_int(doc.get("fiscal_year"), doc.get("period_end"))
         for f in FIELDS:
             cell = line.get(f)
-            if filled(cell) and item.get("quote_check", {}).get(f) is False:
+            if not filled(cell):
+                continue
+            if item.get("quote_check", {}).get(f) in (False, "missing"):
                 add(item, "quote_not_found", f"quote not in the text: {cell.get('quote')!r}", f, True)
+            if comparison_year(cell.get("quote"), fy):
+                add(item, "comparison_year", f"the quote shows {fy - 1}, not {fy}: "
+                    f"{cell.get('quote')!r}", f, True)
         # units and currencies
         money = [(f, line[f]) for f in MONEY if filled(line.get(f))]
         currencies = {c.get("currency_printed") for _, c in money if c.get("currency_printed")}
