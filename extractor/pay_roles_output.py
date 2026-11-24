@@ -147,6 +147,30 @@ def fiscal_year_int(fy: str | None, period_end: str | None) -> int | None:
     return int(years[-1]) if years else None
 
 
+def scale(cell: dict) -> float:
+    """What one printed unit of this cell is in currency units (1 when the unit is unknown or
+    a number of instruments)."""
+    return float(UNIT_MULTIPLIERS.get(cell.get("unit") or "", 1))
+
+
+def scaled(cell: dict) -> float:
+    return cell["value"] * scale(cell)
+
+
+def confirmed_by_gapfill(line: dict, fields: list[str]) -> bool:
+    """A gap-fill asked about these cells again and the AI read the same figures (or found
+    nothing else): asking once more would only repeat the answer."""
+    asked = [line[f] for f in fields if isinstance(line.get(f), dict)
+             and str(line[f].get("gapfill_note") or "").startswith("rechecked")]
+    if not asked:
+        return False
+    for cell in asked:
+        prev = cell.get("previous")
+        if prev and prev.get("value") != cell.get("value"):
+            return False
+    return True
+
+
 def _most(values: list[str]) -> str:
     values = [v for v in values if v]
     return Counter(values).most_common(1)[0][0] if values else ""
@@ -217,20 +241,27 @@ def check_company(doc: dict) -> list[Finding]:
                     ("ceo", "cfo", "deputy_ceo", "coo", "other_executive")):
                 add(item, "unit_scale", f"{c.get('printed')} {c.get('unit_printed')}: an executive "
                     "salary under 1,000 currency units; is the table in thousands?", f, True)
-        # totals
+        # totals, compared in full currency units: a total in "EUR thousand" and parts in
+        # "EUR" are the same money (the values themselves stay as printed)
         total = line.get("total")
         parts = [f for f in TOTAL_PARTS if filled(line.get(f))]
         if filled(total) and parts:
-            base = sum(line[f]["value"] for f in parts)
+            base = sum(scaled(line[f]) for f in parts)
             sums = {"without LTI": base}
             if filled(line.get("lti_vested")):
-                sums["with LTI vested"] = base + line["lti_vested"]["value"]
+                sums["with LTI vested"] = base + scaled(line["lti_vested"])
             if filled(line.get("lti_granted")):
-                sums["with LTI granted"] = base + line["lti_granted"]["value"]
-            tol = max(1.0, abs(total["value"]) * TOTAL_TOLERANCE)
-            if not any(abs(s - total["value"]) <= tol for s in sums.values()):
-                add(item, "total_mismatch", f"total {total.get('printed')} vs parts "
-                    + ", ".join(f"{k} {_num(v)}" for k, v in sums.items()), "total", True)
+                sums["with LTI granted"] = base + scaled(line["lti_granted"])
+            whole = scaled(total)
+            tol = max(scale(total), abs(whole) * TOTAL_TOLERANCE)
+            if not any(abs(s - whole) <= tol for s in sums.values()):
+                confirmed = confirmed_by_gapfill(line, ["total", *parts])
+                add(item, "total_mismatch", f"total {total.get('printed')} "
+                    f"{total.get('unit_printed') or ''} vs parts "
+                    + ", ".join(f"{k} {_num(v)}" for k, v in sums.items())
+                    + (" (full units)" if whole != total["value"] else "")
+                    + ("; a gap-fill read the same figures again" if confirmed else ""),
+                    "total", not confirmed)
         # an individual executive with no fixed pay at all
         if (m.get("role_code") in ("ceo", "cfo", "deputy_ceo", "coo", "other_executive")
                 and line.get("role_disclosure") in ("individual", "individual_unnamed")

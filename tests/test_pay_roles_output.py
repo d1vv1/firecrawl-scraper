@@ -44,6 +44,26 @@ class TestChecks:
         ln2["total"] = cell(1001)                     # 1 printed unit of rounding
         assert "total_mismatch" not in kinds(out.check_company(doc([item(ln2)])))
 
+    def test_total_in_other_units_is_compared_in_full_units(self):
+        ln = line("Chair", 200_000)
+        for k, v in (("unit", "units"), ("unit_printed", "EUR")):
+            ln["base_salary"][k] = v
+        ln["committee_fees"] = {**cell(34_000), "unit": "units", "unit_printed": "EUR"}
+        ln["total"] = cell(234)                        # "234" in an EUR thousand table
+        assert "total_mismatch" not in kinds(out.check_company(doc([item(ln)])))
+
+    def test_total_confirmed_by_gapfill_is_not_asked_again(self):
+        ln = line("CEO", 1000)
+        ln["total"] = cell(1500)
+        for f in ("total", "base_salary"):
+            ln[f]["previous"] = {"value": ln[f]["value"]}
+            ln[f]["gapfill_note"] = "rechecked: total_mismatch"
+        (f,) = [x for x in out.check_company(doc([item(ln)])) if x.kind == "total_mismatch"]
+        assert not f.gap and "read the same figures again" in f.detail
+        ln["total"]["previous"] = {"value": 1600}      # the gap-fill changed it: ask again
+        (f,) = [x for x in out.check_company(doc([item(ln)])) if x.kind == "total_mismatch"]
+        assert f.gap
+
     def test_completeness_follows_the_when_rules(self):
         ceo = item(line("CEO", 10))
         found = kinds(out.check_company(doc([ceo])))
@@ -194,5 +214,15 @@ class TestRunFiles:
     def test_gapfill_dry_run_counts_cells(self, env, capsys):
         pr.main(["--mode", "all", "--only", "acme-a", "--run-id", "g2"] + env["args"])
         n = len(env["calls"])
+        capsys.readouterr()
         assert pr.main(["--mode", "gapfill", "--from-run", "g2", "--dry-run"] + env["args"]) == 0
         assert len(env["calls"]) == n
+        out = capsys.readouterr().out
+        assert "pay_line_id" not in out and "4 line(s)" not in out or "ok 4 line(s)" in out
+
+    def test_resumed_summary_counts_lines(self, env):
+        args = ["--mode", "all", "--only", "acme-a", "--run-id", "g3"] + env["args"]
+        pr.main(args)
+        pr.main(args)                                   # everything done: rows from the files
+        with (env["tmp"] / "runs" / "g3" / "summary.csv").open(encoding="utf-8-sig") as fh:
+            assert next(csv.DictReader(fh))["lines"] == "4"

@@ -550,8 +550,17 @@ def merge_gaps(doc: dict, answer: dict, gaps: list[prompts.Gap], texts: dict[int
         grade = output.quote_grade(new.get("quote"), new.get("printed"), new.get("chunk_id"), texts)
         if grade is not None:
             item["quote_check"][key[1]] = grade
-        changed += 1
+        changed += (old or {}).get("value") != new.get("value")
     return changed
+
+
+def summary_row(doc: dict) -> dict:
+    """A company's summary.csv row from its saved JSON, where "lines" is the list of pay
+    lines (the summary gives their number)."""
+    row = {k: doc.get(k, "") for k in SUMMARY_COLUMNS}
+    if isinstance(doc.get("lines"), list):
+        row["lines"] = len(doc["lines"])
+    return row
 
 
 def run_gapfill(doc: dict, req: Request, run_dir: Path, dry_run: bool = False) -> dict:
@@ -560,10 +569,7 @@ def run_gapfill(doc: dict, req: Request, run_dir: Path, dry_run: bool = False) -
     started = time.monotonic()
     cid = doc["company_id"]
     gaps = gaps_of(doc) if doc.get("status") == "ok" else []
-    row = {k: doc.get(k, "") for k in ("company_id", "company_name", "country", "also_listed_as",
-                                       "match_type", "source_file", "format", "fiscal_year",
-                                       "period_end", "lines", "mapped_auto",
-                                       "mapped_suggestion", "unmapped", "cells")}
+    row = summary_row(doc)
     if gaps and not dry_run:
         ref = ref_roles.load(req.ref_path)
         c = Company(cid, doc["company_name"], doc.get("country", ""), "", report=doc["report"])
@@ -642,7 +648,7 @@ def write_summary(run_dir: Path, companies: list[Company], rows: dict[str, dict]
                 done = run_dir / "companies" / f"{c.company_id}.json"
                 failed = done.with_suffix(".error.json")
                 if done.exists():
-                    row = json.loads(done.read_text(encoding="utf-8"))
+                    row = summary_row(json.loads(done.read_text(encoding="utf-8")))
                 elif failed.exists():
                     row = {"company_id": c.company_id, "company_name": c.company_name,
                            "country": c.country, "status": "error",
