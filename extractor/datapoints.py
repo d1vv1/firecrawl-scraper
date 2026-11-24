@@ -1546,6 +1546,11 @@ def set_aside_report(c: Company, result: dict, why: str) -> str | None:
     return was.group(1) if was else None
 
 
+# not ISO 3166 but common (the EU's EL for Greece; UK): the same country (Supermarket
+# Income REIT's report "UK" against "GB" graded every value C)
+COUNTRY_ALIASES = {"UK": "GB", "EL": "GR"}
+
+
 def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
     """Is the report really this company's? Two signals from the report's own text: the
     country it says the company is registered in, and its legal name (the Siemens run
@@ -1555,7 +1560,8 @@ def identity_check(values: list[Found], country: str | None, names: list[str], s
     reasons = []
     stated = next((f.value for f in values if f.data_point == "country_code"
                    and f.source == source and f.value), None)
-    if country and stated and stated != country:
+    same = lambda c: COUNTRY_ALIASES.get(str(c).strip().upper(), str(c).strip().upper())
+    if country and stated and same(stated) != same(country):
         reasons.append(f"the report says the company is in {stated}, the company list says {country}")
     legal = next((f.value for f in values if f.data_point == "legal_name"
                   and f.source == source and f.value), None)
@@ -2929,6 +2935,23 @@ def no_future_year_end(rows: list[dict]) -> None:
     end.update(value="", unit="", period_end="", method="", confidence="", note=note)
 
 
+_ALIAS_ONLY = re.compile(r";? ?check: the report says the company is in (UK|EL), the company list says "
+                         r"(GB|GR): " + re.escape(OTHER_COMPANY))
+
+
+def country_alias_not_a_mismatch(rows: list[dict]) -> None:
+    """Saved before COUNTRY_ALIASES: the report's "UK" against the list's "GB" graded every
+    value from it C as possibly another company's (28 GB companies). The note goes, and a
+    value whose quote was found verbatim is B again."""
+    for r in rows:
+        if not _ALIAS_ONLY.search(r["note"]):
+            continue
+        r["note"] = _ALIAS_ONLY.sub("", r["note"]).strip("; ")
+        if (r["confidence"] == "C" and r["method"] == "PARSE" and "not found verbatim" not in r["note"]
+                and "check:" not in r["note"] and "undated" not in r["note"]):
+            r["confidence"] = "B"
+
+
 def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2943,6 +2966,7 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
     rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
     iso_codes(rows)
+    country_alias_not_a_mismatch(rows)
     no_future_year_end(rows)
     fiscal_year_from_its_end(rows)
     totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own

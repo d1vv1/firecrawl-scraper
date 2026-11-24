@@ -136,3 +136,22 @@ def test_a_saved_year_end_after_the_day_it_was_read_is_cleared():
     dp.no_future_year_end(rows[2:])
     assert [r["value"] for r in rows] == ["", "", "2025-12-31"]
     assert "after the day it was read" in rows[0]["note"]
+
+
+def test_uk_in_the_report_is_gb_in_the_identity_check():
+    src = "Annual report (PDF)"
+    vals = [dp.Found("country_code", "UK", source=src), dp.Found("revenue", "1", source=src, confidence="A")]
+    dp.identity_check(vals, "GB", [], src)
+    assert vals[1].confidence == "A"
+    dp.identity_check(vals, "IE", [], src)
+    assert vals[1].confidence == "C"
+
+
+def test_a_saved_uk_gb_mismatch_is_taken_back():
+    why = "check: the report says the company is in UK, the company list says GB: possibly another company's report"
+    rows = [_row("a", "revenue", "1") | {"method": "PARSE", "confidence": "C", "note": 'PDF page 3: "Revenue 1"; ' + why},
+            _row("a", "ebitda", "2") | {"method": "PARSE", "confidence": "C",
+                                        "note": '"EBITDA 2" (quote not found verbatim); ' + why}]
+    dp.country_alias_not_a_mismatch(rows)
+    assert [(r["confidence"], r["note"]) for r in rows] == [
+        ("B", 'PDF page 3: "Revenue 1"'), ("C", '"EBITDA 2" (quote not found verbatim)')]
