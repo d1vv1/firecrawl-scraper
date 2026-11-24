@@ -116,11 +116,16 @@ def pair(golden: list[dict], run: list[dict]) -> list[tuple[dict, dict | None]]:
     return out
 
 
-def same(golden_text: str, run_value, part: str) -> bool:
+def same(golden_text: str, run_value, part: str, cell: dict | None = None) -> bool:
+    """The golden value equals the run's: as printed ("15,000" in a SEK-thousands table), or
+    in full currency units ("15000000", as the old export and some checkers write it)."""
     if part == "form":
         return (golden_text or "").strip().casefold() == str(run_value or "").strip().casefold()
     g, r = number(golden_text), run_value
-    return g is not None and r is not None and abs(g - float(r)) <= 1e-6 * max(1.0, abs(g))
+    if g is None or r is None:
+        return False
+    full = float(r) * output.scale(cell) if cell else float(r)
+    return any(abs(g - v) <= 1e-6 * max(1.0, abs(g)) for v in (float(r), full))
 
 
 def score(run_dir: Path, golden_path: Path, ref: ref_roles.RefRoles) -> tuple[dict, list[dict]]:
@@ -165,7 +170,7 @@ def score(run_dir: Path, golden_path: Path, ref: ref_roles.RefRoles) -> tuple[di
                     result = "extra"
                 elif rv in (None, ""):
                     result = "missing"
-                elif same(gtext, rv, part):
+                elif same(gtext, rv, part, cell):
                     result = "exact"
                 else:
                     result = "wrong"

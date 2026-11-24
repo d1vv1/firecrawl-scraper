@@ -67,6 +67,12 @@ class TestScore:
         assert any(c["run_role_title"] == "(not found)" for c in cells)
         assert not result["all_passed"]
 
+    def test_golden_in_full_units_matches_a_printed_value(self):
+        cell = {"value": 15000.0, "unit": "thousands"}
+        assert sc.same("15000000", 15000.0, "value", cell)          # old export, full units
+        assert sc.same("15 000", 15000.0, "value", cell)            # as printed
+        assert not sc.same("1500000", 15000.0, "value", cell)
+
     def test_pairing_prefers_the_person(self):
         run = [{"line": {"person_name": "Bo B", "printed_title": "CEO"}, "mapping": {"role_detail": "ceo"}},
                {"line": {"person_name": "Anna A", "printed_title": "CEO"}, "mapping": {"role_detail": "ceo"}}]
