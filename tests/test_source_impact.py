@@ -60,3 +60,17 @@ def test_robots_tdm_and_ai_txt_verdicts():
     assert si.robots_verdict(info, "https://x.com/ir/a.pdf")[:2] == (False, False)
     assert si.tdm_reserved(info, "https://x.com/reports/ar.pdf") and not si.tdm_reserved(info, "https://x.com/ir/a.pdf")
     assert si.ai_txt_disallows(info, "https://x.com/ir/a.pdf")
+
+
+def test_robots_wildcards_longest_match_and_agent_groups():
+    text = ("User-agent: *\nDisallow: /\n\nUser-agent: Googlebot\nUser-agent: Bingbot\nAllow: /\n\n"
+            "User-agent: GPTBot\nDisallow: /*.pdf$\nAllow: /ir/\n")
+    assert not si.robots_allows(text, "*", "https://x.com/ir/a.pdf")
+    assert si.robots_allows(text, "Bingbot", "https://x.com/ir/a.pdf")
+    assert si.robots_allows(text, "GPTBot", "https://x.com/ir/a.htm")
+    assert not si.robots_allows(text, "GPTBot", "https://x.com/media/a.pdf")
+    gam = "User-agent: *\nDisallow: */media/\nDisallow: /*.pdf$\n"
+    assert not si.robots_allows(gam, "*", "https://cdn.gam.com/files/ar.pdf")
+    assert si.robots_allows(gam, "*", "https://cdn.gam.com/files/ar.pdf?x=1")
+    assert si.robots_allows("User-agent: *\nDisallow: /private/\nAllow: /private/ok/\n", "*",
+                            "https://x.com/private/ok/a.pdf")

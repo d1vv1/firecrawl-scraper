@@ -34,7 +34,6 @@ from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import unquote, urlparse
-from urllib.robotparser import RobotFileParser
 
 from . import gcs
 from .config import CACHE_DIR, OUTPUT_DIR
@@ -228,19 +227,68 @@ class Web:
         self.save()
 
 
+def _groups(text: str) -> list[tuple[list[str], list[tuple[bool, str]]]]:
+    """robots.txt -> [(user agents, [(allow, path pattern)])], consecutive User-agent lines
+    sharing one group (RFC 9309)."""
+    groups, agents, rules, last = [], [], [], ""
+    for raw in text.splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, val = (x.strip() for x in line.split(":", 1))
+        key = key.lower()
+        if key == "user-agent":
+            if last != "user-agent" and agents:
+                groups.append((agents, rules))
+                agents, rules = [], []
+            agents.append(val.lower())
+        elif key in ("allow", "disallow") and agents:
+            if val or key == "allow":
+                rules.append((key == "allow", val))
+        last = key
+    if agents:
+        groups.append((agents, rules))
+    return groups
+
+
+def _pattern(path: str) -> re.Pattern:
+    end = path.endswith("$")
+    body = re.escape(path[:-1] if end else path).replace(r"\*", ".*")
+    return re.compile(body + ("$" if end else ""))
+
+
+def robots_allows(text: str, agent: str, url: str) -> bool:
+    """RFC 9309 / Google matching: the group naming the agent (else "*"), the longest
+    matching rule wins, Allow on a tie; * and $ in paths."""
+    p = urlparse(url)
+    path = (p.path or "/") + (f"?{p.query}" if p.query else "")
+    groups = _groups(text)
+    a = agent.lower()
+    mine = [r for ags, r in groups if any(x != "*" and x in a for x in ags)]
+    if not mine:
+        mine = [r for ags, r in groups if "*" in ags]
+    best = None                      # (length, allow)
+    for rules in mine:
+        for allow, pat in rules:
+            if not pat:
+                continue
+            if _pattern(pat).match(path):
+                key = (len(pat), allow)
+                if best is None or key > best:
+                    best = key
+    return best is None or best[1]
+
+
 def robots_verdict(info: dict, url: str) -> tuple[bool, bool, list[str]]:
     """(blocked for every crawler "*", blocked for FirecrawlAgent, AI bots named as disallowed)."""
     text = info.get("robots") or ""
     if not text:
         return False, False, []
-    rp = RobotFileParser()
-    rp.parse(text.splitlines())
-    star = not rp.can_fetch("*", url)
-    fc = not rp.can_fetch(FIRECRAWL_UA, url)
-    named = []
-    for bot in AI_BOTS:
-        if re.search(rf"(?im)^\s*user-agent:\s*{re.escape(bot)}\s*$", text) and not rp.can_fetch(bot, url):
-            named.append(bot)
+    star = not robots_allows(text, "*", url)
+    fc = not robots_allows(text, FIRECRAWL_UA, url)
+    named = [bot for bot in AI_BOTS
+             if re.search(rf"(?im)^\s*user-agent:\s*{re.escape(bot)}\s*$", text)
+             and not robots_allows(text, bot, url)]
     return star, fc, named
 
 
@@ -264,9 +312,7 @@ def ai_txt_disallows(info: dict, url: str) -> bool:
     text = info.get("ai_txt") or ""
     if not text:
         return False
-    rp = RobotFileParser()
-    rp.parse(text.splitlines())
-    return not rp.can_fetch("*", url)
+    return not robots_allows(text, "*", url)
 
 
 # --- the report ---------------------------------------------------------------------------
@@ -371,11 +417,13 @@ def build(src: Path = COMBINED, out: Path = OUT, web: bool = True) -> dict:
                 v["replacement_source"] = v["replacement_source"] or "another copy of the document whose host allows it"
             if named:
                 v["ai_bots_disallowed"] = ", ".join(named)
+            if "noai" in str(dinfo.get("x_robots", "")).lower():
+                v["other_opt_out"] = f"X-Robots-Tag: {dinfo['x_robots']} (not on legal's list)"
     affected = [v for v in vals if v["rules"]]
     write_xlsx(out, vals, affected, src, web)
     csv_out = out.with_name(out.stem + "_values.csv")
     with open(csv_out, "w", encoding="utf-8-sig", newline="") as fh:
-        w_ = csv.DictWriter(fh, fieldnames=COLUMNS + ["ai_bots_disallowed"], extrasaction="ignore")
+        w_ = csv.DictWriter(fh, fieldnames=COLUMNS + ["ai_bots_disallowed", "other_opt_out"], extrasaction="ignore")
         w_.writeheader()
         w_.writerows(affected)
     return {"values": len(vals), "affected": len(affected), "xlsx": out, "csv": csv_out}
@@ -496,8 +544,8 @@ def write_xlsx(out: Path, vals: list[dict], affected: list[dict], src: Path, web
           [40, 40, 8, 22, 20, 60])
 
     # the values (legal's columns first)
-    sheet("Values", COLUMNS + ["ai_bots_disallowed"],
-          [[v.get(c, "") for c in COLUMNS + ["ai_bots_disallowed"]] for v in affected],
+    sheet("Values", COLUMNS + ["ai_bots_disallowed", "other_opt_out"],
+          [[v.get(c, "") for c in COLUMNS + ["ai_bots_disallowed", "other_opt_out"]] for v in affected],
           [30, 30, 7, 24, 18, 8, 30, 26, 9, 60, 40, 28, 30, 40, 14, 60, 40, 20])
     wb.save(out)
 
