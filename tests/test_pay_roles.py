@@ -207,6 +207,19 @@ class TestRun:
         doc = json.loads(path.read_text(encoding="utf-8"))
         assert doc["lines"][0]["quote_check"]["base_salary"] == "exact"
 
+    def test_remap_uses_the_current_workbook_without_the_ai(self, env):
+        pr.main(["--mode", "all", "--only", "acme-a", "--run-id", "rm"] + env["args"])
+        path = env["tmp"] / "runs" / "rm" / "companies" / "acme-a.json"
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        for it in doc["lines"]:
+            it["mapping"] = {"mapping_source": "unmapped", "role_detail": "", "role_code": ""}
+        path.write_text(json.dumps(doc, ensure_ascii=False), encoding="utf-8")
+        n = len(env["calls"])
+        assert pr.main(["--remap", "rm", "--ref-roles", str(env["xlsx"])]) == 0
+        assert len(env["calls"]) == n
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        assert doc["lines"][0]["mapping"]["role_detail"] == "ceo" and doc["mapped_auto"] >= 1
+
     def test_bad_requests(self, env, capsys):
         assert pr.main(["--mode", "field"] + env["args"]) == 1             # no fields
         assert pr.main(["--mode", "role", "--roles", "wizard"] + env["args"]) == 1
@@ -218,6 +231,20 @@ class TestMapRole:
     @pytest.fixture()
     def ref(self, tmp_path):
         return ref_roles.load(write(tmp_path / "ref_roles.xlsx"))
+
+    @pytest.fixture()
+    def real_like(self, tmp_path):
+        """A workbook with former_* rows and a group title, like the real one."""
+        from tests.test_ref_roles import DETAILS, ROLES, TITLES
+        roles = ROLES + [("executive_team_aggregate", "Y")]
+        details = DETAILS + [("former_ceo", "Y", "ceo", "R001"),
+                             ("former_executive", "Y", "other_executive", "R338"),
+                             ("former_board_member", "Y", "board_member", ""),
+                             ("executive_management_group", "Y", "executive_team_aggregate", "")]
+        titles = TITLES + [("executive_management_group", "Executive Board Group", "en",
+                            "phrase", "agreed", "")]
+        return ref_roles.load(write(tmp_path / "real_like.xlsx", roles=roles, details=details,
+                                    titles=titles))
 
     def test_workbook_title_beats_the_suggestion(self, ref):
         m = pr.map_role(ref, line("Group CFO", suggested="ceo"), "SE", set())
@@ -234,6 +261,26 @@ class TestMapRole:
         ln["row_label"] = "Henrik Lind, Styrelseordförande"
         m = pr.map_role(ref, ln, "SE", set())
         assert (m["role_detail"], m["mapping_source"]) == ("board_chair", "auto")
+
+    def test_a_holder_who_left_gets_the_former_role(self, real_like):
+        ln = line("CFO until 30 June", suggested="former_executive")
+        ln["period_coverage"] = "left_in_year"
+        m = pr.map_role(real_like, ln, "SE", set())
+        assert (m["role_detail"], m["role_code"], m["held_role_detail"]) == \
+            ("former_executive", "cfo", "cfo")
+        assert "note" not in m                          # agrees with the AI now
+        ln["printed_title"], ln["suggested_role_detail"] = "CEO", "former_ceo"
+        assert pr.map_role(real_like, ln, "SE", set())["role_detail"] == "former_ceo"
+        ln["period_coverage"] = "joined_in_year"         # a new CEO is not a former one
+        assert pr.map_role(real_like, ln, "SE", set())["role_detail"] == "ceo"
+
+    def test_group_title_inside_a_person_title_does_not_decide(self, real_like):
+        ln = line("Member of the Executive Board Group", suggested="exco_member")
+        m = pr.map_role(real_like, ln, "SE", set())
+        assert (m["role_detail"], m["mapping_source"]) == ("exco_member", "suggestion")
+        assert "group title" in m["note"]
+        ln["is_aggregate"] = True
+        assert pr.map_role(real_like, ln, "SE", set())["mapping_source"] == "auto"
 
     def test_unknown_suggestion_is_unmapped(self, ref):
         m = pr.map_role(ref, line("Chief Wizard", suggested="wizard"), "SE", set())

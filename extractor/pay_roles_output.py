@@ -58,7 +58,7 @@ COMPLETENESS = [
      {"non_executive_director", "supervisory_board_member", "board_group",
       "employee_representative", "senior_independent_director", "audit_committee_chair",
       "remuneration_committee_chair", "nomination_committee_chair", "committee_chair_member",
-      "board_vice_chair"}),
+      "board_vice_chair", "former_board_member"}),
 ]
 
 

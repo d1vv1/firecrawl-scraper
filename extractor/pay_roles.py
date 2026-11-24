@@ -201,23 +201,64 @@ def pay_line_id(company_id: str, fiscal_year: str | None, line: dict) -> str:
     return hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]
 
 
+GROUP_CODES = {"executive_team_aggregate", "board_aggregate", "key_management_total"}
+LEFT = {"left_in_year", "joined_and_left"}
+# The Allshares role list has a "former" row per group: a holder who left during the year is
+# that row, under the role code of what they held (a former CFO stays role_code cfo).
+FORMER = {"ceo": "former_ceo"}
+FORMER_BY_GROUP = {"executive": "former_executive", "board": "former_board_member"}
+
+
+def former_detail(ref: ref_roles.RefRoles, role_detail: str, role_code: str) -> str:
+    if role_code in GROUP_CODES or not role_detail:
+        return role_detail
+    group = ref.roles.get(role_code, {}).get("role_group", "")
+    former = FORMER.get(role_code) or FORMER_BY_GROUP.get(group, "")
+    return former if former in ref.details else role_detail
+
+
 def map_role(ref: ref_roles.RefRoles, line: dict, country: str,
              cdp_ids: set[str]) -> dict:
     """The line's role: the workbook title in it (source auto), else the AI's suggestion
     when it names a known role_detail (source suggestion) or, failing that, a CDP role from
-    the list it was given (low), else unmapped."""
+    the list it was given (low), else unmapped. A holder who left during the year
+    (period_coverage) gets the "former" role_detail of their group, under their role code."""
+    out = _map_role(ref, line, country, cdp_ids)
+    if line.get("period_coverage") in LEFT and out.get("role_code"):
+        held = out["role_detail"]
+        out["role_detail"] = former_detail(ref, held, out["role_code"])
+        if out["role_detail"] != held:
+            out["held_role_detail"] = held
+    suggested = line.get("suggested_role_detail") or ""
+    if (out["mapping_source"] == "auto" and suggested
+            and suggested not in (out["role_detail"], out.get("held_role_detail"))):
+        out["note"] = f"AI suggested {suggested}"
+    return out
+
+
+def _map_role(ref: ref_roles.RefRoles, line: dict, country: str, cdp_ids: set[str]) -> dict:
     suggested = line.get("suggested_role_detail") or ""
     # the function first; the row's own label second ("Ellen Trane Nørby, formand")
     m = (ref.match(line.get("printed_title") or "", country)
          or ref.match(line.get("row_label") or "", country))
+    group_note = ""
+    if m and m.role_code in GROUP_CODES and not line.get("is_aggregate"):
+        # a group's title inside one person's title ("Member of the Board of Directors"
+        # holds "Board of Directors"): not the group line, so the title does not decide
+        group_note = f"group title {m.title!r} on a one-person line"
+        m = None
     if m:
-        out = {"role_detail": m.role_detail, "role_code": m.role_code,
-               "cdp_role_id": m.cdp_role_id, "mapping_source": "auto",
-               "mapping_confidence": m.confidence, "matched_title": m.title,
-               "title_part_year": m.part_year, "title_flags": m.flags}
-        if suggested and suggested != m.role_detail:
-            out["note"] = f"AI suggested {suggested}"
-        return out
+        return {"role_detail": m.role_detail, "role_code": m.role_code,
+                "cdp_role_id": m.cdp_role_id, "mapping_source": "auto",
+                "mapping_confidence": m.confidence, "matched_title": m.title,
+                "title_part_year": m.part_year, "title_flags": m.flags}
+    out = _suggested(ref, line, suggested, cdp_ids)
+    if group_note:
+        out["note"] = "; ".join(x for x in (group_note, out.get("note")) if x)
+    return out
+
+
+def _suggested(ref: ref_roles.RefRoles, line: dict, suggested: str, cdp_ids: set[str]) -> dict:
     if suggested in ref.details:
         row = ref.details[suggested]
         return {"role_detail": suggested, "role_code": row["role_code"],
@@ -408,6 +449,30 @@ def quote_checks(line: dict, texts: dict[int, str]) -> dict[str, str]:
             if grade is not None:
                 out[name] = grade
     return out
+
+
+def remap(run_dir: Path, ref: ref_roles.RefRoles,
+          cdp_roles: list[tuple[str, str]] | None) -> dict[str, int]:
+    """Map every line of an existing run again with the current role workbook and rules,
+    from the AI's saved answers, and rewrite the run's files. No AI call."""
+    cdp_ids = {i for i, _ in cdp_roles or []}
+    done = 0
+    for path in sorted((run_dir / "companies").glob("*.json")):
+        if path.name.endswith(".error.json"):
+            continue
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        if doc.get("status") != "ok":
+            continue
+        for item in doc.get("lines", []):
+            item["mapping"] = map_role(ref, item["line"], doc.get("country", ""), cdp_ids)
+        lines = doc.get("lines", [])
+        for s in ("auto", "suggestion", "unmapped"):
+            doc[f"mapped_{s}" if s != "unmapped" else "unmapped"] = sum(
+                1 for x in lines if x["mapping"]["mapping_source"] == s)
+        doc["ref_roles_version"] = ref.version
+        path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+        done += 1
+    return {"companies": done, **output.export(run_dir)}
 
 
 def recheck(run_dir: Path) -> dict[str, int]:
@@ -608,6 +673,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--mode", choices=["field", "role", "all", "gapfill"])
     p.add_argument("--recheck", default="", metavar="RUN_ID",
                    help="grade the quotes of an existing run again and rewrite its files (no AI)")
+    p.add_argument("--remap", default="", metavar="RUN_ID",
+                   help="map the roles of an existing run again with the current workbook (no AI)")
     p.add_argument("--roles", default="required",
                    help="mode role: required | optional | all | role_details or codes, comma-separated")
     p.add_argument("--fields", default="", help="mode field: pay fields, comma-separated")
@@ -642,8 +709,22 @@ def main(argv: list[str] | None = None) -> int:
         print(f"rechecked {f['companies']} companies of {args.recheck}: {f['lines']} line(s), "
               f"{f['cells']} cell(s), {f['review']} review row(s), {f['gaps']} to ask again")
         return 0
+    if args.remap:
+        run_dir = RUNS_DIR / args.remap
+        if not (run_dir / "companies").is_dir():
+            print(f"ERROR: no run at {run_dir}", file=sys.stderr)
+            return 1
+        try:
+            ref = ref_roles.load(args.ref_roles or None)
+        except ref_roles.RefRolesError as e:
+            print(f"ERROR: {e}", file=sys.stderr)
+            return 1
+        f = remap(run_dir, ref, load_cdp_roles(args.cdp_repo, ref))
+        print(f"remapped {f['companies']} companies of {args.remap} with {ref.version}: "
+              f"{f['lines']} line(s), {f['review']} review row(s), {f['gaps']} to ask again")
+        return 0
     if not args.mode:
-        p.error("--mode is required (or --recheck RUN_ID)")
+        p.error("--mode is required (or --recheck / --remap RUN_ID)")
     gapfill = args.mode == "gapfill"
     from_dir = RUNS_DIR / args.from_run if args.from_run else None
     if gapfill and not (from_dir and (from_dir / "companies").is_dir()):
