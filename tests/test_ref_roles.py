@@ -50,7 +50,8 @@ def write(path, roles=ROLES, details=DETAILS, titles=TITLES, exclusions=EXCLUSIO
     ws.append(["code", "label", "role_level", "role_group", "meaning", "is_ceo", "sort_order",
                "required", "active"])
     for code, req in roles:
-        ws.append([code, code, "E1", "executive", "", "N", 1, req, "Y"])
+        ws.append([code, code, "E1", "board" if code.startswith("board") else "executive",
+                   "", "N", 1, req, "Y"])
     ws = wb.create_sheet("role_details")
     ws.append(["role_detail", "label", "group", "required", "when_rule", "role_code", "cdp_role_id",
                "cdp_role_title", "note"])
