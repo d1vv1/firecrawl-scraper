@@ -142,7 +142,7 @@ def score(run_dir: Path, golden_path: Path, ref: ref_roles.RefRoles) -> tuple[di
         if not doc:
             missing_companies.append(cid)
         n["companies"] += 1
-        run_lines = (doc or {}).get("lines", [])
+        run_lines = [x for x in (doc or {}).get("lines", []) if not x["mapping"].get("excluded")]
         if doc and not any(f.kind == "completeness" for f in output.check_company(doc)):
             n["complete"] += 1
         pages = (doc or {}).get("chunk_pages", {})

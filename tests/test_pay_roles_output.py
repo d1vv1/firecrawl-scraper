@@ -78,6 +78,22 @@ class TestChecks:
         assert "completeness" not in kinds(out.check_company(doc([ceo], mode="role",
                                                                   roles=["ceo"])))
 
+    def test_deputy_ceo_who_is_cfo_meets_the_cfo_rule(self):
+        ceo = item(line("CEO", 10))
+        dep = item(line("Deputy CEO and CFO", 8), "deputy_ceo", "deputy_ceo", pid="p2",
+                   also_role_details=["cfo"])
+        details = [f.detail for f in out.check_company(doc([ceo, dep])) if f.kind == "completeness"]
+        assert not any("CFO" in d for d in details)
+
+    def test_excluded_line_is_reviewed_not_exported(self, tmp_path):
+        d = doc([item(line("CEO", 10)), item(line("Head of nomination committee"), pid="p2",
+                                             excluded="nomination committee member")])
+        assert "excluded_line" in kinds(out.check_company(d))
+        (tmp_path / "companies").mkdir()
+        (tmp_path / "companies" / "c1.json").write_text(json.dumps(d), encoding="utf-8")
+        files = out.export(tmp_path)
+        assert files["lines"] == 1
+
     def test_unit_and_currency_warnings(self):
         ln = line("CFO", 2_500_000)                   # 2.5 billion in a tkr table?
         ln["pension"] = {**cell(10), "currency_printed": "EUR"}

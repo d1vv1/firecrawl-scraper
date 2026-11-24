@@ -75,7 +75,10 @@ give the largest and name the others in `includes`; never add them.
 
 ### total
 The total remuneration as the company states it. Never add it up yourself;
-null if the table has no total.
+null if the table has no total. If the table gives two totals for the
+same person, one with long-term incentives at their initial grant (award)
+value and one at their value at vesting, give the one at grant value and
+name the other, with its figure, in `includes`.
 
 ### sti_target
 The target short-term incentive opportunity for this role, in the form the

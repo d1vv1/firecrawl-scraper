@@ -37,8 +37,8 @@ EXTRA_COLUMNS = ["role_detail", "cdp_role_id", "mapping_source", "mapping_confid
                  "source_file", "match_type", "ref_roles_version", "run_id", "review_flags"]
 EVIDENCE_COLUMNS = ["pay_line_id", "company_id", "role_title", "role_detail", "field", "value",
                     "printed", "unit_printed", "unit", "currency_printed", "form", "includes",
-                    "page", "chunk_id", "quote", "quote_found", "goes_to", "previous_value",
-                    "note", "source_file"]
+                    "page", "chunk_id", "quote", "quote_found", "table_check", "goes_to",
+                    "previous_value", "note", "source_file"]
 REVIEW_COLUMNS = ["company_id", "company_name", "pay_line_id", "role_title", "kind", "field",
                   "detail", "gap"]
 
@@ -199,6 +199,9 @@ def check_company(doc: dict) -> list[Finding]:
     for item in lines:
         line, m = item["line"], item["mapping"]
         title = line.get("printed_title", "")
+        if m.get("excluded"):
+            add(item, "excluded_line", f"left out of fact_pay_line: {m['excluded']}")
+            continue
         # roles
         if m["mapping_source"] == "suggestion":
             add(item, "role_suggestion", f"AI: {m.get('role_detail') or m.get('cdp_role_id')} "
@@ -214,6 +217,21 @@ def check_company(doc: dict) -> list[Finding]:
         if key in seen:
             add(item, "duplicate_line", f"same title and name as {seen[key]}")
         seen[key] = item["pay_line_id"]
+        # Camelot's table against the AI (pay_roles_tables.py)
+        row = item.get("table_row") or {}
+        for f, s in (item.get("table_check") or {}).items():
+            cell = line.get(f) if isinstance(line.get(f), dict) else {}
+            prev = (cell.get("previous") or {}).get("printed")
+            where = f"PDF page {row.get('page')}, row '{str(row.get('label', ''))[:40]}'"
+            if s == "table_replaced":
+                add(item, "table_replaced", f"AI read {prev}, table has {cell.get('printed')} "
+                    f"({where}); the table's figure is used", f)
+            elif s == "table_added":
+                add(item, "table_added", f"the table has {cell.get('printed')} ({where}); "
+                    "the AI had none", f)
+            elif s == "ai_consistent":
+                add(item, "table_other_split", f"the table ({where}) splits the pay another "
+                    f"way; the AI's {cell.get('printed')} adds up to the same total and stays", f)
         # quotes (True/False: runs before quotes were graded)
         fy = fiscal_year_int(doc.get("fiscal_year"), doc.get("period_end"))
         for f in FIELDS:
@@ -269,14 +287,17 @@ def check_company(doc: dict) -> list[Finding]:
                 and "base_salary" in doc.get("fields", FIELDS)):
             add(item, "empty_core", "no base salary and no total", "base_salary", True)
 
-    found = {x["mapping"].get("role_detail") for x in lines}
+    kept = [x for x in lines if not x["mapping"].get("excluded")]
+    found = ({x["mapping"].get("role_detail") for x in kept}
+             | {d for x in kept for d in x["mapping"].get("also_role_details", [])})
     if doc.get("status") == "ok" and doc.get("run_mode") in ("role", "all"):
         asked = set(doc.get("roles") or []) or None
         for label, any_of in COMPLETENESS:
             if asked is not None and not (any_of & asked):
                 continue                    # this request did not ask for these roles
             if not (any_of & found):
-                add(None, "completeness", f"no {label} line")
+                add(None, "completeness", f"no {label}" + ("" if label.endswith("line")
+                                                              else " line"))
     return out
 
 
@@ -343,9 +364,11 @@ def evidence_rows(doc: dict, item: dict) -> list[dict]:
             "page": ",".join(map(str, pages.get(str(cid), []))) if cid is not None else "",
             "chunk_id": "" if cid is None else cid, "quote": cell.get("quote") or "",
             "quote_found": item.get("quote_check", {}).get(name, ""),
+            "table_check": (item.get("table_check") or {}).get(name, ""),
             "goes_to": "+".join(f.columns) or "evidence only",
             "previous_value": _num((cell.get("previous") or {}).get("value")),
-            "note": cell.get("gapfill_note") or "", "source_file": doc.get("source_file", ""),
+            "note": "; ".join(x for x in (cell.get("gapfill_note"), cell.get("table_note")) if x),
+            "source_file": doc.get("source_file", ""),
         })
     return out
 
@@ -369,6 +392,8 @@ def export(run_dir: Path) -> dict[str, int]:
         for f in findings:
             by_line.setdefault(f.pay_line_id, []).append(f.kind)
         for item in doc.get("lines", []):
+            if item["mapping"].get("excluded"):
+                continue                    # listed in role_review.csv as excluded_line
             facts.append(fact_row(doc, item, run_id, by_line.get(item["pay_line_id"], [])))
             evidence += evidence_rows(doc, item)
     for name, cols, rows in (("fact_pay_line.csv", FACT_COLUMNS + EXTRA_COLUMNS, facts),

@@ -53,6 +53,7 @@ from pathlib import Path
 from . import llm, pay, ref_roles
 from . import pay_roles_output as output
 from . import pay_roles_prompts as prompts
+from . import pay_roles_tables as tables
 from . import report_library as rl
 from .config import CACHE_DIR, OUTPUT_DIR, PROJECT_ROOT
 from .pay_roles_schema import FIELDS
@@ -84,6 +85,7 @@ class Request:
     ref_path: str
     cdp_roles: list[tuple[str, str]] | None = None
     from_run: str = ""               # gap-fill: the run whose flagged cells are asked again
+    tables: bool = True              # check the AI's figures against Camelot's tables
 
 
 @dataclass
@@ -209,6 +211,20 @@ FORMER = {"ceo": "former_ceo"}
 FORMER_BY_GROUP = {"executive": "former_executive", "board": "former_board_member"}
 
 
+# A second function named in the same title ("Toimitusjohtajan sijainen, talousjohtaja" is the
+# deputy CEO and the CFO): recorded so the completeness check counts it.
+ALSO_ROLES = ("cfo", "ceo", "deputy_ceo")
+# A shareholders' nomination committee is not the board (decided 25 Nov 2026): a member paid
+# only for it is left out. A board member who also sits on it keeps their line.
+_NOMINATION = re.compile(r"(?i)nomination committee|valgkomit|valberedning|nomineringsudvalg"
+                         r"|nimitystoimikun|nimitysvaliokun|osakkeenomistajien nimityst")
+
+
+def nomination_committee_only(line: dict, text: str) -> bool:
+    board_fee = isinstance(line.get("base_salary"), dict) and line["base_salary"].get("value")
+    return bool(_NOMINATION.search(text)) and not board_fee
+
+
 def former_detail(ref: ref_roles.RefRoles, role_detail: str, role_code: str) -> str:
     if role_code in GROUP_CODES or not role_detail:
         return role_detail
@@ -224,6 +240,18 @@ def map_role(ref: ref_roles.RefRoles, line: dict, country: str,
     the list it was given (low), else unmapped. A holder who left during the year
     (period_coverage) gets the "former" role_detail of their group, under their role code."""
     out = _map_role(ref, line, country, cdp_ids)
+    text = " ".join(x for x in (line.get("printed_title"), line.get("row_label")) if x)
+    if nomination_committee_only(line, text):
+        out["excluded"] = "nomination committee member, not on the board"
+    rest = ref_roles.norm(text)
+    if out.get("matched_title"):        # "Deputy CEO" holds "CEO": not a second function
+        rest = re.sub(r"(?<!\w)" + re.escape(ref_roles.norm(out["matched_title"])) + r"(?!\w)",
+                      " ", rest)
+    also = [d for d in ALSO_ROLES if d != out.get("role_detail") and d in ref.details
+            and any(re.search(r"(?<!\w)" + re.escape(t.key) + r"(?!\w)", rest)
+                    for t in ref.titles if t.role_detail == d)]
+    if also:
+        out["also_role_details"] = also
     if line.get("period_coverage") in LEFT and out.get("role_code"):
         held = out["role_detail"]
         out["role_detail"] = former_detail(ref, held, out["role_code"])
@@ -392,6 +420,12 @@ def run_company(c: Company, req: Request, run_dir: Path, dry_run: bool = False) 
         lines.append({"pay_line_id": pay_line_id(c.company_id, fy, line),
                       "mapping": map_role(ref, line, c.country, cdp_ids), "line": line,
                       "quote_check": quote_checks(line, texts)})
+    chunk_pages = {str(ch.id): ch.pages for ch in chunks}
+    table_counts = (tables.check_lines(c.company_name, fy, lines, origin, chunks, chunk_pages)
+                    if req.tables else {})
+    for item in lines:
+        if item.get("table_check"):
+            item["quote_check"] = quote_checks(item["line"], texts)
     count = {s: sum(1 for x in lines if x["mapping"]["mapping_source"] == s)
              for s in ("auto", "suggestion", "unmapped")}
     cells = sum(1 for x in lines for f in FIELDS if isinstance(x["line"].get(f), dict)
@@ -400,7 +434,7 @@ def run_company(c: Company, req: Request, run_dir: Path, dry_run: bool = False) 
               "roles": req.roles, "model": llm.model_name(), "request_key": key,
               "ref_roles_version": ref.version, "image_pages": shown,
               "report": c.report, "annual_file": c.annual_file,
-              "chunk_pages": {str(ch.id): ch.pages for ch in chunks}, "lines": lines}
+              "chunk_pages": chunk_pages, "table_check": table_counts, "lines": lines}
     return finish("ok" if lines else "no_lines", "" if lines else "the AI found no pay line",
                   fiscal_year=fy or "", period_end=answer.get("period_end") or "",
                   lines=len(lines), mapped_auto=count["auto"],
@@ -473,6 +507,39 @@ def remap(run_dir: Path, ref: ref_roles.RefRoles,
         path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
         done += 1
     return {"companies": done, **output.export(run_dir)}
+
+
+def table_check(run_dir: Path) -> dict[str, int]:
+    """Check an existing run's figures against Camelot's reading of the pay tables, in
+    place (a changed cell keeps the AI's figure as "previous"), and rewrite its files. Only
+    the small column-mapping calls go to the AI, cached per table."""
+    from .datapoints import _pay_chunks
+
+    totals: dict[str, int] = {"companies": 0}
+    for path in sorted((run_dir / "companies").glob("*.json")):
+        if path.name.endswith(".error.json"):
+            continue
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        if doc.get("status") != "ok" or not doc.get("report"):
+            continue
+        origin, _ = read_origin(doc["report"])
+        chunks = _pay_chunks(origin, pay.PAY_WORDS)
+        texts = {ch.id: ch.text for ch in chunks}
+        for item in doc.get("lines", []):
+            item.pop("table_check", None)
+            item.pop("table_row", None)
+        counts = tables.check_lines(doc.get("company_name", ""), doc.get("fiscal_year"),
+                                    doc.get("lines", []), origin, chunks,
+                                    doc.get("chunk_pages"))
+        for item in doc.get("lines", []):
+            if item.get("table_check"):
+                item["quote_check"] = quote_checks(item["line"], texts)
+        doc["table_check"] = counts
+        path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+        totals["companies"] += 1
+        for k, v in counts.items():
+            totals[k] = totals.get(k, 0) + v
+    return {**totals, **{f"file_{k}": v for k, v in output.export(run_dir).items()}}
 
 
 def recheck(run_dir: Path) -> dict[str, int]:
@@ -681,6 +748,11 @@ def main(argv: list[str] | None = None) -> int:
                    help="grade the quotes of an existing run again and rewrite its files (no AI)")
     p.add_argument("--remap", default="", metavar="RUN_ID",
                    help="map the roles of an existing run again with the current workbook (no AI)")
+    p.add_argument("--table-check", default="", metavar="RUN_ID",
+                   help="check an existing run's figures against Camelot's pay tables, in place")
+    p.add_argument("--tables", choices=["on", "off"], default="on",
+                   help="check the AI's figures against Camelot's reading of the pay tables "
+                        "(default on)")
     p.add_argument("--roles", default="required",
                    help="mode role: required | optional | all | role_details or codes, comma-separated")
     p.add_argument("--fields", default="", help="mode field: pay fields, comma-separated")
@@ -714,6 +786,15 @@ def main(argv: list[str] | None = None) -> int:
         f = recheck(run_dir)
         print(f"rechecked {f['companies']} companies of {args.recheck}: {f['lines']} line(s), "
               f"{f['cells']} cell(s), {f['review']} review row(s), {f['gaps']} to ask again")
+        return 0
+    if args.table_check:
+        run_dir = RUNS_DIR / args.table_check
+        if not (run_dir / "companies").is_dir():
+            print(f"ERROR: no run at {run_dir}", file=sys.stderr)
+            return 1
+        f = table_check(run_dir)
+        print(f"table-checked {f.pop('companies')} companies of {args.table_check}: "
+              + ", ".join(f"{k} {v}" for k, v in f.items()))
         return 0
     if args.remap:
         run_dir = RUNS_DIR / args.remap
@@ -764,7 +845,7 @@ def main(argv: list[str] | None = None) -> int:
     images = args.images
     req = Request(args.mode, fields, roles, args.roles if args.mode == "role" else "", images,
                   str(ref.path), None if gapfill else load_cdp_roles(args.cdp_repo, ref),
-                  args.from_run)
+                  args.from_run, args.tables == "on")
     countries = {c.strip().upper() for c in args.countries.split(",") if c.strip()}
     only = {c.strip() for c in args.only.split(",") if c.strip()}
     if gapfill:

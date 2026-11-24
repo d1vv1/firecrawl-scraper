@@ -282,6 +282,19 @@ class TestMapRole:
         ln["is_aggregate"] = True
         assert pr.map_role(real_like, ln, "SE", set())["mapping_source"] == "auto"
 
+    def test_nomination_committee_member_is_excluded(self, ref):
+        ln = line("Head of nomination committee")           # committee fee only, no board fee
+        assert pr.map_role(ref, ln, "NO", set())["excluded"].startswith("nomination committee")
+        ln = line("Board member and member of the nomination committee", 275)   # a board fee
+        assert "excluded" not in pr.map_role(ref, ln, "NO", set())
+        ln = line("Ledamot i valberedningen")
+        assert "excluded" in pr.map_role(ref, ln, "SE", set())
+
+    def test_a_second_function_in_the_title_is_recorded(self, ref):
+        ln = line("Deputy CEO and CFO")
+        m = pr.map_role(ref, ln, "FI", set())
+        assert m["role_detail"] == "deputy_ceo" and m["also_role_details"] == ["cfo"]
+
     def test_unknown_suggestion_is_unmapped(self, ref):
         m = pr.map_role(ref, line("Chief Wizard", suggested="wizard"), "SE", set())
         assert m["mapping_source"] == "unmapped" and "wizard" in m["note"]
