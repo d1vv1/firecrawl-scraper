@@ -945,3 +945,29 @@ Missing priority-field values, whole file:
   - The band is now also derived again when its missing input arrives later, not only when the euro rate was missing.
   - `combine` keeps a MANUAL value when a later run finds none.
 - **C7 sized:** 250 of the 1,848 missing priority pay values for executive roles are in annual-report role rows at companies whose remuneration report was read. The "remuneration report not read" label overstates the gap a wider search would close.
+
+---
+
+### 24–25 November 2026: legal's source rules measured, then a switch to follow them (branch `legal-source-policy`)
+
+#### 68. What legal's rules would touch, and `LEGAL_SOURCE_RULES`
+- **Measured, not enforced:**
+  - `extractor/source_impact.py` gives the technical workbook and one row per value.
+  - `extractor/legal_impact_report.py` gives the plain-language `output/legal_rules_impact.xlsx`.
+  - Out of 65,700 values:
+    - 5,012 (7.6%; 1,433 priority) would have to be re-read from an allowed source;
+    - 2,240 can stay but need a linking page or original address recorded;
+    - 22,115 depend on legal's answer about filings.xbrl.org.
+  - robots.txt is read per RFC 9309. No site we use publishes a TDM opt-out.
+- **The switch:** `extractor/source_policy.py`. With `LEGAL_SOURCE_RULES=true`:
+  - every direct download, Firecrawl scrape and ESEF download is checked first. A blocked host, a robots.txt disallow (for every crawler, or for FirecrawlAgent on Firecrawl calls; an unreachable robots.txt counts as a disallow), a tdmrep.json reservation, an ai.txt disallow or a TDM-Rep header means the download is skipped as a `DownloadError` and logged to `output/source_policy_log.csv`;
+  - a bucket file is judged by its original address;
+  - blocked copies are dropped before report candidates are ranked, so the company's own copy wins;
+  - identifiers are taken only from allowed sources:
+    - ISIN from GLEIF's ISIN-to-LEI map (FIRDS picks which one is listed);
+    - exchange and listing status from FIRDS or the annual report;
+    - no ticker from OpenFIGI;
+    - no Nasdaq segment lists;
+    - no OpenFIGI path for home exchanges outside FIRDS (GB, CH, NO).
+  - filings.xbrl.org stays allowed until legal answers; `SOURCE_POLICY_XBRL=block` blocks it.
+- **False or unset:** everything runs as before (tests check this).
