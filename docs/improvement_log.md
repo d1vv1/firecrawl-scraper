@@ -971,3 +971,14 @@ Missing priority-field values, whole file:
     - no OpenFIGI path for home exchanges outside FIRDS (GB, CH, NO).
   - filings.xbrl.org stays allowed until legal answers; `SOURCE_POLICY_XBRL=block` blocks it.
 - **False or unset:** everything runs as before (tests check this).
+- **First run with the rules on (25 Nov, the 44 companies left from Phase D batch 1):**
+  - Downloads skipped: 2 (a bucket file whose original came from a blocked host; Shawbrook's report, disallowed by robots.txt).
+  - Identifiers dropped: 40. Half of them were exchange or listing status read from the filed annual report (ESEF, Companies House accounts, 20-F); those sources now count as the annual report. An ISIN that GLEIF's map holds is now stored as GLEIF's.
+  - Spliced with `combine` under the rules: an old value is kept over the run's only when its source is allowed.
+  - Man Group and OSB first failed when the model's answer ran to the output limit. The call now retries with the fallback model, then with half the excerpts; both then completed (53/70 and 63/70).
+  - Results for these 44: priority values missing 30.4% → 11.5% (424 → 167), filled values 2,196 → 2,988, no value from a disallowed source.
+  - Whole file: priority missing 29.0% → 28.3%.
+- **Company-data-only list:** `rerun_list --company-gaps` lists 726 companies.
+  - 611 never had company data collected; 478 of them are "Pay Data" only in the tracker.
+  - 115 have specific gaps a re-run may fill (859 values, 305 priority).
+  - Values the documents do not state, values that do not apply, and market-cap bands waiting on a share price are left out.
