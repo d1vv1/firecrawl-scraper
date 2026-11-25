@@ -42,7 +42,9 @@ FIRECRAWL = "FirecrawlAgent"
 DIRECT = "*"
 # Identifiers: which source each may come from
 ISIN_SOURCES = ("GLEIF",)
-EXCHANGE_SOURCES = ("ESMA FIRDS",)        # or a report: Annual report (...)
+EXCHANGE_SOURCES = ("ESMA FIRDS",)
+# The annual report, also as filed: the ESEF report, the accounts at Companies House, a 20-F
+ANNUAL_REPORT_SOURCES = ("Annual report", "ESEF filing", "Companies House filing", "SEC EDGAR filing")
 IDENTIFIERS = ("isin", "ticker", "exchange", "listing_status", "exchange_segment", "listing_date")
 
 _lock = threading.Lock()
@@ -237,7 +239,7 @@ def identifier_allowed(data_point: str, source: str) -> bool:
     if data_point == "isin":
         return source in ISIN_SOURCES
     if data_point in ("exchange", "listing_status"):
-        return source in EXCHANGE_SOURCES or source.startswith("Annual report")
+        return source in EXCHANGE_SOURCES or source.startswith(ANNUAL_REPORT_SOURCES)
     if data_point == "exchange_segment":
         return blocked_host_source(source) is None
     return True

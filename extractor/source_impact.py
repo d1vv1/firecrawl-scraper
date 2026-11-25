@@ -35,7 +35,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from . import gcs
+from . import gcs, source_policy
 from .config import CACHE_DIR, OUTPUT_DIR
 from .rerun_list import PRIORITY
 
@@ -357,8 +357,7 @@ def classify(r: dict, bucket: Bucket) -> dict | None:
         rules.append("identifier: ISIN only from GLEIF")
         what.append(f"ISIN from {r['source'] or 'unknown'}: must come from GLEIF's ISIN-to-LEI file")
         repl.append("GLEIF ISIN-to-LEI file")
-    elif dp_ in ("exchange", "listing_status") and not (
-            r["source"] == "ESMA FIRDS" or r["source"].startswith("Annual report")):
+    elif dp_ in ("exchange", "listing_status") and not source_policy.identifier_allowed(dp_, r["source"]):
         rules.append("identifier: exchange/listing from FIRDS or annual report")
         what.append(f"{dp_} from {r['source'] or 'unknown'}: must come from ESMA FIRDS or the annual report")
         repl.append("ESMA FIRDS or the annual report")

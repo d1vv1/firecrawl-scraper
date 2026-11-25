@@ -1774,6 +1774,18 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
     an `error` and no report read, the gap's note leads with it; when a report was read
     all the same (an older result kept after a re-run failed), it is added at the end."""
     us = t.company.country == "US" or t.company.segment == "us_listed"
+    isin = chosen.get("isin")
+    if isin and gleif_isins and source_policy.enforced() and isin.source != "GLEIF":
+        # legal: the ISIN from GLEIF's ISIN-to-LEI map. One read elsewhere that the map
+        # holds is that map's ISIN; one it does not hold is dropped below.
+        codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
+        lei = chosen.get("lei")
+        if codes and all(code in gleif_isins for code in codes):
+            chosen["isin"] = Found(**{**asdict(isin), "source": "GLEIF", "method": "API",
+                                      "confidence": "A",
+                                      "endpoint": apis.GLEIF_RECORD.format(lei=lei.value) + "/isins"
+                                      if lei else isin.endpoint,
+                                      "note": f"in GLEIF's ISIN-to-LEI map; read from {isin.source}"})
     for k in [k for k, f in chosen.items()       # legal: identifiers only from allowed sources
               if not source_policy.keep_identifier(k, f.source, str(f.value))]:
         del chosen[k]

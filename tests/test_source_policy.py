@@ -151,3 +151,24 @@ def test_a_failed_robots_answer_is_asked_again_before_it_blocks(policy, monkeypa
     monkeypatch.setattr(scraper, "_httpx_get", lambda u: (_ for _ in ()).throw(OSError("down")))
     monkeypatch.setattr(scraper, "_impersonated_get", lambda u: (_ for _ in ()).throw(OSError("down")))
     assert sp.check("https://y.com/ar.pdf").allowed          # our connection, not the site: no block
+
+
+def test_a_filed_annual_report_counts_as_the_annual_report():
+    for src in ("ESEF filing (filings.xbrl.org)", "Companies House filing", "SEC EDGAR filing 20-F"):
+        assert sp.identifier_allowed("exchange", src) and sp.identifier_allowed("listing_status", src)
+    assert not sp.identifier_allowed("listing_status", "Year-end report (PDF)")
+
+
+def test_an_isin_read_from_the_report_that_gleif_holds_is_kept_as_gleifs(policy):
+    from extractor import datapoints as d
+    from extractor.apis import Found
+    policy("enforce")
+    t = d.Target(d.Company("a", "A plc", "", "GB", ""))
+    chosen = {"isin": Found("isin", "GB00B10RZP78", source="Annual report (PDF)", endpoint="x.pdf#page=3",
+                            method="PARSE", confidence="B"),
+              "lei": Found("lei", "LEI1", source="GLEIF", endpoint="g", method="API")}
+    rows = {f.data_point: f for f in d.finish(t, dict(chosen), [], None, ["GB00B10RZP78"])}
+    assert rows["isin"].value == "GB00B10RZP78" and rows["isin"].source == "GLEIF"
+    assert rows["isin"].endpoint.endswith("/LEI1/isins")
+    rows = {f.data_point: f for f in d.finish(t, dict(chosen), [], None, ["GB00ZZZZZZ11"])}
+    assert not rows["isin"].value
