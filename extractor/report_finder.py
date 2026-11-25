@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 from urllib.parse import unquote, urljoin, urlparse
 
+from . import source_policy
 from .config import MAP_LIMIT, clean_name, fold, without_share_class
 from firecrawl import FirecrawlError
 
@@ -364,7 +365,7 @@ def pick_best(candidates: list[ReportCandidate]) -> ReportCandidate | None:
     """The best kept candidate by _rank (e.g. 'annual-report-and-accounts' beats
     'annual-report-on-form-20-f', and an annual report beats a tax report in the
     same 'annual_report' folder)."""
-    kept = [c for c in candidates if c.kept]
+    kept = [c for c in candidates if c.kept and source_policy.allows_candidate(c.url)]
     return max(kept, key=_rank) if kept else None
 
 
@@ -610,7 +611,7 @@ def find_report(website_url: str | None, fc: FirecrawlClient, country: str | Non
         log.info("Scraping %s for report links", page_url)
         try:
             page = fc.scrape(page_url, formats=["markdown", "links"])
-        except FirecrawlError as e:          # e.g. "all scraping engines failed"
+        except (FirecrawlError, source_policy.SourceBlocked) as e:   # "all scraping engines failed"
             log.warning("Could not scrape %s: %s", page_url, str(e)[:150])
             return pick_best(all_cands)
         found = page["links"] + re.findall(r"\((https?://[^)\s]+\.pdf[^)\s]*)\)", page["markdown"])

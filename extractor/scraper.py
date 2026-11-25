@@ -16,6 +16,7 @@ import httpx
 from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
                       wait_exponential)
 
+from . import source_policy
 from .config import CACHE_DIR, MIN_CHARS_PER_PAGE
 from .firecrawl_client import FirecrawlClient
 
@@ -37,6 +38,13 @@ _PAGE_MARKER_RE = re.compile(r"^<!-- page (\d+) -->$", re.M)
 
 class DownloadError(RuntimeError):
     pass
+
+
+class SourceBlockedError(DownloadError, source_policy.SourceBlocked):
+    """A download legal's source rules do not allow (LEGAL_SOURCE_RULES=true)."""
+
+    def __init__(self, url: str, rule: str, detail: str = ""):
+        source_policy.SourceBlocked.__init__(self, url, rule, detail)
 
 
 class NeedsOCRError(RuntimeError):
@@ -138,7 +146,9 @@ def local_file(url: str) -> Path | None:
 
 def download(url: str) -> tuple[bytes, str | None]:
     """Return (body, content_type). Tries plain httpx, then a Chrome-impersonating
-    client if the response is blocked or isn't a PDF. A local file is read from disk."""
+    client if the response is blocked or isn't a PDF. A local file is read from disk.
+    Legal's source rules are checked first (source_policy.gate)."""
+    source_policy.gate(url)
     path = local_file(url)
     if path:
         body = path.read_bytes()

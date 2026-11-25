@@ -74,7 +74,7 @@ from firecrawl import PaymentRequiredError
 
 from . import apis, edgar, esef, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
-from . import gcs
+from . import gcs, source_policy
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
 from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings, signed_off
@@ -1774,6 +1774,9 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
     an `error` and no report read, the gap's note leads with it; when a report was read
     all the same (an older result kept after a re-run failed), it is added at the end."""
     us = t.company.country == "US" or t.company.segment == "us_listed"
+    for k in [k for k, f in chosen.items()       # legal: identifiers only from allowed sources
+              if not source_policy.keep_identifier(k, f.source, str(f.value))]:
+        del chosen[k]
     isin = chosen.get("isin")
     if isin and gleif_isins and isin.confidence != "A":
         codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
@@ -1783,10 +1786,11 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
     listed = (chosen.get("listing_status").value == "listed") if chosen.get("listing_status") else None
     if listed is None and any(k in chosen for k in ("ticker", "exchange", "isin")):
         src = next(chosen[k] for k in ("ticker", "exchange", "isin") if k in chosen)
-        chosen["listing_status"] = Found(**{**asdict(src), "data_point": "listing_status",
-                                            "value": "listed", "unit": "",
-                                            "note": f"has a {src.data_point}: {clip(str(src.value), 60)}"})
-        listed = True
+        if source_policy.keep_identifier("listing_status", src.source, "listed"):
+            chosen["listing_status"] = Found(**{**asdict(src), "data_point": "listing_status",
+                                                "value": "listed", "unit": "",
+                                                "note": f"has a {src.data_point}: {clip(str(src.value), 60)}"})
+            listed = True
     band, band_why = market_cap_band(chosen)
     if band:
         chosen["market_cap_band"] = band

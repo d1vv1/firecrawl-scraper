@@ -319,6 +319,8 @@ def is_recent(filing: EsefFiling | None, today: dt.date | None = None) -> bool:
 
 def download_report(filing: EsefFiling) -> str:
     """The full annual report (.xhtml) as text."""
+    from . import source_policy
+    source_policy.gate(filing.report_url)      # filings.xbrl.org: allowed until legal answers
     r = _get(filing.report_url)
     r.encoding = r.encoding or "utf-8"
     return r.text
