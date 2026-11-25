@@ -505,6 +505,8 @@ class Library:
         md_path = CACHE_DIR / f"{_stem(self.slug, c.url)}.md"
         pdf_path = md_path.with_suffix(".pdf")
         try:
+            # legal's rules apply to a cached copy too (LEGAL_SOURCE_RULES=true)
+            source_policy.gate(c.url, source_policy.DIRECT if c.is_pdf else source_policy.FIRECRAWL)
             files_path = md_path.with_suffix(".files.json")
             if md_path.exists():
                 pages = markdown_to_pages(md_path.read_text(encoding="utf-8"))

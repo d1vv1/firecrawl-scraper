@@ -211,6 +211,9 @@ def check_not_scanned(pages: list[Page]) -> None:
 
 def fetch_report(report_url: str, slug: str, fc: FirecrawlClient,
                  use_cache: bool = True) -> ReportDocument:
+    # legal's rules apply to a cached copy too (LEGAL_SOURCE_RULES=true)
+    source_policy.gate(report_url, source_policy.DIRECT if report_url.lower().split("?")[0].endswith(".pdf")
+                       else source_policy.FIRECRAWL)
     CACHE_DIR.mkdir(exist_ok=True)
     stem = cache_stem(slug, report_url)
     pdf_path = CACHE_DIR / f"{stem}.pdf"

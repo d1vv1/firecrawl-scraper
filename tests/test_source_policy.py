@@ -127,3 +127,12 @@ def test_enforced_listing_values_take_isin_from_gleif_and_skip_openfigi(offline,
     assert got["exchange"].source == "ESMA FIRDS" and got["listing_status"].value == "listed"
     assert "ticker" not in got
     assert listing.listing_values("LEI", "GB", ["GB00B"]) == []           # home outside FIRDS
+
+
+def test_a_cached_copy_of_a_blocked_report_is_not_reused(policy, monkeypatch, tmp_path):
+    policy("enforce")
+    monkeypatch.setattr(scraper, "CACHE_DIR", tmp_path)
+    url = "https://www.1info.it/doc/ar.pdf"
+    (tmp_path / f"{scraper.cache_stem('acme', url)}.md").write_text("cached", encoding="utf-8")
+    with pytest.raises(scraper.DownloadError):
+        scraper.fetch_report(url, "acme", fc=None)
