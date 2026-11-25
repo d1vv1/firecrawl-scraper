@@ -61,7 +61,7 @@ def test_false_or_unset_works_as_before(policy, monkeypatch):
     assert not log.exists()
 
 
-def test_robots_tdm_and_ai_txt(policy):
+def test_robots_tdm_and_ai_txt(policy, monkeypatch):
     web = FakeWeb({
         "https://a.com": {"robots_status": 200, "robots": "User-agent: *\nDisallow: /private/\n"
                                                          "User-agent: FirecrawlAgent\nDisallow: /\n"},
@@ -70,6 +70,7 @@ def test_robots_tdm_and_ai_txt(policy):
         "https://tdm.com": {"robots_status": 404, "tdmrep": [{"location": "/*", "tdm-reservation": 1}]},
     }, docs={"https://h.com/ar.pdf": {"tdm_reservation": "1"}})
     policy("enforce", web)
+    monkeypatch.setattr(sp, "_refetched", {"https://down.com"})            # asked again already
     assert sp.check("https://a.com/private/ar.pdf").rule == "robots.txt"
     assert sp.check("https://a.com/ir/ar.pdf").allowed                       # direct download
     assert sp.check("https://a.com/ir/ar.pdf", sp.FIRECRAWL).detail == "disallows FirecrawlAgent"
@@ -136,3 +137,17 @@ def test_a_cached_copy_of_a_blocked_report_is_not_reused(policy, monkeypatch, tm
     (tmp_path / f"{scraper.cache_stem('acme', url)}.md").write_text("cached", encoding="utf-8")
     with pytest.raises(scraper.DownloadError):
         scraper.fetch_report(url, "acme", fc=None)
+
+
+def test_a_failed_robots_answer_is_asked_again_before_it_blocks(policy, monkeypatch):
+    web = FakeWeb({"https://x.com": {"robots_status": None, "robots": ""}})
+    web.save = lambda: None
+    policy("enforce", web)
+    monkeypatch.setattr(sp, "_refetched", set())
+    monkeypatch.setattr(scraper, "_httpx_get", lambda u: (200, "text/plain", b"User-agent: *\nDisallow:\n"))
+    assert sp.check("https://x.com/ar.pdf").allowed
+    assert web.hosts["https://x.com"]["robots_status"] == 200
+    web.hosts["https://y.com"] = {"robots_status": None}
+    monkeypatch.setattr(scraper, "_httpx_get", lambda u: (_ for _ in ()).throw(OSError("down")))
+    monkeypatch.setattr(scraper, "_impersonated_get", lambda u: (_ for _ in ()).throw(OSError("down")))
+    assert sp.check("https://y.com/ar.pdf").allowed          # our connection, not the site: no block

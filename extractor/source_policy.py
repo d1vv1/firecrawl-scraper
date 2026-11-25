@@ -100,6 +100,39 @@ def _bucket_origin(url: str) -> dict | None:
     return _bucket.origin(url.replace("\\", "/"))
 
 
+_refetched: set[str] = set()
+
+
+def _host_info(web, scheme_host: str) -> dict:
+    """The host's robots.txt etc.; a failed or server-error answer (cached by an earlier
+    check) is asked again once per run, with the downloader's own client (OS certificate
+    store, then a browser TLS fingerprint), before it can block anything."""
+    info = web.host(scheme_host)
+    st = info.get("robots_status")
+    if not (st is None or st == 429 or (isinstance(st, int) and st >= 500)) or scheme_host in _refetched:
+        return info
+    _refetched.add(scheme_host)
+    from . import scraper
+    status, body = None, ""
+    for get in (scraper._httpx_get, scraper._impersonated_get):
+        try:
+            status, _, raw = get(scheme_host + "/robots.txt")
+            body = raw[:400_000].decode("utf-8", "replace")
+            if status < 500 and status != 429:
+                break
+        except Exception:  # noqa: BLE001 - try the next client
+            continue
+    info = {**info, "robots_status": status,
+            "robots": body if status == 200 and "<html" not in body[:300].lower() else ""}
+    with _lock:
+        web.hosts[scheme_host] = info
+    try:
+        web.save()
+    except OSError:
+        pass
+    return info
+
+
 def blocked_host(url: str) -> str | None:
     """The blocked domain this URL is on, if any."""
     si = _si()
@@ -130,10 +163,12 @@ def check(url: str, agent: str = DIRECT, head: bool = True) -> Verdict:
     if si._under(host, si.API_HOSTS):
         return Verdict(True)
     web = _web_checks()
-    info = web.host(f"{p.scheme}://{p.netloc}")
+    info = _host_info(web, f"{p.scheme}://{p.netloc}")
     st = info.get("robots_status")
-    if st is None or (isinstance(st, int) and st >= 500):
+    if isinstance(st, int) and (st >= 500 or st == 429):
         return Verdict(False, "robots.txt unreachable", f"status {st}: RFC 9309 says assume disallow")
+    if st is None:      # our request failed, not the site's answer: the download will tell
+        _log("not checked", url, agent, Verdict(True, "robots.txt not fetched", "connection failed"))
     text = info.get("robots") or ""
     if text and not si.robots_allows(text, "*", url):
         return Verdict(False, "robots.txt", "disallows all crawlers")
