@@ -31,7 +31,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from . import fields
+from . import fields, source_policy
 from .datapoints import COLUMNS, refresh
 from .fields import NOT_COLLECTED
 
@@ -189,6 +189,33 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
     return out, kept
 
 
+NOT_ALLOWED = "not kept from before: its source is not allowed under legal's rules"
+
+
+def drop_disallowed(rows: list[dict], new: list[dict], kept: set[Key]) -> tuple[list[dict], set[Key], int]:
+    """With LEGAL_SOURCE_RULES=true, an old value kept over the run's (no value, a worse
+    block, an untouched role row) must itself come from an allowed source: else the run's
+    row takes its place, or an empty row saying why. Returns (rows, kept, dropped)."""
+    if not source_policy.enforced() or not kept:
+        return rows, kept, 0
+    run = {key(r): r for r in new}
+    out, dropped = [], 0
+    for r in rows:
+        k = key(r)
+        if k in kept and r.get("value") and not source_policy.value_allowed(r):
+            kept = kept - {k}
+            dropped += 1
+            n = run.get(k)
+            if n is not None:
+                out.append(n)
+            else:
+                out.append({**r, "value": "", "unit": "", "method": "", "confidence": "",
+                            "note": NOT_ALLOWED + f" ({r.get('source') or 'unknown source'})"})
+            continue
+        out.append(r)
+    return out, kept, dropped
+
+
 def kept_worse_grains(kept_worse: set[Key]) -> set[str]:
     return {k[0] for k in kept_worse}
 
@@ -264,6 +291,9 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool 
                 log.warning("%s: the run has under half the values before for %s; kept the old rows "
                             "(--take-newer to replace them)", name, " and ".join(sorted(worse)))
             merged[cid], kept = merge_company(groups.get(cid, []), new, keep_better)
+            merged[cid], kept, dropped = drop_disallowed(merged[cid], new, kept)
+            if dropped:
+                stats["not_allowed"] = stats.get("not_allowed", 0) + dropped
             stats["replaced" if cid in groups else "added"] += 1
             stats["kept"] += len(kept)
             def ckey(c):
@@ -276,6 +306,8 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool 
             corder = list(dict.fromkeys(c["company_id"] for c in checks))
             checks = splice(cgroups, corder, merged_checks)
         log.info("Merged %s: %d companies replaced, %d added", run.name, stats["replaced"], stats["added"])
+        if stats.get("not_allowed"):
+            log.info("Legal's rules: %d old values not kept (source not allowed)", stats["not_allowed"])
     rows = refreshed(rows, gleif, esef)
     write(into, rows, cols)
     if ccols:

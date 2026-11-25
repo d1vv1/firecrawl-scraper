@@ -707,9 +707,27 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
             if not (fallback and facts_empty(facts, wanted) and not saved.get("fallback_tried")):
                 return facts
     prompt, user = llm.load_prompt("datapoints_system"), _user_prompt(name, url, chunks, what, wanted)
-    facts, model = llm.call_llm(prompt, user, DataPointFacts), llm.model_name()
     tried = False
-    if fallback and facts_empty(facts, wanted):
+    try:
+        facts, model = llm.call_llm(prompt, user, DataPointFacts), llm.model_name()
+    except openai.LengthFinishReasonError:
+        # the answer ran on to the output limit (Man Group, OSB: 170-260k-token reports,
+        # 25 Nov 2026): the stronger model once, then half the excerpts
+        log.warning("Data points: the answer for %s hit the output limit; asking again", url)
+        again = None
+        if fallback:
+            tried = True
+            try:
+                again = llm.ask_fallback(prompt, user, DataPointFacts)
+            except openai.LengthFinishReasonError:
+                again = None
+        if again is None:
+            if len(chunks) < 2:
+                raise
+            log.warning("Data points: reading %s from %d of %d excerpts", url, len(chunks) // 2, len(chunks))
+            return ask(name, url, chunks[: len(chunks) // 2], what, cache_key, wanted)
+        facts, model = again, fallback
+    if fallback and not tried and facts_empty(facts, wanted):
         # plan B6: an empty answer is asked once more of the stronger model
         log.info("Data points: no answer from %s for %s; asking %s", model, url, fallback)
         tried = True

@@ -230,6 +230,21 @@ def _bucket_blocked(url: str) -> bool:
     return bool(o and o.get("source_url") and blocked_host(o["source_url"]))
 
 
+def value_allowed(row: dict) -> bool:
+    """A stored value (a datapoints row): its identifier source and its document allowed?
+    The document check is check() without the HEAD (robots.txt etc. come from the cache)."""
+    if row.get("data_point") in IDENTIFIERS and not identifier_allowed(row["data_point"], row.get("source", "")):
+        return False
+    url = (row.get("endpoint") or "").split("#")[0].split(" ")[0]
+    if not url:
+        return True
+    try:
+        return check(url, DIRECT, head=False).allowed
+    except Exception as e:  # noqa: BLE001 - a check that fails does not drop a value
+        log.warning("source check failed for %s: %s", url, str(e)[:150])
+        return True
+
+
 def identifier_allowed(data_point: str, source: str) -> bool:
     """Only the FIGI code from OpenFIGI; ISIN from GLEIF's ISIN-to-LEI file; exchange and
     listing status from ESMA FIRDS or the annual report."""

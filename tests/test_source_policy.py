@@ -172,3 +172,49 @@ def test_an_isin_read_from_the_report_that_gleif_holds_is_kept_as_gleifs(policy)
     assert rows["isin"].endpoint.endswith("/LEI1/isins")
     rows = {f.data_point: f for f in d.finish(t, dict(chosen), [], None, ["GB00ZZZZZZ11"])}
     assert not rows["isin"].value
+
+
+def test_combine_does_not_keep_an_old_value_from_a_source_the_rules_block(policy):
+    from extractor import combine
+    from tests.test_before_dach import _row
+    old = [_row("a", "base_salary", "100") | {"source": "Remuneration report (PDF)",
+                                               "endpoint": "https://www.1info.it/x.pdf#page=3"},
+           _row("a", "revenue", "5") | {"source": "Annual report (PDF)", "endpoint": "https://www.a.it/ar.pdf#page=2"},
+           _row("a", "ticker", "AAA") | {"source": "OpenFIGI", "endpoint": "https://api.openfigi.com/v3/mapping"}]
+    new = [_row("a", "base_salary", note="not found"), _row("a", "revenue", note="not found"),
+           _row("a", "ticker", note="not found")]
+    policy("off")
+    rows, kept = combine.merge_company(old, new)
+    assert combine.drop_disallowed(rows, new, kept)[2] == 0              # rules off: as before
+    policy("enforce")
+    rows, kept, dropped = combine.drop_disallowed(rows, new, kept)
+    assert dropped == 2 and [r["value"] for r in rows] == ["", "5", ""]
+    assert rows[0]["note"] == "not found" and len(kept) == 1
+
+
+def test_an_answer_that_runs_to_the_output_limit_is_asked_again_with_fewer_excerpts(monkeypatch, tmp_path):
+    import openai
+    from extractor import datapoints as d, llm
+    monkeypatch.setattr(d, "CACHE_DIR", tmp_path)
+    monkeypatch.setattr(llm, "fallback_model", lambda: None)
+    monkeypatch.setattr(llm, "load_prompt", lambda n: "p")
+    asked = []
+
+    class Facts:
+        def model_dump(self):
+            return {}
+
+    def call(prompt, user, schema, **k):
+        asked.append(user.count("CHUNK"))
+        if asked[-1] > 2:
+            raise openai.LengthFinishReasonError.__new__(openai.LengthFinishReasonError)
+        return Facts()
+    monkeypatch.setattr(llm, "call_llm", call)
+    monkeypatch.setattr(d, "_user_prompt", lambda n, u, chunks, w, wanted: " ".join("CHUNK" for _ in chunks))
+    monkeypatch.setattr(d, "facts_empty", lambda f, w: False)
+
+    class C:
+        def __init__(self, i):
+            self.id = i
+    assert isinstance(d.ask("A", "u", [C(i) for i in range(8)], "the report", "k"), Facts)
+    assert asked == [8, 4, 2]
