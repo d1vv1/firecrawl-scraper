@@ -60,9 +60,20 @@ class RefRolesError(ValueError):
 def norm(text: str) -> str:
     """Lower case, no accents, punctuation as spaces: the form titles are compared in.
     Letters without a decomposition (ø, æ, ß) are kept as they are."""
-    text = unicodedata.normalize("NFKD", text or "")
+    text = re.sub(r"<br\s*/?>", " ", text or "", flags=re.I)    # a wrapped table label
+    text = unicodedata.normalize("NFKD", text)
     text = "".join(c for c in text if not unicodedata.combining(c)).casefold()
     return re.sub(r"[\W_]+", " ", text).strip()
+
+
+# the functions that win over any other title in the same printed title, wherever they stand
+FUNCTIONS = {"ceo", "former_ceo", "cfo", "deputy_ceo", "executive_chair", "board_chair",
+             "board_vice_chair", "statutory_auditor"}
+# "Presidente Comitato Nomine", "Chair of the Audit Committee": a committee's chair, not the
+# board's (the words right after the title)
+COMMITTEE = re.compile(r"^\W*(of the |del |della |de la |do |da |τη[σς] |tou )?(\w+ ){0,2}"
+                       r"(comitat|comite|committee|comissao|comision|επιτροπ|udvalg|utskott|"
+                       r"utvalg|valiokun|ausschuss)")
 
 
 def _plain(text: str) -> str:
@@ -170,6 +181,13 @@ class RefRoles:
                            and (o[1] - o[0]) > (s[1] - s[0]) for o in spans)]
         if not kept:
             return None
+        # a function (CEO, chair, CFO, ...) beats a plain membership title wherever it stands:
+        # "Executive member, Chairman", "Cons. non esecutivo - Presidente" are the chair
+        # (Southern Europe run, 25 Nov 2026)
+        functions = [s for s in kept if s[2].role_detail in FUNCTIONS
+                     and not COMMITTEE.search(n[s[1]:s[1] + 30])]
+        if functions:
+            kept = functions
         kept.sort(key=lambda s: (s[0], -(s[1] - s[0])))
         return kept[0][2]
 

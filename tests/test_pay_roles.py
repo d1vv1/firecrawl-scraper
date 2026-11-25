@@ -369,3 +369,33 @@ def test_pay_line_id_is_stable():
     a = pr.pay_line_id("c1", "2025", {"printed_title": "VD ", "person_name": "Anna"})
     assert a == pr.pay_line_id("c1", "2025", {"printed_title": "vd", "person_name": "anna"})
     assert a != pr.pay_line_id("c1", "2024", {"printed_title": "VD", "person_name": "Anna"})
+
+
+def test_undo_table_gives_the_ai_figure_back():
+    ln = line("CFO", 2062)
+    ln["base_salary"].update(previous={"value": 2026, "printed": "2 026", "quote": "q"},
+                             table_note="Camelot")
+    ln["pension"] = {**cell(103), "table_note": "Camelot", "previous": None}
+    item = {"line": ln, "table_check": {"base_salary": "table_replaced",
+                                        "pension": "table_added"}, "table_row": {}}
+    pr.undo_table(item)
+    assert ln["base_salary"]["value"] == 2026 and "table_note" not in ln["base_salary"]
+    assert ln["pension"] is None and "table_check" not in item
+
+
+def test_a_failed_gapfill_call_keeps_the_first_pass(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    doc = {"company_id": "c1", "company_name": "Eukedos", "country": "IT", "status": "ok",
+           "report": {}, "lines": [{"pay_line_id": "p1", "line": line("CEO", 5)}]}
+    monkeypatch.setattr(pr, "gaps_of", lambda d: [("p1", "total")])
+    monkeypatch.setattr(pr.ref_roles, "load", lambda p: None)
+    monkeypatch.setattr(pr, "build_request", lambda *a: (None, [], "", "", [], "k"))
+
+    def boom(*a):
+        raise ValueError("length limit")
+    monkeypatch.setattr(pr, "ask", boom)
+    req = SimpleNamespace(ref_path=None, from_run="r1")
+    row = pr.run_gapfill(doc, req, tmp_path)
+    saved = json.loads((tmp_path / "companies" / "c1.json").read_text(encoding="utf-8"))
+    assert row["status"] == "ok" and "first-pass lines kept" in row["note"]
+    assert len(saved["lines"]) == 1 and "error" in saved["gapfill"]

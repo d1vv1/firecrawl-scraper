@@ -143,3 +143,36 @@ def test_a_named_line_never_takes_another_persons_row():
             "base_salary": {"value": 408009.0}}
     assert pt.match(line, rows) is None
     assert pt.match({"base_salary": {"value": 408.009}}, rows) is None     # board: no fee match
+
+
+def test_same_printed_figure_and_blank_table_cells_keep_the_ai(fake, monkeypatch):
+    # B&C Speakers: "228.000" on both sides, read as two numbers; National Bank of Greece:
+    # "-" in the table where the AI read the chair's fee
+    grid = pay_tables.Grid(4, [["Name", "Board fee", "Total"],
+                               ["Lorenzo Coppini", "228.000", "228.000"],
+                               ["Gikas Hardouvelis", "–", "–"]])
+    m = pt.BoardColumnMap(is_board_table=True, year="2025", unit="units", currency="EUR",
+                          rows=[MappedRow(row=1, label="Lorenzo Coppini"),
+                                MappedRow(row=2, label="Gikas Hardouvelis")],
+                          board_fee=[1], committee_fees=[], meeting_fees=[], pension=[],
+                          other_pay=[], total=2)
+    monkeypatch.setattr(pt.pay_tables, "read_grids", lambda p, pages: [grid])
+    monkeypatch.setattr(pt.pay_tables, "map_columns", lambda g, n, t="": NOT_EXEC)
+    monkeypatch.setattr(pt, "map_board", lambda g, n, t="": m)
+    a = it("Amministratore", "Lorenzo Coppini", 228000)
+    a["line"]["base_salary"]["printed"] = "228.000"
+    b = it("BoD Chair", "Gikas Hardouvelis", 379500)
+    pt.check_lines("B&C", "2025", [a, b], fake, [])
+    assert a["table_check"]["base_salary"] == "agree"
+    assert b["table_check"]["base_salary"] == "table_blank"
+    assert b["line"]["base_salary"]["value"] == 379500
+
+
+def test_a_figure_whose_quote_is_found_is_not_replaced(fake):
+    # Iren: the AI's total is in the text; another table's smaller total is only noted
+    cfo = it("CFO", "Anders Engelsen", 2026, benefits=114, total=2583)
+    cfo["quote_check"] = {"base_salary": "close"}
+    pt.check_lines("Goodtech", "2025", [cfo], fake, [])
+    assert cfo["table_check"]["base_salary"] == "table_differs"
+    assert cfo["line"]["base_salary"]["value"] == 2026
+    assert cfo["table_figures"]["base_salary"] == "2,062"

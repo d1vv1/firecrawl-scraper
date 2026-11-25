@@ -509,6 +509,24 @@ def remap(run_dir: Path, ref: ref_roles.RefRoles,
     return {"companies": done, **output.export(run_dir)}
 
 
+def undo_table(item: dict) -> None:
+    """Take back what an earlier table check changed in one line: a replaced cell gets the
+    AI's figure back, an added cell is emptied. Cells changed since (a gap-fill) stay."""
+    line = item["line"]
+    for f, s in (item.pop("table_check", None) or {}).items():
+        cell = line.get(f)
+        if not isinstance(cell, dict) or not cell.get("table_note"):
+            continue
+        if s == "table_added":
+            line[f] = None
+        elif s == "table_replaced" and cell.get("previous"):
+            prev = cell.pop("previous")
+            cell.pop("table_note", None)
+            cell.update(prev)
+    item.pop("table_row", None)
+    item.pop("table_figures", None)
+
+
 def table_check(run_dir: Path) -> dict[str, int]:
     """Check an existing run's figures against Camelot's reading of the pay tables, in
     place (a changed cell keeps the AI's figure as "previous"), and rewrite its files. Only
@@ -526,8 +544,8 @@ def table_check(run_dir: Path) -> dict[str, int]:
         chunks = _pay_chunks(origin, pay.PAY_WORDS)
         texts = {ch.id: ch.text for ch in chunks}
         for item in doc.get("lines", []):
-            item.pop("table_check", None)
-            item.pop("table_row", None)
+            undo_table(item)
+            item["quote_check"] = quote_checks(item["line"], texts)
         counts = tables.check_lines(doc.get("company_name", ""), doc.get("fiscal_year"),
                                     doc.get("lines", []), origin, chunks,
                                     doc.get("chunk_pages"))
@@ -641,15 +659,25 @@ def run_gapfill(doc: dict, req: Request, run_dir: Path, dry_run: bool = False) -
         ref = ref_roles.load(req.ref_path)
         c = Company(cid, doc["company_name"], doc.get("country", ""), "", report=doc["report"])
         origin, chunks, system, user, shown, key = build_request(c, req, ref, gaps)
-        answer, tokens, cached = ask(key, system, user, origin, shown,
-                                     prompts.answer_schema("gapfill", []))
         doc = json.loads(json.dumps(doc))       # a copy: the earlier run stays as it was
-        changed = merge_gaps(doc, answer, gaps, {ch.id: ch.text for ch in chunks})
-        doc["gapfill"] = {"of_run": req.from_run, "asked": len(gaps), "changed": changed,
-                          "request_key": key}
-        row.update(status="ok", note=f"{len(gaps)} cell(s) asked again, {changed} changed",
-                   prompt_tokens=tokens.prompt, completion_tokens=tokens.completion,
-                   cached=cached)
+        try:
+            answer, tokens, cached = ask(key, system, user, origin, shown,
+                                         prompts.answer_schema("gapfill", []))
+        except Exception as e:  # noqa: BLE001 - a failed re-ask keeps the first pass
+            # (Eukedos: a 274k-token prompt ran out of output room twice). Without this the
+            # company's lines dropped out of the gap-fill run.
+            log.warning("%s: gap-fill call failed, first-pass lines kept: %s", cid, repr(e)[:200])
+            doc["gapfill"] = {"of_run": req.from_run, "asked": len(gaps), "changed": 0,
+                              "request_key": key, "error": repr(e)[:500]}
+            row.update(status="ok", note=f"gap-fill failed ({type(e).__name__}); "
+                       f"first-pass lines kept, {len(gaps)} cell(s) not asked again")
+        else:
+            changed = merge_gaps(doc, answer, gaps, {ch.id: ch.text for ch in chunks})
+            doc["gapfill"] = {"of_run": req.from_run, "asked": len(gaps), "changed": changed,
+                              "request_key": key}
+            row.update(status="ok", note=f"{len(gaps)} cell(s) asked again, {changed} changed",
+                       prompt_tokens=tokens.prompt, completion_tokens=tokens.completion,
+                       cached=cached)
     elif gaps:
         row.update(status="dry_run", note=f"{len(gaps)} cell(s) to ask again")
     else:

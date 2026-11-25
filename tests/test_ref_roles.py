@@ -252,3 +252,16 @@ class TestRealWorkbook:
     def test_nordic_titles(self, real, printed, detail, part_year):
         m = real.match(printed)
         assert m and (m.role_detail, m.part_year) == (detail, part_year)
+
+
+def test_a_function_beats_a_membership_title_wherever_it_stands(ref):
+    # Southern Europe: "Executive member - Chairman" is the chair, not an executive member;
+    # a chair of a committee is not the board's chair
+    assert ref.match("Board member - Chairman").role_detail == "board_chair"
+    assert ref.match("Member of the Management Board, CFO").role_detail == "cfo"
+    assert ref.match("Board member, Chairman of the Audit Committee").role_detail == \
+        "non_executive_director"
+
+
+def test_a_wrapped_label_is_one_title(ref):
+    assert ref.match("Chief Executive<br>Officer").role_detail == "ceo"

@@ -133,6 +133,17 @@ def comparison_year(quote: str | None, fiscal_year: int | None) -> bool:
     return str(fiscal_year - 1) in years and str(fiscal_year) not in years
 
 
+CURRENCY_WORDS = {"€": "EUR", "eur": "EUR", "euro": "EUR", "euros": "EUR", "eura": "EUR",
+                  "ευρώ": "EUR", "$": "USD", "us$": "USD", "usd": "USD", "£": "GBP",
+                  "gbp": "GBP", "kr": "KR", "kr.": "KR", "chf": "CHF", "fr.": "CHF"}
+
+
+def currency_code(printed: str | None) -> str:
+    """'€', 'Euro', 'euros' -> 'EUR'; an ISO code as it is; other text upper-cased."""
+    p = (printed or "").strip().casefold()
+    return CURRENCY_WORDS.get(p) or p.upper()
+
+
 def filled(cell) -> bool:
     return isinstance(cell, dict) and cell.get("value") is not None
 
@@ -229,6 +240,10 @@ def check_company(doc: dict) -> list[Finding]:
             elif s == "table_added":
                 add(item, "table_added", f"the table has {cell.get('printed')} ({where}); "
                     "the AI had none", f)
+            elif s == "table_differs":
+                add(item, "table_differs", f"AI read {cell.get('printed')} (quote found), "
+                    f"table has {(item.get('table_figures') or {}).get(f)} ({where}); the "
+                    "AI's figure stays", f)
             elif s == "ai_consistent":
                 add(item, "table_other_split", f"the table ({where}) splits the pay another "
                     f"way; the AI's {cell.get('printed')} adds up to the same total and stays", f)
@@ -245,9 +260,13 @@ def check_company(doc: dict) -> list[Finding]:
                     f"{cell.get('quote')!r}", f, True)
         # units and currencies
         money = [(f, line[f]) for f in MONEY if filled(line.get(f))]
+        # spellings of one currency and scale ("miles de €" / "miles €", "€" / "euros") are the
+        # same: compare the currency code and the scale ("unit"), list the printed forms
         currencies = {c.get("currency_printed") for _, c in money if c.get("currency_printed")}
         units = {c.get("unit_printed") for _, c in money if c.get("unit_printed")}
-        if len(currencies) > 1 or len(units) > 1:
+        codes = {currency_code(x) for x in currencies}
+        scales = {c.get("unit") for _, c in money if c.get("unit")}
+        if len(codes) > 1 or len(scales) > 1:
             add(item, "currency_mix", f"currencies {sorted(currencies)}, units {sorted(units)}",
                 "", False)
         for f, c in money:

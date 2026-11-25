@@ -14,9 +14,15 @@ columns instead. Per company:
             else the same base salary or board fee.
   4. CHECK  field by field, for fields that are ONE table column (decided 25 Nov 2026):
               agree           the AI read the same printed figure;
-              table_replaced  they differ and the row's parts add up to its total: the
-                              table's figure is used, verbatim, and the AI's kept as
-                              "previous";
+              table_replaced  they differ, the row's parts add up to its total and the
+                              AI's quote is NOT found in the text: the table's figure is
+                              used, verbatim, and the AI's kept as "previous";
+              table_differs   they differ but the AI's quote is found: the AI's figure
+                              stays and the table's goes to the review file (Southern
+                              Europe prints several tables per person);
+              table_blank     the table has "-" or 0 where the AI read a figure: the AI's
+                              figure stays;
+              (the same printed figure read with another separator counts as agree)
               table_added     the AI has no figure and the table has one (row adds up);
               ai_consistent   they differ, but the AI's own line adds up to the same total
                               (a table split another way, Stora Enso's cash and shares):
@@ -193,6 +199,10 @@ def match(line: dict, rows: list[TableRow]) -> TableRow | None:
     return None
 
 
+def _digits(text: str | None) -> str:
+    return re.sub(r"\D", "", text or "")
+
+
 def _same(a: float | None, b: float | None) -> bool:
     return a is not None and b is not None and abs(a - b) <= 1e-6 * max(1.0, abs(a))
 
@@ -232,6 +242,8 @@ def compare(item: dict, row: TableRow, page_text: str) -> dict[str, str]:
     # a table that splits the pay another way (Stora Enso: cash and shares, not fee and
     # committee) does not overrule it
     consistent = _consistent(line, pay_tables.parse_figure(row.total or ""))
+    quotes = item.get("quote_check") or {}
+    item.pop("table_figures", None)
     for f, cells in fields.items():
         if len(cells) != 1:
             status[f] = "multi_column"
@@ -247,6 +259,15 @@ def compare(item: dict, row: TableRow, page_text: str) -> dict[str, str]:
         if _same(ai, tv):
             status[f] = "agree"
             continue
+        if ai is not None and _digits((old or {}).get("printed")) == _digits(printed) != "":
+            # the same printed figure read with another separator (Italian "228.000"): agree
+            status[f] = "agree"
+            continue
+        if ai not in (None, 0) and tv == 0:
+            # "-" or 0 in the table where the AI read a figure (National Bank of Greece): a
+            # blank cell never overwrites a figure
+            status[f] = "table_blank"
+            continue
         if not row.adds_up:
             # a row whose mapped parts don't reach its total was read or mapped wrong (ISS:
             # the clean "1,437 + 719 + 76 = 2,232" row mapped to other columns): it can't
@@ -256,6 +277,13 @@ def compare(item: dict, row: TableRow, page_text: str) -> dict[str, str]:
             continue
         if consistent:
             status[f] = "ai_consistent"
+            continue
+        if ai is not None and quotes.get(f) in ("exact", "close"):
+            # the AI's figure is in the text: reports print several tables per person (Italian
+            # Tabella 1 and 3B, the Spanish CNMV tables), so a different figure in another
+            # table is a disagreement to review, not a correction (decided 25 Nov 2026)
+            status[f] = "table_differs"
+            item.setdefault("table_figures", {})[f] = printed
             continue
         if ai is None and any(_same(c.get("value"), tv) for k, c in line.items()
                               if k != f and isinstance(c, dict)):

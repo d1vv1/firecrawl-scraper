@@ -99,6 +99,10 @@ class TestChecks:
         ln["pension"] = {**cell(10), "currency_printed": "EUR"}
         k = kinds(out.check_company(doc([item(ln, "cfo", "cfo")])))
         assert "unit_scale" in k and "currency_mix" in k
+        same = line("CFO", 250)
+        same["pension"] = {**cell(10), "currency_printed": "€", "unit_printed": "miles €"}
+        same["base_salary"].update(currency_printed="euros", unit_printed="miles de €")
+        assert "currency_mix" not in kinds(out.check_company(doc([item(same, "cfo", "cfo")])))
         small = line("CEO", 950)
         small["base_salary"]["unit"] = "units"
         assert "unit_scale" in kinds(out.check_company(doc([item(small)])))
