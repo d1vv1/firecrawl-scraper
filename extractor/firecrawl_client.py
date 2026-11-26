@@ -99,6 +99,8 @@ class FirecrawlClient:
 
     @_retry
     def scrape(self, url: str, formats: list[str]) -> dict:
+        from . import source_policy
+        source_policy.gate(url, source_policy.FIRECRAWL)     # legal's rules, before the credit
         self._afford("scrape", 1)
         doc = self.app.scrape(url, formats=formats, only_main_content=False,
                               timeout=SCRAPE_TIMEOUT_MS)

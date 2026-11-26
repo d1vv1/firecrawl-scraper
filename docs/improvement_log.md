@@ -845,3 +845,154 @@ The PO's branch `fy2025-targeted-reruns-gcs` (a `fields` column per company, fai
 - 11 required companies are in the file with no values at all (no report found): Accentro, NEXR, TC Unterhaltungselektronik, Inmobiliaria del Sur, Bergbahnen Engelberg-Titlis, Groupe Minoteries, Highlight Event, Liechtensteinische Landesbank, Mobimo, Romande Energie, Schweizerische Nationalbank. They need report links.
 - Exceptions list (`output/fy2025_runs_failures.md`): 20,861 values missing at 1,473 of 1,510 companies; not stated 10,787; pay where only the annual report was read 8,529; annual report not found 644 (37 companies); wrong-year report 84.
 - Backup before the splice: the session scratchpad, `before_nordics/`.
+
+---
+
+### 22 November 2026: not-found plan, decisions and Phases A and B (branch `not-found-phase-b`)
+
+#### 66. Fewer "not found" values: rules over saved rows, prompt changes, ESEF tags, a second model
+- **Decisions** (`docs/not_found_reduction_plan.md`, section 6), taken on the client's behalf from their own field list, for them to confirm. The four rules that fill a value the source does not print (`gleif_non_consolidating`, `zero_from_total`, `none_if_absent`, `included_in_other`) are on by default. To switch one off, list it in `RULES_OFF` in `.env`; no code change is needed.
+- **Phase A** (rules over saved rows; reach every company through `python -m extractor.combine --into <file> --gleif`):
+  - ownership from the named holders;
+  - pay currency from the amounts;
+  - a benefit or pension of 0 when the stated total is the sum of the other parts;
+  - ultimate parent from GLEIF (including "none (no consolidating parent)");
+  - prices in pence or cents converted.
+
+  On a copy of the 1,508-company file:
+
+  | Field | Missing before | Missing after |
+  |---|---|---|
+  | ultimate_parent | 25.4% | 2.2% |
+  | benefits_value | 32.3% | 18.4% |
+  | pension_contribution | 38.8% | 19.7% |
+  | pay_currency | 4.4% | 0.4% |
+  | ownership_type | 12.9% | 8.3% |
+- **Phase B** (scraper version 6):
+  - Pay prompt: a dash in a component's own cell is 0. A pension folded into another amount is recorded as "not applicable: included in ...".
+  - "None" / "no pension" when the text says so. shareholding_requirement is "None" when the remuneration report was read and states no rule (37.1% → 21.4% on saved rows).
+  - Year-end share price wording in each language.
+  - EBITDA (or operating profit) and share counts from the ESEF filing's tags (`combine --esef`; ebitda 10.1% → 8.0%).
+  - An all-dash pay row is no pay for the year.
+  - An empty answer is asked again of `LLM_FALLBACK_MODEL`.
+- **Dropped:** the planned `market_cap` fact. `DataPointFacts` is at Vertex's schema size limit, and any further nested fact gives 400 INVALID_ARGUMENT.
+- **Second model:** the project has no Gemini 2.5 Pro, so the fallback model is Gemini 3.1 Pro preview.
+- **50-company test** (`data/not_found_phase_b_test.csv`, the 50 companies with the most priority gaps, run with `--redo`):
+  - The first attempt failed 47 of 50 on those two errors.
+  - After the fixes (commit `ecd1421`): 50 of 50 ran, using 118 Firecrawl credits.
+  - Missing priority-field values on the 50 went from 44.0% to 38.1% with the rules alone, and to **28.9%** after the re-run plus the rules.
+  - Gains by field:
+
+    | Field | Missing before | Missing after |
+    |---|---|---|
+    | base_salary | 40% | 18% |
+    | benefits_value | 72% | 42% |
+    | pension_contribution | 70% | 43% |
+    | shareholding_requirement | 77% | 40% |
+    | share_price | 76% | 68% |
+  - Revenue and total assets were lost at C-Capital Holdings and SECO. The run now rejects their reports as another company's, so the old values were likely wrong.
+  - Output: `output/not_found_phase_b_test_datapoints.csv`.
+- **Fixed after the test:**
+  - The fallback model answered once (empty, for Mondo TV's pay) and was then switched off for the whole run. Now only a model or schema the project rejects switches it off; an empty answer is a miss for that question only.
+  - A token log line crashed on a missing completion count.
+- **Still to do:**
+  - Measure the fallback model.
+  - Splice the 50 into the combined file and run `combine --gleif --esef` over it. Neither is done; the combined file is unchanged.
+  - Fix Centrica's price by hand. Its report prints "1.4065 pence" for £1.4065.
+
+#### The combined file now (the 50 spliced in, Phase A and B rules applied)
+- `python -m extractor.combine --into output/fy2025_runs_datapoints.csv --gleif --esef output/not_found_phase_b_test_datapoints.csv`: 50 companies replaced. C-Capital Holdings kept its old rows because the run got under half the values: the run rejected its report as another company's. Its old values need checking.
+- Backup before the splice: the session scratchpad, `before_phase_b_splice/`.
+- Fixed with the splice: check CORE-02 (the value is in its quote) now takes a 0 from a dash cell or from "none" in Italian, Spanish, Portuguese or Greek ("Nessuno", "δεν έχει θεσπίσει"). Before the fix, Phase B's dash-as-0 values failed it.
+
+Missing priority-field values, whole file:
+
+| Field | Before | After |
+|---|---|---|
+| ultimate_parent | 25.4% | **2.2%** |
+| benefits_value | 32.3% | **17.3%** |
+| pension_contribution | 38.8% | **18.7%** |
+| shareholding_requirement | 37.1% | **20.8%** |
+| pay_currency | 4.4% | 0.3% |
+| controlling_owner / ownership_type | 12.8% / 12.9% | 8.0% / 8.1% |
+| base_salary | 12.8% | 11.4% |
+| ebitda | 10.1% | 7.7% |
+| share_price | 45.2% | 44.8% |
+| market_cap_band | 47.8% | 46.5% |
+
+| | Before | After |
+|---|---|---|
+| Filled values checked | 62,823 | 64,615 |
+| Values passing the checks | 58,334 (93%) | 60,077 (93%) |
+| Values failing a hard check | 3,013 | 3,035 |
+| Missing values (exceptions list) | 20,861 | 18,658 |
+
+- The 22 extra hard fails are in the 50 re-run companies. Pay figures that don't match their quote: BKW's Group Executive Board amounts look like the other year's column; a Banque Cantonale du Jura row; CMB.Tech's monthly salary was taken as annual. A 0 from an empty cell (CMB.Tech "Pension||") stays a fail: a blank cell is not a stated 0.
+- Share price and the market cap band are still the largest gaps, at about 45% missing. Phase C is next for them.
+
+---
+
+### 23 November 2026: not-found plan, Phase C started (branch `not-found-phase-c`)
+
+#### 67. Exchange terms read; share prices by hand
+- **Terms first, as decision D2 requires.** No free exchange source can be automated:
+  - Athens (now Euronext Athens): personal use only, no bots or scripts, no commercial use. Its closing-price files for Dec 2025 are no longer served.
+  - SIX: no reproduction or use "for public or commercial purposes without the prior written consent".
+  - Wiener Börse: sells price data to professional users, and its history is adjusted for corporate actions. Only 7 Austrian prices are missing, so those are done by hand.
+- **Prices by hand:** `extractor/manual_prices.py`.
+  - `build` lists the 452 companies with no share price in `output/manual_share_prices.csv`: GB 121, IT 95, GR 82, DE 32, ES 29, BE 23, CH 21, others 49. Each row has its ISIN, ticker, exchange, fiscal year end and website. 35 are marked "skip" because their values come from an older report.
+  - `load` checks each filled row (date within 31 days before the fiscal year end, ISO currency or pence, an http(s) source). It writes accepted rows as method MANUAL, confidence B, and the market-cap band is then derived from them.
+  - The band is now also derived again when its missing input arrives later, not only when the euro rate was missing.
+  - `combine` keeps a MANUAL value when a later run finds none.
+- **C7 sized:** 250 of the 1,848 missing priority pay values for executive roles are in annual-report role rows at companies whose remuneration report was read. The "remuneration report not read" label overstates the gap a wider search would close.
+
+---
+
+### 24–25 November 2026: legal's source rules measured, then a switch to follow them (branch `legal-source-policy`)
+
+#### 68. What legal's rules would touch, and `LEGAL_SOURCE_RULES`
+- **Measured, not enforced:**
+  - `extractor/source_impact.py` gives the technical workbook and one row per value.
+  - `extractor/legal_impact_report.py` gives the plain-language `output/legal_rules_impact.xlsx`.
+  - Out of 65,700 values:
+    - 5,012 (7.6%; 1,433 priority) would have to be re-read from an allowed source;
+    - 2,240 can stay but need a linking page or original address recorded;
+    - 22,115 depend on legal's answer about filings.xbrl.org.
+  - robots.txt is read per RFC 9309. No site we use publishes a TDM opt-out.
+- **The switch:** `extractor/source_policy.py`. With `LEGAL_SOURCE_RULES=true`:
+  - every direct download, Firecrawl scrape and ESEF download is checked first. A blocked host, a robots.txt disallow (for every crawler, or for FirecrawlAgent on Firecrawl calls; an unreachable robots.txt counts as a disallow), a tdmrep.json reservation, an ai.txt disallow or a TDM-Rep header means the download is skipped as a `DownloadError` and logged to `output/source_policy_log.csv`;
+  - a bucket file is judged by its original address;
+  - blocked copies are dropped before report candidates are ranked, so the company's own copy wins;
+  - identifiers are taken only from allowed sources:
+    - ISIN from GLEIF's ISIN-to-LEI map (FIRDS picks which one is listed);
+    - exchange and listing status from FIRDS or the annual report;
+    - no ticker from OpenFIGI;
+    - no Nasdaq segment lists;
+    - no OpenFIGI path for home exchanges outside FIRDS (GB, CH, NO).
+  - filings.xbrl.org stays allowed until legal answers; `SOURCE_POLICY_XBRL=block` blocks it.
+- **False or unset:** everything runs as before (tests check this).
+- **First run with the rules on (25 Nov, the 44 companies left from Phase D batch 1):**
+  - Downloads skipped: 2 (a bucket file whose original came from a blocked host; Shawbrook's report, disallowed by robots.txt).
+  - Identifiers dropped: 40. Half of them were exchange or listing status read from the filed annual report (ESEF, Companies House accounts, 20-F); those sources now count as the annual report. An ISIN that GLEIF's map holds is now stored as GLEIF's.
+  - Spliced with `combine` under the rules: an old value is kept over the run's only when its source is allowed.
+  - Man Group and OSB first failed when the model's answer ran to the output limit. The call now retries with the fallback model, then with half the excerpts; both then completed (53/70 and 63/70).
+  - Results for these 44: priority values missing 30.4% → 11.5% (424 → 167), filled values 2,196 → 2,988, no value from a disallowed source.
+  - Whole file: priority missing 29.0% → 28.3%.
+- **Company-data-only list:** `rerun_list --company-gaps` lists 726 companies.
+  - 611 never had company data collected; 478 of them are "Pay Data" only in the tracker.
+  - 115 have specific gaps a re-run may fill (859 values, 305 priority).
+  - Values the documents do not state, values that do not apply, and market-cap bands waiting on a share price are left out.
+
+### 26 November 2026: company-data-only re-run of 248 companies, rules off (branch `legal-source-policy`)
+- **Run:** the 248 companies from `data/rerun_company_only_248.csv` (company data only, `LEGAL_SOURCE_RULES=false`).
+  - It ran in three parts: 17, then 182 (paused), then the last 49; Gabetti Property Solutions, cut off by the pause, was run on its own.
+  - Only companies each part actually ran were joined into `output/company_only_248_datapoints.csv` (the run file also carries earlier saved results, which were left out), then spliced.
+- **Results for the 248 (company values):**
+  - missing 34.9% → 23.5% (filled 6,621 → 7,781 of 10,168);
+  - priority company fields missing 36.8% → 25.6% (2,352 → 2,768 of 3,720);
+  - biggest gains: 5% PE stake 49, largest holders 48, ultimate parent 47, exchange segment 41, website 40, EBITDA 39.
+- **Whole file:** priority company fields missing 41.2% → 39.3%; company values 42.1% → 40.2%.
+- **Values that went blank:** 6.
+  - 4 were correct removals: market-cap bands built on 2023 share prices, and EvoNext's 2023 headcount and FTE.
+  - Fairview International's largest holders and 5% PE stake, from its June 2025 ESEF filing, were missed by the run and put back by hand.
+- `combine` kept the old role rows for 15 companies where the run had under half the earlier values.

@@ -342,12 +342,19 @@ _NONE_STATED = re.compile(
     r"ingen|inga|inget|ikke|ikkje|inte|ej|"
     r"aucune?|pas|sans|néant|"
     r"geen|niet|"
+    r"nessun[oa]?|nulla|ningun[oa]?|ningún|nenhum[a]?|nada|"   # Italian, Spanish, Portuguese
+    r"δεν|ουδεν|ουδέν|κανένα|καμία|"                              # Greek
     r"ei)\b")
+# A table cell that is only a dash ("Pension | – |", "Jon Lewis 2025 – – –"): the pay prompt
+# reads it as 0 (not-found plan B1).
+_DASH_CELL = re.compile(r"(?:^|[|\s])[-–—](?=$|[|\s])")
 
 
 def states_none(quote: str) -> bool:
-    """The quote says, in words, that there was nothing: the source of a value 0."""
-    return bool(_NONE_STATED.search(normalize(quote or "")))
+    """The quote says, in words or with a dash in a table cell, that there was nothing:
+    the source of a value 0."""
+    q = (quote or "").strip()
+    return bool(_NONE_STATED.search(normalize(q)) or _DASH_CELL.search(q))
 
 
 def _cell_numbers(quote: str) -> list[float]:

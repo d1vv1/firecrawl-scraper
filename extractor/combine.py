@@ -23,13 +23,15 @@ are on another machine. With no run given, only that and the scoring are done.
 
 import argparse
 import csv
+import datetime as dt
 import logging
 import os
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
 
-from . import fields
+from . import fields, source_policy
 from .datapoints import COLUMNS, refresh
 from .fields import NOT_COLLECTED
 
@@ -111,6 +113,34 @@ def worse_blocks(old: list[dict], new: list[dict]) -> set[str]:
     return out
 
 
+OTHER_COMPANYS_REPORT = "OtherCompanysReport"
+# an old value dated this long before the run's fiscal year end is from another year
+KEEP_MAX_DAYS_BEFORE = 92
+
+
+def lost_by_rerun(old: dict, new: dict, fye: str = "") -> bool:
+    """A company fact the earlier run read and this run did not find (run-to-run misses,
+    Phase B test: Helios Solar's EBITDA, Arzneiwerk's shares): the old value stays. Not
+    when this run set the report aside as another company's (the old value likely came
+    from that same report: C-Capital, SECO), and not when the old value is dated in an
+    earlier year than the run's fiscal year end."""
+    if old["grain"] != "company" or new["value"] or not old.get("value"):
+        return False
+    if OTHER_COMPANYS_REPORT in new["note"] and (old.get("source") or "").startswith("Annual report"):
+        # Hidong Estate: the bucket's file was another company's; its Companies House values stay
+        return False
+    end, when = fye[:10], (old.get("period_end") or "")[:10]
+    if end > dt.date.today().isoformat():
+        end = ""                        # a year that has not ended (Nestlé's 2026-12-31): no guide
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", end) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", when):
+        try:
+            if (dt.date.fromisoformat(end) - dt.date.fromisoformat(when)).days > KEEP_MAX_DAYS_BEFORE:
+                return False
+        except ValueError:
+            pass
+    return True
+
+
 def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
                   ) -> tuple[list[dict], set[Key]]:
     """A company's rows after a run: the run's, except where the run did not collect a
@@ -137,6 +167,7 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         rest, kept_rest = merge_company([r for r in old if r["grain"] != "role"],
                                         [r for r in new if r["grain"] != "role"], keep_better)
         return rest + roles, kept_rest | ({key(r) for r in old_roles} - filled_keys)
+    fye = next((r["value"] for r in new if r["data_point"] == "fiscal_year_end" and r["value"]), "")
     for r in new:
         if key(r) in kept_worse:
             out.append(r)
@@ -144,7 +175,10 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         if r["grain"] == "role" and roles_skipped:
             continue
         o = before.get(key(r))
-        if r["note"].startswith(NOT_COLLECTED) and o and o.get("value"):
+        # a value entered by hand (manual_prices) stays unless the run read one itself
+        if o and o.get("value") and (r["note"].startswith(NOT_COLLECTED)
+                                     or (o.get("method") == "MANUAL" and not r["value"])
+                                     or lost_by_rerun(o, r, fye)):
             out.append(o)
             kept.add(key(r))
         else:
@@ -153,6 +187,33 @@ def merge_company(old: list[dict], new: list[dict], keep_better: bool = True
         out += old_roles or new_roles
         kept |= {key(r) for r in old_roles}
     return out, kept
+
+
+NOT_ALLOWED = "not kept from before: its source is not allowed under legal's rules"
+
+
+def drop_disallowed(rows: list[dict], new: list[dict], kept: set[Key]) -> tuple[list[dict], set[Key], int]:
+    """With LEGAL_SOURCE_RULES=true, an old value kept over the run's (no value, a worse
+    block, an untouched role row) must itself come from an allowed source: else the run's
+    row takes its place, or an empty row saying why. Returns (rows, kept, dropped)."""
+    if not source_policy.enforced() or not kept:
+        return rows, kept, 0
+    run = {key(r): r for r in new}
+    out, dropped = [], 0
+    for r in rows:
+        k = key(r)
+        if k in kept and r.get("value") and not source_policy.value_allowed(r):
+            kept = kept - {k}
+            dropped += 1
+            n = run.get(k)
+            if n is not None:
+                out.append(n)
+            else:
+                out.append({**r, "value": "", "unit": "", "method": "", "confidence": "",
+                            "note": NOT_ALLOWED + f" ({r.get('source') or 'unknown source'})"})
+            continue
+        out.append(r)
+    return out, kept, dropped
 
 
 def kept_worse_grains(kept_worse: set[Key]) -> set[str]:
@@ -192,10 +253,15 @@ def splice(groups: dict[str, list[dict]], order: list[str], incoming: dict[str, 
     return out
 
 
-def combine(runs: list[Path], into: Path, keep_better: bool = True) -> dict:
+def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool = False,
+            esef: bool = False) -> dict:
     """Merge the runs (in order) into `into`, and their checks into its checks file.
-    `keep_better`: a block a run got clearly fewer values for stays (merge_company)."""
+    `keep_better`: a block a run got clearly fewer values for stays (merge_company).
+    `gleif`: ask GLEIF level 2 again for every empty ultimate parent (datapoints.refresh).
+    `esef`: fill an empty EBITDA, share count or ultimate parent from the ESEF filing's tags."""
     rows, cols = read(into) if into.exists() else ([], COLUMNS)
+    if "tier" not in cols:              # a file from before the tier column (refresh fills it)
+        cols = cols[:cols.index("segment") + 1] + ["tier"] + cols[cols.index("segment") + 1:]             if "segment" in cols else cols + ["tier"]
     checks_path = into.with_name(into.stem + "_checks.csv")
     checks, ccols = read(checks_path) if checks_path.exists() else ([], [])
     stats = {"replaced": 0, "added": 0, "kept": 0, "worse": []}
@@ -227,6 +293,9 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True) -> dict:
                 log.warning("%s: the run has under half the values before for %s; kept the old rows "
                             "(--take-newer to replace them)", name, " and ".join(sorted(worse)))
             merged[cid], kept = merge_company(groups.get(cid, []), new, keep_better)
+            merged[cid], kept, dropped = drop_disallowed(merged[cid], new, kept)
+            if dropped:
+                stats["not_allowed"] = stats.get("not_allowed", 0) + dropped
             stats["replaced" if cid in groups else "added"] += 1
             stats["kept"] += len(kept)
             def ckey(c):
@@ -239,19 +308,26 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True) -> dict:
             corder = list(dict.fromkeys(c["company_id"] for c in checks))
             checks = splice(cgroups, corder, merged_checks)
         log.info("Merged %s: %d companies replaced, %d added", run.name, stats["replaced"], stats["added"])
-    rows = refreshed(rows)
+        if stats.get("not_allowed"):
+            log.info("Legal's rules: %d old values not kept (source not allowed)", stats["not_allowed"])
+    rows = refreshed(rows, gleif, esef)
     write(into, rows, cols)
     if ccols:
         write(checks_path, checks, ccols)
     return stats
 
 
-def refreshed(rows: list[dict]) -> list[dict]:
-    """Every company's rows under the current rules for saved rows, in the same order."""
+def refreshed(rows: list[dict], gleif: bool = False, esef: bool = False) -> list[dict]:
+    """Every company's rows under the current rules for saved rows, in the same order.
+    `gleif`: an empty ultimate parent is asked of GLEIF again (online, cached a week)."""
+    from .apis import gleif_parent
+    from .esef import extras_for
+    lookup = gleif_parent if gleif else None
+    extras = extras_for if esef else None
     groups: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         groups[r["company_id"]].append(r)
-    return [r for block in groups.values() for r in refresh(block)]
+    return [r for block in groups.values() for r in refresh(block, lookup, extras)]
 
 
 def main(argv=None) -> int:
@@ -265,12 +341,19 @@ def main(argv=None) -> int:
     p.add_argument("--take-newer", action="store_true",
                    help="Replace a company's facts or pay even when the run has under half "
                         "the values already there (default: the old block stays)")
+    p.add_argument("--gleif", action="store_true",
+                   help="Ask GLEIF level 2 again for every empty ultimate parent (a parent added "
+                        "since, or a reporting exception that gives one)")
+    p.add_argument("--esef", action="store_true",
+                   help="Fill an empty EBITDA (else operating profit), share count or ultimate "
+                        "parent from the tags of the ESEF filing for the fiscal year (online)")
     args = p.parse_args(argv)
     missing = [r for r in args.runs if not r.exists()]
     if missing:
         print(f"ERROR: not found: {', '.join(map(str, missing))}", file=sys.stderr)
         return 1
-    stats = combine(args.runs, args.into, keep_better=not args.take_newer)
+    stats = combine(args.runs, args.into, keep_better=not args.take_newer, gleif=args.gleif,
+                    esef=args.esef)
     print(f"{args.into}: {stats['replaced']} companies replaced, {stats['added']} added, "
           f"{stats['kept']} values kept that the runs did not collect")
     if stats["worse"]:

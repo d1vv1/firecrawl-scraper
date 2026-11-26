@@ -30,7 +30,38 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 #    (pay.PAY_WORDS, pay.ask_opportunities).
 # 5: 15 Nov 2026, a deferred part of the annual bonus is read with the bonus (PR #4, merged
 #    without a version: of the saved results, only the remaining-UK run has it).
-SCRAPER_VERSION = 5
+# 6: 22 Nov 2026, not-found plan Phase B: a dash in a pay cell is 0 and a folded pension is
+#    "included in"; "None" / "no pension" when the text says so; the year-end share price
+#    in each language and the market cap the company states; an empty answer asked again
+#    of LLM_FALLBACK_MODEL; gaps filled from the ESEF filing's tags.
+SCRAPER_VERSION = 6
+
+# Rules that fill a value the source does not print (docs/not_found_reduction_plan.md,
+# decisions D1 and D4). Decided on 22 Nov 2026 on the client's behalf, by their own field
+# list ("record 0, not blank", "record 'None' if absent"), for them to confirm; each is on
+# unless its name is in RULES_OFF (.env, comma-separated), so one the client rejects is
+# switched off without a code change:
+#   gleif_non_consolidating  ultimate_parent "none (no consolidating parent)" from GLEIF's
+#                            reporting exception NON_CONSOLIDATING
+#   zero_from_total          a role's benefits or pension 0 when its stated total is the sum
+#                            of its other amounts
+#   none_if_absent           shareholding_requirement "None" when the remuneration report
+#                            was read and states no such rule
+#   included_in_other        a pension or benefit the table folds into another amount is
+#                            "not applicable: included in ..." (D4), not "not found"
+DECIDED_RULES = ("gleif_non_consolidating", "zero_from_total", "none_if_absent", "included_in_other")
+_env_loaded = False
+
+
+def signed_off(rule: str) -> bool:
+    """Is this rule (DECIDED_RULES) on? Read from the environment each time (.env loaded
+    once, not over a variable already set), so a test or a one-off run can switch it off."""
+    global _env_loaded
+    if not _env_loaded:
+        load_dotenv(PROJECT_ROOT / ".env")
+        _env_loaded = True
+    off = {n.strip() for n in os.environ.get("RULES_OFF", "").split(",")}
+    return rule in DECIDED_RULES and rule not in off
 
 # Tunables. Kept here so a later batch runner can override them in one place.
 WORD_BUDGET_PER_GROUP = 6_000
@@ -65,6 +96,10 @@ class Settings:
     vertex_project: str | None = None
     vertex_location: str = "global"
     vertex_model: str = "google/gemini-2.5-flash"
+    # Asked once more when the model's answer for the facts or the pay is empty (plan B6).
+    # Default on Vertex: Gemini 3.1 Pro (preview; the project has no 2.5 Pro or 3 Pro);
+    # "off" or "none" switches the retry off.
+    llm_fallback_model: str | None = None
 
     def require(self, *names: str) -> None:
         missing = [n.upper() for n in names if not getattr(self, n)]
@@ -87,7 +122,17 @@ def load_settings() -> Settings:
         vertex_project=os.getenv("VERTEX_PROJECT") or None,
         vertex_location=os.getenv("VERTEX_LOCATION") or "global",
         vertex_model=os.getenv("VERTEX_MODEL") or "google/gemini-2.5-flash",
+        llm_fallback_model=_fallback_model(),
     )
+
+
+def _fallback_model() -> str | None:
+    v = (os.getenv("LLM_FALLBACK_MODEL") or "").strip()
+    if v.lower() in ("off", "none"):
+        return None
+    if v:
+        return v
+    return "google/gemini-3.1-pro-preview" if (os.getenv("LLM_PROVIDER") or "").strip().lower() == "vertex" else None
 
 
 def clean_name(legal_name: str) -> str:

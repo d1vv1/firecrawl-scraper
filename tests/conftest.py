@@ -15,3 +15,7 @@ def no_ai_calls(request, monkeypatch):
     def refuse(*a, **k):
         raise llm.LLMRefusalError("no AI calls in tests: give the test a fake answer")
     monkeypatch.setattr(llm, "call_llm", refuse)
+    # no second ask of a stronger model (plan B6) unless a test sets one, whatever .env says
+    monkeypatch.setattr(llm, "fallback_model", lambda: None)
+    # no robots.txt / TDM requests from the source rules (tests that need them set the mode)
+    monkeypatch.delenv("LEGAL_SOURCE_RULES", raising=False)

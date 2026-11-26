@@ -10,7 +10,7 @@ The source-validation protocol (`Source_validation_listed_22Oct/PROTOCOL.md`) se
 
 `output/datapoints.csv` gains two columns, `grain` and `role_row`, making 17:
 
-`company_id, company_name, segment, country, lei, grain, role_row, data_point, value, unit, period_end, source, endpoint, method, retrieved_at, confidence, note`
+`company_id, company_name, segment, tier, country, lei, grain, role_row, data_point, value, unit, period_end, source, endpoint, method, retrieved_at, confidence, note`
 
 - **Company grain:** 41 data points, one row each, including the ones not found.
 - **Role grain:** one set of 14 rows per disclosed executive role. `role_row` holds the role title as stated; the person's name is added only when two roles share a title. Non-executive board members get one `role_disclosure` row and nothing else, as the protocol says.

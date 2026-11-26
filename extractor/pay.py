@@ -140,7 +140,9 @@ def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
         if (saved.get("chunk_ids") == ids and saved.get("prompt") == prompt
                 and saved.get("image_pages", []) == shown
                 and saved.get("image_note") == (IMAGE_NOTE if shown else None)):
-            return RemunerationFacts.model_validate(saved["facts"])
+            facts = RemunerationFacts.model_validate(saved["facts"])
+            if not (llm.fallback_model() and no_amounts(facts) and not saved.get("fallback_tried")):
+                return facts
     body = "\n\n".join(f'<chunk id="{c.id}">\n{c.text.strip()}\n</chunk>' for c in chunks)
     user = (f"Company legal name: {name}\nSource: {url}\n\nExcerpts from {what} (tables are "
             f"in markdown):\n\n{body}")
@@ -154,13 +156,28 @@ def ask_pay(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
     if images:
         log.info("Pay: showing PDF page(s) %s as images", ", ".join(map(str, shown)))
         user += IMAGE_NOTE.format(pages=", ".join(map(str, shown)))
-    facts = llm.call_llm(prompt, user, RemunerationFacts, images=images or None)
+    facts, model = llm.call_llm(prompt, user, RemunerationFacts, images=images or None), llm.model_name()
+    fallback, tried = llm.fallback_model(), False
+    if fallback and no_amounts(facts):
+        # plan B6: a pay document read with no amount at all is asked once more of the
+        # stronger model
+        log.info("Pay: no amounts from %s in %s; asking %s", model, url, fallback)
+        tried = True
+        again = llm.ask_fallback(prompt, user, RemunerationFacts, images=images or None)
+        if again is not None and not no_amounts(again):
+            facts, model = again, fallback
     CACHE_DIR.mkdir(exist_ok=True)
     path.write_text(json.dumps({"chunk_ids": ids, "prompt": prompt, "image_pages": shown,
                                 "image_note": IMAGE_NOTE if shown else None,
-                                "model": llm.model_name(), "facts": facts.model_dump()},
+                                "model": model, "fallback_tried": tried, "facts": facts.model_dump()},
                                ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
+
+
+def no_amounts(facts: RemunerationFacts) -> bool:
+    """No executive role with any pay amount: the answer of a model that missed the table."""
+    return not any(getattr(r, k).value is not None for r in facts.roles if r.executive
+                   for k in ("base_salary", "sti_paid", "benefits", "pension", "total"))
 
 
 def ask_opportunities(name: str, url: str, chunks: list[Chunk], roles: list[str], what: str,

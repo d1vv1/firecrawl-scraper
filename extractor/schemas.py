@@ -180,6 +180,8 @@ class DataPointFacts(BaseModel):
     pension_type: TextFact
     benefits: TextFact              # company-level executive benefits
     shareholding_requirement: TextFact
+    # No room for more: Vertex rejects this schema with one more nested fact (400
+    # INVALID_ARGUMENT; tried 22 Nov 2026 with a market cap fact).
 
 
 # --- executive pay, role grain (python -m extractor.datapoints) --------------------

@@ -37,6 +37,7 @@ from .report_finder import EN_MARKERS, NATIVE_MARKERS, _link_titles, _norm, extr
 from .scraper import (DownloadError, NeedsOCRError, Page, check_not_scanned, download,
                       local_file, looks_like_pdf, markdown_to_pages, pages_to_markdown,
                       pdf_to_pages)
+from . import source_policy
 from .website import is_blocked, registered_domain
 from .xhtml_text import html_to_text, text_to_pages
 
@@ -238,6 +239,8 @@ def classify(url: str, doc_type: DocType, title: str = "",
     p = urlparse(url)
     ext = PurePosixPath(p.path).suffix.lower()
     if p.scheme not in ("http", "https") or ext not in DOC_EXTENSIONS or is_blocked(p.netloc):
+        return None
+    if not source_policy.allows_candidate(url):          # legal's blocked hosts (enforce only)
         return None
     path = _norm(p.path)
     if any(rx.search(path) for rx in _SKIP):
@@ -502,6 +505,8 @@ class Library:
         md_path = CACHE_DIR / f"{_stem(self.slug, c.url)}.md"
         pdf_path = md_path.with_suffix(".pdf")
         try:
+            # legal's rules apply to a cached copy too (LEGAL_SOURCE_RULES=true)
+            source_policy.gate(c.url, source_policy.DIRECT if c.is_pdf else source_policy.FIRECRAWL)
             files_path = md_path.with_suffix(".files.json")
             if md_path.exists():
                 pages = markdown_to_pages(md_path.read_text(encoding="utf-8"))

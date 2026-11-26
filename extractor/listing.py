@@ -27,7 +27,8 @@ import unicodedata
 
 import httpx
 
-from .apis import Found, _cached, retrieved_at
+from . import source_policy
+from .apis import GLEIF_RECORD, Found, _cached, retrieved_at
 from .config import CACHE_DIR
 
 log = logging.getLogger(__name__)
@@ -297,7 +298,12 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
                retrieved_at=retrieved_at(furl))
     out: list[Found] = []
     op, recs = home_listings(docs, country)
+    strict = source_policy.enforced()     # legal: OpenFIGI only for FIGI; no Nasdaq lists
     if country in NON_EU_HOME and (not op or (mics().get(op) or {}).get("country") != country):
+        if strict:
+            # the home exchange is outside FIRDS and OpenFIGI may not give ISIN, exchange,
+            # ticker or listing status: they come from the annual report instead
+            return []
         # Home exchange outside FIRDS: the share ISINs FIRDS knows (any venue, also
         # London records closed at Brexit) or GLEIF's, then OpenFIGI on the home exchange.
         home = NON_EU_HOME[country]
@@ -324,10 +330,18 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
         return []
     isins = sorted({d["isin"] for d in recs})
     names = {d["isin"]: d.get("gnr_full_name") or "" for d in recs}
-    out.append(Found("isin", "; ".join(isins), **src, confidence="A",
-                     note="issuer-requested listing on " + venue_name(op)
-                          + ("" if len(isins) == 1 else "; share classes: "
-                             + "; ".join(f"{i} {names[i].strip()}" for i in isins))))
+    if strict:
+        # the ISIN itself from GLEIF's ISIN-to-LEI map; FIRDS only says which is listed here
+        shown = [i for i in isins if i in set(gleif_isins)]
+        gurl = GLEIF_RECORD.format(lei=lei) + "/isins"
+        isin_src = dict(source="GLEIF", endpoint=gurl, method="API", retrieved_at=retrieved_at(gurl))
+        why = "GLEIF ISIN-to-LEI map; the share listed on " + venue_name(op) + " (ESMA FIRDS)"
+    else:
+        shown, isin_src, why = isins, src, "issuer-requested listing on " + venue_name(op)
+    if shown:
+        out.append(Found("isin", "; ".join(shown), **isin_src, confidence="A",
+                         note=why + ("" if len(shown) == 1 else "; share classes: "
+                                     + "; ".join(f"{i} {names[i].strip()}" for i in shown))))
     out.append(Found("exchange", venue_name(op), **src, confidence="A",
                      note=f"MIC {op}; " + _category(op)))
     out.append(Found("listing_status", "listed", **src, confidence="A",
@@ -338,7 +352,7 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
         seg = sorted(segs)[0] if segs else op
         out.append(Found("exchange_segment", venue_name(seg), **src, confidence="A",
                          note=f"MIC {seg}; multilateral trading facility (not a regulated market)"))
-    elif (cap := nasdaq_segment(isins, op)):
+    elif not strict and (cap := nasdaq_segment(isins, op)):     # nasdaq.com: blocked by legal
         label, url = cap
         out.append(Found("exchange_segment", label, source="Nasdaq Nordic", endpoint=url,
                          method="API", confidence="A", retrieved_at=retrieved_at(url),
@@ -348,8 +362,9 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
         out.append(Found("listing_date", date, **src, confidence="C",
                          note=f"first trading date in FIRDS on {venue_name(op)}; FIRDS has "
                               f"trading dates, not admission dates"))
-    # the most widely traded class first (most FIRDS venue records): Volvo B, not A
-    for isin in sorted(isins, key=lambda i: -sum(d["isin"] == i for d in docs)):
+    # the most widely traded class first (most FIRDS venue records): Volvo B, not A.
+    # Not when enforcing legal's rules: only the FIGI code may come from OpenFIGI.
+    for isin in ([] if strict else sorted(isins, key=lambda i: -sum(d["isin"] == i for d in docs))):
         ticker = _ticker(isin, op)
         if ticker:
             fig_key = f"{OPENFIGI}#{isin}/{BLOOMBERG_EXCH[op]}"
@@ -359,7 +374,7 @@ def listing_values(lei: str | None, country: str | None, gleif_isins=()) -> list
                              note="Bloomberg-style ticker (spaces and class separators dropped)"
                                   + (f"; for {isin}" if len(isins) > 1 else "")))
             break
-    return out
+    return out      # datapoints.finish logs or drops identifiers from sources legal does not allow
 
 
 def _category(mic: str) -> str:

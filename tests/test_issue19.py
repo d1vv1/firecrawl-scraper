@@ -69,7 +69,8 @@ def test_a_role_paid_only_fixed_pay_has_no_variable_pay_rather_than_none_found()
     dp.refresh(rows)
     by = {r["data_point"]: r for r in rows}
     assert all(by[k]["note"] == dp.NO_VARIABLE_PAY for k in dp.VARIABLE_PAY)
-    assert by["benefits_value"]["note"].startswith("not found")
+    # the total is the base salary alone: no benefits (decided rule zero_from_total, plan D1)
+    assert by["benefits_value"]["value"] == "0" and by["benefits_value"]["method"] == "DERIVED"
 
 
 def test_variable_pay_is_still_missing_when_the_total_holds_more_than_fixed_pay():

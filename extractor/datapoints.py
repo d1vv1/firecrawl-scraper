@@ -33,7 +33,7 @@ See docs/pipeline_flow.html for the whole flow.
 
 Output:
   <--out>.csv                  one row per company and data point, and per role and pay
-                               field (18 columns, COLUMNS)
+                               field (19 columns, COLUMNS)
   output/datapoints/<id>.json  the same rows per company (re-runs skip done companies)
   output/golden_test_filled.csv  the input CSV with build_value filled in, when the
                                input is the golden sample
@@ -72,12 +72,12 @@ import httpx
 import openai
 from firecrawl import PaymentRequiredError
 
-from . import apis, edgar, fx, listing, llm, pay, pay_tables, requote, sector
+from . import apis, edgar, esef, fx, listing, llm, pay, pay_tables, requote, sector
 from . import fields as selection
-from . import gcs
+from . import gcs, source_policy
 from .apis import Found
 from .batch import FATAL, Company, _KeepAwake, _setup_logging, _worker_init, process_company
-from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings
+from .config import CACHE_DIR, OUTPUT_DIR, SCRAPER_VERSION, fold, load_settings, signed_off
 from .documents import (DP_DOC_TYPES, Candidate, DocType, Document, Library, _stem as doc_stem,
                         title_year)
 from .extract import full_value, full_value_quoted, printed_figure
@@ -92,7 +92,7 @@ from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
 
-COLUMNS = ["company_id", "company_name", "segment", "country", "lei", "grain", "role_row",
+COLUMNS = ["company_id", "company_name", "segment", "tier", "country", "lei", "grain", "role_row",
            "data_point", "value", "unit", "period_end", "source", "endpoint", "method",
            "retrieved_at", "confidence", "note", "scraper_version"]
 
@@ -138,7 +138,7 @@ LISTED_REPORTS_ONLY = {"pension_type", "benefits", "shareholding_requirement"}
 MARKET_CAP_BANDS_EUR = [(1_000_000_000, "large"), (150_000_000, "mid"), (0, "small")]
 
 CONFIDENCE_RANK = {"A": 3, "B": 2, "C": 1, "": 0}
-METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
+METHOD_RANK = {"API": 4, "XBRL": 4, "PARSE": 3, "MANUAL": 3, "SCRAPE": 2, "DERIVED": 1, "": 0}
 
 DP_DIR = OUTPUT_DIR / "datapoints"
 # A report up to this long is read whole. The keyword pick below showed the AI a median 14%
@@ -637,6 +637,13 @@ def from_result(result: dict, origin: Origin | None) -> list[Found]:
                          f"{fmt_number(broad)} {rev.unit} (ifrs-full:RevenueAndOperatingIncome)")
     period = result.get("period_end_date") or ""
     at = result.get("extracted_at") or ""
+    today = at[:10] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", at[:10]) else dt.date.today().isoformat()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", period[:10]) and period[:10] > today:
+        # a year that has not ended yet (Nestlé's Annual Review 2025 gave 2026-12-31):
+        # not the year of the figures; neither the year nor its end is stored
+        log.warning("Report period end %s is after the day it was read (%s); not used", period, today)
+        result = {**result, "period_end_date": None, "fiscal_year": None}
+        period = ""
     money = next((f for f in out), None)
     if money is None and origin is not None:
         # no revenue or total assets read (a pre-revenue company, a bank): the year and its
@@ -691,19 +698,59 @@ def ask(name: str, url: str, chunks: list[Chunk], what: str, cache_key: str,
     facts asked for (`wanted`: DataPointFacts fields; None asks for all)."""
     path = CACHE_DIR / f"{cache_key}_datapoints_llm.json"
     ids = [c.id for c in chunks]
+    fallback = llm.fallback_model()
     if path.exists():
         saved = json.loads(path.read_text(encoding="utf-8"))
         if (saved.get("chunk_ids") == ids and saved.get("wanted") == wanted
                 and saved.get("prompt") == llm.load_prompt("datapoints_system")):
-            return DataPointFacts.model_validate(saved["facts"])
-    facts = llm.call_llm(llm.load_prompt("datapoints_system"),
-                         _user_prompt(name, url, chunks, what, wanted), DataPointFacts)
+            facts = DataPointFacts.model_validate(saved["facts"])
+            if not (fallback and facts_empty(facts, wanted) and not saved.get("fallback_tried")):
+                return facts
+    prompt, user = llm.load_prompt("datapoints_system"), _user_prompt(name, url, chunks, what, wanted)
+    tried = False
+    try:
+        facts, model = llm.call_llm(prompt, user, DataPointFacts), llm.model_name()
+    except openai.LengthFinishReasonError:
+        # the answer ran on to the output limit (Man Group, OSB: 170-260k-token reports,
+        # 25 Nov 2026): the stronger model once, then half the excerpts
+        log.warning("Data points: the answer for %s hit the output limit; asking again", url)
+        again = None
+        if fallback:
+            tried = True
+            try:
+                again = llm.ask_fallback(prompt, user, DataPointFacts)
+            except openai.LengthFinishReasonError:
+                again = None
+        if again is None:
+            if len(chunks) < 2:
+                raise
+            log.warning("Data points: reading %s from %d of %d excerpts", url, len(chunks) // 2, len(chunks))
+            return ask(name, url, chunks[: len(chunks) // 2], what, cache_key, wanted)
+        facts, model = again, fallback
+    if fallback and not tried and facts_empty(facts, wanted):
+        # plan B6: an empty answer is asked once more of the stronger model
+        log.info("Data points: no answer from %s for %s; asking %s", model, url, fallback)
+        tried = True
+        again = llm.ask_fallback(prompt, user, DataPointFacts)
+        if again is not None and not facts_empty(again, wanted):
+            facts, model = again, fallback
     CACHE_DIR.mkdir(exist_ok=True)
-    path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted,
-                                "prompt": llm.load_prompt("datapoints_system"),
-                                "model": llm.model_name(), "facts": facts.model_dump()},
+    path.write_text(json.dumps({"chunk_ids": ids, "wanted": wanted, "prompt": prompt,
+                                "model": model, "fallback_tried": tried,
+                                "facts": facts.model_dump()},
                                ensure_ascii=False, indent=1), encoding="utf-8")
     return facts
+
+
+# The facts whose empty answer is worth asking the stronger model again (plan B6).
+RETRY_FACTS = ("revenue", "total_assets", "ebitda", "shares_outstanding", "share_price")
+
+
+def facts_empty(facts: DataPointFacts, wanted: list[str] | None) -> bool:
+    """No value for any of the financial facts asked for (RETRY_FACTS): the answer of a
+    model that missed the figures, worth one more try."""
+    asked = [k for k in RETRY_FACTS if wanted is None or k in wanted]
+    return bool(asked) and all(getattr(facts, k).value is None for k in asked)
 
 
 def report_chunks(origin: Origin, gaps: list[str] | None = None) -> list[Chunk]:
@@ -1517,6 +1564,11 @@ def set_aside_report(c: Company, result: dict, why: str) -> str | None:
     return was.group(1) if was else None
 
 
+# not ISO 3166 but common (the EU's EL for Greece; UK): the same country (Supermarket
+# Income REIT's report "UK" against "GB" graded every value C)
+COUNTRY_ALIASES = {"UK": "GB", "EL": "GR"}
+
+
 def identity_check(values: list[Found], country: str | None, names: list[str], source: str) -> None:
     """Is the report really this company's? Two signals from the report's own text: the
     country it says the company is registered in, and its legal name (the Siemens run
@@ -1526,7 +1578,8 @@ def identity_check(values: list[Found], country: str | None, names: list[str], s
     reasons = []
     stated = next((f.value for f in values if f.data_point == "country_code"
                    and f.source == source and f.value), None)
-    if country and stated and stated != country:
+    same = lambda c: COUNTRY_ALIASES.get(str(c).strip().upper(), str(c).strip().upper())
+    if country and stated and same(stated) != same(country):
         reasons.append(f"the report says the company is in {stated}, the company list says {country}")
     legal = next((f.value for f in values if f.data_point == "legal_name"
                   and f.source == source and f.value), None)
@@ -1740,6 +1793,21 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
     all the same (an older result kept after a re-run failed), it is added at the end."""
     us = t.company.country == "US" or t.company.segment == "us_listed"
     isin = chosen.get("isin")
+    if isin and gleif_isins and source_policy.enforced() and isin.source != "GLEIF":
+        # legal: the ISIN from GLEIF's ISIN-to-LEI map. One read elsewhere that the map
+        # holds is that map's ISIN; one it does not hold is dropped below.
+        codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
+        lei = chosen.get("lei")
+        if codes and all(code in gleif_isins for code in codes):
+            chosen["isin"] = Found(**{**asdict(isin), "source": "GLEIF", "method": "API",
+                                      "confidence": "A",
+                                      "endpoint": apis.GLEIF_RECORD.format(lei=lei.value) + "/isins"
+                                      if lei else isin.endpoint,
+                                      "note": f"in GLEIF's ISIN-to-LEI map; read from {isin.source}"})
+    for k in [k for k, f in chosen.items()       # legal: identifiers only from allowed sources
+              if not source_policy.keep_identifier(k, f.source, str(f.value))]:
+        del chosen[k]
+    isin = chosen.get("isin")
     if isin and gleif_isins and isin.confidence != "A":
         codes = re.findall(r"[A-Z]{2}[A-Z0-9]{9}\d", str(isin.value).upper())
         if codes and all(code in gleif_isins for code in codes):
@@ -1748,10 +1816,11 @@ def finish(t: Target, chosen: dict[str, Found], tried: list[str],
     listed = (chosen.get("listing_status").value == "listed") if chosen.get("listing_status") else None
     if listed is None and any(k in chosen for k in ("ticker", "exchange", "isin")):
         src = next(chosen[k] for k in ("ticker", "exchange", "isin") if k in chosen)
-        chosen["listing_status"] = Found(**{**asdict(src), "data_point": "listing_status",
-                                            "value": "listed", "unit": "",
-                                            "note": f"has a {src.data_point}: {clip(str(src.value), 60)}"})
-        listed = True
+        if source_policy.keep_identifier("listing_status", src.source, "listed"):
+            chosen["listing_status"] = Found(**{**asdict(src), "data_point": "listing_status",
+                                                "value": "listed", "unit": "",
+                                                "note": f"has a {src.data_point}: {clip(str(src.value), 60)}"})
+            listed = True
     band, band_why = market_cap_band(chosen)
     if band:
         chosen["market_cap_band"] = band
@@ -1801,6 +1870,11 @@ def market_cap_band(chosen: dict[str, Found]) -> tuple[Found | None, str]:
     in_eur, at = cap, ""
     # a year-end price read without its date: the report's fiscal year end dates it
     fye = getattr(chosen.get("fiscal_year_end"), "value", "") or ""
+    if iso_date(price.period_end) and iso_date(fye) and abs(
+            (dt.date.fromisoformat(price.period_end) - dt.date.fromisoformat(str(fye))).days) > 366:
+        # Centrica's 2023 price quoted in its FY2025 report: not this year's size
+        return None, (f"not derived: the share price is dated {price.period_end}, over a year "
+                      f"from the fiscal year end {fye}")
     date = price.period_end or (str(fye) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(fye)) else "")
     if price.unit != "EUR":
         # The ECB's euro rate on the price's date (the last working day before it)
@@ -2181,7 +2255,7 @@ def rows_for(t: Target, found: list[Found]) -> list[dict]:
     for f in found:
         value = fmt_number(f.value) if isinstance(f.value, (int, float)) else (f.value or "")
         rows.append({"company_id": c.company_id, "company_name": c.name,
-                     "segment": c.segment or "", "country": c.country or "", "lei": lei,
+                     "segment": "", "tier": c.segment or "", "country": c.country or "", "lei": lei,
                      "grain": f.grain, "role_row": f.role_row, "data_point": f.data_point, "value": value, "unit": f.unit,
                      "period_end": f.period_end, "source": f.source, "endpoint": f.endpoint,
                      "method": f.method, "retrieved_at": f.retrieved_at if f.value not in (None, "")
@@ -2259,7 +2333,15 @@ def process(t: Target, opts: dict) -> dict:
     finally:
         logging.getLogger().removeHandler(handler)
         handler.close()
-    rows = save_rows(t, rows_for(t, found))
+    rows = rows_for(t, found)
+    if opts.get("apis", True):
+        # free, no AI: the ESEF filing's tags for an EBITDA, share count or parent not read
+        try:
+            fill_from_esef({r["data_point"]: r for r in rows if r["grain"] == "company"},
+                           esef.extras_for)
+        except Exception as e:  # noqa: BLE001 - a gap filler; the rows stand without it
+            log.warning("ESEF tags for the gaps failed: %s", str(e)[:150])
+    rows = save_rows(t, rows)
     if "no_credits" in flags:
         no_credits_path(c).write_text(NO_CREDITS, encoding="utf-8")
     else:
@@ -2424,11 +2506,19 @@ def iso_codes(rows: list[dict]) -> None:
         country = r.get("country", "")
         if r["data_point"] in ("pay_currency", "reporting_currency") and r["value"]:
             r["value"] = iso_currency(r["value"], country)
-        if r["data_point"] == "share_price" and r["unit"] in ("GBp", "GBX") \
-                and re.fullmatch(r"-?[\d.]+", r["value"]):
-            pence = r["value"]
-            r["value"], r["unit"] = fmt_number(float(pence) / 100), "GBP"
-            r["note"] = f"{r['note']}; printed {pence} pence" if r["note"] else f"printed {pence} pence"
+        if r["data_point"] == "share_price" and re.fullmatch(r"-?[\d.]+", r["value"]):
+            # "USD cents" and "pence" too (the ECB has no rate for them), and a price the
+            # page prints in "ZAR cents" taken as rand
+            whole = price_in_hundredths(r["unit"])
+            if not whole and re.fullmatch(r"[A-Z]{3}", r["unit"]) and \
+                    re.search(rf"{r['unit']} cents", r["note"]) and \
+                    not re.search(rf"printed [\d.]+ {r['unit']} cents", r["note"]):
+                whole = r["unit"]
+            if whole:
+                small = r["value"]
+                word = "pence" if whole == "GBP" else f"{whole} cents"
+                r["value"], r["unit"] = fmt_number(float(small) / 100), whole
+                r["note"] = f"{r['note']}; printed {small} {word}" if r["note"] else f"printed {small} {word}"
         if r["unit"]:
             head, _, rest = r["unit"].partition(" ")
             code = iso_currency(head, country)
@@ -2564,17 +2654,371 @@ def dates_of_the_report_year(rows: list[dict], report_end: str) -> None:
             r["note"] += f"; period end: the report's (document dated {m.group(1)})"
 
 
-def refresh(rows: list[dict]) -> list[dict]:
+def missing(r: dict | None) -> bool:
+    """A row the dashboard counts as not found: no value, and not "not applicable" or
+    "not collected" (dashboard.value_status)."""
+    return bool(r) and not r["value"] and not r["note"].startswith(("not applicable", selection.NOT_COLLECTED))
+
+
+def _derive_from(r: dict, src: dict, value: str, note: str) -> None:
+    """Fill the empty row `r` with `value`, worked out from the row `src`: its source,
+    locator, date and confidence, method DERIVED."""
+    r.update({k: src[k] for k in ("period_end", "source", "endpoint", "retrieved_at",
+                                  "confidence", "scraper_version") if k in src},
+             value=value, unit="", method="DERIVED", note=note)
+
+
+def fill_from_esef(by: dict[str, dict], lookup) -> None:
+    """Gaps the ESEF filing for the company's fiscal year fills from its tags (plan B3,
+    B4), asked through `lookup` (esef.extras_for; combine --esef, and every new run):
+    - ebitda: the company's own EBITDA tag, else operating profit (the client's rule:
+      "EBITDA, else operating profit", the note says which);
+    - shares_outstanding: the shares outstanding tag, else the shares issued;
+    - ultimate_parent: the tagged name of the ultimate parent ("none (top of group)" when
+      it is the company itself).
+    Only empty values; tags are exact (method XBRL, confidence A). `by`: a company's rows
+    by data point."""
+    lei = (by.get("lei") or {}).get("value")
+    fye = (by.get("fiscal_year_end") or {}).get("value") or ""
+    gaps = [k for k in ("ebitda", "shares_outstanding", "ultimate_parent") if missing(by.get(k))]
+    if not lei or not iso_date(fye) or not gaps:
+        return
+    x = lookup(lei, fye)
+    if not x:
+        return
+    viewer = f"; viewer {x.viewer_url}" if x.viewer_url else ""
+
+    def put(k, value, unit, note):
+        by[k].update(value=value, unit=unit, period_end=x.period_end,
+                     source="ESEF filing (filings.xbrl.org)", endpoint=x.report_url,
+                     method="XBRL", confidence="A", retrieved_at=_now(), note=note + viewer)
+    if "ebitda" in gaps and (x.ebitda or x.operating_profit):
+        t = x.ebitda or x.operating_profit
+        what = ("ebitda (company-defined)" if x.ebitda else
+                "operating profit (no EBITDA tagged; the client's rule: EBITDA, else operating profit)")
+        put("ebitda", fmt_number(t.value), t.currency, f"{what}; tag {t.concept}")
+    if "shares_outstanding" in gaps and x.shares:
+        issued = x.shares.concept == esef.SHARES_ISSUED_CONCEPT
+        put("shares_outstanding", fmt_number(x.shares.value), "shares",
+            f"tag {x.shares.concept}" + ("; shares issued (no outstanding count tagged)" if issued else ""))
+    if "ultimate_parent" in gaps and x.parent:
+        name, concept = x.parent
+        own = (by.get("legal_name") or {}).get("value") or ""
+        top = same_company(name, own)
+        put("ultimate_parent", "none (top of group)" if top else name, "",
+            f"tag {concept}: {clip(name, 80)}" + ("; the company itself" if top else ""))
+
+
+def parent_from_gleif(by: dict[str, dict], lookup) -> None:
+    """An empty ultimate_parent asked of GLEIF level 2 again (apis.gleif_parent, passed in
+    as `lookup` so that only `combine --gleif` goes online): its parent, or "none" where
+    a reporting exception says so. `by`: a company's rows by data point."""
+    up, lei = by.get("ultimate_parent"), (by.get("lei") or {}).get("value")
+    if not missing(up) or not lei:
+        return
+    f = lookup(lei)
+    if f and f.value:
+        up.update({k: v for k, v in asdict(f).items() if k in up})
+    elif f and f.note and f.note not in up["note"]:
+        up["note"] += f"; GLEIF {f.note}"
+
+
+# A line of a shareholder list that is a group of holders, not one holder: the whole name
+# is the group's ("Institutional", "Free float", "Board and management"), not a word in a
+# holder's name ("Marwyn Investment Management LLP").
+_GROUP_WORD = (r"(institutional|retail|free[- ]?float|public|others?|treasury|unidentified|"
+               r"identified trading|private|individuals|foundations|employees|management|"
+               r"directors|board( members)?|executives|rest|streubesitz|flottante|mercato|"
+               r"(own|treasury) shares)")
+HOLDER_GROUP = re.compile(rf"(other\s+)?{_GROUP_WORD}(\s+(and|&)\s+{_GROUP_WORD})?"
+                          r"(\s+(investors|shareholders|holders|shares))?(\s*\(.*\))?", re.I)
+_HOLDER = re.compile(r"(.+?)\s+(\d+(?:\.\d+)?)\s*%$")
+WIDELY_HELD = "derived from largest_holders: no holder of 20% or more (largest: {top})"
+
+
+def holder_stakes(text: str) -> list[tuple[str, float]]:
+    """The named holders of a largest_holders value ("BlackRock, Inc. 7.13%; FMR LLC
+    4.9%") with their stakes; groups ("Institutional 60.19%", "Free float") left out."""
+    out = []
+    for part in text.split(";"):
+        m = _HOLDER.match(part.strip())
+        if m and not HOLDER_GROUP.fullmatch(m.group(1).strip()):
+            out.append((m.group(1).strip(), float(m.group(2))))
+    return out
+
+
+def ownership_from_holders(by: dict[str, dict]) -> None:
+    """The client's rule (fields_list.json: controlling owner, ownership type and PE stake
+    are "derived from largest_holders"), for a company whose list was read but those
+    fields were not. Two or more named holders with stakes are needed: a list of one is
+    often a director's holding, not the register.
+    - largest stake under 20%: controlling_owner "none", ownership_type "widely_held"
+      (controlling_owner_name then reads "not applicable", no_controlling_owner);
+    - 20% or more: that holder is the controlling owner's name (its type is not in the
+      list, so controlling_owner and ownership_type stay open);
+    - every stake under 5%: pe_stake_5pct "no".
+    `by`: a company's rows by data point."""
+    lh = by.get("largest_holders")
+    if not lh or not lh["value"]:
+        return
+    stakes = holder_stakes(lh["value"])
+    if len(stakes) < 2:
+        return
+    name, top = max(stakes, key=lambda s: s[1])
+    shown = f"{name} {fmt_number(top)}%"
+    owner, kind, owner_name = (by.get(k) for k in ("controlling_owner", "ownership_type",
+                                                   "controlling_owner_name"))
+    if top < 20:
+        if missing(owner):
+            _derive_from(owner, lh, "none", WIDELY_HELD.format(top=shown))
+        if missing(kind) and (owner or {}).get("value") == "none":
+            _derive_from(kind, lh, "widely_held", WIDELY_HELD.format(top=shown))
+    elif missing(owner_name):
+        _derive_from(owner_name, lh, name, f"derived from largest_holders: {shown}, "
+                                           "the only holder of 20% or more"
+                     if sum(1 for _, s in stakes if s >= 20) == 1 else
+                     f"derived from largest_holders: {shown}, the largest of the holders of 20% or more")
+    pe = by.get("pe_stake_5pct")
+    if missing(pe) and top < 5 and len(stakes) >= 3:
+        _derive_from(pe, lh, "no", f"derived from largest_holders: no holder of 5% or more (largest: {shown})")
+
+
+ZERO_TOLERANCE = 0.005      # tighter than XF-02's 2%: a benefit is often under 2% of the total
+PAY_PARTS = ("base_salary", "sti_paid", "benefits_value", "pension_contribution")
+
+
+def zero_from_total(mine: dict[str, dict]) -> None:
+    """A role whose stated total is the sum of the amounts read (base salary, STI, the
+    others, and the LTI that fits, as check XF-02 adds them) within 0.5%, with no
+    benefits or no pension read: that part is 0. A decided rule (config.DECIDED_RULES
+    "zero_from_total"). `mine`: a role's rows by data point."""
+    def amount(k):
+        r = mine.get(k)
+        try:
+            return float(r["value"]) if r and r["value"] else None
+        except ValueError:
+            return None
+    total, base = amount("total_remuneration"), amount("base_salary")
+    gaps = [k for k in ("benefits_value", "pension_contribution") if missing(mine.get(k))]
+    if not total or total <= 0 or not base or not gaps:
+        return
+    parts = {k: amount(k) for k in PAY_PARTS if amount(k) is not None}
+    ltis = {k: amount(k) for k in pay.LTIS
+            if amount(k) is not None and mine[k]["unit"] != "instruments"}
+    options = [{}] + [{k: v} for k, v in ltis.items()] + ([ltis] if len(ltis) == 2 else [])
+    lti = min(options, key=lambda o: abs(sum(parts.values()) + sum(o.values()) - total))
+    added = {**parts, **lti}
+    if abs(sum(added.values()) - total) > ZERO_TOLERANCE * total:
+        return
+    tot = mine["total_remuneration"]
+    sums = " + ".join(f"{k} {v:,.0f}" for k, v in added.items())
+    for k in gaps:
+        _derive_from(mine[k], tot, "0", f"derived: 0, the stated total {total:,.0f} = {sums}")
+        mine[k]["unit"] = tot["unit"]
+
+
+_DASH = re.compile(r"[-–—�]")
+_AMOUNT = re.compile(r"\d{1,3}(?:[,.' ]\d{3})+|\d{4,}")
+
+
+def all_dashes(quote: str) -> bool:
+    """A pay table row whose figures are all dashes ("Jon Lewis 8,10 2025 – – – – –",
+    "Jack Clarke|2025|–|–|–"): three dashes or more, and no amount but a year."""
+    cells = [c.strip() for c in re.split(r"[|\s]+", quote) if c.strip()]
+    dashes = sum(1 for c in cells if _DASH.fullmatch(c))
+    amounts = [c for c in cells if _AMOUNT.fullmatch(c) and not re.fullmatch(r"(19|20)\d{2}", c)]
+    return dashes >= 3 and not amounts
+
+
+def no_pay_for_year(mine: dict[str, dict]) -> None:
+    """A role paid nothing in the year (a member who left before it, or served unpaid):
+    its empty amounts are not applicable. Either its stated total is 0, or no amount was
+    read and the table row it was found on is all dashes (Capita's former CEO; GB
+    single-figure tables). `mine`: a role's rows by data point."""
+    tot = mine.get("total_remuneration")
+    why = ""
+    if tot and re.fullmatch(r"-?0+(\.0+)?", tot["value"] or ""):
+        why = "stated total 0"
+    elif not any(mine.get(k, {}).get("value") for k in pay.AMOUNTS):
+        found_on = (mine.get("role_disclosure") or {}).get("note", "")
+        m = re.search(r'(?:PDF page \d+|report text|web page): "([^"]*)', found_on)
+        if m and all_dashes(m.group(1)):
+            why = "the table row is all dashes"
+    if not why:
+        return
+    for k in pay.AMOUNTS:
+        if k != "total_remuneration" or why != "stated total 0":
+            if missing(mine.get(k)):
+                mine[k]["note"] = f"not applicable: no pay for the year ({why})"
+
+
+# What an amount's "includes ..." names, for each part a table can fold into another.
+FOLDED = {"pension_contribution": re.compile(r"\b(pension|retirement|vorsorge|previdenz|pensjon|"
+                                             r"pensio|eläke|BVG|LPP)", re.I),
+          "benefits_value": re.compile(r"\b(benefit|fringe|in kind|sachbezüg|nebenleistung|"
+                                       r"benefici|avantages|förmåner|fordele|goder)", re.I)}
+_INCLUDES = re.compile(r"\bincludes ([^;]+)")
+
+
+def included_in_other(mine: dict[str, dict]) -> None:
+    """Decision D4: a pension or benefit the table folds into another amount ("pension and
+    social security" in one column; Italy's "benefici non monetari" with the pension in it)
+    is neither 0 nor missing. The empty part reads "not applicable: included in <field>",
+    when another amount of the role (not the total, which includes everything) says in its
+    note that it includes it. A decided rule ("included_in_other"). `mine`: a role's rows
+    by data point."""
+    for part, words in FOLDED.items():
+        if not missing(mine.get(part)):
+            continue
+        for k in pay.AMOUNTS:
+            r = mine.get(k)
+            if k in (part, "total_remuneration") or not r or not r["value"]:
+                continue
+            m = _INCLUDES.search(r["note"])
+            if m and words.search(m.group(1)):
+                mine[part]["note"] = f"not applicable: included in {k} ({clip(m.group(1), 80)})"
+                break
+
+
+NO_SHAREHOLDING_RULE = "None"
+PAY_DOCUMENT = re.compile(r"remuneration|compensation|vergütung|remunerazione|ersättning|"
+                          r"godtgjørelse|vederlag|palkitsemis|rémunération|retribuci", re.I)
+
+
+def shareholding_none_if_absent(rows: list[dict]) -> None:
+    """The client's rule for shareholding_requirement: "record 'None' if absent". Only
+    where its absence means something: the role pay was read from a remuneration report
+    (a document that sets out the executives' pay in full) and that report was searched
+    for the rule. The value then is "None", confidence C (an absence, not a quote), its
+    locator the report. A decided rule ("none_if_absent"). `rows`: a company's rows."""
+    sr = next((r for r in rows if r["grain"] == "company"
+               and r["data_point"] == "shareholding_requirement"), None)
+    if not missing(sr) or not PAY_DOCUMENT.search(sr["note"]):
+        return
+    pay_row = next((r for r in rows if r["grain"] == "role" and r["value"]
+                    and r["data_point"] in pay.AMOUNTS and PAY_DOCUMENT.search(r["source"])), None)
+    if not pay_row:
+        return
+    sr.update(value=NO_SHAREHOLDING_RULE, unit="", method="DERIVED", confidence="C",
+              source=pay_row["source"], endpoint=pay_row["endpoint"].split("#")[0],
+              period_end=pay_row["period_end"], retrieved_at=pay_row["retrieved_at"],
+              note=f"derived: no shareholding requirement in the remuneration report read "
+                   f"(the client's rule: 'None' if absent); {sr['note']}")
+
+
+def pay_currency_from_amounts(rows: list[dict]) -> None:
+    """An empty pay_currency: the currency of the role's own amounts when they all share
+    one, else the currency every other role of the company has. `rows`: a company's rows."""
+    roles: dict[str, dict[str, dict]] = {}
+    for r in rows:
+        if r["grain"] == "role":
+            roles.setdefault(r["role_row"], {})[r["data_point"]] = r
+    company = {m["pay_currency"]["value"] for m in roles.values()
+               if m.get("pay_currency") and m["pay_currency"]["value"]}
+    for role, mine in roles.items():
+        cur = mine.get("pay_currency")
+        if not missing(cur):
+            continue
+        amounts = [mine[k] for k in pay.AMOUNTS if k in mine and mine[k]["value"]
+                   and re.fullmatch(r"[A-Z]{3}", mine[k]["unit"] or "")]
+        units = {r["unit"] for r in amounts}
+        if len(units) == 1:
+            _derive_from(cur, amounts[0], units.pop(), "derived: the currency of the role's amounts")
+        elif not units and len(company) == 1:
+            src = next(m["pay_currency"] for m in roles.values()
+                       if m.get("pay_currency") and m["pay_currency"]["value"])
+            _derive_from(cur, src, next(iter(company)), "derived: the pay currency of the company's other roles")
+
+
+# A share price unit in hundredths of a currency: "GBp", "GBX", "pence", "USD cents".
+_HUNDREDTHS = re.compile(r"^(?:(?P<cur>[A-Z]{3})\s+)?(?:cents?|pence|p)$", re.I)
+
+
+def price_in_hundredths(unit: str) -> str | None:
+    """The currency a share price in pence or cents is a hundredth of ("GBp" -> "GBP",
+    "USD cents" -> "USD"), or None. "GBP" (pounds) is not "GBp" (pence)."""
+    if unit in ("GBp", "GBX", "GBx"):
+        return "GBP"
+    m = _HUNDREDTHS.match(unit or "")
+    if not m:
+        return None
+    if m.group("cur"):
+        return m.group("cur").upper()
+    return "GBP" if unit.lower() in ("pence", "p") else None
+
+
+FUTURE_YEAR_END = "not used: the period end read ({}) is after the day it was read"
+
+
+def no_future_year_end(rows: list[dict]) -> None:
+    """A fiscal year end after the day the values were read is a year that had not ended
+    (Nestlé's Annual Review 2025 gave 2026-12-31; Bellway, Smiths, Volution 2026-07-31):
+    the year end and the fiscal year are cleared, the note saying why."""
+    by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
+    end = by.get("fiscal_year_end")
+    if not end or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", end["value"][:10]):
+        return
+    read = (end.get("retrieved_at") or "")[:10]
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", read) or end["value"][:10] <= read:
+        return
+    day = end["value"][:10]
+    note = FUTURE_YEAR_END.format(day)
+    year = by.get("fiscal_year")
+    if year and year["value"] and year["period_end"][:10] == day:
+        year.update(value="", unit="", period_end="", method="", confidence="", note=note)
+    end.update(value="", unit="", period_end="", method="", confidence="", note=note)
+
+
+_ALIAS_ONLY = re.compile(r";? ?check: the report says the company is in (UK|EL), the company list says "
+                         r"(GB|GR): " + re.escape(OTHER_COMPANY))
+
+
+def country_alias_not_a_mismatch(rows: list[dict]) -> None:
+    """Saved before COUNTRY_ALIASES: the report's "UK" against the list's "GB" graded every
+    value from it C as possibly another company's (28 GB companies). The note goes, and a
+    value whose quote was found verbatim is B again."""
+    for r in rows:
+        if not _ALIAS_ONLY.search(r["note"]):
+            continue
+        r["note"] = _ALIAS_ONLY.sub("", r["note"]).strip("; ")
+        if (r["confidence"] == "C" and r["method"] == "PARSE" and "not found verbatim" not in r["note"]
+                and "check:" not in r["note"] and "undated" not in r["note"]):
+            r["confidence"] = "B"
+
+
+def segment_from_sector(rows: list[dict]) -> None:
+    """`segment`: the company's industry, the NACE section of its sector_code ("NACE 28.99"
+    -> "Manufacturing"); empty without a NACE code. `tier`: the input file's Tier or
+    segment column (the client's priority, or a run group). Rows saved before `tier`
+    existed held that input value in `segment`: it moves to `tier`."""
+    code = next((r["value"] for r in rows if r["grain"] == "company"
+                 and r["data_point"] == "sector_code" and r["value"]), "")
+    industry = sector.section_name(code)
+    for r in rows:
+        if "tier" not in r:
+            r["tier"] = r.get("segment") or ""
+        r["segment"] = industry
+
+
+def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
     or an ownership fact read without one. A role that is a pay table's "Total" line
-    (pay.total_roles) is removed. Other rows that already have their values are unchanged."""
+    (pay.total_roles) is removed. Other rows that already have their values are unchanged.
+    `gleif`: apis.gleif_parent, to ask GLEIF again for an empty ultimate parent (the one
+    rule that goes online; combine --gleif). `esef_extras`: esef.extras_for, to fill an
+    empty EBITDA, share count or ultimate parent from the ESEF filing's tags (combine --esef)."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
+    segment_from_sector(rows)
     # a group role read from two documents; a table's accounting line taken for a person
     gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
     rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]
+    for r in rows:                       # a bucket file: its browser address, not a local path
+        r["endpoint"] = gcs.browser_url(r["endpoint"])
     iso_codes(rows)
+    country_alias_not_a_mismatch(rows)
+    no_future_year_end(rows)
     fiscal_year_from_its_end(rows)
     totals = pay.total_roles(rows)          # a "Total" line saved as a role of its own
     if totals:
@@ -2583,9 +3027,21 @@ def refresh(rows: list[dict]) -> list[dict]:
         rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
     headcount_from_fte(by)
+    if gleif:
+        parent_from_gleif(by, gleif)
+    if esef_extras:
+        fill_from_esef(by, esef_extras)
+    ownership_from_holders(by)
     no_controlling_owner(by)
+    pay_currency_from_amounts(rows)
+    if signed_off("none_if_absent"):
+        shareholding_none_if_absent(rows)
     band = by.get("market_cap_band")
-    if band and not band["value"] and band["note"].startswith("not derived: market cap"):
+    # derived again when only the euro rate was missing, or an input has come since (a share
+    # price entered by hand: manual_prices)
+    if band and not band["value"] and (band["note"].startswith("not derived: market cap") or (
+            band["note"].startswith("not derived:")
+            and all(by.get(k, {}).get("value") for k in ("shares_outstanding", "share_price")))):
         names = [f.name for f in fields(Found)]
         chosen = {k: Found(**{n: by[k][n] for n in names if n in by[k]})
                   for k in ("shares_outstanding", "share_price", "fiscal_year_end")
@@ -2599,6 +3055,11 @@ def refresh(rows: list[dict]) -> list[dict]:
     for role in dict.fromkeys(r["role_row"] for r in rows if r["grain"] == "role"):
         whole = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role}
         unit_named_wrongly(whole)
+        no_pay_for_year(whole)
+        if signed_off("included_in_other"):
+            included_in_other(whole)
+        if signed_off("zero_from_total"):
+            zero_from_total(whole)
         no_variable_pay(whole)
         mine = {r["data_point"]: r for r in rows if r["grain"] == "role" and r["role_row"] == role
                 and r["data_point"] in pay.TARGETS}

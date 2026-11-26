@@ -39,6 +39,39 @@ def model_name() -> str | None:
     return s.vertex_model if s.llm_provider == "vertex" else s.foundry_deployment
 
 
+def fallback_model() -> str | None:
+    """The stronger model asked once more when an answer is empty (plan B6), or None
+    (none set, or it failed before in this run)."""
+    m = load_settings().llm_fallback_model
+    return m if m and m != model_name() and m not in _broken_fallbacks else None
+
+
+_broken_fallbacks: set[str] = set()
+
+
+def ask_fallback(system_prompt: str, user_prompt: str, schema: type[T],
+                 images: list[bytes] | None = None) -> T | None:
+    """call_llm with the fallback model; None when it fails (a model the project has no
+    access to, a schema it rejects, or no answer): the first answer then stands. A model the
+    project can't use is not asked again in this run; an empty answer is a miss for that
+    question only."""
+    m = fallback_model()
+    if not m:
+        return None
+    try:
+        return call_llm(system_prompt, user_prompt, schema, images=images, model=m)
+    except (openai.NotFoundError, openai.BadRequestError, openai.PermissionDeniedError,
+            StructuredOutputsUnsupportedError) as e:
+        log.warning("Fallback model %s failed (%s); not asked again in this run", m, str(e)[:150])
+        _broken_fallbacks.add(m)
+        return None
+    except LLMRefusalError as e:
+        # an empty or refused answer to this one question (Gemini 3.1 Pro returned no parsed
+        # output for Mondo TV's pay, 22 Nov): the model still works for the next company
+        log.warning("Fallback model %s gave no answer (%s)", m, str(e)[:150])
+        return None
+
+
 @lru_cache(maxsize=1)
 def _client() -> tuple[OpenAI, str]:
     s = load_settings()
@@ -163,9 +196,11 @@ def _log_retry(retry_state) -> None:
                                       openai.APITimeoutError, openai.InternalServerError)),
        stop=stop_after_attempt(8), wait=_wait, before_sleep=_log_retry, reraise=True)
 def call_llm(system_prompt: str, user_prompt: str, schema: type[T],
-             images: list[bytes] | None = None) -> T:
-    """`images`: PNG pages shown to the model next to the text (pay tables)."""
+             images: list[bytes] | None = None, model: str | None = None) -> T:
+    """`images`: PNG pages shown to the model next to the text (pay tables). `model`:
+    another model of the same provider (fallback_model()) instead of the configured one."""
     client, deployment = _client()
+    deployment = model or deployment
     try:
         completion = _parse(client, deployment, system_prompt, user_prompt, schema, images)
     except openai.BadRequestError as e:
@@ -179,8 +214,8 @@ def call_llm(system_prompt: str, user_prompt: str, schema: type[T],
 
     usage = completion.usage
     if usage:
-        log.info("LLM %s: %d prompt + %d completion tokens", schema.__name__,
-                 usage.prompt_tokens, usage.completion_tokens)
+        log.info("LLM %s: %s prompt + %s completion tokens", schema.__name__,
+                 usage.prompt_tokens, usage.completion_tokens)   # Gemini 3.1 Pro can omit one
     message = completion.choices[0].message
     if message.refusal:
         raise LLMRefusalError(f"Model refused: {message.refusal}")
