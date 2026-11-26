@@ -255,8 +255,11 @@ Per company, cheapest and most exact first:
    report are skipped. Default cap: 10 credits per company (`--doc-credits`,
    `--no-docs`).
 
-`headcount`: when only an FTE count is stated, the FTE count rounded is the headcount
-(method `DERIVED`, note "derived: full-time equivalents (no headcount stated)"). A company
+`headcount` is a count of people, never an FTE count: when only an FTE count is stated,
+headcount stays empty (note "not found: only full-time equivalents are stated (in fte), not
+a head count") and the FTE count is in `fte`. A headcount saved by the old rule (11-26 Nov
+2026, method `DERIVED`, note "derived: full-time equivalents (no headcount stated)") is
+emptied when the rules are applied (`datapoints.no_headcount_from_fte`). A company
 without a fiscal year from the report step gets it from the year end its report states,
 else from its cover title. An input `annual_report_url` that is a filings.xbrl.org search
 gives its LEI, not a report.

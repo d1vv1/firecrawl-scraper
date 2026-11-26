@@ -1,4 +1,4 @@
-"""Weak links on the High-severity fields (11 Nov 2026): headcount from FTE, an undated
+"""Weak links on the High-severity fields (11 Nov 2026): headcount not from FTE (26 Nov), an undated
 share price, re-scoring a run cached partly elsewhere, the workbook's severities."""
 
 import csv
@@ -22,23 +22,23 @@ def _row(name, value="", note="", **kw):
             "confidence": "", "note": note, "scraper_version": "1"} | kw
 
 
-def test_fte_is_the_headcount_when_none_is_stated():
+def test_an_fte_count_is_not_the_headcount():
     fte = _row("fte", "1234.5", 'PDF page 9: "Average FTEs 1,234.5"', unit="employees",
                period_end="2025-12-31", source="Annual report (PDF)", method="PARSE", confidence="B",
                endpoint="https://x.com/ar.pdf#page=9")
-    rows = dp.refresh([_row("headcount", note="not found in: Annual report (PDF)"), fte])
-    hc = rows[0]
-    assert (hc["value"], hc["method"], hc["confidence"], hc["period_end"]) == ("1235", "DERIVED", "B", "2025-12-31")
-    assert hc["note"].startswith(dp.FROM_FTE + ", rounded from 1234.5; printed 1234.5;")
-    checks = {x.check: x for x in oc.score_row(oc.Row(hc), oc.Ctx(NoSources(), dict(oc.DEFAULT_RANGES), []))
-              .results if x.check in ("DER-03", "DER-06", "NUM-05", "CORE-02")}
-    assert all(x.outcome != "fail" for x in checks.values()), checks
-    assert checks["DER-03"].outcome == checks["NUM-05"].outcome == "pass"
-    # a stated headcount stays; a run limited to other fields leaves it alone
+    # no headcount stated: it stays empty, the FTE count stays in fte
+    rows = dp.refresh([_row("headcount", note="not found in: Annual report (PDF)"), dict(fte)])
+    assert rows[0]["value"] == "" and rows[1]["value"] == "1234.5"
+    # a headcount saved by the old rule (copied from fte) is emptied
+    old = _row("headcount", "1235", f"{dp.FROM_FTE}, rounded from 1234.5; printed 1234.5; {fte['note']}",
+               unit="employees", period_end="2025-12-31", source="Annual report (PDF)", method="DERIVED",
+               confidence="B", endpoint="https://x.com/ar.pdf#page=9")
+    hc, kept_fte = dp.refresh([old, dict(fte)])
+    assert (hc["value"], hc["method"], hc["unit"], hc["note"]) == ("", "", "", dp.ONLY_FTE)
+    assert kept_fte["value"] == "1234.5"
+    # a stated headcount stays
     stated = dp.refresh([_row("headcount", "900", method="PARSE"), dict(fte)])
     assert stated[0]["value"] == "900"
-    skipped = dp.refresh([_row("headcount", note=dp.selection.NOT_COLLECTED + "pay"), dict(fte)])
-    assert skipped[0]["value"] == ""
 
 
 def test_an_undated_share_price_takes_the_fiscal_year_end(monkeypatch):

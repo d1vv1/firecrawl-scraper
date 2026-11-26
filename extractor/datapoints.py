@@ -2526,28 +2526,19 @@ def iso_codes(rows: list[dict]) -> None:
                 r["unit"] = f"{code} {rest}".strip()
 
 
-FROM_FTE = "derived: full-time equivalents (no headcount stated)"
+FROM_FTE = "derived: full-time equivalents (no headcount stated)"   # rows saved before 26 Nov 2026
+ONLY_FTE = "not found: only full-time equivalents are stated (in fte), not a head count"
 
 
-def headcount_from_fte(by: dict[str, dict]) -> None:
-    """No headcount but an FTE count: the FTE count, rounded, is the headcount (the closest
-    size measure the company states; decided 11 Nov 2026), method DERIVED, its note
-    saying so. `by`: a company's rows by data point."""
-    hc, fte = by.get("headcount"), by.get("fte")
-    if not hc or hc["value"] or not fte or not fte["value"] or hc["note"].startswith(selection.NOT_COLLECTED):
+def no_headcount_from_fte(by: dict[str, dict]) -> None:
+    """An FTE count is not a head count (CDP dev worklist, 25 Nov 2026; reverses the
+    11 Nov rule that copied it into headcount): a headcount saved as derived from the FTE
+    count is emptied, the FTE count stays in fte. `by`: a company's rows by data point."""
+    hc = by.get("headcount")
+    if not hc or hc["method"] != "DERIVED" or not hc["note"].startswith(FROM_FTE):
         return
-    try:
-        n = float(fte["value"])
-    except ValueError:
-        return
-    whole = int(n + 0.5)                 # half up (round() gives 1234 for 1234.5)
-    if whole < 1:
-        return
-    how = FROM_FTE if whole == n else f"{FROM_FTE}, rounded from {fte['value']}"
-    printed = "" if whole == n or "printed " in fte["note"] else f"printed {fte['value']}; "
-    hc.update({k: fte[k] for k in ("unit", "period_end", "source", "endpoint", "retrieved_at",
-                                   "confidence", "scraper_version")},
-              value=str(whole), method="DERIVED", note=f"{how}; {printed}{fte['note']}")
+    hc.update({k: "" for k in ("value", "unit", "period_end", "source", "endpoint", "method",
+                               "retrieved_at", "confidence")}, note=ONLY_FTE)
 
 
 VARIABLE_PAY = ("sti_paid", "sti_target", "sti_max", *pay.LTIS, "lti_target", "lti_max")
@@ -3026,7 +3017,7 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
                  ", ".join(totals))
         rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in totals]
     by = {r["data_point"]: r for r in rows if r["grain"] == "company"}
-    headcount_from_fte(by)
+    no_headcount_from_fte(by)
     if gleif:
         parent_from_gleif(by, gleif)
     if esef_extras:
