@@ -22,7 +22,7 @@ def _origin(kind="pdf"):
 
 
 def test_columns_match_the_requested_format():
-    assert dp.COLUMNS == ["company_id", "company_name", "segment", "country", "lei", "grain",
+    assert dp.COLUMNS == ["company_id", "company_name", "segment", "tier", "country", "lei", "grain",
                           "role_row", "data_point", "value", "unit", "period_end", "source",
                           "endpoint", "method", "retrieved_at", "confidence", "note", "scraper_version"]
 

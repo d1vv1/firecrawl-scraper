@@ -53,6 +53,27 @@ def classes() -> dict[str, str]:
     return {c: name for c, (level, name) in taxonomy().items() if level == "class"}
 
 
+@lru_cache(maxsize=1)
+def _division_sections() -> dict[str, str]:
+    """NACE division ("28") -> its section's name ("Manufacturing"). The file lists each
+    section before its divisions. Empty for a taxonomy without sections."""
+    out, section = {}, ""
+    for code, (level, name) in taxonomy().items():
+        if level == "section":
+            section = name
+        elif level == "division" and section:
+            out[code] = section
+    return out
+
+
+def section_name(value: str) -> str:
+    """The NACE section of a sector_code value, the company's industry in plain words:
+    "NACE 28.99" -> "Manufacturing", "NACE 64.20" -> "Financial and insurance activities".
+    A register's "TOL/NACE 46900" counts too; another scheme (SIC, NAICS) gives ""."""
+    m = re.search(r"\bNACE (\d{2})", value or "")
+    return _division_sections().get(m.group(1), "") if m else ""
+
+
 def system_prompt() -> str:
     lines = "\n".join(f"{c}\t{name}" for c, name in classes().items())
     return llm.load_prompt("sector_system").replace("{taxonomy}", lines)

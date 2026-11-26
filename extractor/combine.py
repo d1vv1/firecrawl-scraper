@@ -260,6 +260,8 @@ def combine(runs: list[Path], into: Path, keep_better: bool = True, gleif: bool 
     `gleif`: ask GLEIF level 2 again for every empty ultimate parent (datapoints.refresh).
     `esef`: fill an empty EBITDA, share count or ultimate parent from the ESEF filing's tags."""
     rows, cols = read(into) if into.exists() else ([], COLUMNS)
+    if "tier" not in cols:              # a file from before the tier column (refresh fills it)
+        cols = cols[:cols.index("segment") + 1] + ["tier"] + cols[cols.index("segment") + 1:]             if "segment" in cols else cols + ["tier"]
     checks_path = into.with_name(into.stem + "_checks.csv")
     checks, ccols = read(checks_path) if checks_path.exists() else ([], [])
     stats = {"replaced": 0, "added": 0, "kept": 0, "worse": []}

@@ -33,7 +33,7 @@ See docs/pipeline_flow.html for the whole flow.
 
 Output:
   <--out>.csv                  one row per company and data point, and per role and pay
-                               field (18 columns, COLUMNS)
+                               field (19 columns, COLUMNS)
   output/datapoints/<id>.json  the same rows per company (re-runs skip done companies)
   output/golden_test_filled.csv  the input CSV with build_value filled in, when the
                                input is the golden sample
@@ -92,7 +92,7 @@ from .website import WebsiteNotFoundError
 
 log = logging.getLogger("extractor.datapoints")
 
-COLUMNS = ["company_id", "company_name", "segment", "country", "lei", "grain", "role_row",
+COLUMNS = ["company_id", "company_name", "segment", "tier", "country", "lei", "grain", "role_row",
            "data_point", "value", "unit", "period_end", "source", "endpoint", "method",
            "retrieved_at", "confidence", "note", "scraper_version"]
 
@@ -2255,7 +2255,7 @@ def rows_for(t: Target, found: list[Found]) -> list[dict]:
     for f in found:
         value = fmt_number(f.value) if isinstance(f.value, (int, float)) else (f.value or "")
         rows.append({"company_id": c.company_id, "company_name": c.name,
-                     "segment": c.segment or "", "country": c.country or "", "lei": lei,
+                     "segment": "", "tier": c.segment or "", "country": c.country or "", "lei": lei,
                      "grain": f.grain, "role_row": f.role_row, "data_point": f.data_point, "value": value, "unit": f.unit,
                      "period_end": f.period_end, "source": f.source, "endpoint": f.endpoint,
                      "method": f.method, "retrieved_at": f.retrieved_at if f.value not in (None, "")
@@ -2986,6 +2986,20 @@ def country_alias_not_a_mismatch(rows: list[dict]) -> None:
             r["confidence"] = "B"
 
 
+def segment_from_sector(rows: list[dict]) -> None:
+    """`segment`: the company's industry, the NACE section of its sector_code ("NACE 28.99"
+    -> "Manufacturing"); empty without a NACE code. `tier`: the input file's Tier or
+    segment column (the client's priority, or a run group). Rows saved before `tier`
+    existed held that input value in `segment`: it moves to `tier`."""
+    code = next((r["value"] for r in rows if r["grain"] == "company"
+                 and r["data_point"] == "sector_code" and r["value"]), "")
+    industry = sector.section_name(code)
+    for r in rows:
+        if "tier" not in r:
+            r["tier"] = r.get("segment") or ""
+        r["segment"] = industry
+
+
 def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     """A company's saved rows under the current rules, without asking any source again:
     the market-cap band where only the euro rate was missing, and a date for a pay term
@@ -2996,6 +3010,7 @@ def refresh(rows: list[dict], gleif=None, esef_extras=None) -> list[dict]:
     empty EBITDA, share count or ultimate parent from the ESEF filing's tags (combine --esef)."""
     for r in rows:
         r.setdefault("scraper_version", "0")    # saved before versioning
+    segment_from_sector(rows)
     # a group role read from two documents; a table's accounting line taken for a person
     gone = pay.duplicate_groups(rows) + pay.accounting_lines(rows)
     rows[:] = [r for r in rows if r["grain"] != "role" or r["role_row"] not in gone]

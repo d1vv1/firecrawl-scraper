@@ -419,7 +419,8 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-si
     <tbody>
       <tr><td>company_id</td><td>The ID from the input CSV, unchanged.</td><td>equinor-asa</td></tr>
       <tr><td>company_name</td><td>The name from the input CSV.</td><td>Equinor ASA</td></tr>
-      <tr><td>segment</td><td>The segment from the input CSV.</td><td>nordic_listed</td></tr>
+      <tr><td>segment</td><td>The industry: the NACE section of the <code>sector_code</code> data point; empty without a NACE code.</td><td>Mining and quarrying</td></tr>
+      <tr><td>tier</td><td>The Tier (or segment) column from the input CSV, unchanged.</td><td>nordic_listed</td></tr>
       <tr><td>country</td><td>The country from the input CSV. The country we <i>found</i> is the <code>country_code</code> data point.</td><td>NO</td></tr>
       <tr><td>lei</td><td>The LEI, repeated on every row for easy filtering.</td><td>OW6OFBNCKXC4US5C7523</td></tr>
       <tr><td>grain</td><td><code>company</code> (C01–C23) or <code>role</code> (executive pay, R01–R11).</td><td>company · role</td></tr>

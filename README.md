@@ -155,8 +155,12 @@ This collects the fields of the source-validation protocol
 (`Source_validation_listed_22Oct/PROTOCOL.md`; mapping in `docs/protocol_schema_mapping.md`)
 for the companies in the CSV, and writes **`output/datapoints.csv`**:
 
-`company_id, company_name, segment, country, lei, grain, role_row, data_point, value, unit,
+`company_id, company_name, segment, tier, country, lei, grain, role_row, data_point, value, unit,
 period_end, source, endpoint, method, retrieved_at, confidence, note, scraper_version`
+
+`segment` is the company's industry: the NACE section of its `sector_code` ("NACE 28.99" ->
+"Manufacturing"), empty without a NACE code. `tier` is the input CSV's Tier (or segment/group)
+column, unchanged: the client's priority, or a run group such as `nordic_listed`.
 
 `scraper_version` is the version of the scraper that extracted the value (`SCRAPER_VERSION` in
 `extractor/config.py`; 0 for values saved before versioning). Raise it when a change means a

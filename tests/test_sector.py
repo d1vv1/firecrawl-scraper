@@ -59,3 +59,25 @@ def test_no_class_when_vague_or_not_in_the_list(monkeypatch):
     monkeypatch.setattr(sector, "classify", lambda *a: SectorPick(code="99.99", basis="x"))
     assert sector.from_description(_chosen(), "X") is None           # not a NACE class
     assert sector.from_description({}, "X") is None                  # no description
+
+
+def test_section_name_is_the_nace_section_of_a_sector_code():
+    from extractor import sector
+    assert sector.section_name("NACE 28.99") == "Manufacturing"
+    assert sector.section_name("NACE 64.20") == "Financial and insurance activities"
+    assert sector.section_name("TOL/NACE 46900").startswith("Wholesale and retail trade")
+    assert sector.section_name("SIC (UK) 70100") == ""     # another scheme
+    assert sector.section_name("") == ""
+
+
+def test_segment_is_the_industry_and_the_input_tier_moves_to_tier():
+    from extractor.datapoints import segment_from_sector
+    old = [{"grain": "company", "data_point": "sector_code", "value": "NACE 41.10", "segment": "Tier 2"},
+           {"grain": "role", "data_point": "base_salary", "value": "1", "segment": "Tier 2"}]
+    segment_from_sector(old)
+    assert [(r["segment"], r["tier"]) for r in old] == [("Construction", "Tier 2")] * 2
+    segment_from_sector(old)                                # saved again: unchanged
+    assert [(r["segment"], r["tier"]) for r in old] == [("Construction", "Tier 2")] * 2
+    new = [{"grain": "company", "data_point": "sector_code", "value": "", "segment": "", "tier": "Tier 1"}]
+    segment_from_sector(new)
+    assert (new[0]["segment"], new[0]["tier"]) == ("", "Tier 1")
