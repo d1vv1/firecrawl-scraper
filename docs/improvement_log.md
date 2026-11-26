@@ -982,3 +982,17 @@ Missing priority-field values, whole file:
   - 611 never had company data collected; 478 of them are "Pay Data" only in the tracker.
   - 115 have specific gaps a re-run may fill (859 values, 305 priority).
   - Values the documents do not state, values that do not apply, and market-cap bands waiting on a share price are left out.
+
+### 26 November 2026: company-data-only re-run of 248 companies, rules off (branch `legal-source-policy`)
+- **Run:** the 248 companies from `data/rerun_company_only_248.csv` (company data only, `LEGAL_SOURCE_RULES=false`).
+  - It ran in three parts: 17, then 182 (paused), then the last 49; Gabetti Property Solutions, cut off by the pause, was run on its own.
+  - Only companies each part actually ran were joined into `output/company_only_248_datapoints.csv` (the run file also carries earlier saved results, which were left out), then spliced.
+- **Results for the 248 (company values):**
+  - missing 34.9% → 23.5% (filled 6,621 → 7,781 of 10,168);
+  - priority company fields missing 36.8% → 25.6% (2,352 → 2,768 of 3,720);
+  - biggest gains: 5% PE stake 49, largest holders 48, ultimate parent 47, exchange segment 41, website 40, EBITDA 39.
+- **Whole file:** priority company fields missing 41.2% → 39.3%; company values 42.1% → 40.2%.
+- **Values that went blank:** 6.
+  - 4 were correct removals: market-cap bands built on 2023 share prices, and EvoNext's 2023 headcount and FTE.
+  - Fairview International's largest holders and 5% PE stake, from its June 2025 ESEF filing, were missed by the run and put back by hand.
+- `combine` kept the old role rows for 15 companies where the run had under half the earlier values.
