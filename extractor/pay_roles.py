@@ -130,12 +130,16 @@ def fallback_id(name: str, country: str) -> str:
     return f"noid-{slug}-{country.lower()}"
 
 
-def find_reports(companies: list[Company], lib: rl.ReportRetriever) -> None:
-    """Each company's remuneration report on disk, and which companies share one PDF."""
+def find_reports(companies: list[Company], lib: rl.ReportRetriever,
+                 source: str = "remuneration") -> None:
+    """Each company's report on disk, and which companies share one PDF. `source`
+    "remuneration" (default) reads the remuneration report; "annual" reads the annual report
+    instead (26 Nov 2026: roles the remuneration report leaves out, e.g. Swedish board fees
+    in the notes, the IAS 24 key-management total)."""
     first_by_path: dict[str, str] = {}
     for c in companies:
         reports, how = rl.local_reports(lib, c.company_name, c.country, c.lei or None)
-        rem = reports.get("Remuneration")
+        rem = reports.get("Annual" if source == "annual" else "Remuneration")
         c.match_type = how
         if "Annual" in reports:
             c.annual_file = reports["Annual"].file_name
@@ -373,7 +377,7 @@ def build_request(c: Company, req: Request, ref: ref_roles.RefRoles,
     shown = image_pages(req.images, chunks, origin)
     if shown:
         user += pay.IMAGE_NOTE.format(pages=", ".join(map(str, shown)))
-    key = prompts.request_key(system, user + f"|images:{shown}", ref.version)
+    key = prompts.request_key(system, user + f"|images:{shown}", ref.version, llm.model_name())
     return origin, chunks, system, user, shown, key
 
 
@@ -417,6 +421,7 @@ def run_company(c: Company, req: Request, run_dir: Path, dry_run: bool = False) 
     fy = answer.get("fiscal_year")
     lines = []
     for line in answer.get("lines", []):
+        output.unscale_line(line)          # values as printed, never pre-multiplied
         lines.append({"pay_line_id": pay_line_id(c.company_id, fy, line),
                       "mapping": map_role(ref, line, c.country, cdp_ids), "line": line,
                       "quote_check": quote_checks(line, texts)})
@@ -560,6 +565,23 @@ def table_check(run_dir: Path) -> dict[str, int]:
     return {**totals, **{f"file_{k}": v for k, v in output.export(run_dir).items()}}
 
 
+def fix_scale(run_dir: Path) -> dict[str, int]:
+    """Set values the AI multiplied by the table's unit back to the printed figure
+    (pay_roles_output.unscale), in an existing run, and rewrite its files. No AI call."""
+    cells = companies = 0
+    for path in sorted((run_dir / "companies").glob("*.json")):
+        if path.name.endswith(".error.json"):
+            continue
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        n = sum(output.unscale_line(it["line"]) for it in doc.get("lines", []))
+        if n:
+            path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+            cells += n
+            companies += 1
+    return {**{f"file_{k}": v for k, v in output.export(run_dir).items()},
+            "cells": cells, "companies": companies}
+
+
 def recheck(run_dir: Path) -> dict[str, int]:
     """Grade every quote of an existing run again from the cached report text, and rewrite
     the run's files. No AI call: for a run made before a change to the checks."""
@@ -630,6 +652,7 @@ def merge_gaps(doc: dict, answer: dict, gaps: list[prompts.Gap], texts: dict[int
         new = {k: cell.get(k) for k in keys}
         new["previous"] = {k: old.get(k) for k in keys} if old else None
         new["gapfill_note"] = f"rechecked: {asked[key].reason}"
+        output.unscale(new)
         item["line"][key[1]] = new
         item.setdefault("quote_check", {}).pop(key[1], None)
         grade = output.quote_grade(new.get("quote"), new.get("printed"), new.get("chunk_id"), texts)
@@ -774,6 +797,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--mode", choices=["field", "role", "all", "gapfill"])
     p.add_argument("--recheck", default="", metavar="RUN_ID",
                    help="grade the quotes of an existing run again and rewrite its files (no AI)")
+    p.add_argument("--fix-scale", default="", metavar="RUN_ID",
+                   help="set values the AI multiplied by the table's unit back to the printed "
+                        "figure, in an existing run (no AI)")
     p.add_argument("--remap", default="", metavar="RUN_ID",
                    help="map the roles of an existing run again with the current workbook (no AI)")
     p.add_argument("--table-check", default="", metavar="RUN_ID",
@@ -794,6 +820,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--retry-failed", action="store_true")
     p.add_argument("--dry-run", action="store_true",
                    help="find and read the reports and build the prompts, but ask no AI")
+    p.add_argument("--model", default="",
+                   help="Vertex model for this run (default: VERTEX_MODEL in .env), "
+                        "e.g. google/gemini-2.5-pro")
+    p.add_argument("--source", choices=["remuneration", "annual"], default="remuneration",
+                   help="which report to read: the remuneration report (default) or the "
+                        "annual report")
     p.add_argument("--images", choices=["auto", "on", "off"], default="auto",
                    help="attach pay-table page images: auto (only pages whose tables the PDF "
                         "conversion damaged; default), on (all pay-table pages) or off")
@@ -804,8 +836,19 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--from-run", default="",
                    help="mode gapfill: the run whose flagged cells are asked again")
     args = p.parse_args(argv)
+    if args.model:                  # before any AI client exists; workers inherit it
+        os.environ["VERTEX_MODEL_OVERRIDE"] = args.model
     _setup_logging()
 
+    if args.fix_scale:
+        run_dir = RUNS_DIR / args.fix_scale
+        if not (run_dir / "companies").is_dir():
+            print(f"ERROR: no run at {run_dir}", file=sys.stderr)
+            return 1
+        f = fix_scale(run_dir)
+        print(f"fixed {f['cells']} scaled value(s) in {f['companies']} companies of "
+              f"{args.fix_scale}")
+        return 0
     if args.recheck:
         run_dir = RUNS_DIR / args.recheck
         if not (run_dir / "companies").is_dir():
@@ -886,7 +929,7 @@ def main(argv: list[str] | None = None) -> int:
                      for d in docs])
     companies = read_companies(args.companies, countries, only, args.limit)
     lib = rl.ReportRetriever(root)
-    find_reports(companies, lib)
+    find_reports(companies, lib, args.source)
     return _run(args, req, ref, root, countries, only, companies, companies)
 
 
@@ -929,7 +972,8 @@ def _run(args, req: Request, ref: ref_roles.RefRoles, root: str, countries: set[
             "roles_spec": req.roles_spec, "roles": roles, "fields": fields,
             "countries": sorted(countries),
             "only": sorted(only), "companies_file": str(args.companies),
-            "reports_folder": root, "model": llm.model_name(), "images": images,
+            "reports_folder": root, "source": getattr(args, "source", "remuneration"),
+            "model": llm.model_name(), "images": images,
             "ref_roles": str(ref.path), "ref_roles_version": ref.version,
             "cdp_roles_offered": len(req.cdp_roles or []), "git_commit": git_commit(),
             "prompt_files": {n: hashlib.sha1(llm.load_prompt(n).encode()).hexdigest()[:12]

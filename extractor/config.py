@@ -86,7 +86,10 @@ def load_settings() -> Settings:
         llm_provider=(os.getenv("LLM_PROVIDER") or "foundry").strip().lower(),
         vertex_project=os.getenv("VERTEX_PROJECT") or None,
         vertex_location=os.getenv("VERTEX_LOCATION") or "global",
-        vertex_model=os.getenv("VERTEX_MODEL") or "google/gemini-2.5-flash",
+        # VERTEX_MODEL_OVERRIDE (not in .env) beats .env's VERTEX_MODEL: one run on another
+        # model, e.g. pay_roles --model google/gemini-2.5-pro
+        vertex_model=(os.getenv("VERTEX_MODEL_OVERRIDE") or os.getenv("VERTEX_MODEL")
+                      or "google/gemini-2.5-flash"),
     )
 
 

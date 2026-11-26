@@ -399,3 +399,15 @@ def test_a_failed_gapfill_call_keeps_the_first_pass(monkeypatch, tmp_path):
     saved = json.loads((tmp_path / "companies" / "c1.json").read_text(encoding="utf-8"))
     assert row["status"] == "ok" and "first-pass lines kept" in row["note"]
     assert len(saved["lines"]) == 1 and "error" in saved["gapfill"]
+
+
+def test_find_reports_reads_the_annual_report_with_source_annual(monkeypatch):
+    rem = report("Acme")
+    ann = rl.Report(**{**report("Acme").__dict__, "report_type": "Annual",
+                       "file_name": "SE_Acme_FY2025_Annual.pdf", "path": "C:/reports/ann.pdf"})
+    monkeypatch.setattr(pr.rl, "local_reports",
+                        lambda lib, n, c, lei: ({"Remuneration": rem, "Annual": ann}, "name-exact"))
+    a, b = pr.Company("a", "Acme AB", "SE", ""), pr.Company("b", "Acme AB", "SE", "")
+    pr.find_reports([a], object())
+    pr.find_reports([b], object(), "annual")
+    assert a.report["path"] == rem.path and b.report["path"] == ann.path

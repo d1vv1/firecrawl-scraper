@@ -140,3 +140,10 @@ class TestUserMessage:
         assert pp.langs_for("fi") == {"en", "fi", "sv"}
         assert pp.langs_for("GB") == {"en"}
         assert pp.langs_for(None) == {"en"}
+
+
+def test_request_key_keeps_flash_keys_and_separates_other_models():
+    from extractor import pay_roles_prompts as pp
+    base = pp.request_key("s", "u", "v")
+    assert pp.request_key("s", "u", "v", "google/gemini-2.5-flash") == base
+    assert pp.request_key("s", "u", "v", "google/gemini-3.1-pro-preview") != base

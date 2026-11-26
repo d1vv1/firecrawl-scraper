@@ -246,3 +246,14 @@ class TestRunFiles:
         pr.main(args)                                   # everything done: rows from the files
         with (env["tmp"] / "runs" / "g3" / "summary.csv").open(encoding="utf-8-sig") as fh:
             assert next(csv.DictReader(fh))["lines"] == "4"
+
+
+def test_unscale_sets_a_pre_multiplied_value_back_to_the_printed_figure():
+    c = {"value": 800000.0, "printed": "800", "unit": "thousands"}
+    assert out.unscale(c) and c["value"] == 800 and c["scaled_by_ai"] == 800000.0
+    for cell in ({"value": 800.0, "printed": "800", "unit": "thousands"},          # as printed
+                 {"value": 45000.0, "printed": "45", "unit": "units"},            # no scale
+                 {"value": 228000.0, "printed": "228.000", "unit": "thousands"}):  # same number
+        assert not out.unscale(cell)
+    m = {"value": 1500000.0, "printed": "EUR 1,5", "unit": "millions"}
+    assert out.unscale(m) and m["value"] == 1.5

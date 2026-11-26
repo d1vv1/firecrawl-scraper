@@ -144,6 +144,36 @@ def currency_code(printed: str | None) -> str:
     return CURRENCY_WORDS.get(p) or p.upper()
 
 
+SCALE = {"thousands": 1_000, "millions": 1_000_000}
+_NUMBER = re.compile(r"\(?-?\d[\d.,' \u00a0\u202f]*\d\)?|\d")
+
+
+def unscale(cell) -> bool:
+    """Values stay as printed (decided 24 Nov 2026). In a thousands or millions table the AI
+    sometimes stored the full amount ("800" in a GBP 000 table read as 800000, about 5-15% of
+    such cells in the FY2025 runs): set the value back to the printed figure and keep the
+    AI's number as "scaled_by_ai". True when the cell was changed."""
+    if not isinstance(cell, dict) or cell.get("value") is None:
+        return False
+    k = SCALE.get(cell.get("unit") or "")
+    if not k:
+        return False
+    from .pay_tables import parse_figure
+    v = float(cell["value"])
+    for token in _NUMBER.findall(cell.get("printed") or ""):
+        p = parse_figure(token)
+        if p and v != p and abs(v - p * k) <= 0.005 * abs(v):
+            cell["scaled_by_ai"] = cell["value"]
+            cell["value"] = p
+            return True
+    return False
+
+
+def unscale_line(line: dict) -> int:
+    """unscale every cell of one AI line; the number of cells changed."""
+    return sum(unscale(c) for c in line.values() if isinstance(c, dict))
+
+
 def filled(cell) -> bool:
     return isinstance(cell, dict) and cell.get("value") is not None
 

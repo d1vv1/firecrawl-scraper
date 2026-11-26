@@ -200,11 +200,16 @@ def user_message(mode: str, *, company: str, source: str, what: str, chunks, ref
     return "\n\n".join(blocks)
 
 
-def request_key(system: str, user: str, ref_version: str) -> str:
+DEFAULT_MODEL = "google/gemini-2.5-flash"
+
+
+def request_key(system: str, user: str, ref_version: str, model: str | None = None) -> str:
     """The cache key of one AI request: the prompt, the message (which holds the chunks and
-    the role lists) and the role workbook's version."""
+    the role lists), the role workbook's version and, for a model other than the default,
+    the model (a pro run must not reuse a flash answer; flash keys stay as they were)."""
     h = hashlib.sha1()
-    for part in (system, user, ref_version):
+    parts = (system, user, ref_version) + ((model,) if model and model != DEFAULT_MODEL else ())
+    for part in parts:
         h.update(part.encode("utf-8"))
         h.update(b"\0")
     return h.hexdigest()[:20]
