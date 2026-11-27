@@ -149,8 +149,8 @@ class DataPointFacts(BaseModel):
     revenue: NumberFact
     total_assets: NumberFact
     ebitda: ProfitFact
-    fte: NumberFact                 # average full-time equivalents
-    headcount: NumberFact           # employees at year end
+    fte: NumberFact                 # full-time equivalents (average, else year end)
+    headcount: NumberFact           # persons employed (year end, else average)
     legal_name: TextFact
     business_id: TextFact           # national register number
     country_code: TextFact          # ISO 3166 alpha-2 of the registered office

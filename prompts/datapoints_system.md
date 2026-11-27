@@ -31,12 +31,18 @@ Facts:
   company_defined: true if the text calls it an alternative performance
   measure or non-IFRS measure, or defines it itself; else false; null if
   unclear. label_in_report: the line label as printed.
-- fte: average number of full-time equivalents in the year. headcount:
-  number of employees at year end. Copy the number as printed, unit
-  "units", currency null. Do not swap the two: if the text says only
-  "employees" without saying average or year end, use headcount. Take the
-  exact count from the employee note or the key figures, not a rounded
-  one from descriptive text ("our 22,000 people").
+- fte and headcount: what is counted decides the field, not the date.
+  fte counts working time: only a figure the text calls full-time
+  equivalents ("FTE", "Vollzeitäquivalente", "ETP", "årsverk"). headcount
+  counts people: every other employee figure ("employees", "persons
+  employed", "staff numbers", "people"). An average count of people
+  ("average monthly number of persons employed", "average number of
+  employees") is headcount, not fte. If both are given, headcount takes
+  the year-end figure and fte the average; otherwise take the one there
+  is. Copy the number as printed, unit
+  "units", currency null. Take the exact count from the employee note or
+  the key figures, not a rounded one from descriptive text ("our 22,000
+  people").
 - legal_name: the company's full registered name, e.g. "Yubico AB (publ)".
 - business_id: its number in the national company register, as printed
   (e.g. "556720-8851", "HRB 12345, Amtsgericht München").
